@@ -1,0 +1,23 @@
+﻿<Application x:Class="MyDev.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MyDev"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+		<ResourceDictionary >
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="\Dicts\ColorsDictionary.xaml" />
+				<ResourceDictionary Source="\Dicts\ButtonsMaster.xaml" />
+				<ResourceDictionary Source="\MyStyles\ListBoxViewStyles.xaml"/>
+				<ResourceDictionary Source="\Dicts\AppButtonsDictionary.xaml"/>
+				<ResourceDictionary Source="\MyStyles\MenuStyles.xaml"/>
+				<ResourceDictionary Source="\DataTemplates\BankDataTemplates.xaml"/>
+				<ResourceDictionary Source="\DataTemplates\CustomerDataTemplates.xaml"/>
+				<ResourceDictionary Source="\DataTemplates\GenericDataTemplates.xaml"/>
+				<ResourceDictionary Source="\DataTemplates\NWDataTemplates.xaml"/>
+				<!--<ResourceDictionary Source="\DataTemplates\NWDataTemplates.xaml"/>-->
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary >
+
+	</Application.Resources>
+</Application>

@@ -1,0 +1,264 @@
+﻿<UserControl x:Class="MyDev.UserControls.FlowDoc"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyDev.UserControls"
+             xmlns:conv="clr-namespace:MyDev.Converts"
+	  	  d:DataContext="{d:DesignInstance Type=local:FlowDoc}"
+		mc:Ignorable="d" 
+		 PreviewKeyDown="flowdoc_PreviewKeyDown"
+		 PreviewMouseLeftButtonUp="doc_PreviewMouseLeftButtonUp"
+		 AllowDrop="True"
+		 Loaded="flowdoc_Loaded"
+		 x:Name="flowdoc"
+             Height="450" Width="550">
+    <!--PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"-->
+    <!--xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"-->
+    <UserControl.Resources>
+        <conv:ReduceByParamValue x:Key="resetTextWidth"/>
+
+        <ControlTemplate x:Key="HorizontalGradientButtonTemplate" TargetType="{x:Type Button}">
+            <!-- NB - it is the Border that controls the buttons default colors
+			which lets us set Back/Foreground and border colors in the button itself
+			but still have mouseover etc working correctly, but still have our text "Content" display-->
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
+				   BorderThickness="{TemplateBinding BorderThickness}" 
+				   Background="{Binding btnBkGround}" 
+				   CornerRadius="15"
+				   SnapsToDevicePixels="True">
+                <ContentPresenter x:Name="contentPresenter" 
+						ContentTemplate="{TemplateBinding ContentTemplate}" 
+						Content="{TemplateBinding Content}" 
+						ContentStringFormat="{TemplateBinding ContentStringFormat}" 
+						Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+						Margin="{TemplateBinding Padding}" 
+						RecognizesAccessKey="True" 
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+
+            <ControlTemplate.Triggers>
+                <!--This handles the button being set as IsDefault=true-->
+                <Trigger Property="FrameworkElement.Tag" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                    <Setter Property="Background" TargetName="border" >
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                                <GradientStop Color="#FFFFFFFF" Offset="0.514"/>
+                                <GradientStop Color="#FF999999" Offset="0.753"/>
+                                <GradientStop Color="#FFF70711" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="BorderBrush" TargetName="border" Value="Black"/>
+                </Trigger>
+
+                <Trigger Property="Button.IsMouseOver" Value="false">
+                    <!--MouseOver FALSE handling-->
+                    <Setter Property="FontWeight"  Value="Bold"/>
+
+                    <Setter Property="Control.Foreground"  TargetName="border">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#FFF7EFF0" Offset="0.414"/>
+                                <GradientStop Color="#FF8A858C" Offset="0.553"/>
+                                <GradientStop Color="#FF111111" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Control.Background"  TargetName="border">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#FF777777" Offset="0.314"/>
+                                <GradientStop Color="#FFffffff" Offset="0.553"/>
+                                <GradientStop Color="#FFF70711" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+
+                <Trigger Property="Button.IsMouseOver" Value="True">
+                    <!--MouseOver TRUE handling-->
+                    <Setter Property="FontWeight"  Value="Bold"/>
+
+                    <Setter Property="Control.Foreground"  TargetName="border">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+                                <GradientStop Color="#FFF7EFF0" Offset="0.414"/>
+                                <GradientStop Color="#FF8A858C" Offset="0.553"/>
+                                <GradientStop Color="#FF111111" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Background" TargetName="border">
+                        <Setter.Value>
+                            <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+                                <GradientStop Color="#FF777777" Offset="0.314"/>
+                                <GradientStop Color="#FFffffff" Offset="0.553"/>
+                                <GradientStop Color="#FFF70711" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+
+                <Trigger Property="IsPressed" Value="True">
+                    <!--Handles Click event-->
+                    <Setter Property="Background"  TargetName="border" Value="Gray"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="White"/>
+                </Trigger>
+                <Trigger Property="ToggleButton.IsChecked" Value="True">
+                    <!--Handles any checkbox style checked option-->
+                    <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <!--Handles disabled status-->
+
+                    <Setter Property="Background" TargetName="border" Value="Gray"/>
+                    <Setter Property="BorderBrush" TargetName="border" Value="Red"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ContextMenu x:Key="DummyContextmenu">
+            <MenuItem Header="xxxxx"  Click="dummy_Click" >
+                <MenuItem.Icon>
+                    <Image Source="/Icons/symlink_directory_30px.png"  />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.Resources>
+
+
+    <Border 
+		BorderBrush="{Binding borderColor}"
+		Width="{Binding Path=ActualWidth, ElementName=flowdoc}"
+		BorderThickness="2 4 2 4">
+
+        <Grid x:Name="MainGrid"
+			Background="{Binding backGround}" >
+
+            <!--<behaviors:Interaction.Behaviors>
+			<behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
+		</behaviors:Interaction.Behaviors>-->
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="45" />
+                <RowDefinition Height="5" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="5" />
+            </Grid.ColumnDefinitions>
+
+            <!--// banner header line-->
+            <Canvas x:Name="topcanvas"
+				Grid.Row="0" Grid.Column="0"
+				Background="{StaticResource Orange3}"
+				Height="30"
+				Width="{Binding Path=ActualWidth, ElementName=MainGrid}"
+				Margin="0 0 0 0">
+
+                <Border x:Name="border"
+						BorderBrush="{StaticResource Black0}"
+						BorderThickness="0 0 0 2"
+						Height="{Binding Path=ActualHeight, ElementName=topcanvas}"
+						Width="{Binding Path=ActualWidth, ElementName=topcanvas}">
+
+                    <TextBlock x:Name="Banner"
+							Text="Processing Results / Information"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							FontWeight="DemiBold"
+							Margin="0 0 0 0"	
+							     Padding="0 5 0 0"
+							Width="{Binding Path=ActualWidth, ElementName=border, Converter={StaticResource resetTextWidth},ConverterParameter=20}"
+							Foreground="{StaticResource Black0}"/>
+                </Border>
+            </Canvas>
+
+            <RichTextBox x:Name="doc" 
+                              Focusable="true"						  
+					 FontSize="14"
+					 Foreground="{StaticResource Black5}"
+					 GotFocus="doc_GotFocus"
+					 Grid.Row="1"
+					 Grid.Column="1"
+					 Grid.ColumnSpan="2"
+					 Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=75}"
+					 HorizontalAlignment="Right"
+					 HorizontalScrollBarVisibility="Auto"
+      				IsEnabled="true"		 
+					 IsHitTestVisible="True"
+					 IsReadOnly="True"
+					 Margin="0 3 0 0" 
+					 Padding="15 10 15 0" 
+      				PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
+					 PreviewMouseLeftButtonUp="doc_PreviewMouseLeftButtonUp"
+				      
+					 VerticalScrollBarVisibility="Hidden"
+					Visibility="Hidden"
+					 Width="{Binding Path=ActualWidth, ElementName=flowdoc}"/>
+            <!--PreviewMouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
+            <!--MouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
+
+            <FlowDocumentScrollViewer x:Name="fdviewer"
+                        ContextMenu="{StaticResource DummyContextmenu}"
+                        Focusable="true"	
+			      FontFamily="Arial"
+				FontSize="11"
+                        Grid.Row="1"
+                        Grid.Column="1"
+				Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=85}"
+                        HorizontalAlignment="Left" 
+				IsHitTestVisible="True"
+				IsEnabled="true"		 
+                        IsSelectionEnabled="false"
+                        Panel.ZIndex="9"
+			      Margin="2,4,0,13"
+				PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="scrollviewer_PreviewMouseLeftButtonUp"       				     
+				VerticalScrollBarVisibility="Hidden"
+                        Visibility="Visible"
+                        Width="{Binding Path=ActualWidth, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=15}"
+				Grid.ColumnSpan="2"
+                        />
+            <!--MouseDown="scrollviewer_MouseDown"-->
+            <!--MouseLeftButtonDown="scrollviewer_PreviewMouseLeftButtonDown"-->
+            <!--PreviewMouseLeftButtonDown="scrollviewer_PreviewMouseLeftButtonDown"-->
+
+            <!--Click="Button_Click"-->
+            <Button   x:Name="CloseBtn"
+				Background="{Binding btnBkGround}"
+				Foreground="{Binding btnForeGround}"
+    				Grid.Row="2"
+				Grid.Column="2"
+				Grid.ColumnSpan="1"
+				HorizontalAlignment="Right"
+				Height="35" Width="90"
+				Margin="0 3 0 0"
+				PreviewMouseLeftButtonUp="Closebtn_PreviewMouseLeftButtonUp"
+				PreviewKeyDown="flowdoc_PreviewKeyDown"	
+				Tag="CloseBtn"
+				Template="{StaticResource HorizontalGradientButtonTemplate}"
+				Content="Close"/>
+
+            <TextBlock
+    			Grid.Row="2"
+			Grid.Column="1"
+			Grid.ColumnSpan="2"
+			HorizontalAlignment="Left" 
+			Width="233"
+			PreviewMouseLeftButtonUp="Closebtn_PreviewMouseLeftButtonUp"
+			Text="Click in Panel to drag it around window !" 
+			Margin="187,15,0,12"/>
+
+        </Grid>
+    </Border>
+</UserControl>

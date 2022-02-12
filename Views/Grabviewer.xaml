@@ -1,0 +1,31 @@
+﻿<Window x:Class="MyDev.Views.Grabviewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyDev.Views"
+        mc:Ignorable="d"
+		Background="CadetBlue"
+		Name="GrabWin"
+	  MouseDoubleClick="GrabWin_MouseDoubleClick"
+		MouseMove="ChecksMouseMove"
+		PreviewKeyDown="GrabWin_PreviewKeyDown"
+		PreviewMouseRightButtonDown="GrabWin_PreviewMouseRightButtonDown"
+		ResizeMode="CanResizeWithGrip"
+		SizeChanged="GrabWin_SizeChanged"
+		Topmost="True"
+		Title="Screen Control Grab Viewer" 
+		ToolTip="Hit F12 or Right Click to dismiss Viewer..."	   		
+		WindowStartupLocation="CenterScreen">
+	<!--<Grid x:Name="GrabGrid"
+		Height="{Binding ElementName=GrabWin, Path=ActualHeight}"
+		Width="{Binding ElementName=GrabWin, Path=ActualWidth}">-->
+	<Viewbox x:Name="GrabViewBox" Stretch="Uniform"  StretchDirection="Both"
+		>
+		<Image x:Name="Grabimage"  Stretch="UniformToFill"
+				Height="{Binding ElementName=Grabimage, Path=ActualHeight}"
+				Width="{Binding ElementName=Grabimage, Path=ActualWidth}"
+					/>
+	</Viewbox>
+	<!--</Grid>-->
+</Window>
