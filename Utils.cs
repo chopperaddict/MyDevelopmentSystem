@@ -353,24 +353,51 @@ namespace MyDev
 		#endregion Dictionary Handlers
 
 		#region datagrid row  to List methods (string, int, double, decimal, DateTime)
+		public static List<string> GetTableColumnsList( DataTable dt  )
+		{
+			//Return a list of strings Containing table column info
+			List<string> list = new List<string>();
+			foreach ( DataRow row in dt . Rows )
+			{
+				string output="";
+				var colcount = row.ItemArray.Length;
+				switch ( colcount )
+				{
+					case 1:
+						output += row . Field<string> ( 0 );
+						break;
+					case 2:
+						output += row . Field<string> ( 0  ) + ", ";
+						output += row . Field<string> ( 1 ) + " ";
+						break;
+					case 3:
+						output += row . Field<string> ( 0 ) + ", ";
+						output += row . Field<string> ( 1 ) + ", ";
+						output += row . Field<string> ( 2 ) + "";
+						break;
+					case 4:
+						output += row . Field<string> ( 0 ) + ", ";
+						output += row . Field<string> ( 1 ) + ", ";
+						output += row . Field<string> ( 2 ) + ", ";
+						output += row . Field<string> ( 3 ) +" ";
+						break;
+					case 5:
+						output += row . Field<string> ( 0 ) + ", ";
+						output += row . Field<string> ( 1 ) + ", ";
+						output += row . Field<string> ( 2 ) + ", ";
+						output += row . Field<string> ( 3 ) + ", ";
+						output += row . Field<string> ( 4 ) + "";
+						break;
+				}
+				list . Add ( output);
+			}
+			return list;
+		}
 		public static List<string> GetDataDridRowsAsListOfStrings ( DataTable dt )
 		{
 			List<string> list = new List<string>();
 			foreach ( DataRow row in dt . Rows )
 			{
-				//int indx = 0;
-				//do {
-				//	try
-				//	{
-				//		if ( row . Field<object> ( indx ) != null )
-				//			Console . WriteLine ( row . Field<object> ( indx ) . ToString ( ) );
-				//		indx++;
-				//	}
-				//	catch (Exception ex) { break; }
-
-				//} while ( true );
-				
-				// ... Write value of first field as string.
 				list . Add ( row . Field<string> ( 0 ) );
 			}
 			return list;

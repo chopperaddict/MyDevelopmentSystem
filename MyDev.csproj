@@ -44,6 +44,7 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -71,6 +72,7 @@
     <Compile Include="AttachedProperties\DataGridColumnsColorAp.cs" />
     <Compile Include="AttachedProperties\Ex.cs" />
     <Compile Include="AttachedProperties\ListboxColorCtrlAP.cs" />
+    <Compile Include="AttachedProperties\MenuAttachedProperties.cs" />
     <Compile Include="Converts\DateTimeToShortStringConverter.cs" />
     <Compile Include="Converts\IncreaseByParamValue.cs" />
     <Compile Include="Converts\ReduceByParamValue.cs" />
@@ -96,7 +98,6 @@
     <Compile Include="Views\GetBrushfromhexvalue.cs" />
     <Compile Include="Converts\HexConvert.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="UserControls\ApTestingControlAP.xaml.cs">
       <DependentUpon>ApTestingControlAP.xaml</DependentUpon>
     </Compile>
@@ -168,6 +169,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DataTemplates\PublishersTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dicts\AppButtonsDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -177,6 +182,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dicts\ColorsDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dicts\ComboBoxStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -285,10 +294,29 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Icons\" />
+    <Resource Include="Icons\maximize2-red.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="1-useful notes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\maximize-red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\redcross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\large redcross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\up arroiw red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\down arroiw red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\left arroiw red.png" />
+    <Resource Include="Icons\right arroiw red.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

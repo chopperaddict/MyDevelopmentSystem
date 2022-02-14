@@ -126,6 +126,10 @@ namespace MyDev . Views
 		private bool UseFlowdocBeep=false;
 		private bool UseScrollViewer= false;
 
+		private  double flowdocHeight=0;
+		private  double flowdocWidth=0;
+		private  double flowdocTop=0;
+		private  double flowdocLeft=0;
 		private bool showall=false;
 		private  bool ShowFullScript = false;
 		private bool Startup = true;
@@ -136,7 +140,7 @@ namespace MyDev . Views
 		Datagrids dGrids = new Datagrids();
 		#endregion private variables
 
-		#region full props
+		#region Private layout variables
 
 		private double row2Height;
 		public double Row2Height
@@ -157,16 +161,22 @@ namespace MyDev . Views
 			set { col3Width = value; }
 		}
 
-		#endregion full props
+		#endregion Private layout variables
 
 		#region Full Properties
 
 		// Full properties used in Binding to I/f objects
-		private int dbcount;
-		public int DbCount
+		private int dbCountlb;
+		public int DbCountlb
 		{
-			get { return dbcount; }
-			set { dbcount = value; OnPropertyChanged ( "DbCount" ); }
+			get { return dbCountlb; }
+			set { dbCountlb = value; OnPropertyChanged ( "DbCountlb" ); Console . WriteLine ( $"DbCountlb set to {value}" ); }
+		}
+		private int dbCountlv;
+		public int DbCountlv
+		{
+			get { return dbCountlv; }
+			set { dbCountlv = value; OnPropertyChanged ( "DbCountlv" ); Console . WriteLine ( $"DbCountlv set to {value}" ); }
 		}
 
 
@@ -187,6 +197,9 @@ namespace MyDev . Views
 		private double FirstYPos=0;
 
 		#endregion Full Properties
+	     //Data  for font size/rowheight
+		private List<int> fontsizes = new List<int>( );
+		private List<int> rowsizes = new List<int>( );
 
 		#region Startup / close
 		public Listviews ( )
@@ -224,7 +237,8 @@ namespace MyDev . Views
 			{
 				Console . WriteLine ( "Unable to load default Select string for BANKACOUNT Db " );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
-			} else
+			}
+			else
 				SqlCommand = DefaultSqlCommand;
 			if ( SetConnectionString ( "IAN1" ) == false )
 			{
@@ -240,17 +254,22 @@ namespace MyDev . Views
 			// this also loads list of tables in Ian1/mdf
 			OpenIan1Db ( );
 			// used to access Dictionary of DataTemplates  - load into both Combos and selects 1st entry
-			LoadDataTemplates_Ian1 ( CurrentTableName , "" );
-			// Set selection of datatemplate to 1st one (selection  used in load method)
-			CurrentDataTable = DataTemplatesLv . Items [ 0 ] . ToString ( );
+			//LoadDataTemplates_Ian1 ( CurrentTableName , "" );
 
 			// now load list of tables in IAN1 Db
 			LoadDbTables ( "IAN1" );
-			SelectCurrentDbInCombo ( "BANKACCOUNT" );
+			SelectCurrentDbInCombo ( "BANKACCOUNT" , "" );
 			//			LoadTablesList_Ian1 ( );
+
 			// Load Bankaccount into both viewers
 			CurrentTableName = "BANKACCOUNT";
 			LoadData_Ian1 ( "" );
+			// Set selection of datatemplate to 1st one (selection  used in load method)
+			CurrentDataTable = DataTemplatesLv . Items [ 0 ] . ToString ( );
+
+			// Hook into our Flowdoc so we can resize it in  the canvas !!!
+			// Flowdoc has an Event declared (ExecuteFlowDocSizeMethod ) that we are  hooking into
+			Flowdoc . ExecuteFlowDocSizeMethod += new EventHandler ( ParentWPF_method );
 
 			// LOAD BOTH VIEWERS (NO PARAMETER)
 			LoadGrid_IAN1 ( );
@@ -260,9 +279,45 @@ namespace MyDev . Views
 				line2: $"" ,
 				line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
 				);
-
+			LoadFontsizes ( );
+			LoadRowsizes ( );
 		}
-
+		private void LoadRowsizes ( )
+		{
+			rowsizes . Add ( 10 );
+			rowsizes . Add ( 12 );
+			rowsizes . Add ( 14 );
+			rowsizes . Add ( 15 );
+			rowsizes . Add ( 16 );
+			rowsizes . Add ( 17 );
+			rowsizes . Add ( 18 );
+			rowsizes . Add ( 20);
+			rowsizes . Add ( 22 );
+			rowsizes . Add ( 24 );
+			rowsizes . Add ( 26 );
+			rowsizes . Add ( 28 );
+			rowsizes . Add ( 30 );
+			rowsizes . Add ( 34 );
+			rowsizes . Add ( 36 );
+			rowsizes . Add ( 38 );
+			rowsizes . Add ( 40 );
+			rowsizes . Add ( 45 );
+			rowheight . ItemsSource = rowsizes;
+		}
+		private void LoadFontsizes ( )
+		{
+			fontsizes . Add ( 11 );
+			fontsizes . Add ( 12 );
+			fontsizes . Add ( 13 );
+			fontsizes . Add ( 14 );
+			fontsizes . Add ( 15 );
+			fontsizes . Add ( 16 );
+			fontsizes . Add ( 17 );
+			fontsizes . Add ( 18 );
+			fontsizes . Add ( 19 );
+			fontsizes . Add ( 20 );
+			fontSize . ItemsSource = fontsizes;
+		}
 		private void Close_Btn ( object sender , RoutedEventArgs e )
 		{
 			this . Close ( );
@@ -275,6 +330,7 @@ namespace MyDev . Views
 		}
 		#endregion Startup / close
 
+		#region Load data for the 3 different Db's
 		private void LoadData_Ian1 ( string viewertype )
 		{
 			if ( Usetimer )
@@ -282,37 +338,44 @@ namespace MyDev . Views
 			if ( CurrentTableName == "BANKACCOUNT" )
 			{
 				//// Looad available DataTemplates into combo(s) ??
-				//LoadDataTemplates_Ian1 ( "BANKACCOUNT" , viewertype );
+				LoadDataTemplates_Ian1 ( "BANKACCOUNT" , viewertype );
 				bankaccts = new ObservableCollection<BankAccountViewModel> ( );
 				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
 				// need to do this cos the SQL command is changed to load the tables list....
 				if ( Startup )
 					SqlCommand = DefaultSqlCommand;
 				bankaccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
-			} else if ( CurrentTableName == "CUSTOMER" )
+			}
+			else if ( CurrentTableName == "CUSTOMER" )
 			{
-				//LoadDataTemplates_Ian1 ( "CUSTOMER" , viewertype );
+				LoadDataTemplates_Ian1 ( "CUSTOMER" , viewertype );
 				custaccts = new ObservableCollection<CustomerViewModel> ( );
 				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
 				// need to do this cos the SQL command is changed to load the tables list....
 				if ( Startup )
 					SqlCommand = DefaultSqlCommand;
 				custaccts = SqlSupport . LoadCustomer ( SqlCommand , 0 , true );
-			} else if ( CurrentTableName == "SECACCOUNTS" )
+			}
+			else if ( CurrentTableName == "SECACCOUNTS" )
 			{
-				//LoadDataTemplates_Ian1 ( "SECACCOUNTS" , viewertype );
+				LoadDataTemplates_Ian1 ( "SECACCOUNTS" , viewertype );
 				detaccts = new ObservableCollection<DetailsViewModel> ( );
 				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
 				// need to do this cos the SQL command is changed to load the tables list....
 				if ( Startup )
 					SqlCommand = DefaultSqlCommand;
 				detaccts = SqlSupport . LoadDetails ( SqlCommand , 0 , true );
-			} else
+			}
+			else
 			{
-				//LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
+				string tablename="";
+				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
 				genaccts = new ObservableCollection<GenericClass> ( );
 				// need to do this cos the SQL command is changed to load the tables list....
-				string tablename = dbName.SelectedItem.ToString();
+				if ( viewertype == "VIEW" )
+					tablename = dbNameLv . SelectedItem . ToString ( );
+				else
+					tablename = dbNameLb . SelectedItem . ToString ( );
 				SqlCommand = $"Select *from {tablename}";
 				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
 				if ( SqlCommand == "" )
@@ -328,7 +391,8 @@ namespace MyDev . Views
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
-				} else
+				}
+				else
 				{
 					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
@@ -360,11 +424,71 @@ namespace MyDev . Views
 
 				LoadDataTemplates_NorthWind ( "CUSTOMERS" , viewertype );
 				nwcustomeraccts = new ObservableCollection<nwcustomer> ( );
+				nwcustomeraccts = nwc . GetNwCustomers ( );
+				// need to do this cos the SQL command is changed to load the tables list....
+				if ( Startup )
+					SqlCommand = DefaultSqlCommand;
+			}
+			else if ( CurrentTableName == "ORDERS" )
+			{
+
+				LoadDataTemplates_NorthWind ( "ORDERS" , viewertype );
+				nworderaccts = new ObservableCollection<nworder> ( );
+				nworderaccts = nwo . LoadOrders ( );
+				// need to do this cos the SQL command is changed to load the tables list....
+				if ( Startup )
+					SqlCommand = DefaultSqlCommand;
+			}
+			else
+			{
+				string tablename="";
+				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
+				genaccts = new ObservableCollection<GenericClass> ( );
+				// need to do this cos the SQL command is changed to load the tables list....
+				if ( viewertype == "VIEW" )
+					tablename = dbNameLv . SelectedItem . ToString ( );
+				else
+					tablename = dbNameLb . SelectedItem . ToString ( );
+				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+				if ( SqlCommand == "" )
+					SqlCommand = $"Select * from {tablename}";
+				// need to do this cos the SQL command is changed to load the tables list....
+				if ( Startup )
+					SqlCommand = DefaultSqlCommand;
+				string ResultString="";
+				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
+				if ( genaccts . Count > 0 )
+				{
+					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+						line2: $"The command line used was" , clr2: "Red2" ,
+						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+						header: "Generic style data table" , clr4: "Red5" );
+				}
+				else
+				{
+					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+						line2: $"The command line used was" , clr2: "Red2" ,
+						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+						header: "Generic style data table" , clr4: "Red5" );
+				}
+			}
+		}
+		public void LoadData_Publishers ( string viewertype , out ObservableCollection<GenericClass> generics )
+		{
+			generics = null;
+			//ObservableCollection<GenericClass> generics = new ObservableCollection<GenericClass>();
+			if ( Usetimer )
+				timer . Start ( );
+			if ( CurrentTableName == "AUTHORS" )
+			{
+				LoadDataTemplates_PubAuthors ( "AUTHORS" , viewertype );
+				pubauthors = new ObservableCollection<PubAuthors> ( );
 				// need to do this cos the SQL command is changed to load the tables list....
 				if ( Startup )
 					SqlCommand = DefaultSqlCommand;
 				//				nwcustomeraccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
-			} else if ( CurrentTableName == "ORDERS" )
+			}
+			else if ( CurrentTableName == "ORDERS" )
 			{
 
 				LoadDataTemplates_NorthWind ( "ORDERS" , viewertype );
@@ -373,22 +497,48 @@ namespace MyDev . Views
 				if ( Startup )
 					SqlCommand = DefaultSqlCommand;
 				//				nwcustomeraccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
-			} else
+			}
+			else
 			{
-				if ( Flags . CurrentConnectionString == "NorthwindConnectionString" )
+				string tablename="";
+				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
+				genaccts = new ObservableCollection<GenericClass> ( );
+				// need to do this cos the SQL command is changed to load the tables list....
+				if ( viewertype == "VIEW" )
+					tablename = dbNameLv . SelectedItem . ToString ( );
+				else
+					tablename = dbNameLb . SelectedItem . ToString ( );
+				SqlCommand = $"Select *from {tablename}";
+				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+				if ( SqlCommand == "" )
+					SqlCommand = $"Select * from {tablename}";
+				// need to do this cos the SQL command is changed to load the tables list....
+				if ( Startup )
+					SqlCommand = DefaultSqlCommand;
+				string ResultString="";
+				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
+				if ( genaccts . Count > 0 )
 				{
-				} else
-				{
-					// WORKING 5.2.22
-					// This creates and loads a GenericClass table if data is found in the selected table
-					string ResultString="";
-					nwc . GetNwCustomers ( );
+					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+						line2: $"The command line used was" , clr2: "Red2" ,
+						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+						header: "Generic style data table" , clr4: "Red5" );
 				}
+				else
+				{
+					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+						line2: $"The command line used was" , clr2: "Red2" ,
+						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+						header: "Generic style data table" , clr4: "Red5" );
+				}
+				generics = genaccts;
 			}
 		}
 
+		#endregion Load data for the 3 different Db's
 
 		// Just Assign data to grids to display it
+		#region Load Viewer for the 3 different Db's
 		private void LoadGrid_IAN1 ( string type = "" )
 		{
 			// Load whatever data we have received into DataGrid
@@ -401,18 +551,22 @@ namespace MyDev . Views
 					listView . ItemsSource = bankaccts;
 					FrameworkElement elemnt = listView as FrameworkElement;
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					listView . SelectedIndex = 0;
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					//					listView . SelectedIndex = 0;
 					listView . Focus ( );
-				} else if ( type == "BOX" )
+					DbCountlv = bankaccts . Count;
+				}
+				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = bankaccts;
 					FrameworkElement elemnt = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					listBox . SelectedIndex = 0;
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					//					listBox . SelectedIndex = 0;
 					listBox . Focus ( );
-				} else
+					DbCountlb = bankaccts . Count;
+				}
+				else
 				{
 					listView . ItemsSource = bankaccts;
 					listBox . ItemsSource = bankaccts;
@@ -420,19 +574,19 @@ namespace MyDev . Views
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
 					FrameworkElement elemnt2 = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					listBox . SelectedIndex = 0;
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listBox . Focus ( );
-					listView . SelectedIndex = 0;
 					listView . Focus ( );
+					DbCountlb = bankaccts . Count;
+					DbCountlv = bankaccts . Count;
 				}
-				DbCount = bankaccts . Count;
-				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
+				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
-			} else if ( CurrentTableName . ToUpper ( ) == "CUSTOMER" )
+			}
+			else if ( CurrentTableName . ToUpper ( ) == "CUSTOMER" )
 			{
 				if ( custaccts == null )
 					return;
@@ -441,18 +595,22 @@ namespace MyDev . Views
 					listView . ItemsSource = custaccts;
 					FrameworkElement elemnt = listView as FrameworkElement;
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
-				} else if ( type == "BOX" )
+					DbCountlv = custaccts . Count;
+				}
+				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = custaccts;
 					FrameworkElement elemnt = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listBox . SelectedIndex = 0;
 					listBox . Focus ( );
-				} else
+					DbCountlb = custaccts . Count;
+				}
+				else
 				{
 					listView . ItemsSource = custaccts;
 					listBox . ItemsSource = custaccts;
@@ -460,149 +618,106 @@ namespace MyDev . Views
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
 					FrameworkElement elemnt2 = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listBox . SelectedIndex = 0;
 					listBox . Focus ( );
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
+					DbCountlv = custaccts . Count;
+					DbCountlv = custaccts . Count;
 				}
-				DbCount = custaccts . Count;
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
-			} else if ( CurrentTableName . ToUpper ( ) == "SECACCOUNTS" )
+			}
+			else if ( CurrentTableName . ToUpper ( ) == "SECACCOUNTS" )
 			{
 				if ( detaccts == null )
 					return;
 				if ( type == "VIEW" )
 				{
 					listView . ItemsSource = detaccts;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-				} else if ( type == "BOX" )
+					HandleCaption ( "VIEW" , detaccts . Count );
+				}
+				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = detaccts;
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+					HandleCaption ( "BOX" , detaccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-				} else
+				}
+				else
 				{
 					listView . ItemsSource = detaccts;
 					listBox . ItemsSource = detaccts;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+					HandleCaption ( "VIEW" , detaccts . Count );
+					HandleCaption ( "BOX" , detaccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
 				}
-				DbCount = detaccts . Count;
-				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
+				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Secondary Accounts data table" );
-				//listBox . SelectedIndex = 0;
 				listBox . Focus ( );
-			} else
+			}
+			else
 			{
 				if ( genaccts . Count > 0 )
 				{
-					//ShowInfo ( line1: $"The requested table [ {CurrentTableName } ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
+					//Generic with >= 1 records
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
-						lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt = listView as FrameworkElement;
-						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
-						listView . Focus ( );
-					} else if ( type == "BOX" )
+					}
+					else if ( type == "BOX" )
 					{
 						listBox . ItemsSource = genaccts;
-						lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt2 = listBox as FrameworkElement;
-						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
 						listBox . Focus ( );
-					} else
+					}
+					else
 					{
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
-						lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt = listView as FrameworkElement;
-						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-						FrameworkElement elemnt2 = listBox as FrameworkElement;
-						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						HandleCaption ( "VIEW" , genaccts . Count );
+						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
 						listView . SelectedIndex = 0;
-						listView . Focus ( );
 					}
 					listBox . Refresh ( );
 					return;
 				}
-				if ( type == "VIEW" )
+				else
 				{
-					// Caution : This loads the data into the DataGrid with only the selected rows
-					// //visible in the grid so do NOT repopulate the grid after making this call
-					//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listView . ItemsSource = genaccts;
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-				} else if ( type == "BOX" )
-				{
-					// Caution : This loads the data into the Datarid with only the selected rows
-					// //visible in the grid so do NOT repopulate the grid after making this call
-					//SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listBox . ItemsSource = genaccts;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-				} else
-				{
-					//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listView . ItemsSource = genaccts;
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					//					SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listBox . ItemsSource = genaccts;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
+					// Empty  Generic table
+					if ( type == "VIEW" )
+					{
+						listView . ItemsSource = genaccts;
+						HandleCaption ( "VIEW" , genaccts . Count );
+					}
+					else if ( type == "BOX" )
+					{
+						listBox . ItemsSource = genaccts;
+						HandleCaption ( "BOX" , genaccts . Count );
+					}
+					else
+					{
+						//Generic table type
+						listView . ItemsSource = genaccts;
+						listBox . ItemsSource = genaccts;
+						HandleCaption ( "BOX" , genaccts . Count );
+						HandleCaption ( "VIEW" , genaccts . Count );
+					}
+					ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+						line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
+						line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
+						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
+						);
 				}
-				DbCount = genaccts . Count;
-				ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
-					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
-					line2: $"the table [{CurrentTableName }] that was queried returned a record count of {DbCount}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
-					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
-					);
 			}
 			ShowLoadtime ( );
 		}
@@ -616,78 +731,102 @@ namespace MyDev . Views
 				if ( type == "VIEW" )
 				{
 					listView . ItemsSource = nwcustomeraccts;
+					if ( nwcustomeraccts . Count == 0 )
+						return;
 					FrameworkElement elemnt = listView as FrameworkElement;
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
-				} else if ( type == "BOX" )
+					DbCountlv = nwcustomeraccts . Count;
+				}
+				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = nwcustomeraccts;
+					if ( nwcustomeraccts . Count == 0 )
+						return;
 					FrameworkElement elemnt = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listBox . SelectedIndex = 0;
 					listBox . Focus ( );
-				} else
+					DbCountlb = nwcustomeraccts . Count;
+				}
+				else
 				{
 					listView . ItemsSource = nwcustomeraccts;
 					listBox . ItemsSource = nwcustomeraccts;
+					if ( nwcustomeraccts . Count == 0 )
+						return;
 					FrameworkElement elemnt = listView as FrameworkElement;
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
 					FrameworkElement elemnt2 = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listBox . SelectedIndex = 0;
 					listBox . Focus ( );
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
+					DbCountlb = nwcustomeraccts . Count;
+					DbCountlv = nwcustomeraccts . Count;
 				}
-				DbCount = nwcustomeraccts . Count;
-				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
+				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {nwcustomeraccts . Count} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
-			} else if ( CurrentTableName . ToUpper ( ) == "ORDERS" )
+			}
+			else if ( CurrentTableName . ToUpper ( ) == "ORDERS" )
 			{
 				if ( nworderaccts == null )
 					return;
 				if ( type == "VIEW" )
 				{
 					listView . ItemsSource = nworderaccts;
+					if ( nworderaccts . Count == 0 )
+						return;
 					FrameworkElement elemnt = listView as FrameworkElement;
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
-				} else if ( type == "BOX" )
+					DbCountlv = nworderaccts . Count;
+				}
+				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = nworderaccts;
+					if ( nworderaccts . Count == 0 )
+						return;
 					FrameworkElement elemnt = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listBox . SelectedIndex = 0;
 					listBox . Focus ( );
-				} else
+					DbCountlb = nworderaccts . Count;
+				}
+				else
 				{
 					listView . ItemsSource = nworderaccts;
 					listBox . ItemsSource = nworderaccts;
+					if ( nworderaccts . Count == 0 )
+						return;
 					FrameworkElement elemnt = listView as FrameworkElement;
 					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
 					FrameworkElement elemnt2 = listBox as FrameworkElement;
 					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 					listBox . SelectedIndex = 0;
 					listBox . Focus ( );
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
+					DbCountlb = nworderaccts . Count;
+					DbCountlv = nworderaccts . Count;
 				}
-				DbCount = nworderaccts . Count;
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
-			} else
+			}
+			else
 			{
 				if ( genaccts . Count > 0 )
 				{
@@ -695,25 +834,29 @@ namespace MyDev . Views
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
-						lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 						FrameworkElement elemnt = listView as FrameworkElement;
 						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
 						listView . SelectedIndex = 0;
 						listView . Focus ( );
-					} else if ( type == "BOX" )
+						DbCountlv = genaccts . Count;
+					}
+					else if ( type == "BOX" )
 					{
 						listBox . ItemsSource = genaccts;
-						lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 						FrameworkElement elemnt2 = listBox as FrameworkElement;
 						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
 						listBox . SelectedIndex = 0;
 						listBox . Focus ( );
-					} else
+						DbCountlb = genaccts . Count;
+					}
+					else
 					{
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
-						lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 						FrameworkElement elemnt = listView as FrameworkElement;
 						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
 						FrameworkElement elemnt2 = listBox as FrameworkElement;
@@ -722,65 +865,309 @@ namespace MyDev . Views
 						listBox . Focus ( );
 						listView . SelectedIndex = 0;
 						listView . Focus ( );
+						DbCountlb = genaccts . Count;
+						DbCountlv = genaccts . Count;
 					}
 					listBox . Refresh ( );
 					return;
 				}
-				if ( type == "VIEW" )
+				else
 				{
-					// Caution : This loads the data into the DataGrid with only the selected rows
-					// //visible in the grid so do NOT repopulate the grid after making this call
-					//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listView . ItemsSource = genaccts;
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-				} else if ( type == "BOX" )
-				{
-					// Caution : This loads the data into the Datarid with only the selected rows
-					// //visible in the grid so do NOT repopulate the grid after making this call
-					//SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listBox . ItemsSource = genaccts;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-				} else
-				{
-					//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listView . ItemsSource = genaccts;
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					//					SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-					listBox . ItemsSource = genaccts;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
+					if ( type == "VIEW" )
+					{
+						// Caution : This loads the data into the DataGrid with only the selected rows
+						// //visible in the grid so do NOT repopulate the grid after making this call
+						//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+						listView . ItemsSource = genaccts;
+						if ( genaccts . Count == 0 )
+							return;
+						listView . SelectedIndex = 0;
+						listView . Focus ( );
+						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						FrameworkElement elemnt = listView as FrameworkElement;
+						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+						listView . SelectedIndex = 0;
+						listView . Focus ( );
+						DbCountlv = genaccts . Count;
+					}
+					else if ( type == "BOX" )
+					{
+						// Caution : This loads the data into the Datarid with only the selected rows
+						// //visible in the grid so do NOT repopulate the grid after making this call
+						//SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+						listBox . ItemsSource = genaccts;
+						if ( genaccts . Count == 0 )
+							return;
+						listBox . SelectedIndex = 0;
+						listBox . Focus ( );
+						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						FrameworkElement elemnt2 = listBox as FrameworkElement;
+						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						listBox . SelectedIndex = 0;
+						listBox . Focus ( );
+						DbCountlb = genaccts . Count;
+					}
+					else
+					{
+						//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+						listView . ItemsSource = genaccts;
+						if ( genaccts . Count == 0 )
+							return;
+						listView . SelectedIndex = 0;
+						listView . Focus ( );
+						//					SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+						listBox . ItemsSource = genaccts;
+						listBox . SelectedIndex = 0;
+						listBox . Focus ( );
+						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						FrameworkElement elemnt = listView as FrameworkElement;
+						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+						FrameworkElement elemnt2 = listBox as FrameworkElement;
+						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						listBox . SelectedIndex = 0;
+						listBox . Focus ( );
+						listView . SelectedIndex = 0;
+						listView . Focus ( );
+						DbCountlb = genaccts . Count;
+						DbCountlv = genaccts . Count;
+					}
 				}
-				DbCount = genaccts . Count;
 				ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
-					line2: $"the table [{CurrentTableName }] that was queried returned a record count of {DbCount}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
+					line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
 					);
+
+				ShowLoadtime ( );
 			}
-			ShowLoadtime ( );
 		}
+		private void LoadGrid_PUBS ( string type = "" )
+		{
+			// Load whatever data we have received into DataGrid
+			if ( CurrentTableName . ToUpper ( ) == "AUTHORS" )
+			{
+				if ( pubauthors == null )
+					return;
+				if ( type == "VIEW" )
+				{
+					listView . ItemsSource = pubauthors;
+					if ( pubauthors . Count == 0 )
+						return;
+					FrameworkElement elemnt = listView as FrameworkElement;
+					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listView . SelectedIndex = 0;
+					listView . Focus ( );
+					DbCountlv = pubauthors . Count;
+				}
+				else if ( type == "BOX" )
+				{
+					listBox . ItemsSource = pubauthors;
+					if ( pubauthors . Count == 0 )
+						return;
+					FrameworkElement elemnt = listBox as FrameworkElement;
+					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . SelectedIndex = 0;
+					listBox . Focus ( );
+					DbCountlb = pubauthors . Count;
+				}
+				else
+				{
+					listView . ItemsSource = pubauthors;
+					listBox . ItemsSource = pubauthors;
+					if ( pubauthors . Count == 0 )
+						return;
+					FrameworkElement elemnt = listView as FrameworkElement;
+					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+					FrameworkElement elemnt2 = listBox as FrameworkElement;
+					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . SelectedIndex = 0;
+					listBox . Focus ( );
+					listView . SelectedIndex = 0;
+					listView . Focus ( );
+					DbCountlb = pubauthors . Count;
+					DbCountlv = pubauthors . Count;
+				}
+				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {pubauthors . Count} records returned are displayed in the table below" , clr1: "Black0" ,
+					line2: $"The command line used was" , clr2: "Red2" ,
+					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+					header: "Bank Accounts data table" , clr4: "Red5" );
+			}
+			else if ( CurrentTableName . ToUpper ( ) == "ORDERS" )
+			{
+				if ( nworderaccts == null )
+					return;
+				if ( type == "VIEW" )
+				{
+					listView . ItemsSource = pubauthors;
+					if ( pubauthors . Count == 0 )
+						return;
+					FrameworkElement elemnt = listView as FrameworkElement;
+					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listView . SelectedIndex = 0;
+					listView . Focus ( );
+					DbCountlv = pubauthors . Count;
+				}
+				else if ( type == "BOX" )
+				{
+					listBox . ItemsSource = pubauthors;
+					if ( pubauthors . Count == 0 )
+						return;
+					FrameworkElement elemnt = listBox as FrameworkElement;
+					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . SelectedIndex = 0;
+					listBox . Focus ( );
+					DbCountlb = pubauthors . Count;
+				}
+				else
+				{
+					listView . ItemsSource = pubauthors;
+					listBox . ItemsSource = pubauthors;
+					if ( pubauthors . Count == 0 )
+						return;
+					FrameworkElement elemnt = listView as FrameworkElement;
+					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+					FrameworkElement elemnt2 = listBox as FrameworkElement;
+					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . SelectedIndex = 0;
+					listBox . Focus ( );
+					listView . SelectedIndex = 0;
+					listView . Focus ( );
+					DbCountlb = pubauthors . Count;
+					DbCountlv = pubauthors . Count;
+				}
+				listBox . SelectedIndex = 0;
+				listBox . Focus ( );
+			}
+			else
+			{
+				if ( genaccts . Count > 0 )
+				{
+					//ShowInfo ( line1: $"The requested table [ {CurrentTableName } ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
+					if ( type == "VIEW" )
+					{
+						listView . ItemsSource = genaccts;
+						if ( genaccts . Count == 0 )
+							return;
+						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						FrameworkElement elemnt = listView as FrameworkElement;
+						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+						listView . SelectedIndex = 0;
+						listView . Focus ( );
+						DbCountlv = genaccts . Count;
+					}
+					else if ( type == "BOX" )
+					{
+						listBox . ItemsSource = genaccts;
+						if ( genaccts . Count == 0 )
+							return;
+						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+						FrameworkElement elemnt2 = listBox as FrameworkElement;
+						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						listBox . SelectedIndex = 0;
+						listBox . Focus ( );
+						DbCountlb = genaccts . Count;
+					}
+					else
+					{
+						if ( type == "VIEW" )
+						{
+							// Caution : This loads the data into the DataGrid with only the selected rows
+							// //visible in the grid so do NOT repopulate the grid after making this call
+							//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+							listView . ItemsSource = genaccts;
+							if ( genaccts . Count == 0 )
+								return;
+							listView . SelectedIndex = 0;
+							listView . Focus ( );
+							lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+							FrameworkElement elemnt = listView as FrameworkElement;
+							listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+							listView . SelectedIndex = 0;
+							listView . Focus ( );
+							DbCountlv = genaccts . Count;
+						}
+						else if ( type == "BOX" )
+						{
+							// Caution : This loads the data into the Datarid with only the selected rows
+							// //visible in the grid so do NOT repopulate the grid after making this call
+							//SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+							listBox . ItemsSource = genaccts;
+							if ( genaccts . Count == 0 )
+								return;
+							listBox . SelectedIndex = 0;
+							listBox . Focus ( );
+							lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+							FrameworkElement elemnt2 = listBox as FrameworkElement;
+							listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+							listBox . SelectedIndex = 0;
+							listBox . Focus ( );
+							DbCountlb = genaccts . Count;
+						}
+						else
+						{
+							//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+							listView . ItemsSource = genaccts;
+							if ( genaccts . Count == 0 )
+								return;
+							listView . SelectedIndex = 0;
+							listView . Focus ( );
+							//					SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+							listBox . ItemsSource = genaccts;
+							listBox . SelectedIndex = 0;
+							listBox . Focus ( );
+							lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+							FrameworkElement elemnt = listView as FrameworkElement;
+							listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+							FrameworkElement elemnt2 = listBox as FrameworkElement;
+							listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+							listBox . SelectedIndex = 0;
+							listBox . Focus ( );
+							listView . SelectedIndex = 0;
+							listView . Focus ( );
+							DbCountlb = genaccts . Count;
+							DbCountlv = genaccts . Count;
+						}
+						ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+							line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
+							line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
+							line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
+							);
+					}
+					ShowLoadtime ( );
+				}
+				else
+				{
+					// no genaccts = its empty
+					DbCountlv = genaccts . Count;
+					if ( type == "VIEW" )
+					{
+						listView . ItemsSource = genaccts;
+						lvHeader . Text = $"List View Display :  No records returned...";
+					}
+					else if ( type == "BOX" )
+					{
+						listBox . ItemsSource = genaccts;
+						lbHeader . Text = $"List Box Display :  No records returned...";
+					}
+					else
+					{
+						listView . ItemsSource = genaccts;
+						listBox . ItemsSource = genaccts;
+						lvHeader . Text = $"List View Display :  No records returned...";
+						listBox . ItemsSource = genaccts;
+					}
+				}
+			}
+		}
+		#endregion Load Viewer for the 3 different Db's
 
 		// Load list of databases in MSSQL
 		private void LoadAllDbNames ( )
@@ -799,7 +1186,7 @@ namespace MyDev . Views
 			{
 				string entry = row.ToUpper();
 				// ONLY ALLOW THE TRHEE MAIN dB'S WE ARE LIKELY TO USE.
-				if ( entry . Contains ( "IAN" ) || entry . Contains ( "NORTHWIND" ) || entry . Contains ( "ADVENTUREWORK" ) )
+				if ( entry . Contains ( "IAN" ) || entry . Contains ( "NORTHWIND" ) || entry . Contains ( "PUBS" ) )
 				{
 					DbMain . Items . Add ( row );
 					if ( row . ToUpper ( ) . Contains ( "IAN1" ) )
@@ -815,11 +1202,22 @@ namespace MyDev . Views
 			SqlCommand = DefaultSqlCommand;
 		}
 
+		//Reload  contents of table names on right click
 		private void dbName_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )
 		{
-
+			if ( LoadDbTables ( DbMain . SelectedItem . ToString ( ) ) == true )
+			{
+				ShowInfo ( header: "List of Tables in current Db reloaded successfully" , clr4: "Red5" ,
+					line1: $"Request made was completed succesfully!" , clr1: "Red3"
+					);
+			}
+			else
+			{
+				ShowInfo ( header: "List of Tables in current Db could not be reloaded" , clr4: "Red5" ,
+					line1: $"Request failed...!" , clr1: "Red3"
+					);
+			}
 		}
-
 
 		private void ResetViewers ( string type )
 		{
@@ -846,53 +1244,125 @@ namespace MyDev . Views
 			if ( viewertype == "VIEW" )
 			{
 				DataTemplatesLv . Items . Clear ( );
-			} else if ( viewertype == "BOX" )
+			}
+			else if ( viewertype == "BOX" )
 			{
 				DataTemplatesLb . Items . Clear ( );
-			} else
+			}
+			else
 			{
 				DataTemplatesLv . Items . Clear ( );
 				DataTemplatesLb . Items . Clear ( );
 			}
+
 			if ( type == "BANKACCOUNT" )
 			{
-				DataTemplatesLv . Items . Add ( "BankDataTemplate1" );
-				DataTemplatesLv . Items . Add ( "BankDataTemplate2" );
-				DataTemplatesLb . Items . Add ( "BankDataTemplate1" );
-				DataTemplatesLb . Items . Add ( "BankDataTemplate2" );
-			} else if ( type == "CUSTOMER" )
+				if ( viewertype == "VIEW" )
+				{
+					DataTemplatesLv . Items . Add ( "BankDataTemplate1" );
+					DataTemplatesLv . Items . Add ( "BankDataTemplate2" );
+					DataTemplatesLv . SelectedIndex = 0;
+					DataTemplatesLv . SelectedItem = 0;
+				}
+				else if ( viewertype == "BOX" )
+				{
+					DataTemplatesLb . Items . Add ( "BankDataTemplate1" );
+					DataTemplatesLb . Items . Add ( "BankDataTemplate2" );
+					DataTemplatesLb . SelectedIndex = 0;
+					DataTemplatesLb . SelectedItem = 0;
+				}
+				else
+				{
+					DataTemplatesLv . Items . Add ( "BankDataTemplate1" );
+					DataTemplatesLv . Items . Add ( "BankDataTemplate2" );
+					DataTemplatesLv . SelectedIndex = 0;
+					DataTemplatesLv . SelectedItem = 0;
+					DataTemplatesLb . Items . Add ( "BankDataTemplate1" );
+					DataTemplatesLb . Items . Add ( "BankDataTemplate2" );
+					DataTemplatesLb . SelectedIndex = 0;
+					DataTemplatesLb . SelectedItem = 0;
+				}
+
+			}
+			else if ( type == "CUSTOMER" )
 			{
-				DataTemplatesLv . Items . Add ( "CustomersDbTemplate1" );
-				DataTemplatesLv . Items . Add ( "CustomersDbTemplate2" );
-				DataTemplatesLb . Items . Add ( "CustomersDbTemplate1" );
-				DataTemplatesLb . Items . Add ( "CustomersDbTemplate2" );
-			} else if ( type == "SECACCOUNTS" )
+				if ( viewertype == "VIEW" )
+				{
+					DataTemplatesLv . Items . Add ( "CustomersDbTemplate1" );
+					DataTemplatesLv . Items . Add ( "CustomersDbTemplate2" );
+					DataTemplatesLv . SelectedIndex = 0;
+					DataTemplatesLv . SelectedItem = 0;
+				}
+				else if ( viewertype == "BOX" )
+				{
+					DataTemplatesLb . Items . Add ( "CustomersDbTemplate1" );
+					DataTemplatesLb . Items . Add ( "CustomersDbTemplate2" );
+					DataTemplatesLb . SelectedIndex = 0;
+					DataTemplatesLb . SelectedItem = 0;
+				}
+				else
+				{
+					DataTemplatesLv . Items . Add ( "CustomersDbTemplate1" );
+					DataTemplatesLv . Items . Add ( "CustomersDbTemplate2" );
+					DataTemplatesLv . SelectedIndex = 0;
+					DataTemplatesLv . SelectedItem = 0;
+					DataTemplatesLb . Items . Add ( "CustomersDbTemplate1" );
+					DataTemplatesLb . Items . Add ( "CustomersDbTemplate2" );
+					DataTemplatesLb . SelectedIndex = 0;
+					DataTemplatesLb . SelectedItem = 0;
+				}
+			}
+			else if ( type == "SECACCOUNTS" )
 			{
 				DataTemplatesLv . Items . Add ( "DetailsDataTemplate1" );
 				DataTemplatesLv . Items . Add ( "DetailsDataTemplate2" );
+				DataTemplatesLv . SelectedIndex = 0;
+				DataTemplatesLv . SelectedItem = 0;
 				DataTemplatesLb . Items . Add ( "DetailsDataTemplate1" );
 				DataTemplatesLb . Items . Add ( "DetailsDataTemplate2" );
-			} else
-			{
-				DataTemplatesLv . Items . Add ( "GenDataTemplate1" );
-				DataTemplatesLv . Items . Add ( "GenDataTemplate2" );
-				DataTemplatesLb . Items . Add ( "GenDataTemplate1" );
-				DataTemplatesLb . Items . Add ( "GenDataTemplate2" );
+				DataTemplatesLb . SelectedIndex = 0;
+				DataTemplatesLb . SelectedItem = 0;
 			}
-			DataTemplatesLv . SelectedIndex = 0;
-			DataTemplatesLv . SelectedItem = 0;
-			DataTemplatesLb . SelectedIndex = 0;
-			DataTemplatesLb . SelectedItem = 0;
+			else
+			{
+				if ( viewertype == "VIEW" )
+				{
+					DataTemplatesLv . Items . Add ( "GenDataTemplate1" );
+					DataTemplatesLv . Items . Add ( "GenDataTemplate2" );
+					DataTemplatesLv . SelectedIndex = 0;
+					DataTemplatesLv . SelectedItem = 0;
+				}
+				else if ( viewertype == "BOX" )
+				{
+					DataTemplatesLb . Items . Add ( "GenDataTemplate1" );
+					DataTemplatesLb . Items . Add ( "GenDataTemplate2" );
+					DataTemplatesLb . SelectedIndex = 0;
+					DataTemplatesLb . SelectedItem = 0;
+				}
+				else
+				{
+					DataTemplatesLv . Items . Add ( "GenDataTemplate1" );
+					DataTemplatesLv . Items . Add ( "GenDataTemplate2" );
+					DataTemplatesLv . SelectedIndex = 0;
+					DataTemplatesLv . SelectedItem = 0;
+					DataTemplatesLb . Items . Add ( "GenDataTemplate1" );
+					DataTemplatesLb . Items . Add ( "GenDataTemplate2" );
+					DataTemplatesLb . SelectedIndex = 0;
+					DataTemplatesLb . SelectedItem = 0;
+				}
+			}
 		}
 		private void LoadDataTemplates_NorthWind ( string type , string viewertype )
 		{
 			if ( viewertype == "VIEW" )
 			{
 				DataTemplatesLv . Items . Clear ( );
-			} else if ( viewertype == "BOX" )
+			}
+			else if ( viewertype == "BOX" )
 			{
 				DataTemplatesLb . Items . Clear ( );
-			} else
+			}
+			else
 			{
 				DataTemplatesLv . Items . Clear ( );
 				DataTemplatesLb . Items . Clear ( );
@@ -905,13 +1375,15 @@ namespace MyDev . Views
 					DataTemplatesLv . Items . Add ( "NwCustomersDataTemplate3" );
 					DataTemplatesLv . Items . Add ( "NwCustomersDataTemplate5" );
 					DataTemplatesLv . Items . Add ( "NwCustomersLVDataTemplate5" );
-				} else if ( viewertype == "BOX" )
+				}
+				else if ( viewertype == "BOX" )
 				{
 					DataTemplatesLv . Items . Add ( "NwCustomersDataTemplate1" );
 					DataTemplatesLv . Items . Add ( "NwCustomersDataTemplate3" );
 					DataTemplatesLv . Items . Add ( "NwCustomersDataTemplate5" );
 					DataTemplatesLv . Items . Add ( "NwCustomersLVDataTemplate5" );
-				} else
+				}
+				else
 				{
 					DataTemplatesLv . Items . Add ( "NwCustomersDataTemplate1" );
 					DataTemplatesLv . Items . Add ( "NwCustomersDataTemplate3" );
@@ -922,7 +1394,8 @@ namespace MyDev . Views
 					DataTemplatesLb . Items . Add ( "NwCustomersDataTemplate5" );
 					DataTemplatesLb . Items . Add ( "NwCustomersLVDataTemplate5" );
 				}
-			} else if ( type == "ORDERS" )
+			}
+			else if ( type == "ORDERS" )
 			{
 				if ( viewertype == "VIEW" )
 				{
@@ -931,14 +1404,16 @@ namespace MyDev . Views
 					DataTemplatesLv . Items . Add ( "NwordersDataTemplate2" );
 					DataTemplatesLv . Items . Add ( "NwordersDataTemplate4" );
 					DataTemplatesLv . Items . Add ( "NwOrdersDataGridTemplate1" );
-				} else if ( viewertype == "BOX" )
+				}
+				else if ( viewertype == "BOX" )
 				{
 					DataTemplatesLb . Items . Add ( "NwordersComplexTemplate1" );
 					DataTemplatesLb . Items . Add ( "NwordersDataTemplate1" );
 					DataTemplatesLb . Items . Add ( "NwordersDataTemplate2" );
 					DataTemplatesLb . Items . Add ( "NwordersDataTemplate4" );
 					DataTemplatesLb . Items . Add ( "NwOrdersDataGridTemplate1" );
-				} else
+				}
+				else
 				{
 					DataTemplatesLv . Items . Add ( "NwordersComplexTemplate1" );
 					DataTemplatesLv . Items . Add ( "NwordersDataTemplate1" );
@@ -951,18 +1426,21 @@ namespace MyDev . Views
 					DataTemplatesLb . Items . Add ( "NwordersDataTemplate4" );
 					DataTemplatesLb . Items . Add ( "NwOrdersDataGridTemplate1" );
 				}
-			} else
+			}
+			else
 			{
 				//Generic   type
 				if ( viewertype == "VIEW" )
 				{
 					DataTemplatesLv . Items . Add ( "GenDataTemplate1" );
 					DataTemplatesLv . Items . Add ( "GenDataTemplate2" );
-				} else if ( viewertype == "BOX" )
+				}
+				else if ( viewertype == "BOX" )
 				{
 					DataTemplatesLb . Items . Add ( "GenDataTemplate1" );
 					DataTemplatesLb . Items . Add ( "GenDataTemplate2" );
-				} else
+				}
+				else
 				{
 					DataTemplatesLv . Items . Add ( "GenDataTemplate1" );
 					DataTemplatesLv . Items . Add ( "GenDataTemplate2" );
@@ -974,11 +1452,13 @@ namespace MyDev . Views
 			{
 				DataTemplatesLv . SelectedIndex = 0;
 				DataTemplatesLv . SelectedItem = 0;
-			} else if ( viewertype == "BOX" )
+			}
+			else if ( viewertype == "BOX" )
 			{
 				DataTemplatesLb . SelectedIndex = 0;
 				DataTemplatesLb . SelectedItem = 0;
-			} else
+			}
+			else
 			{
 				DataTemplatesLv . SelectedIndex = 0;
 				DataTemplatesLv . SelectedItem = 0;
@@ -986,48 +1466,55 @@ namespace MyDev . Views
 				DataTemplatesLb . SelectedItem = 0;
 			}
 		}
-		private void LoadDataTemplates_PubAuthors( string type , string viewertype )
+		private void LoadDataTemplates_PubAuthors ( string type , string viewertype )
 		{
-				if ( viewertype == "VIEW" )
+			if ( viewertype == "VIEW" )
 			{
 				DataTemplatesLv . Items . Clear ( );
-			} else if ( viewertype == "BOX" )
+			}
+			else if ( viewertype == "BOX" )
 			{
 				DataTemplatesLb . Items . Clear ( );
-			} else
+			}
+			else
 			{
 				DataTemplatesLv . Items . Clear ( );
 				DataTemplatesLb . Items . Clear ( );
 			}
-			if ( type == "PERSON" )
+			if ( type == "AUTHORS" )
 			{
 				if ( viewertype == "VIEW" )
 				{
-					DataTemplatesLv . Items . Add ( "PubAuthorTemplate1" );
-					DataTemplatesLv . Items . Add ( "PubAuthorTemplate2" );
-				} else if ( viewertype == "BOX" )
-				{
-					DataTemplatesLv . Items . Add ( "PubAuthorTemplate1" );
-					DataTemplatesLv . Items . Add ( "PubAuthorTemplate2" );
-				} else
-				{
-					DataTemplatesLv . Items . Add ( "PubAuthorTemplate1" );
-					DataTemplatesLv . Items . Add ( "PubAuthorTemplate2" );
-					DataTemplatesLb . Items . Add ( "PubAuthorTemplate1" );
-					DataTemplatesLb . Items . Add ( "PubAuthorTemplate2" );
+					DataTemplatesLv . Items . Add ( "PubsAuthorTemplate1" );
+					DataTemplatesLv . Items . Add ( "PubsAuthorTemplate2" );
 				}
-			} else																 
+				else if ( viewertype == "BOX" )
+				{
+					DataTemplatesLb . Items . Add ( "PubsAuthorTemplate1" );
+					DataTemplatesLb . Items . Add ( "PubsAuthorTemplate2" );
+				}
+				else
+				{
+					DataTemplatesLv . Items . Add ( "PubsAuthorTemplate1" );
+					DataTemplatesLv . Items . Add ( "PubsAuthorTemplate2" );
+					DataTemplatesLb . Items . Add ( "PubsAuthorTemplate1" );
+					DataTemplatesLb . Items . Add ( "PubsAuthorTemplate2" );
+				}
+			}
+			else
 			{
 				//Generic   type
 				if ( viewertype == "VIEW" )
 				{
 					DataTemplatesLv . Items . Add ( "GenDataTemplate1" );
 					DataTemplatesLv . Items . Add ( "GenDataTemplate2" );
-				} else if ( viewertype == "BOX" )
+				}
+				else if ( viewertype == "BOX" )
 				{
 					DataTemplatesLb . Items . Add ( "GenDataTemplate1" );
 					DataTemplatesLb . Items . Add ( "GenDataTemplate2" );
-				} else
+				}
+				else
 				{
 					DataTemplatesLv . Items . Add ( "GenDataTemplate1" );
 					DataTemplatesLv . Items . Add ( "GenDataTemplate2" );
@@ -1039,11 +1526,13 @@ namespace MyDev . Views
 			{
 				DataTemplatesLv . SelectedIndex = 0;
 				DataTemplatesLv . SelectedItem = 0;
-			} else if ( viewertype == "BOX" )
+			}
+			else if ( viewertype == "BOX" )
 			{
 				DataTemplatesLb . SelectedIndex = 0;
 				DataTemplatesLb . SelectedItem = 0;
-			} else
+			}
+			else
 			{
 				DataTemplatesLv . SelectedIndex = 0;
 				DataTemplatesLv . SelectedItem = 0;
@@ -1081,12 +1570,10 @@ namespace MyDev . Views
 			ComboBox cbrow = rowheight as ComboBox;
 			if ( cb . SelectedItem == null )
 				cb . SelectedIndex = 0;
-			ComboBoxItem cbi = cb. SelectedItem as ComboBoxItem;
 			double fontsze = 0;
+			fontsze = Convert . ToDouble ( cb . SelectedItem );
 			double newitemheightrequired= 0;
 			double currentItemHeight = 0;
-			double . TryParse ( cbi . Content . ToString ( ) , out fontsze );
-			//SetValue ( FontsizeProperty , fontsze );
 			newitemheightrequired = Fontsize + 6;
 			currentItemHeight = Convert . ToDouble ( GetValue ( ItemsHeightProperty ) );
 			SetValue ( FontsizeProperty , fontsze );
@@ -1097,169 +1584,58 @@ namespace MyDev . Views
 			ComboBox cb = sender as ComboBox;
 			if ( cb . SelectedItem == null )
 				cb . SelectedIndex = 0;
-			ComboBoxItem cbi = cb. SelectedItem as ComboBoxItem;
 			double rwheight = 0;
-			double . TryParse ( cbi . Content . ToString ( ) , out rwheight );
+			rwheight = Convert . ToDouble ( cb . SelectedItem );
 			ItemsHeight = rwheight;
 			SetValue ( ItemsHeightProperty , rwheight );
 		}
 
-		//----------------------------------------------------------------------------------//
-		// Switching DataBases, so gotta change all other lookup tables
-		//----------------------------------------------------------------------------------//
-		private void dbMain_SelectionChanged ( object sender , SelectionChangedEventArgs e )
-		{
-			if ( Startup )
-				return;
-			if ( DbMain . Items . Count == 0 )
-				return;
-			// clear down viewers 1st
-			listView . ItemsSource = null;
-			listBox . ItemsSource = null;
-			listView . Refresh ( );
-			listBox . Refresh ( );
-			ComboBox cb = sender as ComboBox;
-			string selection = cb.SelectedItem.ToString();
-			if ( selection . ToUpper ( ) == "IAN1" )
-			{
-				// initial access of this Db, so load BankAccount table
-				if ( SetConnectionString ( "IAN1" ) == false )
-				{
-					Console . WriteLine ( "Failed to set connection string for IAN1 Db" );
-					return;
-				}
-				// used to access Dictionary of DataTemplates
-				OpenIan1Db ( );
-				CurrentDbName = "IAN1";
-				LoadDbTables ( CurrentDbName );
-				CurrentTableName = "BANKACCOUNT";
-				SelectCurrentDbInCombo ( "BANKACCOUNT" );
-				LoadDataTemplates_Ian1 ( CurrentTableName , "VIEW" );
-				DefaultSqlCommand = "Select * from Bankaccount";
-				SqlCommand = DefaultSqlCommand;
-				CurrentDataTable = DataTemplatesLv . Items [ 0 ] . ToString ( );
-
-				//Now setup the UI as needed
-				listView . ItemsSource = null;
-				// Load  the data from the Table via SQL
-				LoadData_Ian1 ( "VIEW" );
-
-				FrameworkElement elemnt = listView as FrameworkElement;
-				listView . ItemTemplate = elemnt . FindResource ( CurrentDataTable ) as DataTemplate;
-				listView . ItemsSource = bankaccts;
-				lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-				listView . SelectedIndex = 0;
-				listView . Focus ( );
-				listBox . ItemTemplate = elemnt . FindResource ( CurrentDataTable ) as DataTemplate;
-				listBox . ItemsSource = bankaccts;
-				lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-				listBox . SelectedIndex = 0;
-			} else if ( selection . ToUpper ( ) == "NORTHWIND" )
-			{
-				// Just open the New DB
-				if ( SetConnectionString ( "NORTHWIND" ) == false )
-				{
-					Console . WriteLine ( "Failed to set connection string for NorthWind Db" );
-					return;
-				}
-				OpenNorthWindDb ( );
-				CurrentDbName = "NORTHWIND";
-				CurrentTableName = "CUSTOMERS";
-				LoadDbTables ( CurrentDbName);
-
-				LoadDataTemplates_NorthWind ( CurrentTableName , "" );
-				SelectCurrentDbInCombo ( CurrentTableName );
-				DefaultSqlCommand = "Select * from Customers";
-				SqlCommand = DefaultSqlCommand;
-				listView . ItemsSource = null;
-				// Load  the data from the Table via SQL
-				nwcustomeraccts = nwc . GetNwCustomers ( );
-
-				//Now setup the UI as needed
-				FrameworkElement elemnt = listView as FrameworkElement;
-				listView . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
-				listView . ItemsSource = nwcustomeraccts;
-				lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-				listView . SelectedIndex = 0;
-				listView . Focus ( );
-				listBox . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
-				listBox . ItemsSource = nwcustomeraccts;
-				lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-				listBox . SelectedIndex = 0;
-				listBox . Focus ( );
-			} else if ( selection . ToUpper ( ) == "PUBS" )
-			{
-				listView . ItemsSource = null;
-				OpenAdventureworks ( );
-				CurrentDbName = "PUBS";
-				CurrentTableName = "AUTHOR";
-				LoadDataTemplates_PubAuthors( CurrentTableName , "" );
-				SelectCurrentDbInCombo ( CurrentTableName );
-				DefaultSqlCommand = "Select * from Authors ";
-				SqlCommand = DefaultSqlCommand;
-				listView . ItemsSource = null;
-				// Load  the data from the Table via SQL
-				//				AdventureWorks aw = new AdventureWorks();
-				pubauthors = PubAuthors .LoadPubAuthors( pubauthors, false );
-
-				//Now setup the UI as needed
-				FrameworkElement elemnt = listView as FrameworkElement;
-//				listView . ItemTemplate = elemnt . FindResource ( "AwPersonsDataTemplate1" ) as DataTemplate;
-//				listView . ItemsSource = awpersonsaccts;
-
-				//lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-				//listView . SelectedIndex = 0;
-				//listView . Focus ( );
-				//listBox . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
-				listBox . ItemsSource = pubauthors;
-				//lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-				//listBox . SelectedIndex = 0;
-				//listBox . Focus ( );
-			}
-		}
-		private void SelectCurrentDbInCombo ( string dbname )
+		private void SelectCurrentDbInCombo ( string dbname , string viewertype )
 		{
 			ComboBoxItem cbi = new ComboBoxItem();
 			string entry="";
 			int indx=0;
-			for ( int x = 0 ; x < dbName . Items . Count ; x++ )
+			for ( int x = 0 ; x < dbNameLv . Items . Count ; x++ )
 			{
-				entry = dbName . Items [ x ] . ToString ( );
+				entry = dbNameLv . Items [ x ] . ToString ( );
 				if ( entry . ToUpper ( ) == dbname )
 					break;
 				indx++;
 			}
 			ComboSelectionActive = true;
-			dbName . SelectedIndex = indx;
+			if ( viewertype == "VIEW" )
+				dbNameLv . SelectedIndex = indx;
+			if ( viewertype == "BOX" )
+				dbNameLb . SelectedIndex = indx;
+			else
+			{
+				dbNameLb . SelectedIndex = indx;
+				dbNameLv . SelectedIndex = indx;
+			}
+
 			ComboSelectionActive = false;
 		}
-		private void dbName_SelectionChanged ( object sender , SelectionChangedEventArgs e )
+		private void dbNameLb_SelectionChanged ( object sender , SelectionChangedEventArgs e )
 		{
 			string ResultString="";
-			if ( ComboSelectionActive || dbName . Items . Count == 0 )
+			if ( alldone )
 				return;
-			string tablename = dbName . SelectedItem.ToString();
+			if ( ComboSelectionActive || dbNameLb . Items . Count == 0 )
+				return;
+			string tablename = dbNameLb . SelectedItem.ToString();
 			SqlCommand = $"Select *from {tablename}";
 			CurrentTableName = tablename . ToUpper ( );
-			//string CurrentDb = GetCurrentDatabase ( ).ToUpper();
-			//if ( CurrentDb == "IAN1" )
-			//{
-			//	LoadData_Ian1 ( "" );
-			//	LoadGrid_IAN1 ( );
-			//} else if ( CurrentDb == "NORTHWIND" )
-			//{
-			//	LoadData_NorthWind ( "" );
-			//	LoadGrid_NORTHWIND ( );
-			//} else if ( CurrentDb == "ADVENTUREWORKS" )
-			//{
-			//	//LoadData_AdventureWorks( "" );
-			//	//LoadGrid_ADVENTUREWORKS( );
-			//}
-			//genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
-			//if ( genaccts . Count > 0 )
-			//{
-
-			//}
+		}
+		private void dbNameLv_SelectionChanged ( object sender , SelectionChangedEventArgs e )
+		{
+			string ResultString="";
+			if ( alldone )
+				return;
+			if ( ComboSelectionActive || dbNameLv . Items . Count == 0 )
+				return;
+			string tablename = dbNameLv . SelectedItem.ToString();
+			SqlCommand = $"Select *from {tablename}";
+			CurrentTableName = tablename . ToUpper ( );
 		}
 
 		#endregion ALL Combo box handlers
@@ -1283,14 +1659,16 @@ namespace MyDev . Views
 				FrameworkElement elemnt = listView as FrameworkElement;
 				listView . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
 				listView . ItemsSource = nwcustomeraccts;
-				lvHeader . Text = $"List View Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 				listView . SelectedIndex = 0;
 				listView . Focus ( );
 				listBox . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
 				listBox . ItemsSource = nwcustomeraccts;
-				lbHeader . Text = $"List Box Display : {dbName?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
+				DbCountlb = nwcustomeraccts . Count;
+				DbCountlv = nwcustomeraccts . Count;
 				return nwcustomeraccts;
 			}
 		}
@@ -1332,20 +1710,20 @@ namespace MyDev . Views
 			LoadDbTables ( "NORTHWIND" );
 			SqlCommand = DefaultSqlCommand;
 		}
-		private void OpenAdventureworks ( )
+		private void OpenPublishers ( )
 		{
 			//Set Sql Connectoin string up first
-			if ( SetConnectionString ( "ADVENTUREWORKS" ) == false )
+			if ( SetConnectionString ( "PUBS" ) == false )
 			{
 				Console . WriteLine ( "Failed to set connection string for Adventure WorksDb" );
 				return;
 			}
 			// Open the Adventureworks Db first off
-			SqlCommand = "OpenDb_AdventureWorks2019";
+			SqlCommand = "spOpenDb_Publishers";
 			SqlSupport . Executestoredproc ( SqlCommand , Flags . CurrentConnectionString );
 			// now load list of tabels in Northwind Db
-			LoadDbTables ( "ADVENTUREWORKS" );
-			SqlCommand = "Select * fom Person order by LNAME";
+			LoadDbTables ( "PUBS" );
+			SqlCommand = "Select * fom Authors order by au_fname";
 		}
 		#endregion Make main Db Connectiions
 
@@ -1355,7 +1733,8 @@ namespace MyDev . Views
 		{
 			int bankindex = 0, count=0;
 			List<string> list = new List<string>      ();
-			dbName . Items . Clear ( );
+			dbNameLv . Items . Clear ( );
+			dbNameLb . Items . Clear ( );
 			SqlCommand = "spGetTablesList";
 			Datagrids . CallStoredProcedure ( list , SqlCommand );
 			//This call returns us a DataTable
@@ -1364,14 +1743,17 @@ namespace MyDev . Views
 			list = Utils . GetDataDridRowsAsListOfStrings ( dt );
 			foreach ( string row in list )
 			{
-				dbName . Items . Add ( row );
+				dbNameLb . Items . Add ( row );
+				dbNameLv . Items . Add ( row );
 				if ( row . ToUpper ( ) == "BANKACCOUNT" )
 					bankindex = count;
 				count++;
 			}
 			// how to Sort Combo/Listbox contents
-			dbName . Items . SortDescriptions . Add ( new SortDescription ( "" , ListSortDirection . Ascending ) );
-			dbName . SelectedIndex = bankindex;
+			dbNameLb . Items . SortDescriptions . Add ( new SortDescription ( "" , ListSortDirection . Ascending ) );
+			dbNameLb . SelectedIndex = bankindex;
+			dbNameLv . Items . SortDescriptions . Add ( new SortDescription ( "" , ListSortDirection . Ascending ) );
+			dbNameLv . SelectedIndex = bankindex;
 			SqlCommand = DefaultSqlCommand;
 		}
 		#endregion  Load Current Db's Tables lists
@@ -1379,15 +1761,15 @@ namespace MyDev . Views
 		#region Load List of Tables in current Db
 
 		//Get list of all Tables in currently selected Db 
-		public void LoadDbTables ( string DbName )
+		public bool LoadDbTables ( string DbName )
 		{
 			int listindex = 0, count=0;
 			List<string> list = new List<string>      ();
-
-			if ( SetConnectionString ( DbName . ToUpper ( ) ) == false )
+			DbName = DbName . ToUpper ( );
+			if ( SetConnectionString ( DbName ) == false )
 			{
-				Console . WriteLine ( $"Failed to set connection string for {dbName} Db" );
-				return;
+				Console . WriteLine ( $"Failed to set connection string for {DbName} Db" );
+				return false;
 			}
 			// All Db's have their own version of this SP.....
 			SqlCommand = "spGetTablesList";
@@ -1398,49 +1780,64 @@ namespace MyDev . Views
 			// This how to access Row data from  a grid the easiest way.... parsed into a List <xxxxx>
 			if ( dt != null )
 			{
-				dbName . Items . Clear ( );
+				dbNameLb . Items . Clear ( );
+				dbNameLv . Items . Clear ( );
 				list = Utils . GetDataDridRowsAsListOfStrings ( dt );
 				if ( DbName == "NORTHWIND" )
 				{
 					foreach ( string row in list )
 					{
-						dbName . Items . Add ( row );
+						dbNameLb . Items . Add ( row );
+						dbNameLv . Items . Add ( row );
 						if ( row . ToUpper ( ) == CurrentTableName )
 							listindex = count;
 						count++;
 					}
-				} else if ( DbName == "IAN1" )
+				}
+				else if ( DbName == "IAN1" )
 				{
 					foreach ( string row in list )
 					{
-						dbName . Items . Add ( row );
+						dbNameLb . Items . Add ( row );
+						dbNameLv . Items . Add ( row );
 						if ( row . ToUpper ( ) == CurrentTableName )
 							listindex = count;
 						count++;
 					}
-				} else if ( DbName == "ADVENTUREWORKS" )
+				}
+				else if ( DbName == "PUBS" )
 				{
 					foreach ( string row in list )
 					{
-						dbName . Items . Add ( row );
+						dbNameLb . Items . Add ( row );
+						dbNameLv . Items . Add ( row );
 						if ( row . ToUpper ( ) == CurrentTableName )
 							listindex = count;
 						count++;
 					}
 				}
 				// how to Sort Combo/Listbox contents
-				dbName . Items . SortDescriptions . Add ( new SortDescription ( "" , ListSortDirection . Ascending ) );
-				dbName . SelectedIndex = listindex;
-			} else
+				//dbNameLv . Items . SortDescriptions . Add ( new SortDescription ( "" , ListSortDirection . Ascending ) );
+				alldone = true;
+				dbNameLb . SelectedIndex = listindex;
+				dbNameLv . SelectedIndex = listindex;
+				alldone = false;
+				if ( count > 0 )
+					return true;
+				else
+					return false;
+			}
+			else
 			{
 				MessageBox . Show ( $"SQL comand {SqlCommand} Failed..." );
 				Utils . DoErrorBeep ( 125 , 55 , 1 );
+				return false;
 			}
-			SqlCommand = DefaultSqlCommand;
+			return true;
+			//SqlCommand = DefaultSqlCommand;
 		}
-		
-		#endregion Load List of Tables in current Db
 
+		#endregion Load List of Tables in current Db
 
 		#region FlowDoc support
 		private void ShowInfo ( string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
@@ -1526,8 +1923,8 @@ namespace MyDev . Views
 		{
 			ConnectionStringsDict . Add ( "IAN1" , ( string ) Properties . Settings . Default [ "BankSysConnectionString" ] );
 			ConnectionStringsDict . Add ( "NORTHWIND" , ( string ) Properties . Settings . Default [ "NorthwindConnectionString" ] );
-			ConnectionStringsDict . Add ( "NEWBANKACCOUNT" , ( string ) Properties . Settings . Default [ "NewBanksys" ] );
-			ConnectionStringsDict . Add ( "ADVENTUREWORKS" , ( string ) Properties . Settings . Default [ "AdventureWorks2019" ] );
+			//ConnectionStringsDict . Add ( "NEWBANKACCOUNT" , ( string ) Properties . Settings . Default [ "NewBanksys" ] );
+			ConnectionStringsDict . Add ( "PUBS" , ( string ) Properties . Settings . Default [ "PubsConnectionString" ] );
 		}
 		public void LoadDefaultSqlCommands ( )
 		{
@@ -1551,7 +1948,8 @@ namespace MyDev . Views
 				CurrentSqlConnection = connstring;
 				Flags . CurrentConnectionString = CurrentSqlConnection;
 				return true;
-			} else
+			}
+			else
 				return false;
 		}
 
@@ -1570,30 +1968,180 @@ namespace MyDev . Views
 		}
 		#endregion utility  support methods
 
+		#region Database switching
+		/// <summary>
+		///----------------------------------------------------------------------------------//
+		///  Switching DataBases, so gotta change all other lookup tables
+		///----------------------------------------------------------------------------------//
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void dbMain_SelectionChanged ( object sender , SelectionChangedEventArgs e )
+		{
+			if ( Startup )
+				return;
+			if ( DbMain . Items . Count == 0 )
+				return;
+			// clear down viewers 1st
+			listView . ItemsSource = null;
+			listBox . ItemsSource = null;
+			listView . Refresh ( );
+			listBox . Refresh ( );
+			ComboBox cb = sender as ComboBox;
+			string selection = cb.SelectedItem.ToString();
+			if ( selection . ToUpper ( ) == "IAN1" )
+			{
+				// initial access of this Db, so load BankAccount table
+				if ( SetConnectionString ( "IAN1" ) == false )
+				{
+					Console . WriteLine ( "Failed to set connection string for IAN1 Db" );
+					return;
+				}
+				// used to access Dictionary of DataTemplates
+				OpenIan1Db ( );
+				CurrentDbName = "IAN1";
+				LoadDbTables ( CurrentDbName );
+				CurrentTableName = "BANKACCOUNT";
+				SelectCurrentDbInCombo ( "BANKACCOUNT" , "" );
+				LoadDataTemplates_Ian1 ( CurrentTableName , "VIEW" );
+				DefaultSqlCommand = "Select * from Bankaccount";
+				SqlCommand = DefaultSqlCommand;
+				CurrentDataTable = DataTemplatesLv . Items [ 0 ] . ToString ( );
+
+				//Now setup the UI as needed
+				listView . ItemsSource = null;
+				// Load  the data from the Table via SQL
+				LoadData_Ian1 ( "VIEW" );
+
+				FrameworkElement elemnt = listView as FrameworkElement;
+				listView . ItemTemplate = elemnt . FindResource ( CurrentDataTable ) as DataTemplate;
+				listView . ItemsSource = bankaccts;
+				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				listView . SelectedIndex = 0;
+				listView . Focus ( );
+				listBox . ItemTemplate = elemnt . FindResource ( CurrentDataTable ) as DataTemplate;
+				listBox . ItemsSource = bankaccts;
+				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				listBox . SelectedIndex = 0;
+				DbCountlb = bankaccts . Count;
+				DbCountlv = bankaccts . Count;
+			}
+			else if ( selection . ToUpper ( ) == "NORTHWIND" )
+			{
+				// Just open the New DB
+				if ( SetConnectionString ( "NORTHWIND" ) == false )
+				{
+					Console . WriteLine ( "Failed to set connection string for NorthWind Db" );
+					return;
+				}
+				OpenNorthWindDb ( );
+				CurrentDbName = "NORTHWIND";
+				CurrentTableName = "CUSTOMERS";
+				LoadDbTables ( CurrentDbName );
+
+				LoadDataTemplates_NorthWind ( CurrentTableName , "" );
+				SelectCurrentDbInCombo ( CurrentTableName , "" );
+				DefaultSqlCommand = "Select * from Customers";
+				SqlCommand = DefaultSqlCommand;
+				listView . ItemsSource = null;
+				// Load  the data from the Table via SQL
+				nwcustomeraccts = nwc . GetNwCustomers ( );
+
+				//Now setup the UI as needed
+				FrameworkElement elemnt = listView as FrameworkElement;
+				listView . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
+				listView . ItemsSource = nwcustomeraccts;
+				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				listView . SelectedIndex = 0;
+				listView . Focus ( );
+				listBox . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
+				listBox . ItemsSource = nwcustomeraccts;
+				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				listBox . SelectedIndex = 0;
+				listBox . Focus ( );
+				DbCountlb = nwcustomeraccts . Count;
+				DbCountlv = nwcustomeraccts . Count;
+			}
+			else if ( selection . ToUpper ( ) == "PUBS" )
+			{
+				listView . ItemsSource = null;
+				OpenPublishers ( );
+				CurrentDbName = "PUBS";
+				CurrentTableName = "AUTHORS";
+
+				LoadDataTemplates_PubAuthors ( CurrentTableName , "" );
+
+				SelectCurrentDbInCombo ( CurrentTableName , "" );
+				DefaultSqlCommand = "Select * from Authors ";
+				SqlCommand = DefaultSqlCommand;
+				listView . ItemsSource = null;
+				// Load  the data from the Table via SQL
+				pubauthors = PubAuthors . LoadPubAuthors ( pubauthors , false );
+
+				//Now setup the UI as needed
+				FrameworkElement elemnt = listView as FrameworkElement;
+				listView . ItemTemplate = elemnt . FindResource ( "PubsAuthorTemplate1" ) as DataTemplate;
+				listView . ItemsSource = pubauthors;
+
+				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				listView . SelectedIndex = 0;
+				listView . Focus ( );
+				listBox . ItemTemplate = elemnt . FindResource ( "PubsAuthorTemplate1" ) as DataTemplate;
+				listBox . ItemsSource = pubauthors;
+				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				listBox . SelectedIndex = 0;
+				listBox . Focus ( );
+				DbCountlb = pubauthors . Count;
+				DbCountlv = pubauthors . Count;
+			}
+		}
+
+		#endregion Databse switching
+
 		#region  Reload Data viewers
 		private void ReloadListview ( object sender , RoutedEventArgs e )
 		{
 			ResetViewers ( "VIEW" );
 			listView . ItemsSource = null;
+			DbCountlv = 0;
 			listView . Refresh ( );
 			// Set flag  to ignore limits check
 			LoadAll = true;
 			string currdb = GetCurrentDatabase ( );
-			CurrentTableName = dbName . SelectedItem . ToString ( ) . ToUpper ( );
+			CurrentTableName = dbNameLv . SelectedItem . ToString ( ) . ToUpper ( );
+
 			if ( currdb == "IAN1" )
 			{
 				LoadData_Ian1 ( "VIEW" );
-				LoadDataTemplates_Ian1 ( CurrentTableName , "VIEW" );
+				//LoadDataTemplates_Ian1 ( CurrentTableName , "VIEW" );
 				LoadGrid_IAN1 ( "VIEW" );
-			} else if ( currdb == "NORTHWIND" )
+			}
+			else if ( currdb == "NORTHWIND" )
 			{
 				LoadData_NorthWind ( "VIEW" );
-				LoadDataTemplates_NorthWind ( CurrentTableName , "VIEW" );
+				//LoadDataTemplates_NorthWind ( CurrentTableName , "VIEW" );
 				LoadGrid_NORTHWIND ( "VIEW" );
 			}
-			//else if ( currdb == "ADVENTUREWORKS" )
-			//	LoadData_Ian1 ( "BOX" );
-
+			else if ( currdb == "PUBS" )
+			{
+				genaccts = null;
+				LoadData_Publishers ( "VIEW" , out genaccts );
+				//LoadDataTemplates_PubAuthors ( CurrentTableName , "VIEW" );
+				if ( genaccts != null )
+				{
+					listView . ItemsSource = genaccts;
+					DbCountlv = genaccts . Count;
+				}
+				else
+				{
+					pubauthors = PubAuthors . LoadPubAuthors ( pubauthors , false );
+					listView . ItemsSource = pubauthors;
+					DbCountlv = pubauthors . Count;
+				}
+				LoadGrid_PUBS ( "VIEW" );
+			}
+			listView . SelectedIndex = 0;
+			listView . SelectedItem = 0;
 			// Clear flag again
 			LoadAll = false;
 		}
@@ -1603,24 +2151,44 @@ namespace MyDev . Views
 			ResetViewers ( "BOX" );
 			listBox . ItemsSource = null;
 			listBox . Refresh ( );
+			DbCountlb = 0;
 			// Set flag  to ignore limits check
 			LoadAll = true;
 			string currdb = GetCurrentDatabase ( );
-			CurrentTableName = dbName . SelectedItem . ToString ( ) . ToUpper ( );
+			CurrentTableName = dbNameLb . SelectedItem . ToString ( ) . ToUpper ( );
+
 			if ( currdb == "IAN1" )
 			{
 				LoadData_Ian1 ( "BOX" );
-				LoadDataTemplates_Ian1 ( CurrentTableName , "BOX" );
+				//LoadDataTemplates_Ian1 ( CurrentTableName , "BOX" );
 				LoadGrid_IAN1 ( "BOX" );
-			} else if ( currdb == "NORTHWIND" )
+			}
+			else if ( currdb == "NORTHWIND" )
 			{
 				LoadData_NorthWind ( "BOX" );
-				LoadDataTemplates_NorthWind ( CurrentTableName , "BOX" );
-				nworderaccts = nwo . LoadOrders ( );
+				//LoadDataTemplates_NorthWind ( CurrentTableName , "BOX" );
+				//nworderaccts = nwo . LoadOrders ( );
 				LoadGrid_NORTHWIND ( "BOX" );
 			}
+			else if ( currdb == "PUBS" )
+			{
+				genaccts = null;
+				LoadData_Publishers ( "BOX" , out genaccts );
+				if ( genaccts != null )
+				{
+					listBox . ItemsSource = genaccts;
+					DbCountlb = genaccts . Count;
+				}
+				else
+				{
+					listBox . ItemsSource = pubauthors;
+					DbCountlb = pubauthors . Count;
+				}
+				LoadGrid_PUBS ( "BOX" );
+			}
+			listBox . SelectedIndex = 0;
+			listBox . SelectedItem = 0;
 			LoadAll = false;
-			//else if ( currdb == "ADVENTUREWORKS" )
 		}
 		#endregion  Reload Data viewers
 		private string GetDefaultSqlCommand ( string CurrentType )
@@ -1650,5 +2218,152 @@ namespace MyDev . Views
 			Flags . UseScrollView = UseScrollViewer;
 		}
 		#endregion Checkboxes
+
+		private void ViewTableColumnsLb ( object sender , RoutedEventArgs e )
+		{
+			bool flowdocswitch = false;
+			int count = 0;
+			List<string> list = new List<string>      ();
+			string output="";
+			SqlCommand = $"spGetTableColumns {dbNameLb . SelectedItem . ToString ( )}";
+			Datagrids . CallStoredProcedure ( list , SqlCommand );
+			//This call returns us a DataTable
+			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
+			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
+			list = Utils . GetTableColumnsList ( dt );
+			foreach ( string row in list )
+			{
+				string entry = row.ToUpper();
+				output += row + "\n";
+				count++;
+			}
+			// Fiddle  to allow Flowdoc  to show Field info even though Flowdoc use is disabled
+			if ( UseFlowdoc == false )
+			{
+				flowdocswitch = true;
+				UseFlowdoc = true;
+			}
+			Console . WriteLine ( $"loaded {count} records for table columns" );
+			ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
+				line2: $"the structure of the table [{dbNameLb . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
+				line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
+				);
+			if ( flowdocswitch == true )
+			{
+				flowdocswitch = false;
+				UseFlowdoc = false;
+			}
+		}
+		private void ViewTableColumnsLv ( object sender , RoutedEventArgs e )
+		{
+			bool flowdocswitch = false;
+			int count = 0;
+			List<string> list = new List<string>      ();
+			string output="";
+			SqlCommand = $"spGetTableColumns {dbNameLv . SelectedItem . ToString ( )}";
+			Datagrids . CallStoredProcedure ( list , SqlCommand );
+			//This call returns us a DataTable
+			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
+			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
+			list = Utils . GetTableColumnsList ( dt );
+			foreach ( string row in list )
+			{
+				string entry = row.ToUpper();
+				output += row + "\n";
+				count++;
+			}
+			Console . WriteLine ( $"loaded {count} records for table columns" );
+			// Fiddle  to allow Flowdoc  to show Field info even though Flowdoc use is disabled
+			if ( UseFlowdoc == false )
+			{
+				flowdocswitch = true;
+				UseFlowdoc = true;
+			}
+			ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
+				line2: $"the structure of the table [{dbNameLv . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
+				line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
+				);
+			if ( flowdocswitch == true )
+			{
+				flowdocswitch = false;
+				UseFlowdoc = false;
+			}
+		}
+
+		// display relevant info when a different table is selected
+		private void HandleCaption ( string viewertype , int reccount )
+		{
+			FrameworkElement elemnt;
+			if ( viewertype == "VIEW" || viewertype == "" )
+			{
+				elemnt = listView as FrameworkElement;
+				listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				DbCountlv = reccount;
+			}
+			else if ( viewertype == "BOX" || viewertype == "" )
+			{
+				elemnt = listBox as FrameworkElement;
+				listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				DbCountlb = reccount;
+			}
+		}
+
+		#region Hook to Flowdoc Maximize buttoin
+		protected void ParentWPF_method ( object sender , EventArgs e )
+		{
+			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
+			// or return to its original size and position courtesy of the Event declard in FlowDoc
+			double height = canvas . Height;
+			double width = canvas . Width;
+			if ( Flowdoc . Height < canvas . Height && Flowdoc . Width < canvas . Width )
+			{
+				// it is in NORMAL moode right now
+				// Set flowdoc size into variables for later use
+				flowdocHeight = Flowdoc . Height;
+				flowdocWidth = Flowdoc . Width;
+				flowdocLeft = ( double ) GetValue ( Canvas . LeftProperty );
+				flowdocTop = ( double ) GetValue ( Canvas . TopProperty );
+				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
+				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+				Flowdoc . Height = height;
+				Flowdoc . Width = width;
+			}
+			else
+			{
+				// it is MAXIMIZED right now
+				// We re returning it to normal position/Size
+				Flowdoc . Height = flowdocHeight;
+				Flowdoc . Width = flowdocWidth;
+				if ( Flags . PinToBorder )
+				{
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+				}
+				else
+				{
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 150 );
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 100 );
+				}
+				//if ( ParkFlowDoc )
+				//{
+				//	flowdocLeft = 0;
+				//	flowdocTop = 0;
+				//} else
+				//{
+				//	flowdocLeft = ( double ) GetValue ( Canvas . LeftProperty );
+				//	flowdocTop = ( double ) GetValue ( Canvas . TopProperty );
+				//}
+			}
+		}
+		#endregion Hook to Flowdoc Maximize buttoin
+
+		private void Park_Click ( object sender , RoutedEventArgs e )
+		{
+			Flags . PinToBorder = !Flags . PinToBorder;
+		}
 	}
 }

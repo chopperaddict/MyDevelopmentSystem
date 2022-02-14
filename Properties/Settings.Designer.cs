@@ -87,5 +87,19 @@ namespace MyDev.Properties {
                 this["AdventureWorks2019"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=DINO-PC;Initial Catalog=\"PUBS\";Integrated Security=True;Connect Timeo" +
+            "ut=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;Mul" +
+            "tiSubnetFailover=False")]
+        public string PubsConnectionString {
+            get {
+                return ((string)(this["PubsConnectionString"]));
+            }
+            set {
+                this["PubsConnectionString"] = value;
+            }
+        }
     }
 }

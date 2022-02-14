@@ -133,7 +133,7 @@ namespace MyDev . ViewModels
 
 				pubauthoraccts = new ObservableCollection<PubAuthors> ( );
 				GetPubAuthors( dt);
-				pubauthoraccts = LoadAwPersons (pubauthoraccts ,  dt);
+				pubauthoraccts = LoadAuthors(pubauthoraccts ,  dt);
 				return ( pubauthoraccts );
 			} catch ( Exception ex )
 			{
@@ -153,7 +153,7 @@ namespace MyDev . ViewModels
 				con = new SqlConnection ( ConString );
 				using ( con )
 				{
-					commandline = "Select * from Person.Person order by LastName";
+					commandline = "Select * from Authors order by au_LName";
 					SqlCommand cmd = new SqlCommand ( commandline, con );
 					SqlDataAdapter sda = new SqlDataAdapter ( cmd );
 					sda . Fill ( dt );
@@ -167,18 +167,21 @@ namespace MyDev . ViewModels
 			return dt;
 		}
 
-		public static ObservableCollection<PubAuthors> LoadAwPersons ( ObservableCollection<PubAuthors> authors, DataTable dt)
+		public static ObservableCollection<PubAuthors> LoadAuthors( ObservableCollection<PubAuthors> authors, DataTable dt)
 		{
 			int count = 0;
 			try
 			{
 				for ( int i = 0 ; i < dt. Rows . Count ; i++ )
 				{
-					authors. Add ( new PubAuthors
+					authors . Add ( new PubAuthors
 					{
-						FName= dt. Rows [ i ] [ 0 ] .ToString() ,
-						LName = dt . Rows [ i ] [ 2 ] . ToString ( ) ,
-						Address= dt . Rows [ i ] [ 2 ] . ToString ( ) ,
+						FName = dt . Rows [ i ] [ 0 ] . ToString ( ) ,
+						LName = dt . Rows [ i ] [ 1 ] . ToString ( ) ,
+						City = dt . Rows [ i ] [ 2 ] . ToString ( ) ,
+						State = dt . Rows [ i ] [ 3 ] . ToString ( ) ,
+						Zip = dt . Rows [ i ] [ 4 ] . ToString ( ),
+						Phone = dt . Rows [ i ] [ 5 ] . ToString ( )
 					} );
 					count = i;
 				}

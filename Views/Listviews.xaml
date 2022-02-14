@@ -4,13 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyDev.Views"
+        xmlns:att="clr-namespace:MyDev.AttachedProperties"
         xmlns:conv="clr-namespace:MyDev.Converts"
         xmlns:user="clr-namespace:MyDev.UserControls"
         mc:Ignorable="d"
 	 Loaded="ListViewWindow_Loaded"
 		x:Name="ListViewWindow"
        Title="List Views" 
-	  MinHeight="650" MinWidth="1000"
+	  MinHeight="1150" MinWidth="1000"
 	  Height="650" Width="1000">
 
 	<Window.Resources>
@@ -19,10 +20,10 @@
 
 	<Window.Background>
 		<LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
-			<GradientStop Offset="0" Color="#FFAAAAAA" />
-			<GradientStop Offset="0.3" Color="#FF6B8E95" />
-			<GradientStop Offset="0.609" Color="#FF6B8E95" />
-			<GradientStop Offset="1" Color="#FF14A7C1" />
+			<GradientStop Offset="0" Color="#FFFFAA5D" />
+			<GradientStop Offset="0.3" Color="#FFCDAA36" />
+			<GradientStop Offset="0.609" Color="#FFFFD598" />
+			<GradientStop Offset="1" Color="#FFFFFAE7" />
 			<!--<GradientStop Offset="0" Color="#FF193A44" />-->
 		</LinearGradientBrush>
 	</Window.Background>
@@ -79,9 +80,6 @@
 
 		<!--#region List Box/views-->
 
-
-		<!--Background="{StaticResource Cyan4}"-->
-		
 		<ListBox x:Name="listBox" 
 				Background="Transparent"
 				FontSize="12"
@@ -149,25 +147,48 @@
 			Padding="0 0 0 0"
 			Text="List View Display"
 			VerticalAlignment="Top"/>
-		<TextBox x:Name="tbCount"
+		<TextBox x:Name="tbCountlb"
 			  AllowDrop="True"
 			  Background="{StaticResource Red5}"
+			   BorderBrush="{StaticResource White0}"
+			   BorderThickness="1 3 1 3"
 			  CaretBrush="{StaticResource White0}"
 			  FocusVisualStyle="{x:Null}"
 			  Foreground="{StaticResource White0}"
 			  FontSize="15"
 			  FontWeight="Bold"
-			  Grid.Row="3"
+			  Grid.Row="2"
 			  Grid.Column="1"
 			  Height="30"
 			  HorizontalAlignment="Left"
-			  Margin="0,15,0,0"
-			  Padding="0 4 0 0"
-			  Text="{Binding DbCount, UpdateSourceTrigger=PropertyChanged}"
+			  Margin="0,7,0,0"
+			  Padding="0 0 0 0"
+			  Text="{Binding DbCountlb, UpdateSourceTrigger=PropertyChanged}"
 			  TextAlignment="center"
 			  TextWrapping="NoWrap"
 			  VerticalAlignment="Top"
-			  Width="53" Grid.ColumnSpan="2" />
+			  Width="53" />
+		<TextBox x:Name="tbCountlv"
+			  AllowDrop="True"
+			  Background="{StaticResource Red5}"
+			   BorderBrush="{StaticResource White0}"
+			   BorderThickness="1 3 1 3"
+			  CaretBrush="{StaticResource White0}"
+			  FocusVisualStyle="{x:Null}"
+			  Foreground="{StaticResource White0}"
+			  FontSize="15"
+			  FontWeight="Bold"
+			  Grid.Row="2"
+			  Grid.Column="3"
+			  Height="30"
+			  HorizontalAlignment="Left"
+			  Margin="1,7,0,0"
+			  Padding="0 0 0 0"
+			  Text="{Binding DbCountlv, UpdateSourceTrigger=PropertyChanged}"
+			  TextAlignment="center"
+			  TextWrapping="NoWrap"
+			  VerticalAlignment="Top"
+			  Width="53" />
 		<TextBox x:Name="LoadTime" 
 			  Background="{StaticResource Blue1}"
 			  FocusVisualStyle="{x:Null}"
@@ -178,7 +199,7 @@
 			  Grid.Column="1"
 			  Height="30"
 			  HorizontalAlignment="Left"
-			  Margin="70,15,0,0" 
+			  Margin="4,20,0,0" 
 			  Padding="0 4 0 0"
 			  TextAlignment="center"  
 			  TextWrapping="NoWrap" 
@@ -189,22 +210,22 @@
 			  Background="Transparent"
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource White0}"
+			  Foreground="{StaticResource Black0}"
 			  Grid.Row="2" 
 			  Grid.Column="3"
 			  Height="23"    
 			  HorizontalAlignment="Right"
-			  Margin="0,0,235,10"
+			  Margin="0,47,230,0"
 			  Text="Select Db Table to load :"
-			  VerticalAlignment="Bottom"
+			  VerticalAlignment="Top"
 			  Width="158" 
 			/>
 		<TextBlock  
 			  Background="Transparent"
 			  FocusVisualStyle="{x:Null}"
-			  FontSize="{Binding Fontsize, ElementName=Listviews}"
+			  FontSize="14"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource White0}"
+			  Foreground="{StaticResource Black0}"
 			  Grid.Row="2" 
 			  Grid.Column="3"
 			  Height="23"    
@@ -219,7 +240,7 @@
 			  Background="Transparent"
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource White0}"
+			  Foreground="{StaticResource Black0}"
 			  Grid.Row="2" 
 			  Grid.Column="1"
 			  Height="23"    
@@ -233,14 +254,14 @@
 			  FontSize="14"
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource White0}"
+			  Foreground="{StaticResource Black0}"
 			  Grid.Row="3" 
 			  Grid.Column="1"
 			  Height="23"    
 			  HorizontalAlignment="Left"
-			  Margin="165,19,0,0"
+			  Margin="108,0,0,0"
 			  Text="Font Size:"
-			  VerticalAlignment="Top"
+			  VerticalAlignment="Center"
 			  Width="67" 
 					/>
 		<TextBlock  
@@ -248,76 +269,61 @@
 				Background="Transparent"
 				FocusVisualStyle="{x:Null}"
 				FontWeight="DemiBold"
-				Foreground="{StaticResource White0}"
+				Foreground="{StaticResource Black0}"
 				Grid.Row="3" 
 				Grid.Column="1"
 				Height="23"    
 				HorizontalAlignment="Left"
-				Margin="310,19,89,0"
+				Margin="248,20,0,0"
 				Text="Row Height :"
 				VerticalAlignment="Top"
-				Width="86" 
-							/>
+				Width="84" />
+		<TextBlock  
+			FontSize="14"
+			Background="Transparent"
+			FocusVisualStyle="{x:Null}"
+			FontWeight="DemiBold"
+			Foreground="{StaticResource Black0}"
+			Grid.Column="3"
+			Grid.Row="2"
+			Grid.RowSpan="2" 
+			Height="23"    
+			HorizontalAlignment="Left"
+			Margin="59,0,0,51"
+			Text="Current Database :"
+			VerticalAlignment="Bottom"
+			Width="124" 
+					/>
 		<TextBlock  
 			  FontSize="14"
 			  Background="Transparent"
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource White0}"
-			  Grid.Row="2"
-			  Height="23"    
-			  HorizontalAlignment="Left"
-			  Margin="10,71,0,0"
-			  Text="Select Current Database :"
-			  VerticalAlignment="Top"
-			  Width="168" Grid.Column="1" 
-					/>
-		<TextBlock  
-			  Background="Transparent"
-			  FocusVisualStyle="{x:Null}"
-			  FontSize="{Binding Fontsize, ElementName=Listviews}"
-			  FontWeight="DemiBold"
-			  Foreground="{StaticResource White0}"
+			  Foreground="{StaticResource Black0}"
 			  Grid.Row="2" 
 			  Grid.Column="1"
-			  Height="14"    
-			  HorizontalAlignment="Left"
-			  Margin="293,98,0,0"
-			  Text="Caution Major switch over !!"
+			  Height="23"    
+			  HorizontalAlignment="Right"
+			  Margin="0,46,230,0"
+			  Text="Select Db Table to load :"
 			  VerticalAlignment="Top"
-			  Width="164" 
+			  Width="158" 
 			/>
 
 		<!--#endregion TextBoxes / Blocks-->
 
 		<!--#region Combos-->
 
-		<ComboBox  x:Name="dbName"
-			  AllowDrop="True"
-			  FontSize="14"
-			  FontWeight="DemiBold"
-			  Foreground="{StaticResource Red5}"
-			  Grid.Row="2"
-			  Grid.Column="3"
-			  Height="25"
-			  HorizontalAlignment="Right"
-			  HorizontalContentAlignment="Left"
-			  Margin="0,0,0,9"
-			  MaxDropDownHeight="257"
-			  Padding="5 3 0 0"
-			  PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
-			  SelectionChanged="dbName_SelectionChanged"    
-			  TabIndex="4"
-			  Text="Db Name..." 
-			  ToolTip="Right Click to refresh list of Tables... "
-			  VerticalAlignment="Bottom"
-			  Width="231"
-			/>
+		<!--Style="{StaticResource ComboBoxStyle1}"-->
+
 		<ComboBox  x:Name="DataTemplatesLb"
 			  AllowDrop="True"
 			  FontSize="13"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource Red5}"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Yellow0}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
+			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Orange0}"
+			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
 			  Grid.Row="2"
 			  Grid.Column="1"
 			  Height="25"
@@ -330,14 +336,24 @@
 			  TabIndex="4"
 			  Text="Db Name..." 
 			  VerticalAlignment="Top"
-			  Width="229"
-			/>
+			  Width="231">
+			<ComboBox.ItemTemplate  >
+				<DataTemplate>
+					<Label Style="{StaticResource ComboBoxTextBlockStyle1}" 
+								Content="{Binding}" 
+								Width="{Binding ActualWidth, ElementName=dbNameLv}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 
 		<ComboBox  x:Name="DataTemplatesLv"
 			  AllowDrop="True"
 			  FontSize="13"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource Red5}"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Yellow0}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
+			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Orange0}"
+			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
 			  Grid.Row="2"
 			  Grid.Column="3"
 			  Height="25"
@@ -350,95 +366,170 @@
 			  TabIndex="4"
 			  Text="Db Name..." 
 			  VerticalAlignment="Top"
-			  Width="231"
-			/>
+			  Width="231">
+			<ComboBox.ItemTemplate  >
+				<DataTemplate>
+					<Label Style="{StaticResource ComboBoxTextBlockStyle1}" 
+								Content="{Binding}" 
+								Width="{Binding ActualWidth, ElementName=dbNameLv}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 
 		<ComboBox  x:Name="DbMain"
 			  AllowDrop="True"
 			  FontSize="14"
 			  FontWeight="DemiBold"
-			  Foreground="{StaticResource Red5}"
-			  Grid.Row="2"
-			  Grid.Column="1"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Green0}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
+			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
+			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
+			  Grid.Row="3"
+			  Grid.Column="3"
 			  Height="25"
 			  HorizontalAlignment="Left"
-			  HorizontalContentAlignment="Left"
-			  Margin="190,0,0,0"
+			  HorizontalContentAlignment="Center"
+			  Margin="3,18,0,0"
 			  MaxDropDownHeight="257"
-			  Padding="5 3 0 0"
+			  Padding="0 3 0 0"
 			  SelectionChanged="dbMain_SelectionChanged"    
 			  TabIndex="4"
 			  Text="Db Name..." 
-			  VerticalAlignment="Center"
-			  Width="294"
-			/>
+			  VerticalAlignment="Top"
+			  Width="227">
+			<ComboBox.ItemTemplate  >
+				<DataTemplate>
+					<Label Style="{StaticResource ComboBoxTextBlockStyle1}" 
+								Content="{Binding}" 
+								Width="{Binding ActualWidth, ElementName=dbNameLv}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 
 		<ComboBox  x:Name="fontSize"
 			  AllowDrop="True"
 			  FontSize="16"
 			  FontWeight="Regular"
-			  Foreground="{StaticResource Blue0}"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Gray5}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
+			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
+			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
 			  Grid.Row="3"
 			  Grid.Column="1"
-			  Height="35"
+			  Height="25"
 			  HorizontalAlignment="Left"
 			  HorizontalContentAlignment="Left"
+			     Margin="180 0 0 0"
 			  MaxDropDownHeight="250"
 			  Padding="10 3 0 0"
-			  SelectedIndex="1"
+			  SelectedIndex="2"
 			  SelectionChanged="fontsize_SelectionChanged"   
-
-			  Text="Db Name..." 
-			  VerticalAlignment="Top"
-			  Width="60" Margin="239,15,0,0"
+			   Text="Db Name..." 
+			  VerticalAlignment="Center"
+			  Width="50"
 			>
-			<ComboBoxItem Content="11"/>
-			<ComboBoxItem Content="12"/>
-			<ComboBoxItem Content="13"/>
-			<ComboBoxItem Content="14"/>
-			<ComboBoxItem Content="15"/>
-			<ComboBoxItem Content="16"/>
-			<ComboBoxItem Content="17"/>
-			<ComboBoxItem Content="18"/>
-			<ComboBoxItem Content="19"/>
-			<ComboBoxItem Content="20"/>
+			<ComboBox.ItemTemplate  >
+				<DataTemplate>
+					<Label Style="{StaticResource ComboBoxTextBlockStyle1}" 
+							Content="{Binding}" 
+							Width="{Binding ActualWidth, ElementName=fontSize}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
 		</ComboBox>
 
 		<ComboBox  x:Name="rowheight"
 			  AllowDrop="True"
 			  FontSize="16"
 			  FontWeight="Regular"
-			  Foreground="{StaticResource Blue0}"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Gray5}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
+			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
+			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
 			  Grid.Row="3"
 			  Grid.Column="1"
-			  Height="35"
+			  Height="25"
 			  HorizontalAlignment="Left"
 			  HorizontalContentAlignment="Left"
+			  Margin="345,0,0,0"
 			  MaxDropDownHeight="250"
+			     
 			  Padding="10 3 0 0"
-			  SelectedIndex="5"
+			  SelectedIndex="8"
 			  SelectionChanged="rowheight_SelectionChanged"   
 			  Text="Db Name..." 
-			  VerticalAlignment="Top"
-			  Width="60" Margin="401,15,0,0">
-			<ComboBoxItem Content="10"/>
-			<ComboBoxItem Content="12"/>
-			<ComboBoxItem Content="14"/>
-			<ComboBoxItem Content="16"/>
-			<ComboBoxItem Content="18"/>
-			<ComboBoxItem Content="20"/>
-			<ComboBoxItem Content="22"/>
-			<ComboBoxItem Content="24"/>
-			<ComboBoxItem Content="26"/>
-			<ComboBoxItem Content="28"/>
-			<ComboBoxItem Content="30"/>
-			<ComboBoxItem Content="32"/>
-			<ComboBoxItem Content="34"/>
-			<ComboBoxItem Content="36"/>
-			<ComboBoxItem Content="38"/>
-			<ComboBoxItem Content="40"/>
-			<ComboBoxItem Content="45"/>
+			  VerticalAlignment="Center"
+			  Width="50" >
+			<ComboBox.ItemTemplate  >
+				<DataTemplate>
+					<Label Style="{StaticResource ComboBoxTextBlockStyle1}" 
+							Content="{Binding}" 
+							Width="{Binding ActualWidth, ElementName=rowheight}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
 		</ComboBox>
+		<ComboBox x:Name="dbNameLv"
+			  AllowDrop="True"
+			  FontSize="14"
+			  FontWeight="DemiBold"
+			  Grid.Row="2"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Blue6}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
+			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
+			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
+			  Grid.Column="3"
+			  Height="25"
+			  HorizontalAlignment="Right"
+			  HorizontalContentAlignment="Left"
+			  Margin="0,46,0,0"
+			  MaxDropDownHeight="257"
+			  Padding="5 3 0 0"
+			  PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
+			  SelectionChanged="dbNameLv_SelectionChanged"    
+			  TabIndex="4"
+			  Text="Db Name..." 
+			  ToolTip="Right Click to refresh list of Tables... "
+			  VerticalAlignment="Top"
+			  Width="231">
+			<ComboBox.ItemTemplate  >
+				<DataTemplate>
+					<Label Style="{StaticResource ComboBoxTextBlockStyle1}" 
+								Content="{Binding}" 
+								Width="{Binding ActualWidth, ElementName=dbNameLv}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<ComboBox  x:Name="dbNameLb"
+			  AllowDrop="True"
+			  FontSize="14"
+			  FontWeight="DemiBold"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Blue6}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
+			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
+			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
+			  Grid.Row="2"
+			  Grid.Column="1"
+			  Height="25"
+			  HorizontalAlignment="Right"
+			  HorizontalContentAlignment="Left"
+			  Margin="0,46,0,0"
+			  MaxDropDownHeight="257"
+			  Padding="5 3 0 0"
+			  PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
+			  SelectionChanged="dbNameLb_SelectionChanged"    
+			  TabIndex="4"
+			  Text="Db Name..." 
+			  ToolTip="Right Click to refresh list of Tables... "
+			  VerticalAlignment="Top"
+			  Width="231">
+			<ComboBox.ItemTemplate  >
+				<DataTemplate>
+					<Label Style="{StaticResource ComboBoxTextBlockStyle1}" 
+								Content="{Binding}" 
+								Width="{Binding ActualWidth, ElementName=dbNameLv}"/>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+
 
 		<!--#endregion Combos-->
 
@@ -454,9 +545,9 @@
 			  Height="40" 
 			  HorizontalAlignment="Right"
 			  Margin="0,10,0,0" 
-			  Template="{StaticResource HorizontalGradientTemplateRed}"
+			  Template="{StaticResource HorizontalGradientTemplateGreen}"
 			  VerticalAlignment="Top"
-			  Width="130" TabIndex="9"  />
+			  Width="110" TabIndex="9"  />
 		<Button x:Name="Close_Copy" 
 			  AllowDrop="True"
 			  Click="Close_Btn"
@@ -466,23 +557,23 @@
 			  Grid.Column="3"
 			  Height="40" 
 			  HorizontalAlignment="Right"
-			  Margin="0,9,138,0" 
-			  Template="{StaticResource HorizontalGradientTemplateRed}"
+			  Margin="0,9,127,0" 
+			  Template="{StaticResource HorizontalGradientTemplateGreen}"
 			  VerticalAlignment="Top"
-			  Width="130" TabIndex="9"  />
+			  Width="110" TabIndex="9"  />
 		<Button x:Name="ReloadAllRecs"
 			  AllowDrop="True"
 			  Click="ReloadListbox"
 			  Content="Reload List Box"
 			  Foreground="{StaticResource ResourceKey=White0}"
 			  Grid.Row="2"
-			  Grid.Column="3"
+			  Grid.Column="1"
 			  Height="40"
 			  HorizontalAlignment="Right"
-			  Margin="0,0,119,57"
+			  Margin="0,80,0,0"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
-			  VerticalAlignment="Bottom"
-			  Width="100" TabIndex="8"  />
+			  VerticalAlignment="Top"
+			  Width="110" TabIndex="8"  />
 		<Button x:Name="ReloadAllRecs_Copy"
 			  AllowDrop="True"
 			  Click="ReloadListview"
@@ -492,51 +583,47 @@
 			  Grid.Column="3"
 			  Height="40"
 			  HorizontalAlignment="Right"
-			  Margin="0,0,7,57"
+			  Margin="0,0,0,40"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Bottom"
 			  Width="110" TabIndex="8"  />
-		
-		<!--#region Checkboxes-->
-		<CheckBox x:Name="Showinfo" 
-				Click="ShowInfo_Click"
-				Content="Display Flow Document for results"
-				FontSize="14"
-				Grid.Column="1" 
-				Grid.Row="2"
-				HorizontalAlignment="Left"
-				IsChecked="False"
-				Margin="1,0,0,20" 
-				VerticalAlignment="Bottom"
-				Width="231" Height="23" 
-					    />
-		<CheckBox x:Name="UseScrollview" 
-				Click="scrollview_Click"
-				Content="Use Scroll Viewer"
-				FontSize="14"
-				Grid.Column="1" 
-				Grid.Row="2"
-				Grid.RowSpan="2" 
-				Height="23" 
-				HorizontalAlignment="Left"
-				IsChecked="False"
-				Margin="1,0,0,60" 
-				VerticalAlignment="Bottom"
-				Width="119" 
-			    />
-		<!--#endregion Checkboxes-->
-
-
+		<Button x:Name="ViewColumnsLv_Copy"
+			  AllowDrop="True"
+			  Click="ViewTableColumnsLv"
+			  Content="View Columns"
+			  Foreground="{StaticResource ResourceKey=White0}"
+			  Grid.Row="2"
+			  Grid.Column="3"
+			  Height="40"
+			  HorizontalAlignment="Right"
+			  Margin="0,0,120,40"
+			  Template="{StaticResource GradientButtonTemplateBlue}"
+			  VerticalAlignment="Bottom"
+			  Width="110" TabIndex="8"   />
+		<Button x:Name="ViewColumnsLb"
+			  AllowDrop="True"
+			  Click="ViewTableColumnsLb"
+			  Content="View Columns"
+			  Foreground="{StaticResource ResourceKey=White0}"
+			  Grid.Row="2"
+			  Grid.Column="1"
+			  Height="40"
+			  HorizontalAlignment="Right"
+			  Margin="0 80 120 0"
+			  Template="{StaticResource GradientButtonTemplateBlue}"
+			  VerticalAlignment="Top"
+			  Width="110" TabIndex="8"  />
+		<!--// Unused Buttons-->
 		<!--<Button x:Name="LvTemplate"
 			  AllowDrop="True"
 			  Click="SwitchLBTemplate"
 			  Content="Update List Box"
 			  Foreground="{StaticResource ResourceKey=White0}"
 			  Grid.Row="2"
-			  Grid.Column="1"
+			  Grid.Column="3"
 			  Height="40"
 			  HorizontalAlignment="Left"
-			  Margin="354,0,0,109"
+			  Margin="92,0,0,28"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Bottom"
 			  Width="110" TabIndex="8"  />-->
@@ -549,12 +636,61 @@
 			  Grid.Column="3"
 			  Height="40"
 			  HorizontalAlignment="Left"
-			  Margin="368,0,0,108"
+			  Margin="48,0,0,44"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Bottom"
 			  Width="110" TabIndex="8"  />-->
 
 		<!--#endregion Buttons-->
+
+		<!--#region Checkboxes-->
+		<Border
+			Background="Transparent"
+			BorderBrush="{StaticResource Red3}"
+			BorderThickness="1"
+			Grid.Column="1" 
+			Grid.Row="2" 
+			Margin="0,74,269,0" 
+			>
+			<Grid>
+				<CheckBox x:Name="ParkDoc" 
+					Click="Park_Click"
+					Content="Display at Top Left Corner"
+					FontSize="11"
+					Foreground="{StaticResource Black0}"
+					HorizontalAlignment="Left"
+					IsChecked="False"
+					Margin="6,0,0,45" 
+					VerticalAlignment="Center"
+					Width="202" Height="17" 
+					    />
+				<CheckBox x:Name="Showinfo" 
+					Click="ShowInfo_Click"
+					Content="Display Flow Document for results"
+					FontSize="11"
+					Foreground="{StaticResource Black0}"
+					HorizontalAlignment="Left"
+					IsChecked="False" 
+					Margin="6,5,0,0" 
+					VerticalAlignment="Center"
+					Width="206" Height="17" 
+						    />
+				<CheckBox x:Name="UseScrollview" 
+					Click="scrollview_Click"
+					Content="Use Scroll Viewer in Flow Document"
+					FontSize="11"
+					Foreground="{StaticResource Black0}" 
+					Height="17" 
+					HorizontalAlignment="Left"
+					IsChecked="False"
+					Margin="6,60,0,0" 
+					VerticalAlignment="Top"
+					Width="206" 
+				    />
+			</Grid>
+		</Border>
+		<!--#endregion Checkboxes-->
+		<!--<Image Source="/Icons/redcross.png" Grid.Column="2" Margin="3,54,373,10" Grid.Row="2" Grid.ColumnSpan="2"/>-->
 
 
 	</Grid>

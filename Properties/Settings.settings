@@ -17,5 +17,8 @@
     <Setting Name="AdventureWorks2019" Type="System.String" Scope="User">
       <Value Profile="(Default)">Data Source=DINO-PC;Initial Catalog="ADVENTUREWORKS2019";Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False</Value>
     </Setting>
+    <Setting Name="PubsConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data Source=DINO-PC;Initial Catalog="PUBS";Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

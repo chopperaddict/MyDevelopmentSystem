@@ -226,6 +226,7 @@ namespace MyDev
 			InitializeComponent ( );
 			Utils . SetupWindowDrag ( this );
 			Flags . CurrentConnectionString =(string)Properties . Settings . Default [ "BankSysConnectionString" ];
+			Flags . FlowdocCrMultplier = 8;
 		}
 
 		private void button1_Click ( object sender , RoutedEventArgs e )

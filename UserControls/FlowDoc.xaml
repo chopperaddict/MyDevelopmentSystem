@@ -13,21 +13,21 @@
 		 Loaded="flowdoc_Loaded"
 		 x:Name="flowdoc"
              Height="450" Width="550">
-    <!--PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"-->
-    <!--xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"-->
-    <UserControl.Resources>
-        <conv:ReduceByParamValue x:Key="resetTextWidth"/>
+	<!--PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"-->
+	<!--xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"-->
+	<UserControl.Resources>
+		<conv:ReduceByParamValue x:Key="resetTextWidth"/>
 
-        <ControlTemplate x:Key="HorizontalGradientButtonTemplate" TargetType="{x:Type Button}">
-            <!-- NB - it is the Border that controls the buttons default colors
+		<ControlTemplate x:Key="HorizontalGradientButtonTemplate" TargetType="{x:Type Button}">
+			<!-- NB - it is the Border that controls the buttons default colors
 			which lets us set Back/Foreground and border colors in the button itself
 			but still have mouseover etc working correctly, but still have our text "Content" display-->
-            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
+			<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
 				   BorderThickness="{TemplateBinding BorderThickness}" 
 				   Background="{Binding btnBkGround}" 
 				   CornerRadius="15"
 				   SnapsToDevicePixels="True">
-                <ContentPresenter x:Name="contentPresenter" 
+				<ContentPresenter x:Name="contentPresenter" 
 						ContentTemplate="{TemplateBinding ContentTemplate}" 
 						Content="{TemplateBinding Content}" 
 						ContentStringFormat="{TemplateBinding ContentStringFormat}" 
@@ -36,154 +36,174 @@
 						RecognizesAccessKey="True" 
 						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
 						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-            </Border>
+			</Border>
 
-            <ControlTemplate.Triggers>
-                <!--This handles the button being set as IsDefault=true-->
-                <Trigger Property="FrameworkElement.Tag" Value="True">
-                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                    <Setter Property="Background" TargetName="border" >
-                        <Setter.Value>
-                            <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
-                                <GradientStop Color="#FFFFFFFF" Offset="0.514"/>
-                                <GradientStop Color="#FF999999" Offset="0.753"/>
-                                <GradientStop Color="#FFF70711" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="BorderBrush" TargetName="border" Value="Black"/>
-                </Trigger>
+			<ControlTemplate.Triggers>
+				<!--This handles the button being set as IsDefault=true-->
+				<Trigger Property="FrameworkElement.Tag" Value="True">
+					<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+					<Setter Property="Background" TargetName="border" >
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+								<GradientStop Color="#FFFFFFFF" Offset="0.514"/>
+								<GradientStop Color="#FF999999" Offset="0.753"/>
+								<GradientStop Color="#FFF70711" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter Property="BorderBrush" TargetName="border" Value="Black"/>
+				</Trigger>
 
-                <Trigger Property="Button.IsMouseOver" Value="false">
-                    <!--MouseOver FALSE handling-->
-                    <Setter Property="FontWeight"  Value="Bold"/>
+				<Trigger Property="Button.IsMouseOver" Value="false">
+					<!--MouseOver FALSE handling-->
+					<Setter Property="FontWeight"  Value="Bold"/>
 
-                    <Setter Property="Control.Foreground"  TargetName="border">
-                        <Setter.Value>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                <GradientStop Color="#FFF7EFF0" Offset="0.414"/>
-                                <GradientStop Color="#FF8A858C" Offset="0.553"/>
-                                <GradientStop Color="#FF111111" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="Control.Background"  TargetName="border">
-                        <Setter.Value>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                <GradientStop Color="#FF777777" Offset="0.314"/>
-                                <GradientStop Color="#FFffffff" Offset="0.553"/>
-                                <GradientStop Color="#FFF70711" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Setter.Value>
-                    </Setter>
-                </Trigger>
+					<Setter Property="Control.Foreground"  TargetName="border">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+								<GradientStop Color="#FFF7EFF0" Offset="0.414"/>
+								<GradientStop Color="#FF8A858C" Offset="0.553"/>
+								<GradientStop Color="#FF111111" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter Property="Control.Background"  TargetName="border">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+								<GradientStop Color="#FF777777" Offset="0.314"/>
+								<GradientStop Color="#FFffffff" Offset="0.553"/>
+								<GradientStop Color="#FFF70711" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
 
-                <Trigger Property="Button.IsMouseOver" Value="True">
-                    <!--MouseOver TRUE handling-->
-                    <Setter Property="FontWeight"  Value="Bold"/>
+				<Trigger Property="Button.IsMouseOver" Value="True">
+					<!--MouseOver TRUE handling-->
+					<Setter Property="FontWeight"  Value="Bold"/>
 
-                    <Setter Property="Control.Foreground"  TargetName="border">
-                        <Setter.Value>
-                            <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
-                                <GradientStop Color="#FFF7EFF0" Offset="0.414"/>
-                                <GradientStop Color="#FF8A858C" Offset="0.553"/>
-                                <GradientStop Color="#FF111111" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="Background" TargetName="border">
-                        <Setter.Value>
-                            <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
-                                <GradientStop Color="#FF777777" Offset="0.314"/>
-                                <GradientStop Color="#FFffffff" Offset="0.553"/>
-                                <GradientStop Color="#FFF70711" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Setter.Value>
-                    </Setter>
-                </Trigger>
+					<Setter Property="Control.Foreground"  TargetName="border">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+								<GradientStop Color="#FFF7EFF0" Offset="0.414"/>
+								<GradientStop Color="#FF8A858C" Offset="0.553"/>
+								<GradientStop Color="#FF111111" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter Property="Background" TargetName="border">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+								<GradientStop Color="#FF777777" Offset="0.314"/>
+								<GradientStop Color="#FFffffff" Offset="0.553"/>
+								<GradientStop Color="#FFF70711" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
 
-                <Trigger Property="IsPressed" Value="True">
-                    <!--Handles Click event-->
-                    <Setter Property="Background"  TargetName="border" Value="Gray"/>
-                    <Setter Property="BorderBrush" TargetName="border" Value="White"/>
-                </Trigger>
-                <Trigger Property="ToggleButton.IsChecked" Value="True">
-                    <!--Handles any checkbox style checked option-->
-                    <Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
-                    <Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <!--Handles disabled status-->
+				<Trigger Property="IsPressed" Value="True">
+					<!--Handles Click event-->
+					<Setter Property="Background"  TargetName="border" Value="Gray"/>
+					<Setter Property="BorderBrush" TargetName="border" Value="White"/>
+				</Trigger>
+				<Trigger Property="ToggleButton.IsChecked" Value="True">
+					<!--Handles any checkbox style checked option-->
+					<Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+					<Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+				</Trigger>
+				<Trigger Property="IsEnabled" Value="False">
+					<!--Handles disabled status-->
 
-                    <Setter Property="Background" TargetName="border" Value="Gray"/>
-                    <Setter Property="BorderBrush" TargetName="border" Value="Red"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
+					<Setter Property="Background" TargetName="border" Value="Gray"/>
+					<Setter Property="BorderBrush" TargetName="border" Value="Red"/>
+					<Setter Property="Foreground" Value="White"/>
+				</Trigger>
+			</ControlTemplate.Triggers>
+		</ControlTemplate>
 
-        <ContextMenu x:Key="DummyContextmenu">
-            <MenuItem Header="xxxxx"  Click="dummy_Click" >
-                <MenuItem.Icon>
-                    <Image Source="/Icons/symlink_directory_30px.png"  />
-                </MenuItem.Icon>
-            </MenuItem>
-        </ContextMenu>
-    </UserControl.Resources>
+		<ContextMenu x:Key="DummyContextmenu">
+			<MenuItem Header="xxxxx"  Click="dummy_Click" >
+				<MenuItem.Icon>
+					<Image Source="/Icons/symlink_directory_30px.png"  />
+				</MenuItem.Icon>
+			</MenuItem>
+		</ContextMenu>
+	</UserControl.Resources>
 
 
-    <Border 
+	<Border 
 		BorderBrush="{Binding borderColor}"
 		Width="{Binding Path=ActualWidth, ElementName=flowdoc}"
 		BorderThickness="2 4 2 4">
 
-        <Grid x:Name="MainGrid"
+		<Grid x:Name="MainGrid"
 			Background="{Binding backGround}" >
 
-            <!--<behaviors:Interaction.Behaviors>
+			<!--<behaviors:Interaction.Behaviors>
 			<behaviors:MouseDragElementBehavior ConstrainToParentBounds="True"/>
 		</behaviors:Interaction.Behaviors>-->
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="45" />
-                <RowDefinition Height="5" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="120" />
-                <ColumnDefinition Width="5" />
-            </Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="45" />
+				<RowDefinition Height="5" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="5" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="120" />
+				<ColumnDefinition Width="5" />
+			</Grid.ColumnDefinitions>
 
-            <!--// banner header line-->
-            <Canvas x:Name="topcanvas"
+			<!--// banner header line-->
+			<Canvas x:Name="topcanvas"
 				Grid.Row="0" Grid.Column="0"
 				Background="{StaticResource Orange3}"
 				Height="30"
 				Width="{Binding Path=ActualWidth, ElementName=MainGrid}"
 				Margin="0 0 0 0">
 
-                <Border x:Name="border"
+				<Border x:Name="border"
 						BorderBrush="{StaticResource Black0}"
 						BorderThickness="0 0 0 2"
 						Height="{Binding Path=ActualHeight, ElementName=topcanvas}"
 						Width="{Binding Path=ActualWidth, ElementName=topcanvas}">
 
-                    <TextBlock x:Name="Banner"
-							Text="Processing Results / Information"
-							HorizontalAlignment="Center"
-							TextAlignment="Center"
-							FontWeight="DemiBold"
-							Margin="0 0 0 0"	
-							     Padding="0 5 0 0"
-							Width="{Binding Path=ActualWidth, ElementName=border, Converter={StaticResource resetTextWidth},ConverterParameter=20}"
-							Foreground="{StaticResource Black0}"/>
-                </Border>
-            </Canvas>
+					<WrapPanel HorizontalAlignment="Left" Orientation="Horizontal">
+						<TextBlock x:Name="Banner"
+                                          FontWeight="DemiBold"
+                                          Foreground="{StaticResource Black0}"
+                                          HorizontalAlignment="Center"
+                                          Margin="0 0 0 0"	
+                                          Padding="0 5 0 0"
+                                          Text="Processing Results / Information"
+                                          TextAlignment="Center"
+                                          Width="{Binding Path=ActualWidth, ElementName=border, Converter={StaticResource resetTextWidth},ConverterParameter=20}"/>
 
-            <RichTextBox x:Name="doc" 
+						<Image Source="/Icons/maximize2-red.png" HorizontalAlignment="Left" 
+							 Height="20"
+							 Width="20"
+							 PreviewMouseLeftButtonUp="Image_PreviewMouseLeftButtonUp"
+							 Margin="-20 3 0 0"/>
+						<TextBlock x:Name="Exit"
+                                          FontSize="20"
+                                          FontWeight="DemiBold"
+                                          Foreground="{StaticResource Red3}"
+                                          HorizontalAlignment="Right"
+                                          Margin="0 0 0 0"	
+                                          Padding="0 0 0 0"
+					            PreviewMouseLeftButtonUp="Exit_PreviewMouseLeftButtonUp"
+                                          Text="X"
+                                          TextAlignment="Center"
+                                          Width="15"/>
+
+					</WrapPanel>
+				</Border>
+			</Canvas>
+
+			<RichTextBox x:Name="doc" 
                               Focusable="true"						  
 					 FontSize="14"
 					 Foreground="{StaticResource Black5}"
@@ -205,10 +225,10 @@
 					 VerticalScrollBarVisibility="Hidden"
 					Visibility="Hidden"
 					 Width="{Binding Path=ActualWidth, ElementName=flowdoc}"/>
-            <!--PreviewMouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
-            <!--MouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
+			<!--PreviewMouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
+			<!--MouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
 
-            <FlowDocumentScrollViewer x:Name="fdviewer"
+			<FlowDocumentScrollViewer x:Name="fdviewer"
                         ContextMenu="{StaticResource DummyContextmenu}"
                         Focusable="true"	
 			      FontFamily="Arial"
@@ -229,12 +249,12 @@
                         Width="{Binding Path=ActualWidth, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=15}"
 				Grid.ColumnSpan="2"
                         />
-            <!--MouseDown="scrollviewer_MouseDown"-->
-            <!--MouseLeftButtonDown="scrollviewer_PreviewMouseLeftButtonDown"-->
-            <!--PreviewMouseLeftButtonDown="scrollviewer_PreviewMouseLeftButtonDown"-->
+			<!--MouseDown="scrollviewer_MouseDown"-->
+			<!--MouseLeftButtonDown="scrollviewer_PreviewMouseLeftButtonDown"-->
+			<!--PreviewMouseLeftButtonDown="scrollviewer_PreviewMouseLeftButtonDown"-->
 
-            <!--Click="Button_Click"-->
-            <Button   x:Name="CloseBtn"
+			<!--Click="Button_Click"-->
+			<Button   x:Name="CloseBtn"
 				Background="{Binding btnBkGround}"
 				Foreground="{Binding btnForeGround}"
     				Grid.Row="2"
@@ -249,16 +269,16 @@
 				Template="{StaticResource HorizontalGradientButtonTemplate}"
 				Content="Close"/>
 
-            <TextBlock
+			<TextBlock
     			Grid.Row="2"
 			Grid.Column="1"
 			Grid.ColumnSpan="2"
 			HorizontalAlignment="Left" 
-			Width="233"
+			Width="420"
 			PreviewMouseLeftButtonUp="Closebtn_PreviewMouseLeftButtonUp"
-			Text="Click in Panel to drag it around window !" 
-			Margin="187,15,0,12"/>
+			Text="Click anywhere inside this Panel to drag it around in this window !" 
+			Margin="14,15,0,12"/>
 
-        </Grid>
-    </Border>
+		</Grid>
+	</Border>
 </UserControl>

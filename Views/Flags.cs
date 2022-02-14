@@ -36,6 +36,7 @@ namespace MyDev . Views
 		public static bool UseSharedView { get; set; }
 		public static bool UseScrollView { get; set; }
 		public static bool UseFlowScrollbar { get; set; }
+		public static int FlowdocCrMultplier { get; set; }
 		public static bool PinToBorder { get; set; }
 		public static bool SqlGridSwitchingActive = false;
 		public static bool SqlBankActive = false;

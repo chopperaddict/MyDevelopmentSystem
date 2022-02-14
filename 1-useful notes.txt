@@ -1,4 +1,36 @@
 ﻿===============================================================================================================
+	// How to HOOK into a method in another control/usercontrol/w.h.y Events
+	// **** This could be used in many scenarios to allow "Remote" handling of other controls/Windows ****//
+===============================================================================================================
+
+		// Put this in  the window we wnnt to perform the "Control" FROM to Hook,in this case
+		// into our Flowdoc so we can resize it in  the canvas !!!
+		// Flowdoc has an Event declared (ExecuteFlowDocSizeMethod ) that we are  hooking into
+		
+		Flowdoc . ExecuteFlowDocSizeMethod += new EventHandler ( ParentWPF_method );
+		
+		// Code in "Donor"  or user control is :"
+		public event EventHandler ExecuteFlowDocSizeMethod;
+		
+		protected virtual void OnExecuteMethod ( )
+		{
+			if ( ExecuteFlowDocSizeMethod != null )
+				ExecuteFlowDocSizeMethod ( this , EventArgs . Empty );
+		}
+
+		public void ChildButton_Click ( object sender , EventArgs e )
+		{
+			OnExecuteMethod ( );
+		}
+
+		// link from the control that initiates this action
+		private void Image_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			//maximize ?
+			OnExecuteMethod ( );
+		}
+
+===============================================================================================================
 	// How to use a Dp or Attached property in a Style/Template
 ===============================================================================================================
 	

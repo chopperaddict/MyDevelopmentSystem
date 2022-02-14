@@ -73,8 +73,7 @@ namespace MyDev . UserControls
 			{
 				fdviewer . Visibility = Visibility . Visible;
 				doc . Visibility = Visibility . Hidden;
-			}
-			else
+			} else
 			{
 				fdviewer . Visibility = Visibility . Hidden;
 				doc . Visibility = Visibility . Visible;
@@ -104,8 +103,7 @@ namespace MyDev . UserControls
 				myFlowDocument2 = CreateFlowDocumentScroll ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 );
 				fdviewer . Document = myFlowDocument2;
 				textRange = new TextRange ( fdviewer . Document . ContentStart , fdviewer . Document . ContentEnd );
-			}
-			else
+			} else
 			{
 				fdviewer . Visibility = Visibility . Hidden;
 				doc . Visibility = Visibility . Visible;
@@ -130,59 +128,54 @@ namespace MyDev . UserControls
 			flowdoc . SetValue ( HeightProperty , DocHeight );
 			flowdoc . SetValue ( WidthProperty , DocWidth );
 			if ( textRange . Text . Length < 100 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 180 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 180 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 150 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 220 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 210 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 200 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 245 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 235 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 250 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 275 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 255 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 300 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 290 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 275 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 350 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 290 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 285 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 400 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 300 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 320 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 450 )
-				flowdoc . SetValue ( HeightProperty , ( double ) 320 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 340 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 500 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 340 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 360 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 20 );
-			}
-			else if ( textRange . Text . Length < 600 )
+			} else if ( textRange . Text . Length < 600 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 380 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 450 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 30 );
-			}
-			else if ( textRange . Text . Length < 700 )
+			} else if ( textRange . Text . Length < 700 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 420 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 40 );
-			}
-			else if ( textRange . Text . Length < 800 )
+			} else if ( textRange . Text . Length < 800 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 460 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 600 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 50 );
-			}
-			else if ( textRange . Text . Length < 900 )
+			} else if ( textRange . Text . Length < 900 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 700 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 60 );
-			}
-			else
+			} else
 			{
 				Flags . UseFlowScrollbar = true;
-				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * 5 );
+				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 100 );
 			}
-			flowdoc . Height =Convert.ToDouble( flowdoc . GetValue ( HeightProperty ));
-			flowdoc . Width = Convert . ToDouble ( flowdoc . GetValue ( WidthProperty ));
+			flowdoc . Height = Convert . ToDouble ( flowdoc . GetValue ( HeightProperty ) );
+			flowdoc . Width = Convert . ToDouble ( flowdoc . GetValue ( WidthProperty ) );
 			if ( flowdoc . Height == 0 )
 				flowdoc . Height = v1;
-			flowdoc . SetValue ( HeightProperty , (double)flowdoc.Height);
-			if ( flowdoc . Width== 0 )
-				flowdoc . Width= v2;
+			flowdoc . SetValue ( HeightProperty , ( double ) flowdoc . Height );
+			if ( flowdoc . Width == 0 )
+				flowdoc . Width = v2;
 			flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width );
 
 			if ( this . Visibility == Visibility . Hidden )
@@ -194,14 +187,12 @@ namespace MyDev . UserControls
 					{
 						fdviewer . VerticalScrollBarVisibility = ScrollBarVisibility . Visible;
 						fdviewer . IsEnabled = true;
-					}
-					else
+					} else
 					{
 						doc . VerticalScrollBarVisibility = ScrollBarVisibility . Visible;
 						doc . IsEnabled = true;
 					}
-				}
-				else
+				} else
 				{
 					if ( Flags . UseScrollView )
 						fdviewer . IsEnabled = false;
@@ -212,8 +203,7 @@ namespace MyDev . UserControls
 				this . BringIntoView ( );
 				if ( beep )
 					Utils . DoErrorBeep ( 300 , 50 , 1 );
-			}
-			else
+			} else
 			{
 				this . BringIntoView ( );
 			}
@@ -257,14 +247,15 @@ namespace MyDev . UserControls
 			}
 			if ( line2 != "" )
 			{
-				// BOLD
+				//\NORMAL
 				Paragraph para2= new Paragraph();
 				para2 . FontFamily = new FontFamily ( "Arial" );
+				para2 . FontSize = 14;
 				if ( clr2 != "" )
 					para2 . Foreground = FindResource ( clr2 . Trim ( ) ) as SolidColorBrush;
 				else
 					para2 . Foreground = FindResource ( "Black2" ) as SolidColorBrush;
-				para2 . Inlines . Add ( new Bold ( new Run ( line2 ) ) );
+				para2 . Inlines . Add ( new Run ( line2 ) );
 				//Add paragraph to flowdocument
 				myFlowDocument . Blocks . Add ( para2 );
 			}
@@ -309,7 +300,7 @@ namespace MyDev . UserControls
 			{
 				//NORMAL
 				Paragraph para1= new Paragraph();
-				para1 . FontSize = 14;
+				para1 . FontSize = 12;
 				para1 . FontFamily = new FontFamily ( "Arial" );
 				if ( clr1 != "" )
 					para1 . Foreground = FindResource ( clr1 . Trim ( ) ) as SolidColorBrush;
@@ -324,12 +315,12 @@ namespace MyDev . UserControls
 				// BOLD
 				Paragraph para2= new Paragraph();
 				para2 . FontFamily = new FontFamily ( "Arial" );
-				para2 . FontSize = 15;
+				para2 . FontSize = 14;
 				if ( clr2 != "" )
 					para2 . Foreground = FindResource ( clr2 . Trim ( ) ) as SolidColorBrush;
 				else
 					para2 . Foreground = FindResource ( "Black2" ) as SolidColorBrush;
-				para2 . Inlines . Add ( new Bold ( new Run ( line2 ) ) );
+				para2 . Inlines . Add ( new Run ( line2 ) );
 				//Add paragraph to flowdocument
 				myFlowDocument . Blocks . Add ( para2 );
 			}
@@ -338,7 +329,7 @@ namespace MyDev . UserControls
 				//ITALIC
 				Paragraph para3= new Paragraph();
 				para3 . FontFamily = new FontFamily ( "Arial" );
-				para3 . FontSize = 16;
+				para3 . FontSize = 14;
 				if ( clr3 != "" )
 					para3 . Foreground = FindResource ( clr3 . Trim ( ) ) as SolidColorBrush;
 				else
@@ -397,8 +388,7 @@ namespace MyDev . UserControls
 			{
 				e . Handled = true;
 				this . Visibility = Visibility . Hidden;
-			}
-			else if ( e . Key == Key . F8 )
+			} else if ( e . Key == Key . F8 )
 			{
 				fdviewer . ReleaseMouseCapture ( );
 				flowdoc . ReleaseMouseCapture ( );
@@ -414,8 +404,7 @@ namespace MyDev . UserControls
 			{
 				fdviewer . IsEnabled = true;
 				return;
-			}
-			else
+			} else
 				fdviewer . IsEnabled = false;
 		}
 
@@ -426,8 +415,7 @@ namespace MyDev . UserControls
 			{
 				fdviewer . IsEnabled = true;
 				return;
-			}
-			else
+			} else
 				fdviewer . IsEnabled = false;
 			MouseCaptured = flowdoc . CaptureMouse ( );
 			Console . WriteLine ( "Mouse CAPTURED...flowdoc_PreviewMouseLeftButtonDown()" );
@@ -443,8 +431,7 @@ namespace MyDev . UserControls
 						fdviewer . IsEnabled = true;
 					else
 						doc . IsEnabled = true;
-				}
-				else
+				} else
 				{
 					if ( Flags . UseScrollView )
 					{
@@ -457,8 +444,7 @@ namespace MyDev . UserControls
 							flowdoc . ReleaseMouseCapture ( );
 							return;
 						}
-					}
-					else
+					} else
 					{
 						doc . IsEnabled = false;
 						if ( doc . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
@@ -470,8 +456,7 @@ namespace MyDev . UserControls
 						}
 					}
 				}
-			}
-			else
+			} else
 			{
 				// NOT over scrollbar, so only allow drag
 				if ( Flags . UseScrollView )
@@ -483,8 +468,7 @@ namespace MyDev . UserControls
 					//		fdviewer . IsEnabled = true;
 					//		return;
 					//	}
-				}
-				else
+				} else
 				{
 					doc . IsEnabled = true;
 					//if ( doc . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
@@ -517,7 +501,7 @@ namespace MyDev . UserControls
 		}
 		private void doc_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
-			fdviewer. ReleaseMouseCapture ( );
+			fdviewer . ReleaseMouseCapture ( );
 			flowdoc . ReleaseMouseCapture ( );
 			Console . WriteLine ( "Mouse RELEASED...(doc_PreviewMouseLeftButtonUp" );
 			//e . Handled = true;
@@ -527,7 +511,7 @@ namespace MyDev . UserControls
 			fdviewer . ReleaseMouseCapture ( );
 			flowdoc . ReleaseMouseCapture ( );
 			Console . WriteLine ( "Mouse RELEASED...(scrollviewerdoc_PreviewMouseLeftButtonUp" );
-//			e . Handled = true;
+			//			e . Handled = true;
 		}
 
 		private void scrollviewer_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
@@ -536,8 +520,7 @@ namespace MyDev . UserControls
 			{
 				fdviewer . IsEnabled = true;
 				return;
-			}
-			else
+			} else
 				fdviewer . IsEnabled = false;
 
 			MouseCaptured = flowdoc . CaptureMouse ( );
@@ -550,8 +533,7 @@ namespace MyDev . UserControls
 			{
 				fdviewer . IsEnabled = true;
 				return;
-			}
-			else
+			} else
 				fdviewer . IsEnabled = false;
 			MouseCaptured = flowdoc . CaptureMouse ( );
 			Console . WriteLine ( "Mouse CAPTURED...scrollviewer_PreviewMouseLeftButtonDown()" );
@@ -581,7 +563,32 @@ namespace MyDev . UserControls
 
 		private void checkBox_Click ( object sender , RoutedEventArgs e )
 		{
-			Flags.PinToBorder = ! Flags.PinToBorder;
+			Flags . PinToBorder = !Flags . PinToBorder;
 		}
+
+		private void Exit_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			this . Visibility = Visibility . Hidden;
+		}
+
+		#region External Hook
+		//code to allow this action in flowdocto be andled by an external window
+		// Clever stuff really
+
+		// Allows any other (External) window to control this via  the control 
+		public event EventHandler ExecuteFlowDocSizeMethod;
+		protected virtual void OnExecuteMethod ( )
+		{
+			if ( ExecuteFlowDocSizeMethod != null )
+				ExecuteFlowDocSizeMethod ( this , EventArgs . Empty );
+		}
+		private void Image_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			//allows remote window to maximize /resize  this control ?
+			OnExecuteMethod ( );
+		}
+		#endregion External Hook
+
+
 	}
 }
