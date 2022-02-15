@@ -9,13 +9,88 @@
         xmlns:user="clr-namespace:MyDev.UserControls"
         mc:Ignorable="d"
 	 Loaded="ListViewWindow_Loaded"
+	  Closed="ListViewWindow_Closed"
 		x:Name="ListViewWindow"
        Title="List Views" 
-	  MinHeight="1150" MinWidth="1000"
-	  Height="650" Width="1000">
+	  MinHeight="830" MinWidth="1220"
+	  Height="830" Width="1226"
+	  WindowChrome.ResizeGripDirection="BottomRight"
+	  ResizeMode="CanResizeWithGrip"
+	  WindowStartupLocation="Manual">
 
 	<Window.Resources>
 		<conv:ReduceByParamValue x:Key="resetTextWidth"/>
+		<conv:UniversalValueConverter x:Key="UniversalConvert" />
+
+		<Style x:Key="DataGridStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+			<Style.Triggers>
+				<!--// Window IS FOCUSED-->
+
+				<!--#region Triggers-->
+
+				<!--NOT SELECTED,  MOUSEOVER / FALSE-->
+				<!--1, False, False -->
+				<MultiDataTrigger>
+					<MultiDataTrigger.Conditions>
+						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="False" />
+						<!--<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}, Path=IsKeyboardFocusWithin}" Value="False" />-->
+						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="False" />
+					</MultiDataTrigger.Conditions>
+					<MultiDataTrigger.Setters>
+						<Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Cyan3}" />
+						<Setter Property="Foreground" Value="{StaticResource Black2}" />
+					</MultiDataTrigger.Setters>
+				</MultiDataTrigger>
+
+				<!--NOT SELECTED,  MOUSEOVER / TRUE-->
+				<!--1, False, True -->
+				<MultiDataTrigger>
+					<MultiDataTrigger.Conditions>
+						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="False" />
+						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
+					</MultiDataTrigger.Conditions>
+					<MultiDataTrigger.Setters>
+						<Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue3}" />
+						<Setter Property="Foreground" Value="{StaticResource White0}" />
+					</MultiDataTrigger.Setters>
+				</MultiDataTrigger>
+				<!-- SELECTED,  MOUSEOVER / TRUE-->
+				<!--1, True, True -->
+				<MultiDataTrigger>
+					<MultiDataTrigger.Conditions>
+						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="True" />
+						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
+					</MultiDataTrigger.Conditions>
+					<MultiDataTrigger.Setters>
+						<Setter Property="Background" Value="{StaticResource Red0}" />
+						<Setter Property="Foreground" Value="{StaticResource White0}" />
+						<Setter Property="FontWeight" Value="DemiBold" />
+					</MultiDataTrigger.Setters>
+				</MultiDataTrigger>
+
+
+				<!--#### ACTYPE = 1 ####-->
+				<!-- SELECTED,  MOUSEOVER / FALSE-->
+				<!--1, True, False -->
+				<MultiDataTrigger>
+					<MultiDataTrigger.Conditions>
+						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="true" />
+						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="False" />
+					</MultiDataTrigger.Conditions>
+					<MultiDataTrigger.Setters>
+						<Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue0}" />
+						<Setter Property="Foreground" Value="{StaticResource White0}" />
+						<Setter Property="FontWeight" Value="Bold"/>
+					</MultiDataTrigger.Setters>
+				</MultiDataTrigger>
+
+
+
+
+				<!--#endregion Triggers-->
+
+			</Style.Triggers>
+		</Style>
 	</Window.Resources>
 
 	<Window.Background>
@@ -31,9 +106,10 @@
 	<Grid x:Name="MainGrid">
 
 		<Grid.RowDefinitions>
-			<RowDefinition  Height="5" />
-			<RowDefinition  x:Name="row1" Height="5*" />
-			<RowDefinition   Height="2*" />
+			<RowDefinition  Height="35" />
+			<RowDefinition  x:Name="row0" Height="1.5*" />
+			<RowDefinition  x:Name="row1" Height="2*" />
+			<RowDefinition   Height="0.8*" />
 			<RowDefinition   Height="65" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
@@ -43,7 +119,6 @@
 			<ColumnDefinition  Width="*" />
 			<ColumnDefinition  Width="10" />
 		</Grid.ColumnDefinitions>
-
 		<!--#region Flowdoc-->
 
 		<Canvas x:Name="canvas" Grid.Row="0"
@@ -68,23 +143,40 @@
 				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"
 				MouseMove="Flowdoc_MouseMove"
 				Opacity="1"
-				Panel.ZIndex="2"
+				Panel.ZIndex="4"
 				PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"
 				Visibility="Hidden" 						  
 				Width="520"
 			/>
 			<!--IsVisibleChanged="Flowdoc_IsVisibleChanged"-->
+
+			<user:Colorpicker  x:Name="PickColors" 
+				Canvas.Left="331" 
+				Canvas.Top="356" 
+				Visibility="Hidden" 
+				MouseLeftButtonUp="PickColors_MouseLeftButtonUp"
+				MouseMove="PickColors_MouseMove"
+				Panel.ZIndex="4"
+				PreviewMouseLeftButtonDown="PickColors_PreviewMouseLeftButtonDown"
+						 />
+
 		</Canvas>
 
 		<!--#endregion Flowdoc-->
 
+		<DataGrid x:Name="dGrid"
+			CellStyle="{StaticResource DataGridStyle}"
+			Grid.Column="1"
+			Grid.Row="1"
+			Grid.ColumnSpan="3"
+/>
 		<!--#region List Box/views-->
 
 		<ListBox x:Name="listBox" 
 				Background="Transparent"
 				FontSize="12"
 				Grid.Column="1"
-				Grid.Row="1"
+				Grid.Row="2"
 				Height="{Binding row1.Height}"
 				HorizontalAlignment="Stretch"
 				ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
@@ -102,7 +194,7 @@
 				FocusVisualStyle="{x:Null}"
 				Grid.Column="3"
 				Grid.ColumnSpan="1"
-				Grid.Row="1"
+				Grid.Row="2"
 				Height="{Binding row1.Height}"
 				HorizontalAlignment="Stretch"	
 				ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -118,6 +210,21 @@
 		<!--#endregion List Box/views-->
 
 		<!--#region TextBoxes / Blocks-->
+		<TextBox x:Name="dGridHeader" 
+			Background="{StaticResource Blue0}"
+			FontSize="16"
+			FontWeight="DemiBold"
+			Foreground="{StaticResource Yellow1}"
+			Grid.Column="1"
+			Grid.ColumnSpan="3"
+			Grid.Row="0" 
+			Grid.RowSpan="1"
+			Height="25"
+			HorizontalContentAlignment="Center"
+			Margin="0 0 0 0"
+			Padding="0 0 0 0"
+			Text="List Box Display"
+			VerticalAlignment="Top"/>
 
 		<TextBox x:Name="lbHeader" 
 			Background="{StaticResource Blue0}"
@@ -125,7 +232,7 @@
 			FontWeight="DemiBold"
 			Foreground="{StaticResource Yellow1}"
 			Grid.Column="1"
-			Grid.Row="1" 
+			Grid.Row="2" 
 			Grid.RowSpan="1"
 			Height="25"
 			HorizontalContentAlignment="Center"
@@ -139,7 +246,7 @@
 			FontWeight="DemiBold"
 			Foreground="{StaticResource Yellow1}"
 			Grid.Column="3"
-			Grid.Row="1" 
+			Grid.Row="2" 
 			Grid.RowSpan="1"
 			Height="25"
 			HorizontalContentAlignment="Center"
@@ -157,7 +264,7 @@
 			  Foreground="{StaticResource White0}"
 			  FontSize="15"
 			  FontWeight="Bold"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="1"
 			  Height="30"
 			  HorizontalAlignment="Left"
@@ -178,7 +285,7 @@
 			  Foreground="{StaticResource White0}"
 			  FontSize="15"
 			  FontWeight="Bold"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="3"
 			  Height="30"
 			  HorizontalAlignment="Left"
@@ -195,7 +302,7 @@
 			  Foreground="{StaticResource White0}" 
 			  FontSize="15"
 			  FontWeight="Normal"
-			  Grid.Row="3"
+			  Grid.Row="4"
 			  Grid.Column="1"
 			  Height="30"
 			  HorizontalAlignment="Left"
@@ -211,7 +318,7 @@
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
 			  Foreground="{StaticResource Black0}"
-			  Grid.Row="2" 
+			  Grid.Row="3" 
 			  Grid.Column="3"
 			  Height="23"    
 			  HorizontalAlignment="Right"
@@ -226,7 +333,7 @@
 			  FontSize="14"
 			  FontWeight="DemiBold"
 			  Foreground="{StaticResource Black0}"
-			  Grid.Row="2" 
+			  Grid.Row="3" 
 			  Grid.Column="3"
 			  Height="23"    
 			  HorizontalAlignment="Right"
@@ -241,7 +348,7 @@
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
 			  Foreground="{StaticResource Black0}"
-			  Grid.Row="2" 
+			  Grid.Row="3" 
 			  Grid.Column="1"
 			  Height="23"    
 			  HorizontalAlignment="Right"
@@ -255,7 +362,7 @@
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
 			  Foreground="{StaticResource Black0}"
-			  Grid.Row="3" 
+			  Grid.Row="4" 
 			  Grid.Column="1"
 			  Height="23"    
 			  HorizontalAlignment="Left"
@@ -270,7 +377,7 @@
 				FocusVisualStyle="{x:Null}"
 				FontWeight="DemiBold"
 				Foreground="{StaticResource Black0}"
-				Grid.Row="3" 
+				Grid.Row="4" 
 				Grid.Column="1"
 				Height="23"    
 				HorizontalAlignment="Left"
@@ -285,7 +392,7 @@
 			FontWeight="DemiBold"
 			Foreground="{StaticResource Black0}"
 			Grid.Column="3"
-			Grid.Row="2"
+			Grid.Row="3"
 			Grid.RowSpan="2" 
 			Height="23"    
 			HorizontalAlignment="Left"
@@ -300,7 +407,7 @@
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
 			  Foreground="{StaticResource Black0}"
-			  Grid.Row="2" 
+			  Grid.Row="3" 
 			  Grid.Column="1"
 			  Height="23"    
 			  HorizontalAlignment="Right"
@@ -324,7 +431,7 @@
 			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Orange0}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="1"
 			  Height="25"
 			  HorizontalAlignment="Right"
@@ -354,7 +461,7 @@
 			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Orange0}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="3"
 			  Height="25"
 			  HorizontalAlignment="Right"
@@ -384,7 +491,7 @@
 			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
-			  Grid.Row="3"
+			  Grid.Row="4"
 			  Grid.Column="3"
 			  Height="25"
 			  HorizontalAlignment="Left"
@@ -414,7 +521,7 @@
 			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
-			  Grid.Row="3"
+			  Grid.Row="4"
 			  Grid.Column="1"
 			  Height="25"
 			  HorizontalAlignment="Left"
@@ -445,7 +552,7 @@
 			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
-			  Grid.Row="3"
+			  Grid.Row="4"
 			  Grid.Column="1"
 			  Height="25"
 			  HorizontalAlignment="Left"
@@ -471,7 +578,7 @@
 			  AllowDrop="True"
 			  FontSize="14"
 			  FontWeight="DemiBold"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			att:MenuAttachedProperties.NormalBackground="{StaticResource Blue6}"
 			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
@@ -506,7 +613,7 @@
 			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="1"
 			  Height="25"
 			  HorizontalAlignment="Right"
@@ -540,7 +647,7 @@
 			  Click="App_Close"
 			  Content="Close App"
 			  Foreground="{StaticResource ResourceKey=White0}" 
-			  Grid.Row="3" 
+			  Grid.Row="4" 
 			  Grid.Column="3"
 			  Height="40" 
 			  HorizontalAlignment="Right"
@@ -553,7 +660,7 @@
 			  Click="Close_Btn"
 			  Content="Close"
 			  Foreground="{StaticResource ResourceKey=White0}" 
-			  Grid.Row="3" 
+			  Grid.Row="4" 
 			  Grid.Column="3"
 			  Height="40" 
 			  HorizontalAlignment="Right"
@@ -566,7 +673,7 @@
 			  Click="ReloadListbox"
 			  Content="Reload List Box"
 			  Foreground="{StaticResource ResourceKey=White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="1"
 			  Height="40"
 			  HorizontalAlignment="Right"
@@ -579,33 +686,33 @@
 			  Click="ReloadListview"
 			  Content="Reload List View"
 			  Foreground="{StaticResource ResourceKey=White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="3"
 			  Height="40"
 			  HorizontalAlignment="Right"
-			  Margin="0,0,0,40"
+			  Margin="0,80,0,0"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
-			  VerticalAlignment="Bottom"
+			  VerticalAlignment="Top"
 			  Width="110" TabIndex="8"  />
 		<Button x:Name="ViewColumnsLv_Copy"
 			  AllowDrop="True"
 			  Click="ViewTableColumnsLv"
 			  Content="View Columns"
 			  Foreground="{StaticResource ResourceKey=White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="3"
 			  Height="40"
 			  HorizontalAlignment="Right"
-			  Margin="0,0,120,40"
+			  Margin="0,80,120,0"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
-			  VerticalAlignment="Bottom"
+			  VerticalAlignment="Top"
 			  Width="110" TabIndex="8"   />
 		<Button x:Name="ViewColumnsLb"
 			  AllowDrop="True"
 			  Click="ViewTableColumnsLb"
 			  Content="View Columns"
 			  Foreground="{StaticResource ResourceKey=White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="1"
 			  Height="40"
 			  HorizontalAlignment="Right"
@@ -614,19 +721,28 @@
 			  VerticalAlignment="Top"
 			  Width="110" TabIndex="8"  />
 		<!--// Unused Buttons-->
-		<!--<Button x:Name="LvTemplate"
+		<Button x:Name="clrviewer"
 			  AllowDrop="True"
-			  Click="SwitchLBTemplate"
-			  Content="Update List Box"
+			  Click="LoadColorpicker"
+			  Content="Colors Selector"
 			  Foreground="{StaticResource ResourceKey=White0}"
-			  Grid.Row="2"
+			  Grid.Row="3"
 			  Grid.Column="3"
 			  Height="40"
 			  HorizontalAlignment="Left"
-			  Margin="92,0,0,28"
-			  Template="{StaticResource GradientButtonTemplateBlue}"
-			  VerticalAlignment="Bottom"
-			  Width="110" TabIndex="8"  />-->
+			  Margin="80,5,0,0"
+			  Template="{StaticResource HorizontalGradientTemplateYellow}"
+			  VerticalAlignment="Top"
+			  Width="110" TabIndex="8" RenderTransformOrigin="0.5,0.5"  >
+			<Button.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform/>
+					<SkewTransform AngleX="0"/>
+					<RotateTransform/>
+					<TranslateTransform X="0"/>
+				</TransformGroup>
+			</Button.RenderTransform>
+		</Button>
 		<!--<Button x:Name="LbTemplate"
 			  AllowDrop="True"
 			  Click="SwitchLVTemplate"
@@ -644,54 +760,88 @@
 		<!--#endregion Buttons-->
 
 		<!--#region Checkboxes-->
-		<Border
+		<!--<Border
 			Background="Transparent"
 			BorderBrush="{StaticResource Red3}"
 			BorderThickness="1"
 			Grid.Column="1" 
-			Grid.Row="2" 
-			Margin="0,74,269,0" 
-			>
-			<Grid>
-				<CheckBox x:Name="ParkDoc" 
+			Grid.Row="3" 
+			Margin="0,135,269,0" 
+			>-->
+		<!--<Grid Margin="0,-32,128,32"
+			Grid.Column="1" 
+			Grid.Row="3" 
+				>-->
+		<CheckBox x:Name="ParkDoc" 
 					Click="Park_Click"
 					Content="Display at Top Left Corner"
 					FontSize="11"
 					Foreground="{StaticResource Black0}"
+					Grid.Column="1" 
+					Grid.Row="3" 
 					HorizontalAlignment="Left"
 					IsChecked="False"
-					Margin="6,0,0,45" 
-					VerticalAlignment="Center"
-					Width="202" Height="17" 
+					Margin="0,45,0,0"
+					VerticalAlignment="Top"
+					Width="202" Height="57" Grid.RowSpan="2" 
 					    />
-				<CheckBox x:Name="Showinfo" 
+		<CheckBox x:Name="Showinfo" 
 					Click="ShowInfo_Click"
 					Content="Display Flow Document for results"
 					FontSize="11"
 					Foreground="{StaticResource Black0}"
+					Grid.Column="1" 
+					Grid.Row="3" 
 					HorizontalAlignment="Left"
 					IsChecked="False" 
-					Margin="6,5,0,0" 
-					VerticalAlignment="Center"
-					Width="206" Height="17" 
+					Margin="0,75,0,0"
+					VerticalAlignment="Top"
+					Width="206" Height="18" 
 						    />
-				<CheckBox x:Name="UseScrollview" 
+		<CheckBox x:Name="UseScrollview" 
 					Click="scrollview_Click"
 					Content="Use Scroll Viewer in Flow Document"
 					FontSize="11"
 					Foreground="{StaticResource Black0}" 
-					Height="17" 
+					Grid.Column="1" 
+					Grid.Row="3" 
+					Height="18" 
 					HorizontalAlignment="Left"
 					IsChecked="False"
-					Margin="6,60,0,0" 
+					Margin="0,105,0,0"
 					VerticalAlignment="Top"
 					Width="206" 
 				    />
-			</Grid>
-		</Border>
+		<!--</Grid>-->
+		<!--</Border>-->
 		<!--#endregion Checkboxes-->
-		<!--<Image Source="/Icons/redcross.png" Grid.Column="2" Margin="3,54,373,10" Grid.Row="2" Grid.ColumnSpan="2"/>-->
 
+		<!--<Image x:Name="Arrow1" Source="/Icons/left arroiw red.png" 
+			 Grid.Row="3" Grid.Column="3" 
+			 Height="20"    Width="20"
+			 Margin="315,0,275,59"
+			 PreviewMouseLeftButtonUp="Arrow1_PreviewMouseLeftButtonUp"
+			 VerticalAlignment="Bottom">
+			<Image.RenderTransform>
+				<TransformGroup>
+					<RotateTransform Angle="90.476"/>
+					<TranslateTransform X="-19.702" Y="37.596"/>
+				</TransformGroup>
+			</Image.RenderTransform>
+		</Image>-->
+
+		<Image x:Name="Arrow2" Source="/Icons/left arroiw red.png"  
+			 Grid.Row="3" Grid.Column="1"
+			 Height="20"    Width="20"
+			 Margin="175,0,415,138"
+			 VerticalAlignment="Bottom">
+			<Image.RenderTransform>
+				<TransformGroup>
+					<RotateTransform Angle="90.656"/>
+					<TranslateTransform X="-5.732" Y="-13.922"/>
+				</TransformGroup>
+			</Image.RenderTransform>
+		</Image>
 
 	</Grid>
 </Window>

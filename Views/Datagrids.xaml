@@ -12,6 +12,8 @@
 	Closing="Window_Closing"
 	PreviewKeyDown="Window_PreviewKeyDown"
 	  PreviewMouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"
+	  WindowChrome.ResizeGripDirection="BottomRight"
+	  ResizeMode="CanResizeWithGrip"
 	Title="Datagrids" 
 	Height="760" 
 	Width="800"

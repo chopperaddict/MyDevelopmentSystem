@@ -1,4 +1,5 @@
-﻿using MyDev . SQL;
+﻿using MyDev . Sql;
+using MyDev . SQL;
 using MyDev . UserControls;
 using MyDev . ViewModels;
 
@@ -18,11 +19,10 @@ using System . Windows . Input;
 using System . Windows . Media;
 using System . Xml . Linq;
 
+using static Dapper . SqlMapper;
+
 namespace MyDev . Views
 {
-	/// <summary>
-	/// Interaction logic for Listviews.xaml
-	/// </summary>
 	public partial class Listviews : Window, INotifyPropertyChanged
 	{
 		#region OnPropertyChanged
@@ -179,7 +179,6 @@ namespace MyDev . Views
 			set { dbCountlv = value; OnPropertyChanged ( "DbCountlv" ); Console . WriteLine ( $"DbCountlv set to {value}" ); }
 		}
 
-
 		private bool ismouseDown;
 		public bool isMouseDown
 		{
@@ -192,12 +191,24 @@ namespace MyDev . Views
 			get { return movingobject; }
 			set { movingobject = value; }
 		}
+		private object Colorpickerobject;
+
+		public object ColorpickerObject
+		{
+			get { return Colorpickerobject; }
+			set { Colorpickerobject = value; }
+		}
+
 
 		private double FirstXPos=0;
 		private double FirstYPos=0;
 
+		private double CpFirstXPos=0;
+		private double CpFirstYPos=0;
+
 		#endregion Full Properties
-	     //Data  for font size/rowheight
+
+		//Data  for font size/rowheight
 		private List<int> fontsizes = new List<int>( );
 		private List<int> rowsizes = new List<int>( );
 
@@ -224,6 +235,8 @@ namespace MyDev . Views
 		//*************************************************************//
 		private void ListViewWindow_Loaded ( object sender , RoutedEventArgs e )
 		{
+			this . DataContext = this;
+			canvas . Visibility = Visibility . Visible;
 			// Initialize all connection strings
 			LoadConnectionStrings ( );
 
@@ -270,6 +283,9 @@ namespace MyDev . Views
 			// Hook into our Flowdoc so we can resize it in  the canvas !!!
 			// Flowdoc has an Event declared (ExecuteFlowDocSizeMethod ) that we are  hooking into
 			Flowdoc . ExecuteFlowDocSizeMethod += new EventHandler ( ParentWPF_method );
+			Colorpicker . ExecuteSaveToClipboardMethod += Colorpicker_ExecuteSaveToClipboardMethod;
+//			Colorpicker . ExecuteMoveMethod += Colorpicker_ExecuteMoveMethod;
+
 
 			// LOAD BOTH VIEWERS (NO PARAMETER)
 			LoadGrid_IAN1 ( );
@@ -282,6 +298,8 @@ namespace MyDev . Views
 			LoadFontsizes ( );
 			LoadRowsizes ( );
 		}
+
+
 		private void LoadRowsizes ( )
 		{
 			rowsizes . Add ( 10 );
@@ -291,7 +309,7 @@ namespace MyDev . Views
 			rowsizes . Add ( 16 );
 			rowsizes . Add ( 17 );
 			rowsizes . Add ( 18 );
-			rowsizes . Add ( 20);
+			rowsizes . Add ( 20 );
 			rowsizes . Add ( 22 );
 			rowsizes . Add ( 24 );
 			rowsizes . Add ( 26 );
@@ -549,37 +567,28 @@ namespace MyDev . Views
 				if ( type == "VIEW" )
 				{
 					listView . ItemsSource = bankaccts;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					//					listView . SelectedIndex = 0;
+					dGrid . ItemsSource = bankaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "VIEW" , bankaccts . Count );
 					listView . Focus ( );
-					DbCountlv = bankaccts . Count;
 				}
 				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = bankaccts;
-					FrameworkElement elemnt = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					//					listBox . SelectedIndex = 0;
+					dGrid . ItemsSource = bankaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "BOX" , bankaccts . Count );
 					listBox . Focus ( );
-					DbCountlb = bankaccts . Count;
 				}
 				else
 				{
 					listView . ItemsSource = bankaccts;
 					listBox . ItemsSource = bankaccts;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = bankaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "" , bankaccts . Count );
 					listBox . Focus ( );
 					listView . Focus ( );
-					DbCountlb = bankaccts . Count;
-					DbCountlv = bankaccts . Count;
 				}
 				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
@@ -593,39 +602,29 @@ namespace MyDev . Views
 				if ( type == "VIEW" )
 				{
 					listView . ItemsSource = custaccts;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = custaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "VIEW" , custaccts . Count );
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
-					DbCountlv = custaccts . Count;
 				}
 				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = custaccts;
-					FrameworkElement elemnt = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = custaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "BOX" , custaccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					DbCountlb = custaccts . Count;
 				}
 				else
 				{
 					listView . ItemsSource = custaccts;
 					listBox . ItemsSource = custaccts;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = custaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "" , custaccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlv = custaccts . Count;
-					DbCountlv = custaccts . Count;
 				}
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
@@ -637,11 +636,15 @@ namespace MyDev . Views
 				if ( type == "VIEW" )
 				{
 					listView . ItemsSource = detaccts;
+					dGrid . ItemsSource = detaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					HandleCaption ( "VIEW" , detaccts . Count );
 				}
 				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = detaccts;
+					dGrid . ItemsSource = detaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					HandleCaption ( "BOX" , detaccts . Count );
 					listBox . SelectedIndex = 0;
 				}
@@ -649,8 +652,9 @@ namespace MyDev . Views
 				{
 					listView . ItemsSource = detaccts;
 					listBox . ItemsSource = detaccts;
-					HandleCaption ( "VIEW" , detaccts . Count );
-					HandleCaption ( "BOX" , detaccts . Count );
+					dGrid . ItemsSource = detaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "" , detaccts . Count );
 					listBox . SelectedIndex = 0;
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
@@ -669,12 +673,16 @@ namespace MyDev . Views
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
 					}
 					else if ( type == "BOX" )
 					{
 						listBox . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
 						listBox . Focus ( );
@@ -683,8 +691,9 @@ namespace MyDev . Views
 					{
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
-						HandleCaption ( "VIEW" , genaccts . Count );
-						HandleCaption ( "BOX" , genaccts . Count );
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+						HandleCaption ( "" , genaccts . Count );
 						listBox . SelectedIndex = 0;
 						listView . SelectedIndex = 0;
 					}
@@ -697,11 +706,15 @@ namespace MyDev . Views
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "VIEW" , genaccts . Count );
 					}
 					else if ( type == "BOX" )
 					{
 						listBox . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "BOX" , genaccts . Count );
 					}
 					else
@@ -709,8 +722,9 @@ namespace MyDev . Views
 						//Generic table type
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
-						HandleCaption ( "BOX" , genaccts . Count );
-						HandleCaption ( "VIEW" , genaccts . Count );
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+						HandleCaption ( "" , genaccts . Count );
 					}
 					ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 						line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
@@ -733,43 +747,32 @@ namespace MyDev . Views
 					listView . ItemsSource = nwcustomeraccts;
 					if ( nwcustomeraccts . Count == 0 )
 						return;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = nwcustomeraccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "VIEW" , nwcustomeraccts . Count );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlv = nwcustomeraccts . Count;
 				}
 				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = nwcustomeraccts;
 					if ( nwcustomeraccts . Count == 0 )
 						return;
-					FrameworkElement elemnt = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = nwcustomeraccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "BOX" , nwcustomeraccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					DbCountlb = nwcustomeraccts . Count;
 				}
 				else
 				{
 					listView . ItemsSource = nwcustomeraccts;
-					listBox . ItemsSource = nwcustomeraccts;
 					if ( nwcustomeraccts . Count == 0 )
 						return;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . ItemsSource = nwcustomeraccts;
+					dGrid . ItemsSource = nwcustomeraccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "" , nwcustomeraccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlb = nwcustomeraccts . Count;
-					DbCountlv = nwcustomeraccts . Count;
 				}
 				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {nwcustomeraccts . Count} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
@@ -785,43 +788,32 @@ namespace MyDev . Views
 					listView . ItemsSource = nworderaccts;
 					if ( nworderaccts . Count == 0 )
 						return;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = nworderaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "VIEW" , nworderaccts . Count );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlv = nworderaccts . Count;
 				}
 				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = nworderaccts;
 					if ( nworderaccts . Count == 0 )
 						return;
-					FrameworkElement elemnt = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = nworderaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "BOX" , nworderaccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					DbCountlb = nworderaccts . Count;
 				}
 				else
 				{
 					listView . ItemsSource = nworderaccts;
-					listBox . ItemsSource = nworderaccts;
 					if ( nworderaccts . Count == 0 )
 						return;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . ItemsSource = nworderaccts;
+					dGrid . ItemsSource = nworderaccts;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "" , nworderaccts . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlb = nworderaccts . Count;
-					DbCountlv = nworderaccts . Count;
 				}
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
@@ -834,39 +826,28 @@ namespace MyDev . Views
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
-						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt = listView as FrameworkElement;
-						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
-						listView . Focus ( );
-						DbCountlv = genaccts . Count;
 					}
 					else if ( type == "BOX" )
 					{
 						listBox . ItemsSource = genaccts;
-						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt2 = listBox as FrameworkElement;
-						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
-						DbCountlb = genaccts . Count;
 					}
 					else
 					{
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
-						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt = listView as FrameworkElement;
-						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-						FrameworkElement elemnt2 = listBox as FrameworkElement;
-						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+						HandleCaption ( "" , genaccts . Count );
 						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
 						listView . SelectedIndex = 0;
-						listView . Focus ( );
-						DbCountlb = genaccts . Count;
-						DbCountlv = genaccts . Count;
 					}
 					listBox . Refresh ( );
 					return;
@@ -879,33 +860,29 @@ namespace MyDev . Views
 						// //visible in the grid so do NOT repopulate the grid after making this call
 						//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
 						listView . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						if ( genaccts . Count == 0 )
 							return;
 						listView . SelectedIndex = 0;
 						listView . Focus ( );
-						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt = listView as FrameworkElement;
-						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
-						listView . Focus ( );
-						DbCountlv = genaccts . Count;
 					}
 					else if ( type == "BOX" )
 					{
-						// Caution : This loads the data into the Datarid with only the selected rows
-						// //visible in the grid so do NOT repopulate the grid after making this call
-						//SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
 						listBox . ItemsSource = genaccts;
 						if ( genaccts . Count == 0 )
 							return;
+
+
+						// Caution : This loads the data into the Datarid with only the selected rows
+						// //visible in the grid so do NOT repopulate the grid after making this call
+						//SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
-						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt2 = listBox as FrameworkElement;
-						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
-						DbCountlb = genaccts . Count;
+						HandleCaption ( "BOX" , genaccts . Count );
 					}
 					else
 					{
@@ -913,23 +890,12 @@ namespace MyDev . Views
 						listView . ItemsSource = genaccts;
 						if ( genaccts . Count == 0 )
 							return;
-						listView . SelectedIndex = 0;
-						listView . Focus ( );
-						//					SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
 						listBox . ItemsSource = genaccts;
-						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
-						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt = listView as FrameworkElement;
-						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-						FrameworkElement elemnt2 = listBox as FrameworkElement;
-						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						listView . SelectedIndex = 0;
-						listView . Focus ( );
-						DbCountlb = genaccts . Count;
-						DbCountlv = genaccts . Count;
+						HandleCaption ( "" , genaccts . Count );
+						listBox . SelectedIndex = 0;
 					}
 				}
 				ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
@@ -953,43 +919,32 @@ namespace MyDev . Views
 					listView . ItemsSource = pubauthors;
 					if ( pubauthors . Count == 0 )
 						return;
+					dGrid . ItemsSource = pubauthors;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "VIEW" , pubauthors . Count );
 					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlv = pubauthors . Count;
 				}
 				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = pubauthors;
 					if ( pubauthors . Count == 0 )
 						return;
-					FrameworkElement elemnt = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					dGrid . ItemsSource = pubauthors;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "BOX" , pubauthors . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					DbCountlb = pubauthors . Count;
 				}
 				else
 				{
 					listView . ItemsSource = pubauthors;
-					listBox . ItemsSource = pubauthors;
 					if ( pubauthors . Count == 0 )
 						return;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . ItemsSource = pubauthors;
+					dGrid . ItemsSource = pubauthors;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "" , pubauthors . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlb = pubauthors . Count;
-					DbCountlv = pubauthors . Count;
 				}
 				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {pubauthors . Count} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
@@ -1005,43 +960,31 @@ namespace MyDev . Views
 					listView . ItemsSource = pubauthors;
 					if ( pubauthors . Count == 0 )
 						return;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					HandleCaption ( "VIEW" , pubauthors . Count );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlv = pubauthors . Count;
 				}
 				else if ( type == "BOX" )
 				{
 					listBox . ItemsSource = pubauthors;
 					if ( pubauthors . Count == 0 )
 						return;
+					dGrid . ItemsSource = pubauthors;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					FrameworkElement elemnt = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					HandleCaption ( "BOX" , pubauthors . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
-					DbCountlb = pubauthors . Count;
 				}
 				else
 				{
 					listView . ItemsSource = pubauthors;
-					listBox . ItemsSource = pubauthors;
 					if ( pubauthors . Count == 0 )
 						return;
-					FrameworkElement elemnt = listView as FrameworkElement;
-					listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-					FrameworkElement elemnt2 = listBox as FrameworkElement;
-					listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-					lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-					lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+					listBox . ItemsSource = pubauthors;
+					dGrid . ItemsSource = pubauthors;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+					HandleCaption ( "" , pubauthors . Count );
 					listBox . SelectedIndex = 0;
-					listBox . Focus ( );
 					listView . SelectedIndex = 0;
-					listView . Focus ( );
-					DbCountlb = pubauthors . Count;
-					DbCountlv = pubauthors . Count;
 				}
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
@@ -1056,24 +999,20 @@ namespace MyDev . Views
 						listView . ItemsSource = genaccts;
 						if ( genaccts . Count == 0 )
 							return;
-						lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt = listView as FrameworkElement;
-						listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
-						listView . Focus ( );
-						DbCountlv = genaccts . Count;
 					}
 					else if ( type == "BOX" )
 					{
 						listBox . ItemsSource = genaccts;
 						if ( genaccts . Count == 0 )
 							return;
-						lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-						FrameworkElement elemnt2 = listBox as FrameworkElement;
-						listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
-						listBox . Focus ( );
-						DbCountlb = genaccts . Count;
 					}
 					else
 					{
@@ -1085,14 +1024,10 @@ namespace MyDev . Views
 							listView . ItemsSource = genaccts;
 							if ( genaccts . Count == 0 )
 								return;
+							SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+							dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 							listView . SelectedIndex = 0;
-							listView . Focus ( );
-							lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-							FrameworkElement elemnt = listView as FrameworkElement;
-							listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-							listView . SelectedIndex = 0;
-							listView . Focus ( );
-							DbCountlv = genaccts . Count;
+							HandleCaption ( "" , genaccts . Count );
 						}
 						else if ( type == "BOX" )
 						{
@@ -1102,14 +1037,10 @@ namespace MyDev . Views
 							listBox . ItemsSource = genaccts;
 							if ( genaccts . Count == 0 )
 								return;
+							SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+							dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 							listBox . SelectedIndex = 0;
-							listBox . Focus ( );
-							lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-							FrameworkElement elemnt2 = listBox as FrameworkElement;
-							listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-							listBox . SelectedIndex = 0;
-							listBox . Focus ( );
-							DbCountlb = genaccts . Count;
+							HandleCaption ( "BOX" , genaccts . Count );
 						}
 						else
 						{
@@ -1117,23 +1048,12 @@ namespace MyDev . Views
 							listView . ItemsSource = genaccts;
 							if ( genaccts . Count == 0 )
 								return;
-							listView . SelectedIndex = 0;
-							listView . Focus ( );
-							//					SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
 							listBox . ItemsSource = genaccts;
-							listBox . SelectedIndex = 0;
-							listBox . Focus ( );
-							lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
-							FrameworkElement elemnt = listView as FrameworkElement;
-							listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-							FrameworkElement elemnt2 = listBox as FrameworkElement;
-							listBox . ItemTemplate = elemnt2 . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-							listBox . SelectedIndex = 0;
-							listBox . Focus ( );
+							SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+							dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 							listView . SelectedIndex = 0;
-							listView . Focus ( );
-							DbCountlb = genaccts . Count;
-							DbCountlv = genaccts . Count;
+							HandleCaption ( "" , genaccts . Count );
+							listBox . SelectedIndex = 0;
 						}
 						ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 							line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
@@ -1150,19 +1070,28 @@ namespace MyDev . Views
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						lvHeader . Text = $"List View Display :  No records returned...";
 					}
 					else if ( type == "BOX" )
 					{
 						listBox . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						lbHeader . Text = $"List Box Display :  No records returned...";
+						dGridHeader . Text = $"List Box Display :  No records returned...";
 					}
 					else
 					{
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
+						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						lvHeader . Text = $"List View Display :  No records returned...";
 						listBox . ItemsSource = genaccts;
+						lbHeader . Text = $"List Box Display :  No records returned...";
+						dGridHeader . Text = $"List Box Display :  No records returned...";
 					}
 				}
 			}
@@ -1577,6 +1506,7 @@ namespace MyDev . Views
 			newitemheightrequired = Fontsize + 6;
 			currentItemHeight = Convert . ToDouble ( GetValue ( ItemsHeightProperty ) );
 			SetValue ( FontsizeProperty , fontsze );
+			dGrid . FontSize = fontsze;
 		}
 		private void rowheight_SelectionChanged ( object sender , SelectionChangedEventArgs e )
 		{
@@ -1588,6 +1518,7 @@ namespace MyDev . Views
 			rwheight = Convert . ToDouble ( cb . SelectedItem );
 			ItemsHeight = rwheight;
 			SetValue ( ItemsHeightProperty , rwheight );
+			dGrid . RowHeight = rwheight;
 		}
 
 		private void SelectCurrentDbInCombo ( string dbname , string viewertype )
@@ -1654,17 +1585,19 @@ namespace MyDev . Views
 			}
 			{
 				OpenNorthWindDb ( );
-				//Flags . CurrentConnectionString = "NorthwindConnectionString";
 				nwcustomeraccts = nwc . GetNwCustomers ( );
+				listView . ItemsSource = nwcustomeraccts;
+				dGrid . ItemsSource = nwcustomeraccts;
 				FrameworkElement elemnt = listView as FrameworkElement;
 				listView . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
-				listView . ItemsSource = nwcustomeraccts;
+				dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 				listView . SelectedIndex = 0;
 				listView . Focus ( );
 				listBox . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
 				listBox . ItemsSource = nwcustomeraccts;
 				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {nwcustomeraccts . Count}";
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
 				DbCountlb = nwcustomeraccts . Count;
@@ -2016,12 +1949,15 @@ namespace MyDev . Views
 				FrameworkElement elemnt = listView as FrameworkElement;
 				listView . ItemTemplate = elemnt . FindResource ( CurrentDataTable ) as DataTemplate;
 				listView . ItemsSource = bankaccts;
-				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGrid . ItemsSource = bankaccts;
+				dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+				lvHeader . Text = $"List View Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 				listView . SelectedIndex = 0;
 				listView . Focus ( );
 				listBox . ItemTemplate = elemnt . FindResource ( CurrentDataTable ) as DataTemplate;
 				listBox . ItemsSource = bankaccts;
-				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				lbHeader . Text = $"List Box Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {bankaccts . Count}";
 				listBox . SelectedIndex = 0;
 				DbCountlb = bankaccts . Count;
 				DbCountlv = bankaccts . Count;
@@ -2051,12 +1987,15 @@ namespace MyDev . Views
 				FrameworkElement elemnt = listView as FrameworkElement;
 				listView . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
 				listView . ItemsSource = nwcustomeraccts;
-				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGrid . ItemsSource = nwcustomeraccts;
+				dGrid . SelectedItem = dGrid . SelectedIndex = 0;
+				lvHeader . Text = $"List View Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 				listView . SelectedIndex = 0;
 				listView . Focus ( );
 				listBox . ItemTemplate = elemnt . FindResource ( "NwCustomersDataTemplate1" ) as DataTemplate;
 				listBox . ItemsSource = nwcustomeraccts;
-				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				lbHeader . Text = $"List Box Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {nwcustomeraccts . Count}";
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
 				DbCountlb = nwcustomeraccts . Count;
@@ -2082,13 +2021,16 @@ namespace MyDev . Views
 				FrameworkElement elemnt = listView as FrameworkElement;
 				listView . ItemTemplate = elemnt . FindResource ( "PubsAuthorTemplate1" ) as DataTemplate;
 				listView . ItemsSource = pubauthors;
+				dGrid . ItemsSource = pubauthors;
+				dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 
-				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				lvHeader . Text = $"List View Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
 				listView . SelectedIndex = 0;
 				listView . Focus ( );
 				listBox . ItemTemplate = elemnt . FindResource ( "PubsAuthorTemplate1" ) as DataTemplate;
 				listBox . ItemsSource = pubauthors;
-				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				lbHeader . Text = $"List Box Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {pubauthors . Count}";
 				listBox . SelectedIndex = 0;
 				listBox . Focus ( );
 				DbCountlb = pubauthors . Count;
@@ -2113,29 +2055,30 @@ namespace MyDev . Views
 			if ( currdb == "IAN1" )
 			{
 				LoadData_Ian1 ( "VIEW" );
-				//LoadDataTemplates_Ian1 ( CurrentTableName , "VIEW" );
 				LoadGrid_IAN1 ( "VIEW" );
 			}
 			else if ( currdb == "NORTHWIND" )
 			{
 				LoadData_NorthWind ( "VIEW" );
-				//LoadDataTemplates_NorthWind ( CurrentTableName , "VIEW" );
 				LoadGrid_NORTHWIND ( "VIEW" );
 			}
 			else if ( currdb == "PUBS" )
 			{
 				genaccts = null;
 				LoadData_Publishers ( "VIEW" , out genaccts );
-				//LoadDataTemplates_PubAuthors ( CurrentTableName , "VIEW" );
 				if ( genaccts != null )
 				{
 					listView . ItemsSource = genaccts;
+					SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					DbCountlv = genaccts . Count;
 				}
 				else
 				{
 					pubauthors = PubAuthors . LoadPubAuthors ( pubauthors , false );
 					listView . ItemsSource = pubauthors;
+					dGrid . ItemsSource = pubauthors;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					DbCountlv = pubauthors . Count;
 				}
 				LoadGrid_PUBS ( "VIEW" );
@@ -2160,14 +2103,11 @@ namespace MyDev . Views
 			if ( currdb == "IAN1" )
 			{
 				LoadData_Ian1 ( "BOX" );
-				//LoadDataTemplates_Ian1 ( CurrentTableName , "BOX" );
 				LoadGrid_IAN1 ( "BOX" );
 			}
 			else if ( currdb == "NORTHWIND" )
 			{
 				LoadData_NorthWind ( "BOX" );
-				//LoadDataTemplates_NorthWind ( CurrentTableName , "BOX" );
-				//nworderaccts = nwo . LoadOrders ( );
 				LoadGrid_NORTHWIND ( "BOX" );
 			}
 			else if ( currdb == "PUBS" )
@@ -2177,11 +2117,16 @@ namespace MyDev . Views
 				if ( genaccts != null )
 				{
 					listBox . ItemsSource = genaccts;
+					SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					DbCountlb = genaccts . Count;
 				}
 				else
 				{
+					pubauthors = PubAuthors . LoadPubAuthors ( pubauthors , false );
 					listBox . ItemsSource = pubauthors;
+					dGrid . ItemsSource = pubauthors;
+					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					DbCountlb = pubauthors . Count;
 				}
 				LoadGrid_PUBS ( "BOX" );
@@ -2300,14 +2245,29 @@ namespace MyDev . Views
 			{
 				elemnt = listView as FrameworkElement;
 				listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
-				lvHeader . Text = $"List View Display : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				lvHeader . Text = $"List View Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {reccount}";
 				DbCountlv = reccount;
 			}
 			else if ( viewertype == "BOX" || viewertype == "" )
 			{
 				elemnt = listBox as FrameworkElement;
-				listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb . SelectedItem ) as DataTemplate;
-				lbHeader . Text = $"List Box Display : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb?.SelectedItem ) as DataTemplate;
+				lbHeader . Text = $"List Box Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {reccount}";
+				DbCountlb = reccount;
+			}
+			else
+			{
+				elemnt = listView as FrameworkElement;
+				listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv?.SelectedItem ) as DataTemplate;
+				lvHeader . Text = $"List View Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {reccount}";
+				DbCountlv = reccount;
+				elemnt = listBox as FrameworkElement;
+				listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb?.SelectedItem ) as DataTemplate;
+				lbHeader . Text = $"List Box Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )}";
+				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLb?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {reccount}";
 				DbCountlb = reccount;
 			}
 		}
@@ -2364,6 +2324,142 @@ namespace MyDev . Views
 		private void Park_Click ( object sender , RoutedEventArgs e )
 		{
 			Flags . PinToBorder = !Flags . PinToBorder;
+		}
+
+		private void Arrow1_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			if ( PickColors . Visibility == Visibility . Visible )
+			{
+
+				PickColors . Visibility = Visibility . Hidden;
+				PickColors . RedSlider . Focus ( );
+			}
+			else
+			{
+				PickColors . Visibility = Visibility . Visible;
+
+				PickColors . Focus ( );
+			}
+		}
+
+		#region Event handler rom ColorPicker button - save to clipboard
+		private void Colorpicker_ExecuteSaveToClipboardMethod ( object sender , ColorpickerArgs e )
+		{
+			Clipboard . SetText ( e.RgbString );
+		}
+		#endregion Event handler rom ColorPicker button - save to clipboard
+
+		#region Move ColorPicker
+		// NOT USED
+		private void Colorpicker_ExecuteMoveMethod ( object sender , EventArgs e )
+		{
+			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
+			// or return to its original size and position courtesy of the Event declard in FlowDoc
+			//double height = canvas . Height;
+			//double width = canvas . Width;
+			//if ( PickColors . Height < canvas . Height && Flowdoc . Width < canvas . Width )
+			//{
+			//	// it is in NORMAL moode right now
+			//	// Set flowdoc size into variables for later use
+			//	//flowdocHeight = Flowdoc . Height;
+			//	//flowdocWidth = Flowdoc . Width;
+			//	CpFirstXPos = ( double ) GetValue ( Canvas . LeftProperty );
+			//	CpFirstYPos = ( double ) GetValue ( Canvas . TopProperty );
+			//	( PickColors as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) CpFirstXPos );
+			//	( PickColors  as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) CpFirstYPos );
+			//	//Flowdoc . Height = height;
+			//	//Flowdoc . Width = width;
+			//}
+			//else
+			//{
+			//	// it is MAXIMIZED right now
+			//	// We re returning it to normal position/Size
+			//	Flowdoc . Height = flowdocHeight;
+			//	Flowdoc . Width = flowdocWidth;
+			//	if ( Flags . PinToBorder )
+			//	{
+			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
+			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+			//	}
+			//	else
+			//	{
+			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 150 );
+			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 100 );
+			//	}
+			//	//if ( ParkFlowDoc )
+			//	//{
+			//	//	flowdocLeft = 0;
+			//	//	flowdocTop = 0;
+			//	//} else
+			//	//{
+			//	//	flowdocLeft = ( double ) GetValue ( Canvas . LeftProperty );
+			//	//	flowdocTop = ( double ) GetValue ( Canvas . TopProperty );
+			//	//}
+			//}
+		}
+		private void PickColors_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			ColorpickerObject = null;
+		}   	
+		private void PickColors_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//In this event, we get current mouse position on the control to use it in the MouseMove event.
+			if ( PickColors.RedSlider.IsMouseOver == true 
+				|| PickColors . GreenSlider . IsMouseOver == true 
+				|| PickColors . BlueSlider . IsMouseOver == true 
+				|| PickColors . OpacitySlider . IsMouseOver == true 
+				|| PickColors . exitbtn. IsMouseOver == true 
+				|| PickColors . ClipboardSave . IsMouseOver == true )
+			{
+				// Dont capture mouse in our cotrols
+				return;
+			}  			
+			CpFirstXPos = e . GetPosition ( sender as Control ) . X;
+			CpFirstYPos = e . GetPosition ( sender as Control ) . Y;
+			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - CpFirstXPos;
+			double FirstArrowYPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . Y - CpFirstYPos;
+			ColorpickerObject = sender;
+		}
+		private void PickColors_MouseMove ( object sender , MouseEventArgs e )
+		{
+			if ( ColorpickerObject != null && e . LeftButton == MouseButtonState . Pressed )
+			{
+				///var v = e . Source;
+				// Get mouse position IN PickColor !!
+				double left = e . GetPosition ( ( ColorpickerObject  as FrameworkElement ) . Parent as FrameworkElement ) . X - CpFirstXPos ;
+				double top = e . GetPosition ( ( ColorpickerObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - CpFirstYPos ;
+				double trueleft = left - CpFirstXPos;
+				double truetop = left - CpFirstYPos;
+				if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
+					( ColorpickerObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
+				if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
+					( ColorpickerObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
+				Console . WriteLine ($"left={left}, Top = {top}");	 			
+			}
+		}
+		#endregion Move ColorPicker
+		private void ListViewWindow_Closed ( object sender , EventArgs e )
+		{											  
+			Colorpicker . ExecuteSaveToClipboardMethod -= Colorpicker_ExecuteSaveToClipboardMethod;
+//			Colorpicker . ExecuteMoveMethod -= Colorpicker_ExecuteMoveMethod;
+			Flowdoc . ExecuteFlowDocSizeMethod -= new EventHandler ( ParentWPF_method );
+
+		}
+
+		private void LoadColorpicker ( object sender , RoutedEventArgs e )
+		{
+			if ( PickColors . Visibility == Visibility . Visible )
+			{
+
+				PickColors . Visibility = Visibility . Hidden;
+				PickColors . RedSlider . Focus ( );
+			}
+			else
+			{
+				PickColors . Visibility = Visibility . Visible;
+
+				PickColors . Focus ( );
+			}
 		}
 	}
 }

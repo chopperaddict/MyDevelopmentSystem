@@ -7,6 +7,8 @@
         mc:Ignorable="d"
 	  PreviewKeyDown="Window_PreviewKeyDown"
         Title="MainWindow" Height="170" Width="630"
+	  WindowChrome.ResizeGripDirection="BottomRight"
+	  ResizeMode="CanResizeWithGrip"
 	  WindowStartupLocation="Manual">
 	<Window.Background>
 		<LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">

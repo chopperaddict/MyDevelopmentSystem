@@ -7,6 +7,7 @@
              xmlns:conv="clr-namespace:MyDev.Converts"
 	  	  d:DataContext="{d:DesignInstance Type=local:FlowDoc}"
 		mc:Ignorable="d" 
+		Panel.ZIndex="4"
 		 PreviewKeyDown="flowdoc_PreviewKeyDown"
 		 PreviewMouseLeftButtonUp="doc_PreviewMouseLeftButtonUp"
 		 AllowDrop="True"
@@ -220,8 +221,7 @@
 					 Margin="0 3 0 0" 
 					 Padding="15 10 15 0" 
       				PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
-					 PreviewMouseLeftButtonUp="doc_PreviewMouseLeftButtonUp"
-				      
+					 PreviewMouseLeftButtonUp="doc_PreviewMouseLeftButtonUp"  				      
 					 VerticalScrollBarVisibility="Hidden"
 					Visibility="Hidden"
 					 Width="{Binding Path=ActualWidth, ElementName=flowdoc}"/>
@@ -240,7 +240,7 @@
 				IsHitTestVisible="True"
 				IsEnabled="true"		 
                         IsSelectionEnabled="false"
-                        Panel.ZIndex="9"
+                        Panel.ZIndex="4"
 			      Margin="2,4,0,13"
 				PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
 				PreviewMouseLeftButtonUp="scrollviewer_PreviewMouseLeftButtonUp"       				     

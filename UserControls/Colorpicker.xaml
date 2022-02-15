@@ -1,0 +1,336 @@
+﻿<UserControl x:Class="MyDev.UserControls.Colorpicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyDev.UserControls"
+             xmlns:conv="clr-namespace:MyDev.Converts"
+             mc:Ignorable="d" 
+		 x:Name="colorPicker"
+		 Loaded="UserControl_Loaded"
+		 Height="300"
+		 Panel.ZIndex="4"
+		 Width="600"
+		 PreviewKeyDown="colorPicker_PreviewKeyDown" 
+		 PreviewMouseLeftButtonUp="colorPicker_PreviewMouseLeftButtonUp"
+		 >
+	<UserControl.Resources>
+		<conv:HexConvert x:Key="DecToHex"/>
+		<conv:DoubleToInt x:Key="doubleToInt"/>
+		<ControlTemplate x:Key="HorizontalGradientButtonTemplate" TargetType="{x:Type Button}">
+			<!-- NB - it is the Border that controls the buttons default colors
+			which lets us set Back/Foreground and border colors in the button itself
+			but still have mouseover etc working correctly, but still have our text "Content" display-->
+			<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
+				   BorderThickness="{TemplateBinding BorderThickness}" 
+				   Background="{Binding btnBkGround}" 
+				   CornerRadius="15"
+				   SnapsToDevicePixels="True">
+				<ContentPresenter x:Name="contentPresenter" 
+						ContentTemplate="{TemplateBinding ContentTemplate}" 
+						Content="{TemplateBinding Content}" 
+						ContentStringFormat="{TemplateBinding ContentStringFormat}" 
+						Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+						Margin="{TemplateBinding Padding}" 
+						RecognizesAccessKey="True" 
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+			</Border>
+
+			<ControlTemplate.Triggers>
+				<!--This handles the button being set as IsDefault=true-->
+				<Trigger Property="FrameworkElement.Tag" Value="True">
+					<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+					<!--<Setter Property="Background" TargetName="border" Value="#FF947978 ">-->
+					<!--<Setter.Value>
+							<LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+								<GradientStop Color="#FFFFFFFF" Offset="0.514"/>
+								<GradientStop Color="#FF999999" Offset="0.753"/>
+								<GradientStop Color="#FFF70711" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>-->
+					<!--</Setter>-->
+					<Setter Property="BorderBrush" TargetName="border" Value="Black"/>
+				</Trigger>
+
+				<Trigger Property="Button.IsMouseOver" Value="false">
+					<!--MouseOver FALSE handling-->
+					<Setter Property="FontWeight"  Value="Bold"/>
+
+					<Setter Property="Control.Foreground"  TargetName="border" Value="{StaticResource Black0}">
+						<!--<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+								<GradientStop Color="#FFF7EFF0" Offset="0.414"/>
+								<GradientStop Color="#FF8A858C" Offset="0.553"/>
+								<GradientStop Color="#FF111111" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>-->
+					</Setter>
+					<Setter Property="Control.Background"  TargetName="border">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+								<GradientStop Color="{StaticResource ClrBlack4}" Offset="0.3"/>
+								<!--<GradientStop Color="#FFffffff" Offset="0.553"/>-->
+								<GradientStop Color="{StaticResource ClrYellow0}" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
+
+				<Trigger Property="Button.IsMouseOver" Value="True">
+					<!--MouseOver TRUE handling-->
+					<Setter Property="FontWeight"  Value="Bold"/>
+
+					<Setter Property="Control.Foreground"  TargetName="border">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+								<GradientStop Color="#FFF7EFF0" Offset="0.414"/>
+								<GradientStop Color="#FF8A858C" Offset="0.553"/>
+								<GradientStop Color="#FF111111" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter Property="Background" TargetName="border">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+								<GradientStop Color="#FF777777" Offset="0.314"/>
+								<GradientStop Color="#FFffffff" Offset="0.553"/>
+								<GradientStop Color="#FFF70711" Offset="1"/>
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
+
+				<Trigger Property="IsPressed" Value="True">
+					<!--Handles Click event-->
+					<Setter Property="Background"  TargetName="border" Value="Gray"/>
+					<Setter Property="BorderBrush" TargetName="border" Value="White"/>
+				</Trigger>
+				<Trigger Property="ToggleButton.IsChecked" Value="True">
+					<!--Handles any checkbox style checked option-->
+					<Setter Property="Background" TargetName="border" Value="#FFBCDDEE"/>
+					<Setter Property="BorderBrush" TargetName="border" Value="#FF245A83"/>
+				</Trigger>
+				<Trigger Property="IsEnabled" Value="False">
+					<!--Handles disabled status-->
+
+					<Setter Property="Background" TargetName="border" Value="Gray"/>
+					<Setter Property="BorderBrush" TargetName="border" Value="Red"/>
+					<Setter Property="Foreground" Value="White"/>
+				</Trigger>
+			</ControlTemplate.Triggers>
+		</ControlTemplate>
+
+	</UserControl.Resources>
+	<Grid Margin="0,0,-25,3" >
+		<Grid.RowDefinitions>
+			<RowDefinition Height="15"/>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="10"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="1"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10"/>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="10"/>
+		</Grid.ColumnDefinitions>
+		<Grid.Background>
+			<LinearGradientBrush EndPoint="0.0,1" StartPoint="1.3,0">
+				<GradientStop Color="#555555" Offset="0.7" />
+				<GradientStop Color="LightGray" Offset="0.17" />
+			</LinearGradientBrush>
+		</Grid.Background>
+
+		<!--#region Text color fields-->
+		<StackPanel
+			Orientation="Horizontal"
+		     Grid.Column="1"
+			Margin="0,10,0,4" Grid.RowSpan="2"			
+			>
+			<TextBlock Text="Opacity" 
+				     HorizontalAlignment="Left"
+				     FontSize="10"
+				     Foreground="White" Width="50"/>
+			<TextBlock Text="{Binding Path=Value,  ElementName=OpacitySlider, Converter={StaticResource doubleToInt}}" 
+				     TextAlignment="Center"				     
+				     Padding="0,0,0,0"  
+				     Background="{StaticResource White4}"
+				     Foreground="Red" Width="41"/>
+			<TextBlock Text="     Red" 
+				     HorizontalAlignment="Left"
+				     FontSize="10"
+				     Foreground="White" 
+				     Width="45"/>
+			<TextBlock Text="{Binding Path=Value,ElementName=RedSlider, Converter={StaticResource doubleToInt}}" 
+				     TextAlignment="Center"
+				     HorizontalAlignment="Left"
+				     Background="{StaticResource White4}"
+				     Foreground="Red" Width="41"/>
+			<TextBlock Text="  Green" 
+				     HorizontalAlignment="Left"
+				     FontSize="10"
+				     Foreground="White" 
+				     Width="40"/>
+			<TextBlock Text="{Binding Path=Value, ElementName=GreenSlider, Converter={StaticResource doubleToInt}}" 
+				     TextAlignment="Center"
+				     HorizontalAlignment="Left"
+				     Background="{StaticResource White4}"
+				     Foreground="Red" Width="41"/>
+			<TextBlock Text="  Blue" 
+				     HorizontalAlignment="Center"
+				     FontSize="10"
+				     Foreground="White" 
+				     Width="40"/>
+			<TextBlock Text="{Binding Path=Value, ElementName=BlueSlider, Converter={StaticResource doubleToInt}}" 
+				     TextAlignment="Center"
+				     HorizontalAlignment="Center"
+				     Background="{StaticResource White4}"
+				     Foreground="Red" Width="41"/>
+			<TextBlock Text="     RGB" 
+				     HorizontalAlignment="Left"
+				     FontSize="10"
+				     Foreground="White" 
+				     Width="45"/>
+			<TextBlock Text="{Binding Path=RGBValueString, ElementName=colorPicker}" 
+				     DataContext="ColorPicker"
+				     HorizontalAlignment="Center"
+				     TextAlignment="Center"
+				     Background="{StaticResource White4}"
+				     Foreground="Red" Width="71"/>
+		</StackPanel>
+		<!--#endregion Text color fields-->
+
+		<!--#region Sliders-->
+		<Slider  x:Name="OpacitySlider" 
+			   Grid.Row="2"
+			   Grid.Column="1"
+			   Height="20"
+			   Background="Gray"
+			   ValueChanged="OpacitySlider_ValueChanged"
+			   Minimum="0" Maximum="255" Value="254" 
+			   />
+		<Slider  x:Name="RedSlider" 
+			   Grid.Row="3"
+			   Grid.Column="1"
+			   Height="20"
+			   Background="Red"
+			   ValueChanged="RedSlider_ValueChanged"
+			   Minimum="0" Maximum="255" Value="128"/>
+		<Slider  x:Name="GreenSlider" 
+			   Grid.Row="4"
+			   Grid.Column="1"
+			   Height="20"
+			   Background="Green"
+			   ValueChanged="GreenSlider_ValueChanged"
+			   Minimum="0" Maximum="255" Value="128"/>
+		<Slider  x:Name="BlueSlider" 
+			   Grid.Row="5"
+			   Grid.Column="1"
+			   Height="20"
+			   Background="Blue"
+			   ValueChanged="BlueSlider_ValueChanged"
+			   Minimum="0" Maximum="255" Value="128"/>
+		<!--#endregion Sliders-->
+		
+		<Grid Grid.Row="7" Grid.Column="1" Background="{StaticResource Gray2}" Panel.ZIndex="4">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.5*" />
+				<ColumnDefinition Width="5" />
+				<ColumnDefinition Width="0.5*" />
+				<ColumnDefinition Width="5" />
+				<ColumnDefinition x:Name="col3"  Width="0.5*" />
+				<ColumnDefinition Width="5" />
+				<ColumnDefinition Width="3*" />
+			</Grid.ColumnDefinitions>
+			<Rectangle x:Name="RedOutput"
+				Fill ="Black" Grid.ColumnSpan="1"
+				Height="132"
+				Grid.Column="0"
+				PreviewMouseLeftButtonDown="Output_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="Output_PreviewMouseLeftButtonUp"			     
+				VerticalAlignment="Top"
+			     />
+			<Rectangle 
+				Fill ="White" Grid.ColumnSpan="1"
+				Height="132"
+				Grid.Column="1"
+				PreviewMouseLeftButtonDown="Output_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="Output_PreviewMouseLeftButtonUp"			     
+				VerticalAlignment="Top"
+			     />
+			<Rectangle x:Name="GreenOutput"
+				Fill ="Black" Grid.ColumnSpan="1"
+				Height="132"
+				Grid.Column="2"
+				PreviewMouseLeftButtonDown="Output_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="Output_PreviewMouseLeftButtonUp"			     
+				VerticalAlignment="Top"
+			     />
+			<Rectangle 
+				Fill ="White" Grid.ColumnSpan="1"
+				Height="132"
+				Grid.Column="3"
+				PreviewMouseLeftButtonDown="Output_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="Output_PreviewMouseLeftButtonUp"			     
+				VerticalAlignment="Top"
+			     />
+			<Rectangle x:Name="BlueOutput"
+				Fill ="Black" Grid.ColumnSpan="1"
+				Height="132"
+				Grid.Column="4"
+				PreviewMouseLeftButtonDown="Output_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="Output_PreviewMouseLeftButtonUp"			     
+				VerticalAlignment="Top"
+			     Width="{Binding Width, ElementName=col3}"
+			     />
+			<Rectangle 
+				Fill ="White" Grid.ColumnSpan="1"
+				Height="132"
+				Grid.Column="5"
+				PreviewMouseLeftButtonDown="Output_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="Output_PreviewMouseLeftButtonUp"			     
+				VerticalAlignment="Top"
+			     />
+			<Rectangle x:Name="Output"
+				Fill ="White" Grid.ColumnSpan="1"
+				Height="132"
+				Grid.Column="6"
+				PreviewMouseLeftButtonDown="Output_PreviewMouseLeftButtonDown"
+				PreviewMouseLeftButtonUp="Output_PreviewMouseLeftButtonUp"			     
+				VerticalAlignment="Top"
+			     />
+			<Button x:Name="exitbtn" Content="Close"
+				Background="{StaticResource Red5}"
+				Click="exitbtn_Click"
+				Foreground="{StaticResource White0}"
+				Grid.Column="6"
+				Height="35"
+				Margin="266,0,7,13" 
+				Panel.ZIndex="2"
+				Template="{StaticResource HorizontalGradientButtonTemplate}"
+				  VerticalAlignment="Bottom"
+				Width="120"
+			  />
+		</Grid>
+		<!--<Label Content="Click ESCAPE to close Color Picker" Margin="209,10,191,102"  Padding="5 3 0 0"
+			 Grid.Row="7" Background="{StaticResource Red5}" Foreground="{StaticResource White0}" Grid.Column="1"/>-->
+
+		<Button x:Name="ClipboardSave" Content="Save to ClipBoard"
+				Background="{StaticResource Green5}"
+				Click="ClipboardSave_Click"
+				Foreground="{StaticResource Red4}"
+				Grid.Column="1" 
+				Grid.RowSpan="3"
+				Height="35"
+				Margin="480,2,5,28"
+				Template="{StaticResource HorizontalGradientButtonTemplate}" 
+				Width="120"
+				  />
+	</Grid>
+</UserControl>

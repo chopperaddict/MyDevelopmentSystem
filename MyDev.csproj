@@ -74,6 +74,7 @@
     <Compile Include="AttachedProperties\ListboxColorCtrlAP.cs" />
     <Compile Include="AttachedProperties\MenuAttachedProperties.cs" />
     <Compile Include="Converts\DateTimeToShortStringConverter.cs" />
+    <Compile Include="Converts\DoubleToInt.cs" />
     <Compile Include="Converts\IncreaseByParamValue.cs" />
     <Compile Include="Converts\ReduceByParamValue.cs" />
     <Compile Include="Converts\ResourceToBrushConverter.cs" />
@@ -82,6 +83,10 @@
     <Compile Include="DataTemplates\BankDataTemplateSelector.cs" />
     <Compile Include="DataTemplates\DataTemplateSelectors.cs" />
     <Compile Include="Sql\SqlDbSupport.cs" />
+    <Compile Include="Sql\SqlServerCommands.cs" />
+    <Compile Include="UserControls\Colorpicker.xaml.cs">
+      <DependentUpon>Colorpicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\FlowDoc.xaml.cs">
       <DependentUpon>FlowDoc.xaml</DependentUpon>
     </Compile>
@@ -113,9 +118,6 @@
     <Compile Include="ViewModels\BankCollection.cs" />
     <Compile Include="Views\BankDragviewModel.cs" />
     <Compile Include="Views\CustomerDragviewModel.cs" />
-    <Compile Include="Views\DapperTesting.xaml.cs">
-      <DependentUpon>DapperTesting.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\DetailsDragviewModel.cs" />
     <Compile Include="ViewModels\DetCollection.cs" />
     <Compile Include="Views\DragDropClient.xaml.cs">
@@ -217,11 +219,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\FlowDoc.xaml">
+    <Page Include="UserControls\Colorpicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DapperTesting.xaml">
+    <Page Include="UserControls\FlowDoc.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

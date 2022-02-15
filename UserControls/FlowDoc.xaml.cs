@@ -398,28 +398,29 @@ namespace MyDev . UserControls
 		#endregion keyboard handlers
 
 		#region Mouse handlers
-		private void flowdoc_PreviewLMBDn ( object sender , MouseButtonEventArgs e )
-		{
-			if ( Utils . HitTestScrollBar ( sender , e ) )
-			{
-				fdviewer . IsEnabled = true;
-				return;
-			} else
-				fdviewer . IsEnabled = false;
-		}
 
-		Point _point;
-		private void doc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		{
-			if ( Utils . HitTestScrollBar ( sender , e ) )
-			{
-				fdviewer . IsEnabled = true;
-				return;
-			} else
-				fdviewer . IsEnabled = false;
-			MouseCaptured = flowdoc . CaptureMouse ( );
-			Console . WriteLine ( "Mouse CAPTURED...flowdoc_PreviewMouseLeftButtonDown()" );
-		}
+		//private void flowdoc_PreviewLMBDn ( object sender , MouseButtonEventArgs e )
+		//{
+		////	if ( Utils . HitTestScrollBar ( sender , e ) )
+		////	{
+		////		fdviewer . IsEnabled = true;
+		////		return;
+		////	} else
+		////		fdviewer . IsEnabled = false;
+		//}
+
+		//Point _point;
+		//private void doc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		//{
+		//	if ( Utils . HitTestScrollBar ( sender , e ) )
+		//	{
+		//		fdviewer . IsEnabled = true;
+		//		return;
+		//	} else
+		//		fdviewer . IsEnabled = false;
+		//	MouseCaptured = flowdoc . CaptureMouse ( );
+		//	Console . WriteLine ( "Mouse CAPTURED...flowdoc_PreviewMouseLeftButtonDown()" );
+		//}
 		private void flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			if ( Utils . HitTestScrollBar ( sender , e ) )

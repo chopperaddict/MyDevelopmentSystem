@@ -836,9 +836,9 @@ namespace MyDev . Views
 				}
 				// Caution : This loads the data into the Datarid with only the selected rows
 				// //visible in the grid so do NOT repopulate the grid after making this call
-//				SqlServerCommands sqlc = new SqlServerCommands();
-//				sqlc. LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
-				Grid1 . ItemsSource = genaccts;
+				//				SqlServerCommands sqlc = new SqlServerCommands();
+				SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+//				Grid1 . ItemsSource = genaccts;
 				DbCount = genaccts . Count;
 				ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
@@ -950,12 +950,9 @@ namespace MyDev . Views
 			{
 				if ( e . OriginalSource . ToString ( ) . Contains ( ".Run" ) == false )
 				{
-					//e . Handled = true;
 					return;
 				}
 			}
-			//			if ( Utils . HitTestHeaderBar ( sender , e ) )
-			//				return;
 			FirstXPos = e . GetPosition ( sender as Control ) . X;
 			FirstYPos = e . GetPosition ( sender as Control ) . Y;
 			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - FirstXPos;
@@ -983,10 +980,6 @@ namespace MyDev . Views
 					( MovingObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
 				if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
 					( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
-
-				//Console . WriteLine ( $"{ FirstXPos} : {FirstYPos} : {trueleft} : {truetop}" );
-				//Console . WriteLine ( $"Left : {left}, Top : {top}" );
-				//Console . WriteLine ( $"{ left} : {Flowdoc . ActualWidth} : {canvas . ActualWidth} = {Flowdoc . ActualWidth - canvas . ActualWidth}" );
 			}
 		}
 		#endregion FlowDoc Drag methods
@@ -1024,7 +1017,8 @@ namespace MyDev . Views
 			DbCount = genaccts . Count;
 			if ( DbCount > 0 )
 			{
-				Grid1 . ItemsSource = genaccts;
+				SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+				//				Grid1 . ItemsSource = genaccts;
 				ShowInfo ( line1: $"Stored Procedure was completed successfully, and returned the {DbCount} records shown in the Grid below !" , "Black0" ,
 					    line2: $"Procedure executed was :" , clr2: "Black0" , line3: $"{cmd . ToUpper ( )}" , clr3: "" , header: "Stored Procedure execution" , "Orange1" );
 			}

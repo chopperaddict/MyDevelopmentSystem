@@ -192,6 +192,14 @@ namespace MyDev . Views
 			get; set;
 		}
 	}
+	public class ColorpickerArgs:EventArgs
+	{
+		public string RgbString
+		{
+			get; set;
+		}
+		
+	}
 	public class GrabImageArgs : EventArgs
 	{
 		public Visual visual { get; set; }
