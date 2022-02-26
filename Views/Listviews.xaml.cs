@@ -1,4 +1,5 @@
-﻿using MyDev . Sql;
+﻿using MyDev . Dapper;
+using MyDev . Sql;
 using MyDev . SQL;
 using MyDev . UserControls;
 using MyDev . ViewModels;
@@ -9,17 +10,25 @@ using System . Collections . ObjectModel;
 using System . ComponentModel;
 using System . Configuration;
 using System . Data;
+using System . Data . SqlClient;
 using System . Diagnostics;
+using System . Linq;
+using System . Runtime . CompilerServices;
 using System . Runtime . InteropServices . WindowsRuntime;
+using System . Runtime . Remoting . Channels;
+using System . Runtime . Remoting . Metadata . W3cXsd2001;
+using System . Text;
 using System . Windows;
 using System . Windows . Automation . Peers;
 using System . Windows . Controls;
 using System . Windows . Documents;
 using System . Windows . Input;
 using System . Windows . Media;
+using System . Windows . Media . Media3D;
 using System . Xml . Linq;
 
 using static Dapper . SqlMapper;
+using static System . Net . WebRequestMethods;
 
 namespace MyDev . Views
 {
@@ -103,66 +112,66 @@ namespace MyDev . Views
 		//		private string CurrentType= "BANKACCOUNT";
 		//		private string [ ] ACTypes = {"BANK", "CUSTOMER", "DETAILS", "NWCUSTOMER", "NWCUSTLIMITED", "GENERIC"};
 		//		private string [ ] DefaultTables = {"BANKACCOUNT", "CUSTOMER", "SECACCOUNTS", "CUSTOMERS", "GENERICS"};
+		private string SqlSpCommand { get; set; }
+		private string CurrentSPDb { get; set; }
 		private string SqlCommand="";
 		private string DefaultSqlCommand="Select * from BankAccount";
-		string Nwconnection = "NorthwindConnectionString";
-		string CurrentSqlConnection = "BankSysConnectionString";
+		//		string Nwconnection = "NorthwindConnectionString";
 		string CurrentDbName = "IAN1";
 		string CurrentTableName="BANKACCOUNT";
 		string CurrentDataTable = "";
-		Dictionary <string, string> ConnectionStringsDict = new Dictionary<string, string>();
-		Dictionary <string, string> DefaultSqlCommands = new Dictionary<string, string>();
+
+		public static string CurrentSqlConnection = "BankSysConnectionString";
+		public static Dictionary <string, string> DefaultSqlCommands = new Dictionary<string, string>();
 
 		#endregion  Public variables
 
 		#region private variables
 		private bool UseDirectLoad = true;
 		private bool UseBGThread= true;
-		private bool LoadDirect=false;
+		//private bool LoadDirect=false;
 		private bool alldone=false;
 		// pro temp variables
 		// Flowdoc flags
 		private bool UseFlowdoc=false;
 		private bool UseFlowdocBeep=false;
 		private bool UseScrollViewer= false;
+		private bool  TvMouseCaptured = false;
 
+		// These ARE used
 		private  double flowdocHeight=0;
 		private  double flowdocWidth=0;
 		private  double flowdocTop=0;
 		private  double flowdocLeft=0;
-		private bool showall=false;
-		private  bool ShowFullScript = false;
-		private bool Startup = true;
+		private double XLeft=0;
+		private double YTop=0;
+		private bool Startup = false;
 		private bool LoadAll = true;
 		private bool Usetimer = true;
 		private bool ComboSelectionActive = false;
 		private static Stopwatch timer = new Stopwatch();
-		Datagrids dGrids = new Datagrids();
+		//Datagrids dGrids = new Datagrids();
+
+		//Variables  for resizing FlowDoc
+		// Needed to be global to improve performance!
+		private double newWidth=0;
+		private double newHeight =0;
+		private double YDiff = 0;
+		private double XDiff = 0;
+		private double FdLeft = 0;
+		private double FdTop =0;
+		private double FdHeight=0;
+		private double FdWidth=0;
+		private double MLeft=0;
+		private double MTop=0;
+		private bool CornerDrag = false;
+		private double FdBorderWidth=0;
+		private double FdBottom =0;
+		private double ValidTop = 0;
+		private double ValidBottom =0;
+		Thickness th = new Thickness(0,0,0,0);
 		#endregion private variables
-
-		#region Private layout variables
-
-		private double row2Height;
-		public double Row2Height
-		{
-			get { return row2Height; }
-			set { row2Height = value; }
-		}
-		private double col2Width;
-		public double Col2Width
-		{
-			get { return col2Width; }
-			set { col2Width = value; }
-		}
-		private double col3Width;
-		public double Col3Width
-		{
-			get { return col3Width; }
-			set { col3Width = value; }
-		}
-
-		#endregion Private layout variables
-
+	
 		#region Full Properties
 
 		// Full properties used in Binding to I/f objects
@@ -192,43 +201,86 @@ namespace MyDev . Views
 			set { movingobject = value; }
 		}
 		private object Colorpickerobject;
-
 		public object ColorpickerObject
 		{
 			get { return Colorpickerobject; }
 			set { Colorpickerobject = value; }
 		}
 
+		private bool flowdocResizing;
+		public bool FlowdocResizing
+		{
+			get { return flowdocResizing; }
+			set { flowdocResizing = value; }
+		}
+		private double flowdocFloatingTop;
+		public double FlowdocFloatingTop
+		{
+			get { return flowdocFloatingTop; }
+			set { flowdocFloatingTop = value; }
+		}
+		private double flowdocFloatingLeft;
+		public double FlowdocFloatingLeft
+		{
+			get { return flowdocFloatingLeft; }
+			set { flowdocFloatingLeft = value; }
+		}
+		private double flowdocFloatingHeight;
+		public double FlowdocFloatingHeight
+		{
+			get { return flowdocFloatingHeight; }
+			set { flowdocFloatingHeight = value; }
+		}
+		private double flowdocFloatingWidth;
+		public double FlowdocFloatingWidth
+		{
+			get { return flowdocFloatingWidth; }
+			set { flowdocFloatingWidth = value; }
+		}
 
-		private double FirstXPos=0;
-		private double FirstYPos=0;
 
 		private double CpFirstXPos=0;
 		private double CpFirstYPos=0;
 
+		private double TvFirstXPos=0;
+		private double TvFirstYPos = 0;
 		#endregion Full Properties
 
 		//Data  for font size/rowheight
 		private List<int> fontsizes = new List<int>( );
 		private List<int> rowsizes = new List<int>( );
 
+		#region Treeview declarations
+		public ObservableCollection<Database> DatabasesCollection =new ObservableCollection<Database>();
+		public ObservableCollection<SqlTable> TablesCollection =new ObservableCollection<SqlTable>();
+		public ObservableCollection<SqlProcedures> ProcsCollection =new ObservableCollection<SqlProcedures>();
+		//		public SqlDatabases sqldb = new SqlDatabases();
+
+		//		public ObservableCollection<Database> dBase= new ObservableCollection<Database>();
+
+		//		public SqlTable sqltable = new SqlTable();
+		//public ObservableCollection<SqlTable> SqlTableCollection =new ObservableCollection<SqlTable>();
+		//public List<SqlDatabase> dbCollection = new List<SqlDatabase>();
+		//public List<string> databaseList = new List<string>();
+		//public List<string>TableList= new List<string>();
+		#endregion Treeview declarations
+
 		#region Startup / close
 		public Listviews ( )
 		{
 			InitializeComponent ( );
 			this . DataContext = this;
-			// Setup default connection
-			//			BgWorker . IsChecked = true;
+			Startup = true;
 			UseBGThread = true;
 			UseFlowdoc = false;
 			UseScrollViewer = false;
 			Usetimer = true;
-			//			UseTimer . IsChecked = true;
 			Flags . UseScrollView = false;
 			// Set flags so we get the right SQL command method used...
 			UseDirectLoad = true;
 			SqlCommand = DefaultSqlCommand;
-
+			canvas . Visibility = Visibility . Visible;
+			TreeviewBorder . Visibility = Visibility . Hidden;
 		}
 		//*************************************************************//
 		// Initial startup - load Db = Ian1 / Table = Bankaccount 
@@ -237,8 +289,8 @@ namespace MyDev . Views
 		{
 			this . DataContext = this;
 			canvas . Visibility = Visibility . Visible;
-			// Initialize all connection strings
-			LoadConnectionStrings ( );
+			// Initialize all connection strings  in Flags
+			Utils . LoadConnectionStrings ( );
 
 			// Get list of Dbs (just 3 right now)
 			LoadAllDbNames ( );
@@ -253,7 +305,7 @@ namespace MyDev . Views
 			}
 			else
 				SqlCommand = DefaultSqlCommand;
-			if ( SetConnectionString ( "IAN1" ) == false )
+			if ( Utils . CheckResetDbConnection ( "IAN1" , out string constr ) == false )
 			{
 				Console . WriteLine ( "Unable to load connection string for BANKACOUNT Db from System Properties" );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
@@ -267,12 +319,10 @@ namespace MyDev . Views
 			// this also loads list of tables in Ian1/mdf
 			OpenIan1Db ( );
 			// used to access Dictionary of DataTemplates  - load into both Combos and selects 1st entry
-			//LoadDataTemplates_Ian1 ( CurrentTableName , "" );
 
 			// now load list of tables in IAN1 Db
 			LoadDbTables ( "IAN1" );
 			SelectCurrentDbInCombo ( "BANKACCOUNT" , "" );
-			//			LoadTablesList_Ian1 ( );
 
 			// Load Bankaccount into both viewers
 			CurrentTableName = "BANKACCOUNT";
@@ -282,10 +332,10 @@ namespace MyDev . Views
 
 			// Hook into our Flowdoc so we can resize it in  the canvas !!!
 			// Flowdoc has an Event declared (ExecuteFlowDocSizeMethod ) that we are  hooking into
-			Flowdoc . ExecuteFlowDocSizeMethod += new EventHandler ( ParentWPF_method );
+			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( ParentWPF_method );
+			Flowdoc . ExecuteFlowDocResizeMethod += Flowdoc_ExecuteFlowDocResizeMethod;
+			Flowdoc . ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
 			Colorpicker . ExecuteSaveToClipboardMethod += Colorpicker_ExecuteSaveToClipboardMethod;
-//			Colorpicker . ExecuteMoveMethod += Colorpicker_ExecuteMoveMethod;
-
 
 			// LOAD BOTH VIEWERS (NO PARAMETER)
 			LoadGrid_IAN1 ( );
@@ -297,9 +347,27 @@ namespace MyDev . Views
 				);
 			LoadFontsizes ( );
 			LoadRowsizes ( );
+			PickColors . Fontsize = 12;
+			Fontsize = 12;
+			ItemBackground = Brushes . LightBlue;
+			ItemForeground = Brushes . Black;
+			SelectedBackground = Brushes . Red;
+			SelectedForeground = Brushes . White;
+			MouseoverBackground = Brushes . Blue;
+			MouseoverForeground = Brushes . White;
+			MouseoverSelectedBackground = Brushes . Black;
+			MouseoverSelectedForeground = Brushes . White;
 		}
 
 
+		private void ListViewWindow_PreviewKeyDown ( object sender , KeyEventArgs e )
+		{
+			if ( e . Key == Key . F8 )
+				Debugger . Break ( );
+			ReleaseMouseCapture ( );
+			//			Console . WriteLine ( "Mouse released 1" );
+			TvMouseCaptured = false;
+		}
 		private void LoadRowsizes ( )
 		{
 			rowsizes . Add ( 10 );
@@ -1107,8 +1175,6 @@ namespace MyDev . Views
 			Datagrids . CallStoredProcedure ( list , SqlCommand );
 			//This call returns us a DataTable
 			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
-			//			Grid2 . ItemsSource = dt . DefaultView;
-			//			Grid2 . Refresh ( );
 			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
 			list = Utils . GetDataDridRowsAsListOfStrings ( dt );
 			foreach ( string row in list )
@@ -1129,6 +1195,8 @@ namespace MyDev . Views
 			DbMain . SelectedIndex = bankindex;
 			Startup = false;
 			SqlCommand = DefaultSqlCommand;
+			// Save a List of ALL DBs so we can add  to our treeview 
+			//databaseList = list;
 		}
 
 		//Reload  contents of table names on right click
@@ -1578,7 +1646,7 @@ namespace MyDev . Views
 			if ( Startup )
 				return null;
 			// Set correct connection string
-			if ( SetConnectionString ( "NORTHWIND" ) == false )
+			if ( Utils . CheckResetDbConnection ( "NORTHWIND" , out string constr ) == false )
 			{
 				Console . WriteLine ( "Failed to set connection string for NorthWind Db" );
 				return null;
@@ -1611,7 +1679,7 @@ namespace MyDev . Views
 		private bool OpenIan1Db ( )
 		{
 			//Set Sql Connection string up first
-			if ( SetConnectionString ( "IAN1" ) == false )
+			if ( Utils . CheckResetDbConnection ( "IAN1" , out string constr ) == false )
 			{
 				Console . WriteLine ( "Failed to set connection string for Ian1 Db" );
 				return false;
@@ -1631,7 +1699,7 @@ namespace MyDev . Views
 		private void OpenNorthWindDb ( )
 		{
 			//Set Sql Connectoin string up first
-			if ( SetConnectionString ( "NORTHWIND" ) == false )
+			if ( Utils . CheckResetDbConnection ( "NORTHWIND" , out string constr ) == false )
 			{
 				Console . WriteLine ( "Failed to set connection string for NorthWind Db" );
 				return;
@@ -1646,7 +1714,7 @@ namespace MyDev . Views
 		private void OpenPublishers ( )
 		{
 			//Set Sql Connectoin string up first
-			if ( SetConnectionString ( "PUBS" ) == false )
+			if ( Utils . CheckResetDbConnection ( "PUBS" , out string constr ) == false )
 			{
 				Console . WriteLine ( "Failed to set connection string for Adventure WorksDb" );
 				return;
@@ -1699,7 +1767,7 @@ namespace MyDev . Views
 			int listindex = 0, count=0;
 			List<string> list = new List<string>      ();
 			DbName = DbName . ToUpper ( );
-			if ( SetConnectionString ( DbName ) == false )
+			if ( Utils . CheckResetDbConnection ( DbName , out string constr ) == false )
 			{
 				Console . WriteLine ( $"Failed to set connection string for {DbName} Db" );
 				return false;
@@ -1749,6 +1817,18 @@ namespace MyDev . Views
 						count++;
 					}
 				}
+
+				//// add ALL DBs to our treeview list of databases
+				////SqlTables sqlt = new SqlTables();
+				//foreach ( string row in list )
+				//{
+				//	SqlTables sqlt= new SqlTables();
+				//	sqlt . tablename = row;
+				//	SqlTableCollection . Add ( sqlt );
+				//}
+				//DbTablesTree . ItemsSource = SqlTableCollection;
+
+
 				// how to Sort Combo/Listbox contents
 				//dbNameLv . Items . SortDescriptions . Add ( new SortDescription ( "" , ListSortDirection . Ascending ) );
 				alldone = true;
@@ -1775,20 +1855,40 @@ namespace MyDev . Views
 		#region FlowDoc support
 		private void ShowInfo ( string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
 		{
-			if ( UseFlowdoc )
+			if ( UseFlowdoc == false )
+				return;
+			if ( UseFlowdocBeep == false )
+				beep = false;
+			Flowdoc . ShowInfo ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
+			canvas . Visibility = Visibility . Visible;
+			canvas . BringIntoView ( );
+			Flowdoc . Visibility = Visibility . Visible;
+
+			if ( Flowdoc . KeepSize == false )
 			{
-				if ( UseFlowdocBeep == false )
-					beep = false;
-				Flowdoc . ShowInfo ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
-				canvas . Visibility = Visibility . Visible;
-				canvas . BringIntoView ( );
-				Flowdoc . Visibility = Visibility . Visible;
-				Flowdoc . BringIntoView ( );
-				if ( Flags . PinToBorder == true )
-				{
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-				}
+				if ( Flowdoc . Height != flowdocFloatingHeight )
+					flowdocFloatingHeight = Flowdoc . Height;
+			}
+			var docheight = Convert.ToDouble ( flowdocFloatingHeight == 0 ? 250 : flowdocFloatingHeight);
+			var docwidth = Convert.ToDouble ( flowdocFloatingWidth == 0 ? 450 : flowdocFloatingWidth);
+			// Save properties
+			flowdocFloatingHeight = docheight;
+			flowdocFloatingWidth = docwidth;
+			flowdocFloatingTop = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
+			flowdocFloatingLeft = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
+			//Position Control on Canvas
+			double canvasheight = canvas.ActualHeight;
+			if ( docheight >= canvasheight )
+				Flowdoc . Height = canvasheight - 20;
+			// Set size of Control
+			Flowdoc . Width = flowdocFloatingWidth;
+			Flowdoc . Height = flowdocFloatingHeight;
+
+			Flowdoc . BringIntoView ( );
+			if ( Flags . PinToBorder == true )
+			{
+				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
+				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
 			}
 		}
 
@@ -1813,54 +1913,290 @@ namespace MyDev . Views
 
 		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
+			// Called  when a Flowdoc MOVE has ended
+			ReleaseMouseCapture ( );
 			MovingObject = null;
+			FlowdocResizing = false;
+			Flowdoc . BorderClicked = false;
+			Flowdoc . BorderSelected = -1;
+			CornerDrag = false;
+			TvMouseCaptured = false;
+			FdLeft = FdTop = th . Left = 0;
 		}
 
+		private void LvFlowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//double FdWidth=0;
+			//double FdHeight = 0;
+			//In this event, we get current mouse position on the control to use it in the MouseMove event.
+			Border border = e . OriginalSource as Border;
+			if ( border != null )
+			{
+				FlowdocResizing = true;
+				flowdocLeft = e . GetPosition ( Flowdoc ) . X;
+				flowdocTop = e . GetPosition ( Flowdoc ) . Y;
+				flowdocHeight = Flowdoc . ActualHeight;
+				flowdocWidth = Flowdoc . ActualWidth;
+				Flowdoc . CaptureMouse ( );
+				//flowdocWidth = border . ActualWidth;
+				//FdHeight = border . ActualHeight;
+				//flowdocTop= e . GetPosition ( Flowdoc ) . Y;
+				//flowdocLeft = e . GetPosition ( Flowdoc ) . X;
+				////MovingObject = sender;
+				return;
+			}
+			else
+			{
+				Button btn = sender as Button;
+				if ( btn != null )
+					return;
+			}
+			flowdocLeft = e . GetPosition ( Flowdoc ) . X;
+			flowdocTop = e . GetPosition ( Flowdoc ) . Y;
+			flowdocHeight = Flowdoc . ActualHeight;
+			flowdocWidth = Flowdoc . ActualWidth;
+			double currcursorH = e . GetPosition ( Flowdoc) . Y;
+			double currcursorW = e . GetPosition ( Flowdoc) . X;
+			CpFirstXPos = e . GetPosition ( sender as Control ) . X;
+			CpFirstYPos = e . GetPosition ( sender as Control ) . Y;
+			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - CpFirstXPos;
+			double FirstArrowYPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . Y - CpFirstYPos;
+			MovingObject = sender;
+			//if ( border != null )
+			//{
+			//	FlowdocResizing = true;
+			//	XLeft = e . GetPosition ( sender as Control ) . X;
+			//	XWidth = Flowdoc . Width;
+			//	YTop = e . GetPosition ( sender as Control ) . Y;
+			//	YHeight = Flowdoc . Height;
+
+			//	double Hdiff = XLeft - currcursorW;
+			//	double Vdiff = YTop - currcursorH;
+
+			//	if ( YTop - currcursorH <= 15 || YTop - currcursorH > 15 )
+			//		ResizeMode = 0;   // Height
+			//	else if ( XLeft - currcursorW <= 10 || XLeft - currcursorW > 10 )
+			//		ResizeMode = 1;   // Width
+			//}
+		}
+
+		private void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
+		{
+			// EVENTHANDLER to Handle resizing
+			FlowDoc fd = sender as FlowDoc;
+			Point pt = Mouse . GetPosition (canvas );
+			double dLeft = pt.X;
+			double dTop= pt.Y;
+			Console . WriteLine ( $"{pt . X}, {pt . Y}" );
+			if ( Flowdoc . BorderSelected == 1 )
+			{ //Top border
+			  //double left = (FlowDoc)Flowdoc.GetPosition () . X ;
+			  //				double top = fd . GetPosition ( ( Flowdoc as FrameworkElement ) . Parent as FrameworkElement ) . Y ;
+				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Top " );
+			}
+			else if ( Flowdoc . BorderSelected == 2 )
+			{ //Bottom border
+				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Bottom " );
+			}
+			else if ( Flowdoc . BorderSelected == 3 )
+			{ //Left border
+				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Left " );
+			}
+			else if ( Flowdoc . BorderSelected == 4 )
+			{ //Right border
+				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Right" );
+			}
+		}
+
+		#region Resize Flowdoc Window
 		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
 		{
-			if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed )
+			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
+			//			MovingObject = sender;
+			if ( Flowdoc . BorderClicked )
 			{
-				// Get mouse position IN FlowDoc !!
-				double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - FirstXPos ;
-				double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - FirstYPos ;
-				double trueleft = left - FirstXPos;
-				double truetop = left - FirstYPos;
-				if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
-					( MovingObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
-				if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
-					( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
-			}
-		}
-		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		{
-			//In this event, we get current mouse position on the control to use it in the MouseMove event.
-			if ( Utils . HitTestScrollBar ( sender , e ) == true )
-			{
-				if ( e . OriginalSource . ToString ( ) . Contains ( ".Run" ) == false )
+				// Get current sizes and position of Flowdoc windowo intilize our calculations
+				if ( FdLeft == 0 )
+					FdLeft = Canvas . GetLeft ( Flowdoc );
+				if ( FdTop == 0 )
+					FdTop = Canvas . GetTop ( Flowdoc );
+				FdHeight = Flowdoc . ActualHeight;
+				FdWidth = Flowdoc . ActualWidth;
+				//Get mouse cursor position
+				Point pt = Mouse . GetPosition (canvas );
+				MLeft = pt . X;
+				MTop = pt . Y;
+				//				if ( th . Left == 0 )
+				th = Flowdoc . FdBorder . BorderThickness;
+				FdBorderWidth = th . Left * 2;
+				FdBottom = FdTop + FdHeight;
+				ValidTop = FdBottom - ( FdBorderWidth / 2 );
+				ValidBottom = FdBottom + ( FdBorderWidth / 2 );
+
+				if ( Flowdoc . BorderSelected == 1 )  // Top
 				{
+					// Top border - WORKING CORRECTLY
+					Canvas . SetTop ( Flowdoc , MTop );
+					YDiff = MTop - FdTop;
+					FdTop = MTop;
+
+					newHeight = FdHeight - YDiff;
+					if ( newHeight < 200 )
+						newHeight = 200;
+					Flowdoc . Height = newHeight;
 					return;
 				}
+				else if ( Flowdoc . BorderSelected == 2 )
+				{     // Bottom border
+					newHeight = MTop - FdTop;
+					Flowdoc . Height = newHeight;
+					return;
+				}
+				else if ( Flowdoc . BorderSelected == 3 )
+				{
+					// Left hand side border  - WORKING CORRECTLY
+					XDiff = MLeft - FdLeft;
+					newWidth = FdWidth - XDiff;
+					if ( newWidth < 350 )
+						newWidth = 350;
+					Flowdoc . Width = newWidth;
+					Canvas . SetLeft ( Flowdoc , MLeft );
+					FdLeft = MLeft;
+					return;
+				}
+				// Right  border or right lower corner
+				else if ( Flowdoc . BorderSelected == 4 )
+				{
+					// Right hand side border  OR Top Right Corner 
+					if ( CornerDrag || MTop - FdTop <= FdBorderWidth || FdTop - MTop <= -FdBorderWidth )
+					{
+						//if ( MTop >= ValidTop && MTop <= ValidBottom)
+						if ( FdTop - MTop >= -FdBorderWidth )
+						{
+							// Top Right corner clicked	- working very well - resizes in BOTH directions
+							CornerDrag = true;
+
+							YDiff = FdTop - MTop;
+							FdTop = MTop;
+							Canvas . SetTop ( Flowdoc , MTop );
+							// Handle Height
+							newHeight = FdHeight + YDiff;
+							if ( newHeight < 200 )
+								newHeight = 200;
+							Flowdoc . Height = FdHeight;
+							// handle width
+							newWidth = MLeft - FdLeft;
+							FdWidth = newWidth;
+							Flowdoc . Width = FdWidth;
+							Flowdoc . SetValue ( HeightProperty , newHeight );
+							Flowdoc . SetValue ( WidthProperty , newWidth );
+							return;
+						}
+						else if (
+							( ( FdTop + FdHeight - MTop >= FdBorderWidth )
+							|| ( FdTop + FdHeight - MTop <= FdBorderWidth ) )
+							&& ( MTop > FdBorderWidth + FdBorderWidth + 5 )
+							)
+						{
+							// Right Border or Lower Right corner
+							if ( MTop >= ValidTop - th . Left && MTop <= ValidBottom + th . Left )
+							{     // WORKING 23/2//2022
+								// Pointer is in lower right corner, so drag both ways
+								CornerDrag = true;
+								// Reset height.  Mouse is at bottom right, so pinpoint where iti s in real terms
+								double mouseposY = FdTop + FdHeight;
+								YDiff = MTop - FdTop - FdHeight;
+								newHeight = FdHeight + YDiff;// - FdLeft;
+								Flowdoc . Height = newHeight;
+								if ( newHeight < 0 )
+									return;
+								//Reset width - WORKING
+								newWidth = MLeft - FdLeft;
+								Flowdoc . Width = newWidth;
+								Flowdoc . SetValue ( HeightProperty , newHeight );
+								Flowdoc . SetValue ( WidthProperty , newWidth );
+								return;
+							}
+							else
+							{     // WORKING 23/2//2022
+								// Just dragging right border	    
+								newWidth = MLeft - FdLeft;
+								Flowdoc . Width = newWidth;
+								Flowdoc . SetValue ( WidthProperty , newWidth );
+								CornerDrag = true;
+								return;
+							}
+						}
+						else
+						{
+							// just dragging right border WORKING CORRECTLY  for right border
+							newWidth = MLeft - FdLeft;
+							Flowdoc . Width = newWidth;
+							Flowdoc . SetValue ( WidthProperty , newWidth );
+							CornerDrag = true;
+							return;
+						}
+					}
+					else if ( CornerDrag || MTop - FdTop + FdHeight <= FdBorderWidth )
+					{
+						if ( ( FdTop + FdHeight - MTop ) >= -FdBorderWidth )
+						{
+							if ( FdTop - MTop >= -FdBorderWidth )
+							{
+								// Bottom Right corner clicked
+								CornerDrag = true;
+								Canvas . SetTop ( Flowdoc , FdTop );
+								newHeight = FdHeight - YDiff;
+								if ( newHeight < 0 )
+									return;
+								XDiff = ( MLeft - FdWidth ) - FdLeft;
+								Flowdoc . Width += XDiff;
+								Flowdoc . Refresh ( );
+								return;
+							}
+						}
+					}
+					else
+					{
+						// if we get here, we are only draggig the RIGHT Border of the window to change it's with
+						newWidth = MLeft - FdLeft;// - FdLeft;
+						Flowdoc . Width = newWidth;
+					}
+				}
+				return;
 			}
-			FirstXPos = e . GetPosition ( sender as Control ) . X;
-			FirstYPos = e . GetPosition ( sender as Control ) . Y;
-			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - FirstXPos;
-			double FirstArrowYPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . Y - FirstYPos;
-			MovingObject = sender;
+			else
+			{
+				var obj = MovingObject as FlowDoc;
+				if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed && Flowdoc . BorderClicked == false )
+				{
+					// MOVING WINDOW around the Parent window (MDI ?)
+					// Get mouse position IN FlowDoc !!
+					double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - CpFirstXPos ;
+					double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - CpFirstYPos ;
+					double trueleft = left - CpFirstXPos;
+					double truetop = left - CpFirstYPos;
+					if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
+						( MovingObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
+					if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
+						( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
+				}
+				else if ( FlowdocResizing == false )
+				{
+					int x = 0;
+				}
+			}
 		}
+
+		#endregion Resize Flowdoc Window
 
 		#endregion FlowDoc support
 
 		#region  initialize data
-		// Create dictionary of ALL Sql Connection strings
-		public void LoadConnectionStrings ( )
-		{
-			ConnectionStringsDict . Add ( "IAN1" , ( string ) Properties . Settings . Default [ "BankSysConnectionString" ] );
-			ConnectionStringsDict . Add ( "NORTHWIND" , ( string ) Properties . Settings . Default [ "NorthwindConnectionString" ] );
-			//ConnectionStringsDict . Add ( "NEWBANKACCOUNT" , ( string ) Properties . Settings . Default [ "NewBanksys" ] );
-			ConnectionStringsDict . Add ( "PUBS" , ( string ) Properties . Settings . Default [ "PubsConnectionString" ] );
-		}
 		public void LoadDefaultSqlCommands ( )
 		{
+			if ( DefaultSqlCommands . Count > 0 )
+				return;
 			DefaultSqlCommands . Add ( "BANKACCOUNT" , "Select * from BankAccount" );
 			DefaultSqlCommands . Add ( "CUSTOMER" , "Select * from Customer" );
 			DefaultSqlCommands . Add ( "SECACCOUNTS" , "Select * from secAccounts" );
@@ -1872,19 +2208,6 @@ namespace MyDev . Views
 			//DefaultSqlCommands . Add ( "AW.PRODUCTION.PRODUCTREVIEW" , "Select * from Production.ProductReview" );
 			//DefaultSqlCommands . Add ( "AW.PRODUCTION.PRODUCTPHOTO" , "Select * from Production.ProductPhoto" );
 		}                 // Set up the connection string fo rthe approriate Db
-		public bool SetConnectionString ( string key )
-		{
-			//string connstring = "";
-			//	if ( ConnectionStringsDict . TryGetValue ( key , out connstring ) )
-			if ( Utils . GetDictionaryEntry ( ConnectionStringsDict , key , out string connstring ) != "" )
-			{
-				CurrentSqlConnection = connstring;
-				Flags . CurrentConnectionString = CurrentSqlConnection;
-				return true;
-			}
-			else
-				return false;
-		}
 
 		#endregion  initialize data
 
@@ -1925,7 +2248,7 @@ namespace MyDev . Views
 			if ( selection . ToUpper ( ) == "IAN1" )
 			{
 				// initial access of this Db, so load BankAccount table
-				if ( SetConnectionString ( "IAN1" ) == false )
+				if ( Utils . CheckResetDbConnection ( "IAN1" , out string constr ) == false )
 				{
 					Console . WriteLine ( "Failed to set connection string for IAN1 Db" );
 					return;
@@ -1965,7 +2288,7 @@ namespace MyDev . Views
 			else if ( selection . ToUpper ( ) == "NORTHWIND" )
 			{
 				// Just open the New DB
-				if ( SetConnectionString ( "NORTHWIND" ) == false )
+				if ( Utils . CheckResetDbConnection ( "NORTHWIND" , out string constr ) == false )
 				{
 					Console . WriteLine ( "Failed to set connection string for NorthWind Db" );
 					return;
@@ -2051,7 +2374,12 @@ namespace MyDev . Views
 			LoadAll = true;
 			string currdb = GetCurrentDatabase ( );
 			CurrentTableName = dbNameLv . SelectedItem . ToString ( ) . ToUpper ( );
-
+			// This resets the current database connection - should be used anywhere that We switch between databases in Sql Server
+			if ( Utils . CheckResetDbConnection ( DbMain . SelectedItem . ToString ( ) , out string constring ) == false )
+			{
+				Console . WriteLine ( $"Failed to set connection string for {CurrentTableName . ToUpper ( )} Db" );
+				return;
+			}
 			if ( currdb == "IAN1" )
 			{
 				LoadData_Ian1 ( "VIEW" );
@@ -2099,6 +2427,11 @@ namespace MyDev . Views
 			LoadAll = true;
 			string currdb = GetCurrentDatabase ( );
 			CurrentTableName = dbNameLb . SelectedItem . ToString ( ) . ToUpper ( );
+			if ( Utils . CheckResetDbConnection ( DbMain . SelectedItem . ToString ( ) , out string constr ) == false )
+			{
+				Console . WriteLine ( $"Failed to set connection string for {CurrentTableName . ToUpper ( )} Db" );
+				return;
+			}
 
 			if ( currdb == "IAN1" )
 			{
@@ -2241,7 +2574,7 @@ namespace MyDev . Views
 		private void HandleCaption ( string viewertype , int reccount )
 		{
 			FrameworkElement elemnt;
-			if ( viewertype == "VIEW" || viewertype == "" )
+			if ( viewertype == "VIEW" )
 			{
 				elemnt = listView as FrameworkElement;
 				listView . ItemTemplate = elemnt . FindResource ( DataTemplatesLv . SelectedItem ) as DataTemplate;
@@ -2249,7 +2582,7 @@ namespace MyDev . Views
 				dGridHeader . Text = $"DataGrid Display : {DbMain . SelectedItem . ToString ( )} : {dbNameLv?.SelectedItem?.ToString ( ) . ToUpper ( )} Records = {reccount}";
 				DbCountlv = reccount;
 			}
-			else if ( viewertype == "BOX" || viewertype == "" )
+			else if ( viewertype == "BOX" )
 			{
 				elemnt = listBox as FrameworkElement;
 				listBox . ItemTemplate = elemnt . FindResource ( DataTemplatesLb?.SelectedItem ) as DataTemplate;
@@ -2277,27 +2610,36 @@ namespace MyDev . Views
 		{
 			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
 			// or return to its original size and position courtesy of the Event declard in FlowDoc
+			if ( Flowdoc . BorderClicked )
+			{
+				return;
+			}
 			double height = canvas . Height;
 			double width = canvas . Width;
 			if ( Flowdoc . Height < canvas . Height && Flowdoc . Width < canvas . Width )
 			{
-				// it is in NORMAL moode right now
+				// it is in NORMAL mode right now
 				// Set flowdoc size into variables for later use
+				flowdocFloatingTop = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
+				flowdocFloatingLeft = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
+				flowdocFloatingHeight = Flowdoc . ActualHeight;
+				flowdocFloatingWidth = Flowdoc . ActualWidth;
 				flowdocHeight = Flowdoc . Height;
 				flowdocWidth = Flowdoc . Width;
-				flowdocLeft = ( double ) GetValue ( Canvas . LeftProperty );
-				flowdocTop = ( double ) GetValue ( Canvas . TopProperty );
+				flowdocTop = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
+				flowdocLeft = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
 				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
 				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
 				Flowdoc . Height = height;
 				Flowdoc . Width = width;
+				// save current size/position
 			}
 			else
 			{
 				// it is MAXIMIZED right now
 				// We re returning it to normal position/Size
-				Flowdoc . Height = flowdocHeight;
-				Flowdoc . Width = flowdocWidth;
+				Flowdoc . Height = flowdocFloatingHeight;
+				Flowdoc . Width = flowdocFloatingWidth;
 				if ( Flags . PinToBorder )
 				{
 					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
@@ -2305,115 +2647,74 @@ namespace MyDev . Views
 				}
 				else
 				{
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 150 );
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 100 );
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) flowdocFloatingLeft );
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) flowdocFloatingTop );
 				}
-				//if ( ParkFlowDoc )
-				//{
-				//	flowdocLeft = 0;
-				//	flowdocTop = 0;
-				//} else
-				//{
-				//	flowdocLeft = ( double ) GetValue ( Canvas . LeftProperty );
-				//	flowdocTop = ( double ) GetValue ( Canvas . TopProperty );
-				//}
 			}
 		}
 		#endregion Hook to Flowdoc Maximize buttoin
+		private void Flowdoc_ExecuteFlowDocResizeMethod ( object sender , FlowArgs e )
+		{
+			// Resizing FlowDoc window  - called  by hook from Flowdoc
+			if ( e . BorderClicked == false )
+				return;
+			XLeft = e . CLeft;
+			YTop = e . CTop;
+			double FdHeight = e . Height;
+			double FdWidth = e . Width;
+			double currcursorH = e . Xpos;
+			double currcursorW = e . Ypos;
+			( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) e . Xpos );
+			( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) e . Ypos );
+			Flowdoc . Height = FdHeight;
+			Flowdoc . Width = FdWidth;
+
+			//if ( FdHeight < canvas . Height && Flowdoc . Width < canvas . Width )
+			//{
+			//	// it is in NORMAL mode right now
+			//	// Set flowdoc size into variables for later use
+			//	flowdocHeight = Flowdoc . Height;
+			//	flowdocWidth = Flowdoc . Width;
+			//	flowdocTop = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
+			//	flowdocLeft = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
+			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
+			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+			//	//Flowdoc . Height = height;
+			//	//Flowdoc . Width = width;
+			//}
+		}
+
 
 		private void Park_Click ( object sender , RoutedEventArgs e )
 		{
 			Flags . PinToBorder = !Flags . PinToBorder;
 		}
 
-		private void Arrow1_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
-		{
-			if ( PickColors . Visibility == Visibility . Visible )
-			{
-
-				PickColors . Visibility = Visibility . Hidden;
-				PickColors . RedSlider . Focus ( );
-			}
-			else
-			{
-				PickColors . Visibility = Visibility . Visible;
-
-				PickColors . Focus ( );
-			}
-		}
-
 		#region Event handler rom ColorPicker button - save to clipboard
 		private void Colorpicker_ExecuteSaveToClipboardMethod ( object sender , ColorpickerArgs e )
 		{
-			Clipboard . SetText ( e.RgbString );
+			Clipboard . SetText ( e . RgbString );
 		}
-		#endregion Event handler rom ColorPicker button - save to clipboard
+		#endregion Event handler from ColorPicker button - save to clipboard
 
 		#region Move ColorPicker
-		// NOT USED
-		private void Colorpicker_ExecuteMoveMethod ( object sender , EventArgs e )
-		{
-			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
-			// or return to its original size and position courtesy of the Event declard in FlowDoc
-			//double height = canvas . Height;
-			//double width = canvas . Width;
-			//if ( PickColors . Height < canvas . Height && Flowdoc . Width < canvas . Width )
-			//{
-			//	// it is in NORMAL moode right now
-			//	// Set flowdoc size into variables for later use
-			//	//flowdocHeight = Flowdoc . Height;
-			//	//flowdocWidth = Flowdoc . Width;
-			//	CpFirstXPos = ( double ) GetValue ( Canvas . LeftProperty );
-			//	CpFirstYPos = ( double ) GetValue ( Canvas . TopProperty );
-			//	( PickColors as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) CpFirstXPos );
-			//	( PickColors  as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) CpFirstYPos );
-			//	//Flowdoc . Height = height;
-			//	//Flowdoc . Width = width;
-			//}
-			//else
-			//{
-			//	// it is MAXIMIZED right now
-			//	// We re returning it to normal position/Size
-			//	Flowdoc . Height = flowdocHeight;
-			//	Flowdoc . Width = flowdocWidth;
-			//	if ( Flags . PinToBorder )
-			//	{
-			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-			//	}
-			//	else
-			//	{
-			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 150 );
-			//		( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 100 );
-			//	}
-			//	//if ( ParkFlowDoc )
-			//	//{
-			//	//	flowdocLeft = 0;
-			//	//	flowdocTop = 0;
-			//	//} else
-			//	//{
-			//	//	flowdocLeft = ( double ) GetValue ( Canvas . LeftProperty );
-			//	//	flowdocTop = ( double ) GetValue ( Canvas . TopProperty );
-			//	//}
-			//}
-		}
 		private void PickColors_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			ColorpickerObject = null;
-		}   	
+		}
 		private void PickColors_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			//In this event, we get current mouse position on the control to use it in the MouseMove event.
-			if ( PickColors.RedSlider.IsMouseOver == true 
-				|| PickColors . GreenSlider . IsMouseOver == true 
-				|| PickColors . BlueSlider . IsMouseOver == true 
-				|| PickColors . OpacitySlider . IsMouseOver == true 
-				|| PickColors . exitbtn. IsMouseOver == true 
-				|| PickColors . ClipboardSave . IsMouseOver == true )
+			if ( PickColors . RedSlider . IsMouseOver == true
+				|| PickColors . GreenSlider . IsMouseOver == true
+				|| PickColors . BlueSlider . IsMouseOver == true
+				|| PickColors . OpacitySlider . IsMouseOver == true
+				|| PickColors . ClipboardSave . IsMouseOver == true
+				|| PickColors . listbox . IsMouseOver == true )
 			{
 				// Dont capture mouse in our cotrols
 				return;
-			}  			
+			}
 			CpFirstXPos = e . GetPosition ( sender as Control ) . X;
 			CpFirstYPos = e . GetPosition ( sender as Control ) . Y;
 			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - CpFirstXPos;
@@ -2422,6 +2723,8 @@ namespace MyDev . Views
 		}
 		private void PickColors_MouseMove ( object sender , MouseEventArgs e )
 		{
+			// ColorpickerObject is an object pointer to the ColorPicker object so this only
+			// works if the mouse pointer is over the ColorPcker
 			if ( ColorpickerObject != null && e . LeftButton == MouseButtonState . Pressed )
 			{
 				///var v = e . Source;
@@ -2434,16 +2737,16 @@ namespace MyDev . Views
 					( ColorpickerObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
 				if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
 					( ColorpickerObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
-				Console . WriteLine ($"left={left}, Top = {top}");	 			
+				//Console . WriteLine ( $"left={left}, Top = {top}" );
 			}
 		}
 		#endregion Move ColorPicker
 		private void ListViewWindow_Closed ( object sender , EventArgs e )
-		{											  
+		{
 			Colorpicker . ExecuteSaveToClipboardMethod -= Colorpicker_ExecuteSaveToClipboardMethod;
-//			Colorpicker . ExecuteMoveMethod -= Colorpicker_ExecuteMoveMethod;
-			Flowdoc . ExecuteFlowDocSizeMethod -= new EventHandler ( ParentWPF_method );
-
+			Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( ParentWPF_method );
+			Flowdoc . ExecuteFlowDocResizeMethod -= Flowdoc_ExecuteFlowDocResizeMethod;
+			Flowdoc . ExecuteFlowDocBorderMethod -= FlowDoc_ExecuteFlowDocBorderMethod;
 		}
 
 		private void LoadColorpicker ( object sender , RoutedEventArgs e )
@@ -2457,9 +2760,600 @@ namespace MyDev . Views
 			else
 			{
 				PickColors . Visibility = Visibility . Visible;
-
+				PickColors . RedSlider . Value = PickColors . RedSlider . Value - 1;
+				PickColors . RedSlider . Value = PickColors . RedSlider . Value + 1;
+				//				PickColors . Output . Fill = PickColors . RGBValueString . ToSolidBrush ( );
+				PickColors . Output . Refresh ( );
 				PickColors . Focus ( );
 			}
 		}
+
+		private void LoadTreeData ( )
+		{
+			//SqlDatabases sqldb = new SqlDatabases();
+			DatabasesCollection . Clear ( );
+			DbTablesTree . ItemsSource = null;
+			DbProcsTree . ItemsSource = null;
+			DbTablesTree . Items . Clear ( );
+			DbProcsTree . Items . Clear ( );
+			SqlCommand = "spGetAllDatabaseNames";
+			List<string>dblist = new List<string>      ();
+			Datagrids . CallStoredProcedure ( dblist , SqlCommand );
+			//This call returns us a DataTable
+			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
+			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
+			dblist = Utils . GetDataDridRowsAsListOfStrings ( dt );
+
+			var  collection = DatabasesCollection;
+
+			foreach ( string row in dblist )
+			{
+				//List<SqlTable> sqltable = new List<SqlTable>();
+				// Now Handle list of tablenames
+				if ( Utils . CheckResetDbConnection ( row , out string constr ) == false )
+				{
+					Console . WriteLine ( $"Failed to set connection string for {row . ToUpper ( )} Db" );
+					continue;
+				}
+				// All Db's have their own version of this SP.....
+				SqlCommand = "spGetTablesList";
+
+				List<string> tableslist = new List<string>      ();
+				Datagrids . CallStoredProcedure ( tableslist , SqlCommand );
+				//This call returns us a DataTable
+				dt = DataLoadControl . GetDataTable ( SqlCommand );
+
+				Database db = new Database();
+				// This how to access Row data from  a grid the easiest way.... parsed into a List <xxxxx>
+				if ( dt != null )
+				{
+					db . Tables = new List<SqlTable> ( );
+					tableslist = Utils . GetDataDridRowsAsListOfStrings ( dt );
+					foreach ( string item in tableslist )
+					{
+						SqlTable sqlt = new SqlTable(item);
+						sqlt . Tablename = item;
+						db . Tables . Add ( sqlt );
+						db . Databasename = row;
+					}
+					DatabasesCollection . Add ( db );
+				}
+
+				// All Db's have their own version of this SP.....
+				SqlCommand = "spGetStoredProcs";
+
+				List<string> procslist = new List<string>      ();
+				Datagrids . CallStoredProcedure ( procslist , SqlCommand );
+				//This call returns us a DataTable
+				dt = DataLoadControl . GetDataTable ( SqlCommand );
+				// This how to access Row data from  a grid the easiest way.... parsed into a List <xxxxx>
+				if ( dt != null )
+				{
+					//Database db = new Database();
+					db . Procedures = new List<SqlProcedures> ( );
+					procslist = Utils . GetDataDridRowsAsListOfStrings ( dt );
+					foreach ( string item in procslist )
+					{
+						SqlProcedures sqlprocs = new SqlProcedures (item);
+						sqlprocs . Procname = item;
+						db . Procedures . Add ( sqlprocs );
+					}
+					// Duplicates all entries !!!
+					//DatabasesCollection . Add ( db );
+				}
+
+			}
+			DbTablesTree . ItemsSource = DatabasesCollection;
+			DbProcsTree . ItemsSource = DatabasesCollection;
+
+		}
+
+		#region  Dependency properties for listbox
+
+		#region ItemBackground
+		public Brush ItemBackground
+		{
+			get { return ( Brush ) GetValue ( ItemBackgroundProperty ); }
+			set { SetValue ( ItemBackgroundProperty , value ); }
+		}
+
+		public static readonly DependencyProperty ItemBackgroundProperty =
+			    DependencyProperty.Register("ItemBackground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.LightBlue));
+		#endregion ItemBackground
+
+		#region ItemForeground
+		public Brush ItemForeground
+		{
+			get { return ( Brush ) GetValue ( ItemForegroundProperty ); }
+			set { SetValue ( ItemForegroundProperty , value ); }
+		}
+
+		public static readonly DependencyProperty ItemForegroundProperty =
+			    DependencyProperty.Register("ItemForeground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.Black));
+		#endregion ItemForeground
+
+		#region SelectedBackground
+		public Brush SelectedBackground
+		{
+			get { return ( Brush ) GetValue ( SelectedBackgroundProperty ); }
+			set { SetValue ( SelectedBackgroundProperty , value ); }
+		}
+		public static readonly DependencyProperty SelectedBackgroundProperty =
+			    DependencyProperty.Register("SelectedBackground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.Red));
+		#endregion SelectedBackground
+
+		#region SelectedForeground
+		public Brush SelectedForeground
+		{
+			get { return ( Brush ) GetValue ( SelectedForegroundProperty ); }
+			set { SetValue ( SelectedForegroundProperty , value ); }
+		}
+		public static readonly DependencyProperty SelectedForegroundProperty =
+			DependencyProperty.Register("SelectedForeground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.White));
+		#endregion SelectedForeground
+
+		#region MouseoverBackground
+		public Brush MouseoverBackground
+		{
+			get { return ( Brush ) GetValue ( MouseoverBackgroundProperty ); }
+			set { SetValue ( MouseoverBackgroundProperty , value ); }
+		}
+		public static readonly DependencyProperty MouseoverBackgroundProperty =
+			    DependencyProperty.Register("MouseoverBackground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.Blue));
+		#endregion MouseoverBackground
+
+		#region MouseoverForeground
+		public Brush MouseoverForeground
+		{
+			get { return ( Brush ) GetValue ( MouseoverForegroundProperty ); }
+			set { SetValue ( MouseoverForegroundProperty , value ); }
+		}
+		public static readonly DependencyProperty MouseoverForegroundProperty =
+			    DependencyProperty.Register("MouseoverForeground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.White));
+		#endregion MouseoverForeground
+
+		#region MouseoverSelectedBackground
+		public Brush MouseoverSelectedBackground
+		{
+			get { return ( Brush ) GetValue ( MouseoverSelectedBackgroundProperty ); }
+			set { SetValue ( MouseoverSelectedBackgroundProperty , value ); }
+		}
+		public static readonly DependencyProperty MouseoverSelectedBackgroundProperty =
+			    DependencyProperty.Register("MouseoverSelectedBackground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.Black));
+		#endregion MouseoverSelectedBackground
+
+		#region MouseoverSelectedForeground
+		public Brush MouseoverSelectedForeground
+		{
+			get { return ( Brush ) GetValue ( MouseoverSelectedForegroundProperty ); }
+			set { SetValue ( MouseoverSelectedForegroundProperty , value ); }
+		}
+		public static readonly DependencyProperty MouseoverSelectedForegroundProperty =
+			    DependencyProperty.Register("MouseoverSelectedForeground", typeof(Brush), typeof(Listviews), new PropertyMetadata(Brushes.White));
+
+		#endregion MouseoverSelectedForeground
+
+		public static bool GetIsNodeExpanded ( DependencyObject obj )
+		{
+			return ( bool ) obj . GetValue ( IsNodeExpandedProperty );
+		}
+		public static void SetIsNodeExpanded ( DependencyObject obj , bool value )
+		{
+			obj . SetValue ( IsNodeExpandedProperty , value );
+		}
+		public static readonly DependencyProperty IsNodeExpandedProperty =
+			DependencyProperty.RegisterAttached("IsNodeExpanded", typeof(bool), typeof(Listviews), new PropertyMetadata(false));
+
+		#endregion  Dependency properties for listbox
+
+		private void DbMain_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+
+		}
+
+		private void TextBlock_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			// right click for S.P script
+			TextBlock tb = sender as TextBlock;
+			string selection = tb.Text;
+			int index=0;
+			foreach ( var item in ProcsCollection )
+			{
+				if ( item . Procname == selection )
+				{
+					item . IsSelected = true;
+					break;
+				}
+			}
+		}
+
+		private void DbProcsTree_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			// process right click to show the  full script in a FlowDoc viewer 
+			if ( SqlSpCommand != "" && SqlSpCommand != null )
+			{
+				DataTable dt = new DataTable();
+				string[] args={"","","","" };
+				string err = "", errormsg="";
+				List<string> list = new List<string>();
+				ObservableCollection<GenericClass> Generics = new ObservableCollection<GenericClass>();
+				foreach ( var item in DatabasesCollection )
+				{
+					CurrentSPDb = item . Databasename;
+					if ( Utils . CheckResetDbConnection ( CurrentSPDb , out string constring ) == false )
+						return;
+
+					List<string> procslist = new List<string>      ();
+					ObservableCollection<BankAccountViewModel> bvmparam = new ObservableCollection<BankAccountViewModel>();
+					List<string> genericlist = new List<string>();
+					try
+					{
+						DapperSupport . CreateGenericCollection (
+							ref Generics ,
+							"spGetSpecificSchema  " ,
+							SqlSpCommand ,
+							"" ,
+							"" ,
+							ref genericlist ,
+							ref errormsg );
+						if ( Generics . Count > 0 )
+						{
+							break;
+						}
+					} catch ( Exception ex )
+					{ }
+
+				}
+				if ( Generics . Count == 0 )
+				{
+					if ( errormsg != "" )
+						MessageBox . Show ( $"No Argument information is available. \nError message = [{errormsg}]" , $"[{SqlSpCommand }] SP Script Information" , MessageBoxButton . OK , MessageBoxImage . Warning );
+					return;
+				}
+				string output="NB: You can select a different S.P & right click it WITHOUT closing this viewer window...\nThe new Script will replace the current contents of the viewer\n\n";
+				foreach ( var item in Generics )
+				{
+					string  store="";
+					store = item . field1 + ",";
+					output += store;
+				}
+				// Display the script in whatever chsen container is relevant
+				bool resetUse = false;
+				if ( UseFlowdoc == false )
+				{
+					UseFlowdoc = true;
+					resetUse = true;
+				}
+				if ( output != "" && UseFlowdoc )
+				{
+					string fdinput = $"Procedure Name : {SqlSpCommand . ToUpper ( )}\n\n";
+					fdinput += output;
+					fdinput += $"\n\nPress ESCAPE to close this window...\n";
+					ShowInfo ( line1: fdinput , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
+				}
+				else
+				{
+					Mouse . OverrideCursor = Cursors . Arrow;
+					ShowInfo ( line1: $"Procedure [{SqlSpCommand . ToUpper ( )}] \ndoes not Support / Require any arguments" , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
+				}
+				if ( resetUse )
+					UseFlowdoc = false;
+
+			}
+		}
+
+		private void DbProcsTree_SelectedItemChanged ( object sender , RoutedPropertyChangedEventArgs<object> e )
+		{
+			if ( e . NewValue == null )
+				return;
+			//var  v = SqlProcedures . IsSelected as Procname;
+			var tablename = e.NewValue as Database;
+			if ( tablename == null )
+			{
+				if ( e . NewValue == null )
+					return;
+				var tvi = e.NewValue as SqlProcedures;
+				SqlSpCommand = tvi . Procname;
+				// Noow get  nmme  of the Db we are in 
+				var items = DbProcsTree . Items;
+				if ( items . CurrentItem != null )
+				{
+					var db= items. CurrentItem as Database;
+					CurrentSPDb = db . Databasename;
+				}
+				else
+				{
+					var v = sender as ItemsControl;
+					foreach ( var item in v . Items )
+					{
+						Console . WriteLine ( item . ToString ( ) );
+					}
+					var treeItems = Utils.FindVisualParent<TextBlock> (this);
+					//treeItems . ForEach ( I => i . IsExpanded = false );
+				}
+			}
+			else
+			{
+				var tvi = e.NewValue as Database;
+				CurrentSPDb = tvi . Databasename;
+			}
+
+		}
+
+		#region Table/SP Tree Handlers
+
+		private void DbProcsTree_Expanded ( object sender , RoutedEventArgs e )
+		{
+			int x = 0;
+		}
+		private void LoadTreeView ( object sender , RoutedEventArgs e )
+		{
+			// Load Db Tables Tree viewer
+			if ( TreeviewBorder . Visibility == Visibility . Visible )
+			{
+				TreeviewBorder . Visibility = Visibility . Hidden;
+				if ( DbProcsTree . Visibility == Visibility . Visible )
+				{
+					LoadTreeData ( );
+					SpLabel . Visibility = Visibility . Hidden;
+					DbProcsTree . Visibility = Visibility . Hidden;
+					SpWrappanel . Visibility = Visibility . Hidden;
+					TablesWrappanel . Visibility = Visibility . Visible;
+					TablesLabel . Visibility = Visibility . Visible;
+					DbTablesTree . Visibility = Visibility . Visible;
+					TreeviewBorder . Visibility = Visibility . Visible;
+				}
+			}
+			else
+			{
+				LoadTreeData ( );
+				SpLabel . Visibility = Visibility . Hidden;
+				DbProcsTree . Visibility = Visibility . Hidden;
+				SpWrappanel . Visibility = Visibility . Hidden;
+				TablesWrappanel . Visibility = Visibility . Visible;
+				TablesLabel . Visibility = Visibility . Visible;
+				DbTablesTree . Visibility = Visibility . Visible;
+				TreeviewBorder . Visibility = Visibility . Visible;
+			}
+		}
+		private void LoadSpView ( object sender , RoutedEventArgs e )
+		{
+			// Load Stored procedures Tree viewer
+
+			if ( TreeviewBorder . Visibility == Visibility . Visible )
+			{
+				TreeviewBorder . Visibility = Visibility . Hidden;
+				if ( DbTablesTree . Visibility == Visibility . Visible )
+				{
+					LoadTreeData ( );
+					SpLabel . Visibility = Visibility . Visible;
+					DbProcsTree . Visibility = Visibility . Visible;
+					SpWrappanel . Visibility = Visibility . Visible;
+					TablesWrappanel . Visibility = Visibility . Hidden;
+					TablesLabel . Visibility = Visibility . Hidden;
+					DbTablesTree . Visibility = Visibility . Hidden;
+					TreeviewBorder . Visibility = Visibility . Visible;
+				}
+			}
+			else
+			{
+				LoadTreeData ( );
+				SpLabel . Visibility = Visibility . Visible;
+				DbProcsTree . Visibility = Visibility . Visible;
+				SpWrappanel . Visibility = Visibility . Visible;
+				TablesWrappanel . Visibility = Visibility . Hidden;
+				TablesLabel . Visibility = Visibility . Hidden;
+				DbTablesTree . Visibility = Visibility . Hidden;
+				TreeviewBorder . Visibility = Visibility . Visible;
+			}
+		}
+
+		private void Image_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			TreeviewBorder . Visibility = Visibility . Hidden;
+		}
+
+		private void DbProcsTree_Expanded_1 ( object sender , RoutedEventArgs e )
+		{
+
+		}
+
+		private void DbProcsTree_Collapsed ( object sender , RoutedEventArgs e )
+		{
+			int x = 0;
+		}
+
+		private void TablesLabel_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			bool flowdocswitch = false;
+			int count = 0;
+			List<string> list = new List<string>      ();
+			string output="";
+
+			foreach ( var item in DatabasesCollection )
+			{
+				CurrentSPDb = item . Databasename;
+				if ( Utils . CheckResetDbConnection ( CurrentSPDb , out string constring ) == false )
+					return;
+				SqlCommand = $"spGetTableColumns {SqlSpCommand }";
+				Datagrids . CallStoredProcedure ( list , SqlCommand );
+				//This call returns us a DataTable
+				DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
+				// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
+				list = Utils . GetTableColumnsList ( dt );
+				if ( dt . Rows . Count > 0 )
+					break;
+			}
+			if ( list . Count > 0 )
+			{
+				foreach ( string row in list )
+				{
+					string entry = row.ToUpper();
+					output += row + "\n";
+					count++;
+				}
+				// Fiddle  to allow Flowdoc  to show Field info even though Flowdoc use is disabled
+				if ( UseFlowdoc == false )
+				{
+					flowdocswitch = true;
+					UseFlowdoc = true;
+				}
+				Console . WriteLine ( $"loaded {count} records for table columns" );
+				ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
+					line2: $"the structure of the table [{SqlSpCommand }] is listed below : \n{output}" ,
+					line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
+					);
+				if ( flowdocswitch == true )
+				{
+					flowdocswitch = false;
+					UseFlowdoc = false;
+				}
+			}
+			else
+			{
+				ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+					line1: $"The request was made succesfully, but no Table Fields were returned..." , clr1: "Red3" ,
+					line2: $"The table queried was [{SqlSpCommand }]" ,
+					line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
+					);
+			}
+		}
+		#endregion Table/SP Tree Handlers
+
+		private void DbTablesTree_SelectedItemChanged ( object sender , RoutedPropertyChangedEventArgs<object> e )
+		{
+			if ( e . NewValue == null )
+				return;
+			//var  v = SqlProcedures . IsSelected as Procname;
+			var tablename = e.NewValue as Database;
+			if ( tablename == null )
+			{
+				if ( e . NewValue == null )
+					return;
+				var tvi = e.NewValue as SqlTable;
+				SqlSpCommand = tvi . Tablename;
+				// Now get  nmme  of the Db we are in 
+				var parentitem = Utils . FindVisualParent<TextBlock> ( sender as UIElement);
+				var items = DbProcsTree . Items;
+				if ( items . CurrentItem != null )
+				{
+					var db= items. CurrentItem as Database;
+					CurrentSPDb = db . Databasename;
+				}
+				else
+				{
+					var v = sender as ItemsControl;
+					foreach ( var item in v . Items )
+					{
+						Console . WriteLine ( item . ToString ( ) );
+					}
+					var treeItems = Utils.FindVisualParent<TextBlock> (this);
+					//treeItems . ForEach ( I => i . IsExpanded = false );
+				}
+			}
+			else
+			{
+				var tvi = e.NewValue as Database;
+				CurrentSPDb = tvi . Databasename;
+			}
+
+		}
+
+		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
+		{
+			Flowdoc . BorderClicked = false;
+		}
+
+		private void ListViewWindow_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			MovingObject = null;
+			FlowdocResizing = false;
+			Flowdoc . BorderClicked = false;
+			ReleaseMouseCapture ( );
+			TvMouseCaptured = false;
+
+		}
+
+		private void TreeviewBorder_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			/// treeviewer item selected with mouse
+			if ( e . LeftButton == MouseButtonState . Pressed )
+			{
+				Label  tv = sender  as Label ;
+				if ( tv == null )
+				{
+					ReleaseMouseCapture ( );
+					return;
+				}
+				TvFirstXPos = e . GetPosition ( tv ) . X;
+				TvFirstYPos = e . GetPosition ( tv ) . Y;
+				TvMouseCaptured = true;
+			}
+			else
+			{
+				ReleaseMouseCapture ( );
+				TvMouseCaptured = false;
+			}
+		}
+
+		#region Treeview  handlers
+		private void TreeviewBorder_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			/// stop treeviewer Move 
+			ReleaseMouseCapture ( );
+			//Console . WriteLine ( "Mouse released 4" );
+			TvMouseCaptured = false;
+		}
+		private void TreeviewBorder_MouseMove ( object sender , MouseEventArgs e )
+		{
+			if ( TvMouseCaptured )
+			{
+				//Label  tv = sender  as Label ;
+				//if ( tv == null )
+				//	return;
+				double left = e . GetPosition ( (TreeviewBorder as FrameworkElement ) . Parent as FrameworkElement ) . X - TvFirstXPos ;
+				double top = e . GetPosition ( (TreeviewBorder as FrameworkElement ) . Parent as FrameworkElement ) . Y - TvFirstYPos ;
+				double trueleft = left - CpFirstXPos;
+				double truetop = left - CpFirstYPos;
+				if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
+					( TreeviewBorder as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
+				if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
+					( TreeviewBorder as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
+				ReleaseMouseCapture ( );
+			}
+			else
+				ReleaseMouseCapture ( );
+		}
+		private void TreeviewBorder_LostFocus ( object sender , RoutedEventArgs e )
+		{
+			ReleaseMouseCapture ( );
+			//Console . WriteLine ( "Mouse released 5" );
+			TvMouseCaptured = false;
+		}
+		private void TextBlock_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+		}
+		private void SpTreeviewBorder_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+		}
+		private void SpTreeviewBorder_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+		}
+		private void SpImage_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+		}
+		private void SpTextBlock_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+		}
+		private void SpTreeviewBorder_LostFocus ( object sender , RoutedEventArgs e )
+		{
+		}
+		private void SpTreeviewBorder_MouseMove ( object sender , MouseEventArgs e )
+		{
+		}
+		#endregion Treeview  handlers
 	}
 }
+
+

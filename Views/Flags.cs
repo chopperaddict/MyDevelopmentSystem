@@ -24,6 +24,8 @@ namespace MyDev . Views
 {
 	public static class Flags
 	{
+		public static Dictionary <string, string> ConnectionStringsDict = new Dictionary<string, string>();
+
 		public static bool USESDAPPERSTDPROCEDURES=false;
 		public static bool USEADOWITHSTOREDPROCEDURES=true;
 		public static bool USEDAPPERWITHSTOREDPROCEDURE=false;
@@ -36,7 +38,7 @@ namespace MyDev . Views
 		public static bool UseSharedView { get; set; }
 		public static bool UseScrollView { get; set; }
 		public static bool UseFlowScrollbar { get; set; }
-		public static int FlowdocCrMultplier { get; set; }
+		public static double FlowdocCrMultplier { get; set; }
 		public static bool PinToBorder { get; set; }
 		public static bool SqlGridSwitchingActive = false;
 		public static bool SqlBankActive = false;

@@ -39,7 +39,6 @@ namespace MyDev . ViewModels
 			{
 				SqlConnection con;
 				string ConString = Flags . CurrentConnectionString;
-				//				ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 				con = new SqlConnection ( ConString );
 				using ( con )
 				{

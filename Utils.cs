@@ -10,8 +10,10 @@ using System . Collections . Generic;
 using System . Collections . ObjectModel;
 using System . Configuration;
 using System . Data;
+using System . Data . SqlClient;
 using System . Diagnostics;
 using System . IO;
+using System . Runtime . InteropServices . WindowsRuntime;
 using System . Threading;
 using System . Threading . Tasks;
 using System . Windows;
@@ -262,10 +264,11 @@ namespace MyDev
 		{
 			string keyval = "";
 
-			if ( dict . TryGetValue ( key , out keyval ) == false )
+			if ( dict . TryGetValue ( key . ToUpper ( ) , out keyval ) == false )
 			{
 				Console . WriteLine ( $"Unable to access Dictionary {dict} to identify key value [{key}]" );
-				Utils . DoErrorBeep ( 250 , 50 , 1 );
+				key = key + "ConnectionString";
+				//Utils . DoErrorBeep ( 250 , 50 , 1 );
 			}
 			dictvalue = keyval;
 			return keyval;
@@ -313,8 +316,7 @@ namespace MyDev
 			try
 			{
 				dict . Remove ( value );
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Unable to access Dictionary {dict} to delete key value [{value}]" );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
@@ -327,8 +329,7 @@ namespace MyDev
 			try
 			{
 				dict . Remove ( value );
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Unable to access Dictionary {dict} to delete key value [{value}]" );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
@@ -336,13 +337,12 @@ namespace MyDev
 			}
 			return true;
 		}
-		public static bool DeleteDictionaryEntry ( Dictionary<int, int> dict , int value )
+		public static bool DeleteDictionaryEntry ( Dictionary<int , int> dict , int value )
 		{
 			try
 			{
 				dict . Remove ( value );
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Unable to access Dictionary {dict} to delete key value [{value}]" );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
@@ -353,7 +353,7 @@ namespace MyDev
 		#endregion Dictionary Handlers
 
 		#region datagrid row  to List methods (string, int, double, decimal, DateTime)
-		public static List<string> GetTableColumnsList( DataTable dt  )
+		public static List<string> GetTableColumnsList ( DataTable dt )
 		{
 			//Return a list of strings Containing table column info
 			List<string> list = new List<string>();
@@ -367,7 +367,7 @@ namespace MyDev
 						output += row . Field<string> ( 0 );
 						break;
 					case 2:
-						output += row . Field<string> ( 0  ) + ", ";
+						output += row . Field<string> ( 0 ) + ", ";
 						output += row . Field<string> ( 1 ) + " ";
 						break;
 					case 3:
@@ -379,7 +379,7 @@ namespace MyDev
 						output += row . Field<string> ( 0 ) + ", ";
 						output += row . Field<string> ( 1 ) + ", ";
 						output += row . Field<string> ( 2 ) + ", ";
-						output += row . Field<string> ( 3 ) +" ";
+						output += row . Field<string> ( 3 ) + " ";
 						break;
 					case 5:
 						output += row . Field<string> ( 0 ) + ", ";
@@ -389,7 +389,7 @@ namespace MyDev
 						output += row . Field<string> ( 4 ) + "";
 						break;
 				}
-				list . Add ( output);
+				list . Add ( output );
 			}
 			return list;
 		}
@@ -432,7 +432,7 @@ namespace MyDev
 			}
 			return list;
 		}
-		public static List<DateTime> GetDataDridRowsAsListOfDateTime( DataTable dt )
+		public static List<DateTime> GetDataDridRowsAsListOfDateTime ( DataTable dt )
 		{
 			List<DateTime> list = new List<DateTime>();
 			foreach ( DataRow row in dt . Rows )
@@ -463,8 +463,7 @@ namespace MyDev
 						break;
 					else
 						output += tmp;
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( "trace() Crashed...\n" );
 					output += "\ntrace() Crashed...\n";
@@ -476,36 +475,36 @@ namespace MyDev
 		}
 		public static void Mbox ( Window win , string string1 = "" , string string2 = "" , string caption = "" , string iconstring = "" , int Btn1 = 1 , int Btn2 = 0 , int Btn3 = 0 , int Btn4 = 0 , int defButton = 1 , bool minsize = false , bool modal = false )
 		{
-// We NEED to remove any \r as part of \r\n as textboxes ONLY accept \n on its own for Cr/Lf
-string1 = ParseforCR ( string1 );
-Msgboxs m = new Msgboxs( string1:string1,  string2:string2, caption:caption ,Btn1:Btn1, Btn2 : Btn2, Btn3 : Btn3, Btn4 : Btn4, defButton : defButton , iconstring:iconstring, MinSize:minsize , modal:modal);
-//			m . Owner = win;
+			// We NEED to remove any \r as part of \r\n as textboxes ONLY accept \n on its own for Cr/Lf
+			string1 = ParseforCR ( string1 );
+			Msgboxs m = new Msgboxs( string1:string1,  string2:string2, caption:caption ,Btn1:Btn1, Btn2 : Btn2, Btn3 : Btn3, Btn4 : Btn4, defButton : defButton , iconstring:iconstring, MinSize:minsize , modal:modal);
+			//			m . Owner = win;
 
-if ( modal == false )
-m . Show ( );
-else
-m . ShowDialog ( );
-}
-public static void Mssg (
-				string caption = "" ,
-				string string1 = "" ,
-				string string2 = "" ,
-				string string3 = "" ,
-				string title = "" ,
-				string iconstring = "" ,
-				int defButton = 1 ,
-				int Btn1 = 1 ,
-				int Btn2 = 2 ,
-				int Btn3 = 3 ,
-				int Btn4 = 4 ,
-				string btn1Text = "" ,
-				string btn2Text = "" ,
-				string btn3Text = "" ,
-				string btn4Text = "" ,
-				bool usedialog = true
-)
-{
-Msgbox msg = new Msgbox(
+			if ( modal == false )
+				m . Show ( );
+			else
+				m . ShowDialog ( );
+		}
+		public static void Mssg (
+						string caption = "" ,
+						string string1 = "" ,
+						string string2 = "" ,
+						string string3 = "" ,
+						string title = "" ,
+						string iconstring = "" ,
+						int defButton = 1 ,
+						int Btn1 = 1 ,
+						int Btn2 = 2 ,
+						int Btn3 = 3 ,
+						int Btn4 = 4 ,
+						string btn1Text = "" ,
+						string btn2Text = "" ,
+						string btn3Text = "" ,
+						string btn4Text = "" ,
+						bool usedialog = true
+		)
+		{
+			Msgbox msg = new Msgbox(
 				caption:caption ,
 				string1:string1,
 				string2:string2,
@@ -705,8 +704,7 @@ Msgbox msg = new Msgbox(
 					bvm . CDate = Convert . ToDateTime ( data [ index ] );
 				}
 				return bvm;
-			}
-			catch
+			} catch
 			{
 				//Check to see if the data includes the data type in it
 				//As we have to parse it diffrently if not - see index....
@@ -716,8 +714,7 @@ Msgbox msg = new Msgbox(
 					int x = int . Parse ( donor );
 					// if we get here, it IS a NUMERIC VALUE
 					index = 0;
-				}
-				catch
+				} catch
 				{
 					//its probably the Data Type string, so ignore it for our Data creation processing
 					index = 1;
@@ -766,8 +763,7 @@ Msgbox msg = new Msgbox(
 					bvm . CDate = Convert . ToDateTime ( data [ index ] );
 					return bvm;
 				}
-			}
-			catch
+			} catch
 			{
 				//Check to see if the data includes the data type in it
 				//As we have to parse it diffrently if not - see index....
@@ -777,8 +773,7 @@ Msgbox msg = new Msgbox(
 					int x = int . Parse ( donor );
 					// if we get here, it IS a NUMERIC VALUE
 					index = 0;
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					//its probably the Data Type string, so ignore it for our Data creation processing
 					index = 1;
@@ -863,8 +858,7 @@ Msgbox msg = new Msgbox(
 				cvm . ODate = Convert . ToDateTime ( data [ index++ ] );
 				cvm . CDate = Convert . ToDateTime ( data [ index ] );
 				return cvm;
-			}
-			catch
+			} catch
 			{
 				//Check to see if the data includes the data type in it
 				//As we have to parse it diffrently if not - see index....
@@ -874,8 +868,7 @@ Msgbox msg = new Msgbox(
 					int x = int . Parse ( donor );
 					// if we get here, it IS a NUMERIC VALUE
 					index = 0;
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					//its probably the Data Type string, so ignore it for our Data creation processing
 					index = 1;
@@ -1262,8 +1255,7 @@ Msgbox msg = new Msgbox(
 			try
 			{
 				brs = System . Windows . Application . Current . FindResource ( brushname ) as Brush;
-			}
-			catch
+			} catch
 			{
 
 			}
@@ -1602,7 +1594,7 @@ Msgbox msg = new Msgbox(
 			{
 				// list various Flags in Console
 				Debug . WriteLine ( $"\nCTRL + F7 pressed..." );
-//TRANSFER				Flags . PrintDbInfo ( );
+				//TRANSFER				Flags . PrintDbInfo ( );
 				e . Handled = true;
 				key1 = false;
 				return;
@@ -1626,7 +1618,7 @@ Msgbox msg = new Msgbox(
 			{
 				// Major  listof GV[] variables (Guids etc]
 				Debug . WriteLine ( $"\nCTRL + F10 pressed..." );
-//TRANSFER				Flags . ListGridviewControlFlags ( 1 );
+				//TRANSFER				Flags . ListGridviewControlFlags ( 1 );
 				key1 = false;
 				e . Handled = true;
 				return;
@@ -1656,9 +1648,14 @@ Msgbox msg = new Msgbox(
 					{
 						Console . WriteLine ( "DataGrid is clicked" );
 					}
-					else if ( original . GetType ( ) . Equals ( typeof ( Paragraph) ) )
+					else if ( original . GetType ( ) . Equals ( typeof ( Paragraph ) ) )
 					{
 						Console . WriteLine ( "Pararaph clicked" );
+						return false;
+					}
+					else if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
+					{
+						Console . WriteLine ( "Border clicked" );
 						return false;
 					}
 					else if ( FindVisualParent<ScrollBar> ( original as DependencyObject ) != null )
@@ -1667,15 +1664,54 @@ Msgbox msg = new Msgbox(
 						Console . WriteLine ( "Calling FindVisualParent" );
 						return true;
 					}
-					return false;					
+					return false;
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
 			}
 			return true;
 		}
+		public static bool HitTestBorder( object sender , MouseButtonEventArgs e )
+		{
+			//			HitTestResult hit = VisualTreeHelper . HitTest ( ( Visual ) sender, e . GetPosition ( ( IInputElement ) sender ) );
+			//			return hit . VisualHit . GetVisualAncestor<ScrollBar> ( ) != null;
+			object original = e . OriginalSource;
+			try
+			{
+				var v = original . GetType ( );
+				//bool isScrollbar = original . GetType ( ) . Equals ( typeof ( ScrollBar ) );
+				//if ( !isScrollbar . Equals ( typeof ( ScrollBar ) ) )
+				//{
+				//	if ( original . GetType ( ) . Equals ( typeof ( DataGrid ) ) )
+				//	{
+				//		Console . WriteLine ( "DataGrid is clicked" );
+				//	}
+				//	else if ( original . GetType ( ) . Equals ( typeof ( Paragraph ) ) )
+				//	{
+				//		Console . WriteLine ( "Pararaph clicked" );
+				//		return false;
+				//	}
+					if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
+					{
+						Console . WriteLine ( "Border clicked" );
+						return true;
+					}
+					else if ( FindVisualParent<ScrollBar> ( original as DependencyObject ) != null )
+					{
+						//scroll bar is clicked
+						Console . WriteLine ( "Calling FindVisualParent" );
+						return true;
+					}
+					return false;
+				//}
+			} catch ( Exception ex )
+			{
+				Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
+			}
+			return true;
+		}
+
 		public static bool HitTestHeaderBar ( object sender , MouseButtonEventArgs e )
 		{
 			//			HitTestResult hit = VisualTreeHelper . HitTest ( ( Visual ) sender, e . GetPosition ( ( IInputElement ) sender ) );
@@ -1749,8 +1785,7 @@ Msgbox msg = new Msgbox(
 						Console . WriteLine ( "Key: {0} Value: {1}" , key , appSettings [ key ] );
 					}
 				}
-			}
-			catch ( ConfigurationErrorsException )
+			} catch ( ConfigurationErrorsException )
 			{
 				Console . WriteLine ( "Error reading app settings" );
 			}
@@ -1763,8 +1798,7 @@ Msgbox msg = new Msgbox(
 				var appSettings = ConfigurationManager . AppSettings;
 				result = appSettings [ key ] ?? "Not Found";
 				Console . WriteLine ( result );
-			}
-			catch ( ConfigurationErrorsException )
+			} catch ( ConfigurationErrorsException )
 			{
 				Console . WriteLine ( "Error reading app settings" );
 			}
@@ -1870,8 +1904,7 @@ Msgbox msg = new Msgbox(
 					}
 					fs . Close ( );
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Utils . Mbox ( null , string1: "The image could not be saved for the following reason " , string2: $"{ex . Message}" , caption: "" , iconstring: "\\icons\\Information.png" , Btn1: MB . OK , Btn2: MB . NNULL , defButton: MB . OK );
 			}
@@ -1889,8 +1922,7 @@ Msgbox msg = new Msgbox(
 				Settings . Default . Save ( );
 				Settings . Default . Upgrade ( );
 				ConfigurationManager . RefreshSection ( setting );
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"Unable to save property {setting} of [{value}]\nError was {ex . Data}, {ex . Message}, Stack trace = \n{ex . StackTrace}" );
 			}
@@ -1966,7 +1998,7 @@ Msgbox msg = new Msgbox(
 			Dgrid . UpdateLayout ( );
 			Dgrid . ScrollIntoView ( Dgrid . SelectedItem );
 			Dgrid . UpdateLayout ( );
-//TRANSFER			Flags . CurrentSqlViewer?.SetScrollVariables ( Dgrid );
+			//TRANSFER			Flags . CurrentSqlViewer?.SetScrollVariables ( Dgrid );
 		}
 		//Generic form of Selection forcing code below
 		public static void SelectTextBoxText ( TextBox txtbox )
@@ -1998,8 +2030,7 @@ Msgbox msg = new Msgbox(
 						r . IsSelected = false;
 						r . IsSelected = true;
 					}
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Debug . WriteLine ( $"{ex . Message}, {ex . Data}" );
 				}
@@ -2086,15 +2117,13 @@ Msgbox msg = new Msgbox(
 						try
 						{
 							inst?.DragMove ( );
-						}
-						catch ( Exception ex )
+						} catch ( Exception ex )
 						{
 							return;
 						}
 					}
 				};
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				return;
 			}
@@ -2108,6 +2137,64 @@ Msgbox msg = new Msgbox(
 			//NewCookie nc = new NewCookie(sender as Window);
 			//nc . ShowDialog ( );
 			//defvars . CookieAdded = false;
+		}
+
+		public static bool CheckResetDbConnection ( string currdb , out string constring )
+		{
+			//string constring = "";
+			currdb?.ToUpper ( );
+			// This resets the current database connection to the one we re working with (currdb - in UPPER Case!)- should be used anywhere that We switch between databases in Sql Server
+			// It also sets the Flags.CurrentConnectionString - Current Connectionstring  and local variable
+			if ( Utils . GetDictionaryEntry ( Flags . ConnectionStringsDict , currdb , out string connstring ) != "" )
+			{
+				//				constring = connstring;
+				if ( connstring != null )
+				{
+					Flags . CurrentConnectionString = connstring;
+					SqlConnection con;
+					con = new SqlConnection ( Flags . CurrentConnectionString );
+					if ( con != null )
+					{
+						constring = connstring;
+						con . Close ( );
+						return true;
+					}
+					else
+					{
+						constring = connstring;
+						return false;
+					}
+				}
+				{
+					constring = connstring;
+					return false;
+				}
+			}
+			else
+			{
+				constring = connstring;
+				return false;
+			}
+
+		}
+		// Create dictionary of ALL Sql Connection strings we may want to use
+		public static void LoadConnectionStrings ( )
+		{
+			try
+			{
+				if(Flags . ConnectionStringsDict.Count > 0)
+					return;
+				Flags . ConnectionStringsDict . Add ( "IAN1" , ( string ) Properties . Settings . Default [ "BankSysConnectionString" ] );
+				Flags . ConnectionStringsDict . Add ( "NORTHWIND" , ( string ) Properties . Settings . Default [ "NorthwindConnectionString" ] );
+				//Flags.ConnectionStringsDict . Add ( "NEWBANKACCOUNT" , ( string ) Properties . Settings . Default [ "NewBanksys" ] );
+				Flags . ConnectionStringsDict . Add ( "PUBS" , ( string ) Properties . Settings . Default [ "PubsConnectionString" ] );
+			} catch ( NullReferenceException ex )
+			{
+				Console . WriteLine ( $"Dictionary  entrry [{ ( string ) Properties . Settings . Default [ "BankSysConnectionString" ]}] already exists");					 
+			} finally
+			{
+
+			}
 		}
 
 	}

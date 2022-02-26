@@ -455,7 +455,6 @@ namespace MyDev . Views
 			int columncount = 0;
 			DataTable dt = new DataTable();
 			ObservableCollection<GenericClass> Generics = new ObservableCollection<GenericClass>();
-
 			ObservableCollection<BankAccountViewModel> bvmparam = new ObservableCollection<BankAccountViewModel>();
 			List<string> genericlist = new List<string>();
 			try

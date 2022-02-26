@@ -35,12 +35,12 @@ namespace MyDev . Converts
                         if ( param > 0 )
                         {
                               currentvalue = d - ( param  );
-                              Console . WriteLine ( $"ReduceByParamValue Converter: value={d} minus parameter={param} *2.3,  Returning {currentvalue}" );
+                              //Console . WriteLine ( $"ReduceByParamValue Converter: value={d} minus parameter={param} *2.3,  Returning {currentvalue}" );
                         }
                         else
                         {
                               currentvalue = d;
-                              Console . WriteLine ( $"ReduceByParamValue Converter: value={d}, parameter=0,  Returning {currentvalue}" );
+                              //Console . WriteLine ( $"ReduceByParamValue Converter: value={d}, parameter=0,  Returning {currentvalue}" );
                               // How to access a DP in a converter
                               //DependencyObject dpo = new DependencyObject ( );
                               //object dobj = dpo . GetValue ( ImgButton . ImgWidthProperty );

@@ -1,4 +1,6 @@
-﻿using MyDev . ViewModels;
+﻿using Microsoft . Win32;
+
+using MyDev . ViewModels;
 using MyDev . Views;
 
 using System;
@@ -25,35 +27,65 @@ namespace MyDev . UserControls
 	/// </summary>
 	public partial class FlowDoc : UserControl
 	{
-		//private bool buttonDown;
-		//public bool ButtonDown
-		//{
-		//	get { return buttonDown; }
-		//	set { buttonDown = value; }
-		//}
-		//private Point _startpoint;
-		//public Point startpoint  
-		//{
-		//	get { return _startpoint; }
-		//	set { _startpoint = value; }
-		//}
 		private bool mouseCaptured  ;
 		public bool MouseCaptured
 		{
 			get { return mouseCaptured; }
 			set { mouseCaptured = value; }
 		}
-		private double docHeight;
-		public double DocHeight
+		private static double docHeight;
+		public static double DocHeight
 		{
 			get { return docHeight; }
 			set { docHeight = value; }
 		}
-		private double docWidth;
-		public double DocWidth
+		private static double docWidth;
+		public static double DocWidth
 		{
 			get { return docWidth; }
 			set { docWidth = value; }
+		}
+		private bool borderClicked ;
+		public bool BorderClicked
+		{
+			get { return borderClicked; }
+			set { borderClicked = value; }
+		}
+		private int borderSelected;
+		public int BorderSelected
+		{
+			get { return borderSelected; }
+			set { borderSelected = value; }
+		}
+		//private double xPos;
+		//public double XPos
+		//{
+		//	get { return xPos; }
+		//	set { xPos = value; }
+		//}
+		//private double yPos;
+		//public double YPos
+		//{
+		//	get { return yPos; }
+		//	set { yPos = value; }
+		//}
+		private bool keepSize;
+		public bool KeepSize
+		{
+			get { return keepSize; }
+			set { keepSize = value; }
+		}
+		private string keepSizeIcon1;
+		public string KeepSizeIcon1
+		{
+			get { return keepSizeIcon1; }
+			set { keepSizeIcon1 = value; }
+		}
+		private string keepSizeIcon2;
+		public string KeepSizeIcon2
+		{
+			get { return keepSizeIcon2; }
+			set { keepSizeIcon2 = value; }
 		}
 
 		public FlowDoc ( )
@@ -73,11 +105,16 @@ namespace MyDev . UserControls
 			{
 				fdviewer . Visibility = Visibility . Visible;
 				doc . Visibility = Visibility . Hidden;
-			} else
+				BorderSelected = -1;
+			}
+			else
 			{
 				fdviewer . Visibility = Visibility . Hidden;
 				doc . Visibility = Visibility . Visible;
+				BorderSelected = -1;
 			}
+			KeepSizeIcon1 = "/Icons/down arroiw red.png";
+			KeepSizeIcon2 = "/Icons/up arroiw red.png";
 		}
 		public void ShowInfo (
 			string line1 = "" ,
@@ -103,7 +140,8 @@ namespace MyDev . UserControls
 				myFlowDocument2 = CreateFlowDocumentScroll ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 );
 				fdviewer . Document = myFlowDocument2;
 				textRange = new TextRange ( fdviewer . Document . ContentStart , fdviewer . Document . ContentEnd );
-			} else
+			}
+			else
 			{
 				fdviewer . Visibility = Visibility . Hidden;
 				doc . Visibility = Visibility . Visible;
@@ -127,6 +165,8 @@ namespace MyDev . UserControls
 			var v2 = Convert . ToDouble ( flowdoc . GetValue ( WidthProperty ) );
 			flowdoc . SetValue ( HeightProperty , DocHeight );
 			flowdoc . SetValue ( WidthProperty , DocWidth );
+			Console . WriteLine ( $"{textRange . Text }\n" );
+			Console . WriteLine ( $"Text Length in Flowdoc = {textRange . Text . Length }" );
 			if ( textRange . Text . Length < 100 )
 				flowdoc . SetValue ( HeightProperty , ( double ) 180 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 150 )
@@ -147,23 +187,28 @@ namespace MyDev . UserControls
 			{
 				flowdoc . SetValue ( HeightProperty , ( double ) 360 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 20 );
-			} else if ( textRange . Text . Length < 600 )
+			}
+			else if ( textRange . Text . Length < 600 )
 			{
 				flowdoc . SetValue ( HeightProperty , ( double ) 450 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 30 );
-			} else if ( textRange . Text . Length < 700 )
+			}
+			else if ( textRange . Text . Length < 700 )
 			{
 				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 40 );
-			} else if ( textRange . Text . Length < 800 )
+			}
+			else if ( textRange . Text . Length < 800 )
 			{
 				flowdoc . SetValue ( HeightProperty , ( double ) 600 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 50 );
-			} else if ( textRange . Text . Length < 900 )
+			}
+			else if ( textRange . Text . Length < 900 )
 			{
 				flowdoc . SetValue ( HeightProperty , ( double ) 700 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 60 );
-			} else
+			}
+			else
 			{
 				Flags . UseFlowScrollbar = true;
 				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * Flags . FlowdocCrMultplier );
@@ -171,9 +216,12 @@ namespace MyDev . UserControls
 			}
 			flowdoc . Height = Convert . ToDouble ( flowdoc . GetValue ( HeightProperty ) );
 			flowdoc . Width = Convert . ToDouble ( flowdoc . GetValue ( WidthProperty ) );
+			DocHeight = flowdoc . Height;
 			if ( flowdoc . Height == 0 )
 				flowdoc . Height = v1;
+
 			flowdoc . SetValue ( HeightProperty , ( double ) flowdoc . Height );
+			//FlowDoc.DocHeight = 
 			if ( flowdoc . Width == 0 )
 				flowdoc . Width = v2;
 			flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width );
@@ -187,12 +235,14 @@ namespace MyDev . UserControls
 					{
 						fdviewer . VerticalScrollBarVisibility = ScrollBarVisibility . Visible;
 						fdviewer . IsEnabled = true;
-					} else
+					}
+					else
 					{
 						doc . VerticalScrollBarVisibility = ScrollBarVisibility . Visible;
 						doc . IsEnabled = true;
 					}
-				} else
+				}
+				else
 				{
 					if ( Flags . UseScrollView )
 						fdviewer . IsEnabled = false;
@@ -203,7 +253,8 @@ namespace MyDev . UserControls
 				this . BringIntoView ( );
 				if ( beep )
 					Utils . DoErrorBeep ( 300 , 50 , 1 );
-			} else
+			}
+			else
 			{
 				this . BringIntoView ( );
 			}
@@ -344,6 +395,8 @@ namespace MyDev . UserControls
 		private void Button_Click ( object sender , RoutedEventArgs e )
 		{
 			this . Visibility = Visibility . Hidden;
+			BorderSelected = -1;
+
 		}
 
 
@@ -388,39 +441,18 @@ namespace MyDev . UserControls
 			{
 				e . Handled = true;
 				this . Visibility = Visibility . Hidden;
-			} else if ( e . Key == Key . F8 )
+				BorderSelected = -1;
+			}
+			else if ( e . Key == Key . F8 )
 			{
 				fdviewer . ReleaseMouseCapture ( );
 				flowdoc . ReleaseMouseCapture ( );
-				Console . WriteLine ( "Mouse RELEASED... flowdoc_PreviewKeyDown()" );
+				//				Console . WriteLine ( "Mouse RELEASED... flowdoc_PreviewKeyDown()" );
 			}
 		}
 		#endregion keyboard handlers
 
 		#region Mouse handlers
-
-		//private void flowdoc_PreviewLMBDn ( object sender , MouseButtonEventArgs e )
-		//{
-		////	if ( Utils . HitTestScrollBar ( sender , e ) )
-		////	{
-		////		fdviewer . IsEnabled = true;
-		////		return;
-		////	} else
-		////		fdviewer . IsEnabled = false;
-		//}
-
-		//Point _point;
-		//private void doc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		//{
-		//	if ( Utils . HitTestScrollBar ( sender , e ) )
-		//	{
-		//		fdviewer . IsEnabled = true;
-		//		return;
-		//	} else
-		//		fdviewer . IsEnabled = false;
-		//	MouseCaptured = flowdoc . CaptureMouse ( );
-		//	Console . WriteLine ( "Mouse CAPTURED...flowdoc_PreviewMouseLeftButtonDown()" );
-		//}
 		private void flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			if ( Utils . HitTestScrollBar ( sender , e ) )
@@ -432,7 +464,8 @@ namespace MyDev . UserControls
 						fdviewer . IsEnabled = true;
 					else
 						doc . IsEnabled = true;
-				} else
+				}
+				else
 				{
 					if ( Flags . UseScrollView )
 					{
@@ -445,7 +478,8 @@ namespace MyDev . UserControls
 							flowdoc . ReleaseMouseCapture ( );
 							return;
 						}
-					} else
+					}
+					else
 					{
 						doc . IsEnabled = false;
 						if ( doc . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
@@ -457,7 +491,8 @@ namespace MyDev . UserControls
 						}
 					}
 				}
-			} else
+			}
+			else
 			{
 				// NOT over scrollbar, so only allow drag
 				if ( Flags . UseScrollView )
@@ -469,7 +504,8 @@ namespace MyDev . UserControls
 					//		fdviewer . IsEnabled = true;
 					//		return;
 					//	}
-				} else
+				}
+				else
 				{
 					doc . IsEnabled = true;
 					//if ( doc . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
@@ -492,7 +528,7 @@ namespace MyDev . UserControls
 				MouseCaptured = fdviewer . CaptureMouse ( );
 			else
 				MouseCaptured = flowdoc . CaptureMouse ( );
-			Console . WriteLine ( "Mouse CAPTURED...flowdoc_PreviewMouseLeftButtonDown()" );
+			//			Console . WriteLine ( "Mouse CAPTURED...flowdoc_PreviewMouseLeftButtonDown()" );
 
 			if ( Flags . UseScrollView )
 				fdviewer . IsEnabled = true;
@@ -504,14 +540,16 @@ namespace MyDev . UserControls
 		{
 			fdviewer . ReleaseMouseCapture ( );
 			flowdoc . ReleaseMouseCapture ( );
-			Console . WriteLine ( "Mouse RELEASED...(doc_PreviewMouseLeftButtonUp" );
+			//			Console . WriteLine ( "Mouse RELEASED...(doc_PreviewMouseLeftButtonUp" );
+			BorderClicked = false;
 			//e . Handled = true;
 		}
 		private void scrollviewer_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			fdviewer . ReleaseMouseCapture ( );
 			flowdoc . ReleaseMouseCapture ( );
-			Console . WriteLine ( "Mouse RELEASED...(scrollviewerdoc_PreviewMouseLeftButtonUp" );
+			//Console . WriteLine ( "Mouse RELEASED...(scrollviewerdoc_PreviewMouseLeftButtonUp" );
+			BorderClicked = false;
 			//			e . Handled = true;
 		}
 
@@ -521,7 +559,8 @@ namespace MyDev . UserControls
 			{
 				fdviewer . IsEnabled = true;
 				return;
-			} else
+			}
+			else
 				fdviewer . IsEnabled = false;
 
 			MouseCaptured = flowdoc . CaptureMouse ( );
@@ -534,7 +573,8 @@ namespace MyDev . UserControls
 			{
 				fdviewer . IsEnabled = true;
 				return;
-			} else
+			}
+			else
 				fdviewer . IsEnabled = false;
 			MouseCaptured = flowdoc . CaptureMouse ( );
 			Console . WriteLine ( "Mouse CAPTURED...scrollviewer_PreviewMouseLeftButtonDown()" );
@@ -550,46 +590,168 @@ namespace MyDev . UserControls
 		private void Closebtn_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			this . Visibility = Visibility . Hidden;
+			BorderSelected = -1;
 		}
 
 		private void dummy_Click ( object sender , RoutedEventArgs e )
 		{
-			;
-		}
-
-		private void fdviewer_MouseDown ( object sender , MouseButtonEventArgs e )
-		{
-
-		}
-
-		private void checkBox_Click ( object sender , RoutedEventArgs e )
-		{
-			Flags . PinToBorder = !Flags . PinToBorder;
+			;     // context menu click
 		}
 
 		private void Exit_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			this . Visibility = Visibility . Hidden;
+			BorderSelected = -1;
 		}
 
 		#region External Hook
+		//code to allow this action in flowdoc to allow smart resizing
+		// Clever stuff really
+		public event EventHandler ExecuteFlowDocBorderMethod;
+		protected virtual void OnExecuteFlowDocBorderMethod ( EventArgs e )
+		{
+			if ( ExecuteFlowDocBorderMethod != null )
+				ExecuteFlowDocBorderMethod ( this , e );
+		}
 		//code to allow this action in flowdocto be andled by an external window
 		// Clever stuff really
+		public event EventHandler<FlowArgs> ExecuteFlowDocResizeMethod;
+		protected virtual void OnExecuteResizeMethod ( FlowArgs e )
+		{
+			if ( ExecuteFlowDocResizeMethod != null )
+				ExecuteFlowDocResizeMethod ( this , e );
+		}
 
 		// Allows any other (External) window to control this via  the control 
-		public event EventHandler ExecuteFlowDocSizeMethod;
+		public event EventHandler ExecuteFlowDocMaxmizeMethod;
 		protected virtual void OnExecuteMethod ( )
 		{
-			if ( ExecuteFlowDocSizeMethod != null )
-				ExecuteFlowDocSizeMethod ( this , EventArgs . Empty );
+			if ( ExecuteFlowDocMaxmizeMethod != null )
+				ExecuteFlowDocMaxmizeMethod ( this , EventArgs . Empty );
 		}
 		private void Image_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			//allows remote window to maximize /resize  this control ?
 			OnExecuteMethod ( );
 		}
+
 		#endregion External Hook
 
+		private void Border_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//	BorderClicked = false;
+			Border bd = sender as Border;
+			if ( Utils . HitTestBorder ( bd, e ) )
+			{
+				// Over the Border, so let user resize contents
+				BorderClicked = true;
 
+				// Mouse Horizontal (X) position
+				double left = e . GetPosition ( (FdBorder  as FrameworkElement ) . Parent as FrameworkElement ) . X ;
+				double height = this.ActualHeight;
+				// Mouse Vertical (Y) position
+				double MTop = e . GetPosition ( (FdBorder as FrameworkElement ) . Parent as FrameworkElement ) . Y;
+				double MBottom = MTop + this.ActualHeight;
+
+				//Console . WriteLine ( $"Border Hit : Left {left}, Top {MTop}\nWidth {this . ActualWidth}, Height {this . ActualHeight}" );
+				double ValidTopT = FdBorder.BorderThickness.Left ;
+				double ValidBottomT = this.ActualHeight + FdBorder.BorderThickness.Left ;
+				double ValidTopB = MBottom -  (FdBorder.BorderThickness.Left  * 2);
+				double ValidBottomB = MBottom + ( FdBorder.BorderThickness.Left  * 2);
+
+				if ( MTop <= ValidTopT && MTop >=  0)
+				{
+					// Top
+					BorderSelected = 1;
+					if  ( this . ActualWidth - left < 10 )
+						BorderSelected = 4;
+				}
+				else if ( MBottom >= ValidTopB && MBottom <= ValidBottomB && MTop > height - 20 )
+				{
+					// Bottom
+					BorderSelected = 2;
+					if ( this . ActualWidth - left < 10 )
+						BorderSelected = 4;
+				}
+				else if ( left < 10 )
+				{
+					// Left
+					BorderSelected = 3;
+				}
+				else if ( this . ActualWidth - left < 10 )
+				{
+					//Right
+					BorderSelected = 4;
+				}
+				Console . WriteLine ( $"BorderSelected = {BorderSelected}" );
+				ExecuteFlowDocBorderMethod ( this , EventArgs . Empty );
+			}
+		}
+
+		private void KeepSize_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			KeepSize = !KeepSize;
+			if ( KeepSize == true )
+			{
+				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon1 , UriKind . Relative ) );
+				SaveLabel . Content = "Using Saved Height =";
+			}
+			else
+			{
+				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon2 , UriKind . Relative ) );
+				SaveLabel . Content = "Using Auto Height =";
+			}
+		}
+
+		private void Border_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			BorderClicked = false;
+		}
+
+		private void FdBorder_MouseMove ( object sender , MouseEventArgs e )
+		{
+			// Flowdoc is being resized
+			if ( BorderClicked )
+			{
+			}
+		}
+
+		private void FlowdocBorder_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			Border border = sender as Border;
+			if ( border . Name == "FdBorder" )
+				BorderClicked = true;
+		}
+	}
+	public class FlowArgs : EventArgs
+	{
+		public double Height
+		{
+			get; set;
+		}
+		public double Width
+		{
+			get; set;
+		}
+		public double CTop
+		{
+			get; set;
+		}
+		public double CLeft
+		{
+			get; set;
+		}
+		public double Xpos
+		{
+			get; set;
+		}
+		public double Ypos
+		{
+			get; set;
+		}
+		public bool BorderClicked
+		{
+			get; set;
+		}
 	}
 }

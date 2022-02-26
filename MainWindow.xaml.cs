@@ -3,6 +3,7 @@ using MyDev . Views;
 
 using System;
 using System . Collections . Generic;
+using System . IO;
 using System . Linq;
 using System . Net;
 using System . Text;
@@ -178,6 +179,11 @@ namespace MyDev
 	}
 	#endregion  Cookies handling
 
+	//public struct TreeExplorer
+	//{
+	//	public static ExplorerClass Explorer = new ExplorerClass();
+	//	public static DirectoryInfo DirInfo = new DirectoryInfo(@"C:\\");
+	//}
 	#region My GridColors arguments
 	public struct GridControl
 	{
@@ -210,10 +216,6 @@ namespace MyDev
 		public string Caller;
 		public int [ ] args;
 	}
-	//public  struct FlowdocFlags
-	//{
-	//	public bool UseScrollView { get; set; };
-	//}
 	public partial class MainWindow : Window
 	{
 		public static GridViewer gv = new GridViewer ( );
@@ -221,12 +223,19 @@ namespace MyDev
 		public static BankAccountViewModel bvm = null;
 		public static CustomerViewModel cvm = null;
 		public static DetailsViewModel dvm = null;
+		
+		public static ExplorerClass Txplorer;
+
 		public MainWindow ( )
 		{
 			InitializeComponent ( );
 			Utils . SetupWindowDrag ( this );
 			Flags . CurrentConnectionString =(string)Properties . Settings . Default [ "BankSysConnectionString" ];
-			Flags . FlowdocCrMultplier = 8;
+			Flags . FlowdocCrMultplier = 3.0;
+			// Setup our treeview data source  as a publically accessible static pointer (Txplorer)
+			//TreeExplorer. Explorer = new ExplorerClass();
+			//Txplorer = TreeExplorer . Explorer;
+			
 		}
 
 		private void button1_Click ( object sender , RoutedEventArgs e )
@@ -243,7 +252,8 @@ namespace MyDev
 
 		private void button3_Click ( object sender , RoutedEventArgs e )
 		{
-
+			TreeViews tv = new TreeViews();
+			tv . Show ( );
 		}
 
 		private void button4_Click ( object sender , RoutedEventArgs e )
@@ -284,8 +294,14 @@ namespace MyDev
 
 		private void Window_PreviewKeyDown ( object sender , KeyEventArgs e )
 		{
+			if ( e . Key == Key . D )
+				button1_Click ( sender , null );
+			if ( e . Key == Key . L )
+				button3_Click ( sender , null );
+			if ( e . Key == Key . T )
+				button3_Click ( sender , null );
 			if ( e . Key == Key . Enter )
-				button2_Click (sender, null );
+				button3_Click ( sender , null );
 		}
 	}
 }
