@@ -1572,7 +1572,7 @@ namespace MyDev . Views
 
 		private void ReadMsgboxData ( int mode )
 		{
-			SolidColorBrush sb;
+//			SolidColorBrush sb;
 			string input = File . ReadAllText ( @"Messageboxes.dat" );
 			string[] fields = input.Split('\n');
 			int indx= 0;

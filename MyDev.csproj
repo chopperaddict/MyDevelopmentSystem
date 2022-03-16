@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\PropertyChanged.Fody.3.4.0\build\PropertyChanged.Fody.props" Condition="Exists('packages\PropertyChanged.Fody.3.4.0\build\PropertyChanged.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,6 +15,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -74,16 +77,43 @@
     <Compile Include="AttachedProperties\Ex.cs" />
     <Compile Include="AttachedProperties\ListboxColorCtrlAP.cs" />
     <Compile Include="AttachedProperties\MenuAttachedProperties.cs" />
+    <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Models\FlowdocLib.cs" />
+    <Compile Include="Models\GenericDbHandlers.cs" />
+    <Compile Include="UserControls\MulltiDbUserControl.xaml.cs">
+      <DependentUpon>MulltiDbUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\Ucontrol1.xaml.cs">
+      <DependentUpon>Ucontrol1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\MvvmGridModel.cs" />
+    <Compile Include="ViewModels\GenListboxClass.cs" />
+    <Compile Include="ViewModels\MvvmGenericModel.cs" />
+    <Compile Include="Views\MvvmDataGrid.xaml.cs">
+      <DependentUpon>MvvmDataGrid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\StdDataUserControl.xaml.cs">
+      <DependentUpon>StdDataUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MvvmUserTest.xaml.cs">
+      <DependentUpon>MvvmUserTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MvvmViewModel.cs" />
+    <Compile Include="Views\MyCommands.cs" />
     <Compile Include="Converts\BoolToYesNo.cs" />
     <Compile Include="Converts\DateTimeToShortStringConverter.cs" />
     <Compile Include="Converts\DoubleToInt.cs" />
     <Compile Include="Converts\IncreaseByParamValue.cs" />
     <Compile Include="Converts\ReduceByParamValue.cs" />
     <Compile Include="Converts\ResourceToBrushConverter.cs" />
+    <Compile Include="Converts\StringToImageConverter.cs" />
+    <Compile Include="Converts\StringToImageMultiConverter.cs" />
+    <Compile Include="Converts\TreeviewItemToImage.cs" />
     <Compile Include="Converts\UniversalValueConverter.cs" />
     <Compile Include="DataTemplates\BankDataStyleTemplateSelector.cs" />
     <Compile Include="DataTemplates\BankDataTemplateSelector.cs" />
     <Compile Include="DataTemplates\DataTemplateSelectors.cs" />
+    <Compile Include="Models\Person.cs" />
     <Compile Include="Sql\SqlDbSupport.cs" />
     <Compile Include="Sql\SqlServerCommands.cs" />
     <Compile Include="UserControls\Colorpicker.xaml.cs">
@@ -92,7 +122,17 @@
     <Compile Include="UserControls\FlowDoc.xaml.cs">
       <DependentUpon>FlowDoc.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\Class1.cs" />
+    <Compile Include="ViewModels\DirectoryItem.cs" />
+    <Compile Include="ViewModels\DirectoryItemType.cs" />
+    <Compile Include="ViewModels\DirectoryItemViewModel.cs" />
+    <Compile Include="ViewModels\DirectoryStructure.cs" />
+    <Compile Include="ViewModels\DirectoryStructureViewModel.cs" />
     <Compile Include="ViewModels\ExplorerClass.cs" />
+    <Compile Include="ViewModels\Icommand.cs" />
+    <Compile Include="ViewModels\PersonViewModel.cs" />
+    <Compile Include="ViewModels\Presenter.cs" />
     <Compile Include="ViewModels\PubAuthors.cs" />
     <Compile Include="ViewModels\DataLoadControl.cs" />
     <Compile Include="Sql\SqlSupport.cs" />
@@ -100,12 +140,18 @@
     <Compile Include="ViewModels\nworder.cs" />
     <Compile Include="ViewModels\NwOrderCollection.cs" />
     <Compile Include="ViewModels\Databases.cs" />
+    <Compile Include="ViewModels\RelayCommand.cs" />
+    <Compile Include="ViewModels\TextConverter.cs" />
     <Compile Include="ViewModels\TreeViewSelectedItemExBehavior.cs" />
+    <Compile Include="Views\DataContext.cs" />
     <Compile Include="Views\Datagrids.xaml.cs">
       <DependentUpon>Datagrids.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\GenericClass.cs" />
     <Compile Include="Views\Family.cs" />
+    <Compile Include="Views\GenericMvvmWindow.xaml.cs">
+      <DependentUpon>GenericMvvmWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GetBrushfromhexvalue.cs" />
     <Compile Include="Converts\HexConvert.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -143,6 +189,7 @@
     <Compile Include="Views\Listviews.xaml.cs">
       <DependentUpon>Listviews.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\MenuItem.cs" />
     <Compile Include="Views\Msgbox.xaml.cs">
       <DependentUpon>Msgbox.xaml</DependentUpon>
     </Compile>
@@ -165,6 +212,9 @@
     <Compile Include="Views\SupportMethods.cs" />
     <Compile Include="Views\TreeViews.xaml.cs">
       <DependentUpon>TreeViews.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VmTest.xaml.cs">
+      <DependentUpon>VmTest.xaml</DependentUpon>
     </Compile>
     <Page Include="DataTemplates\BankDataTemplates.xaml">
       <SubType>Designer</SubType>
@@ -218,11 +268,23 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MyStyles\ListBoxViewStyles.xaml">
+    <Page Include="UserControls\MulltiDbUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MyStyles\MenuStyles.xaml">
+    <Page Include="UserControls\Ucontrol1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewModels\ListBoxViewStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewModels\MenuStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewModels\MvvmStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -238,11 +300,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MvvmDataGrid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Datagrids.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DragDropClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GenericMvvmWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -266,6 +336,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\StdDataUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MvvmUserTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Progressbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -279,6 +357,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TreeViews.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VmTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -346,5 +428,135 @@
   <ItemGroup>
     <Resource Include="Icons\greencross.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\CallDirectory.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\cloud_fld_w10.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\CoffeeShop0.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Cube.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\database.Ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\DatabaseProject.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Delete.ico" />
+    <Resource Include="Icons\delete2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\desktop.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\DocGenericLRRed.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\docs.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Dicts\edit.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Export.Ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\HPScan.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\messageboxalert.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\MYSL.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\New.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ProgressSkip.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ProgressWarn.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ScriptFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\shared_fld_w7.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\SMSL.ICO" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\ssms.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\sync.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\TemplateIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\TextService.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\transaction_logfile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\TSSource.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Up.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\WSS_DocLib.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\xml.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\XSLTFile.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\folder-open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\TextFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\folder opening.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\folder.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\folder with docs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\blue folder open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\open folder with pages.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\blank doc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\NaPali.bmp" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('packages\Fody.6.5.1\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Fody.6.5.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.6.5.1\build\Fody.targets'))" />
+    <Error Condition="!Exists('packages\PropertyChanged.Fody.3.4.0\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\PropertyChanged.Fody.3.4.0\build\PropertyChanged.Fody.props'))" />
+  </Target>
 </Project>

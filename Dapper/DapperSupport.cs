@@ -14,6 +14,7 @@ using System . Windows;
 using Dapper;
 using System . ComponentModel;
 using MyDev . ViewModels;
+using MyDev . Models;
 
 namespace MyDev . Dapper
 {
@@ -55,7 +56,11 @@ namespace MyDev . Dapper
 			string arg1="", arg2="", arg3="", arg4="";
 			Dictionary<string , object> dict = new Dictionary<string, object>();
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
 			{
 				try
@@ -209,8 +214,7 @@ namespace MyDev . Dapper
 														tmp = pair . Key . ToString ( ) + "=" + pair . Value . ToString ( );
 														buffer += tmp + ",";
 													}
-												}
-												catch ( Exception ex )
+												} catch ( Exception ex )
 												{
 													Console . WriteLine ( $"Dictionary ERROR : {ex . Message}" );
 													result = ex . Message;
@@ -220,8 +224,7 @@ namespace MyDev . Dapper
 											string s = buffer . Substring (0, buffer . Length - 1 );
 											buffer = s;
 											genericlist . Add ( buffer );
-										}
-										catch ( Exception ex )
+										} catch ( Exception ex )
 										{
 											result = $"SQLERROR : {ex . Message}";
 											errormsg = result;
@@ -231,8 +234,7 @@ namespace MyDev . Dapper
 										dict . Clear ( );
 										dictcount = 1;
 									}
-								}
-								catch ( Exception ex )
+								} catch ( Exception ex )
 								{
 									Console . WriteLine ( $"OUTER DICT/PROCEDURE ERROR : {ex . Message}" );
 									result = ex . Message;
@@ -240,7 +242,7 @@ namespace MyDev . Dapper
 								}
 								if ( errormsg == "" )
 									errormsg = $"DYNAMIC:{fldcount}";
-								return collection.Count;
+								return collection . Count;
 							}
 						}
 						else
@@ -287,8 +289,7 @@ namespace MyDev . Dapper
 														tmp = pair . Key . ToString ( ) + "=" + pair . Value . ToString ( );
 														buffer += tmp + ",";
 													}
-												}
-												catch ( Exception ex )
+												} catch ( Exception ex )
 												{
 													Console . WriteLine ( $"Dictionary ERROR : {ex . Message}" );
 													result = ex . Message;
@@ -298,21 +299,19 @@ namespace MyDev . Dapper
 											string s = buffer . Substring (0, buffer . Length - 1 );
 											buffer = s;
 											genericlist . Add ( buffer );
-										}
-										catch ( Exception ex )
+										} catch ( Exception ex )
 										{
 											result = $"SQLERROR : {ex . Message}";
 											Console . WriteLine ( result );
 											return 0;
 										}
-//										gc . ActiveColumns = dict . Count;
+										//										gc . ActiveColumns = dict . Count;
 										//ParseListToDbRecord ( genericlist , out gc );
 										collection . Add ( gc );
 										dict . Clear ( );
 										dictcount = 1;
 									}
-								}
-								catch ( Exception ex )
+								} catch ( Exception ex )
 								{
 									Console . WriteLine ( $"OUTER DICT/PROCEDURE ERROR : {ex . Message}" );
 									if ( ex . Message . Contains ( "not find stored procedure" ) )
@@ -348,21 +347,19 @@ namespace MyDev . Dapper
 								return fldcount;
 							//return 0;
 						}
-					}
-					catch ( Exception ex )
+					} catch ( Exception ex )
 					{
 						Console . WriteLine ( $"STORED PROCEDURE ERROR : {ex . Message}" );
 						result = ex . Message;
 						errormsg = $"SQLERROR : {result}";
 					}
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
 					result = ex . Message;
 				}
 			}
-			return dict . Count;			
+			return dict . Count;
 		}
 		private static void ParseListToDbRecord ( List<string> genericlist , out GenericClass collection )
 		{
@@ -461,7 +458,11 @@ namespace MyDev . Dapper
 			{
 				SqlConnection con;
 				string ConString = Flags . CurrentConnectionString;
-				//				ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+				if ( ConString == "" )
+				{
+					GenericDbHandlers . CheckDbDomain ( "IAN1" );
+					ConString = Flags . CurrentConnectionString;
+				}
 				con = new SqlConnection ( ConString );
 				using ( con )
 				{
@@ -469,8 +470,7 @@ namespace MyDev . Dapper
 					SqlDataAdapter sda = new SqlDataAdapter ( cmd );
 					sda . Fill ( dt );
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"Failed to load Db - {ex . Message}, {ex . Data}" );
 				return null;
@@ -478,7 +478,7 @@ namespace MyDev . Dapper
 			return dt;
 		}
 
-		
+
 		#region	PERFORMSQLEXECUTECOMMAND
 		public static int PerformSqlExecuteCommand ( string SqlCommand , string [ ] args , out string err )
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -521,8 +521,7 @@ namespace MyDev . Dapper
 						tran . Commit ( );
 					}
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Error {ex . Message}, {ex . Data}" );
 				err = $"Error {ex . Message}";
@@ -580,8 +579,7 @@ namespace MyDev . Dapper
 						tran . Commit ( );
 					}
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Error {ex . Message}, {ex . Data}" );
 			}
@@ -617,8 +615,7 @@ namespace MyDev . Dapper
 									//else
 									//	err = "NOTFOUND";
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Error {ex . Message}, {ex . Data}" );
 				if ( ex . Message . Contains ( "There is already an object named" ) )
@@ -667,8 +664,7 @@ namespace MyDev . Dapper
 					//	newentry . Entry = item;
 					//	collection . Add ( newentry );
 					//}
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error : {ex . Message}" );
 				}
@@ -676,146 +672,31 @@ namespace MyDev . Dapper
 			}
 		}
 
-			/// <summary>
-				/// ASYNC version that Loads JUST the Customers that have More than ONE Bank Account with this bank
-				/// </summary>
-				/// <param name="collection">ObservableCollection<BankAccount></BankAccount></param>
-				/// <param name="SqlCommand"></param>
-				/// <param name="DbNameToLoad">The Bank Account  to load from</param>
-				/// <param name="Notify">Trigger notification or not</param>
-				/// <param name="Caller">Our Caller  Window name</param>
-				/// <returns></returns>
-				public static void GetMultiBankCollectionAsync ( ObservableCollection<BankAccountViewModel> collection ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					string Orderby = "" ,
-					string Conditions = "" ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
-				{
-					ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
-							string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-					string[] ValidFields=
-					{
-						"ID",
-						"CUSTNO",
-						"BANKNO",
-						"ACTYPE",
-						"INTRATE" ,
-						"BALANCE" ,
-						"ODATE" ,
-						"CDATE"
-						};
-					string[] errorcolumns;
-					using ( IDbConnection db = new SqlConnection ( ConString ) )
-					{
-						// Utility Support Methods to validate data
-						if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-						{
-							if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-							{
-								MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-								Orderby = "";
-							}
-							else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-							{
-								MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-								Conditions = "";
-							}
-							else
-							{
-								MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-								return;
-							}
-						}
-
-						//// make sure order by clause is correctly formatted
-						//if ( Orderby . Trim ( ) != "" )
-						//{
-						//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
-						//	{
-						//		Orderby = " Order by " + Orderby;
-						//	}
-						//}
-						//if ( Conditions != "" )
-						//{
-						//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
-						//		Conditions = " Where " + Conditions;
-						//}
-
-						try
-						{
-							// Use DAPPER to to load Bank data using Stored Procedure
-							try
-							{
-								Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-								Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-								var Args = new { Arg1 = "" , Arg2 = " " , Arg3= ""};
-								SqlCommand = $"spLoadMultiBankAccountsOnly";
-								if ( args [ 2 ] == 0 )
-									Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions} " , Arg3 = $" {Orderby}" };
-								else if ( args [ 2 ] > 0 )
-									Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions}  " , Arg3 = $" {Orderby}" };
-
-								// This syntax WORKS CORRECTLY
-
-								//***************************************************************************************************************//
-								var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
-								//***************************************************************************************************************//
-
-								Console . WriteLine ( result );
-								//process the list of multi a/c Bank accounts
-								foreach ( var item in result )
-								{
-									bvmcollection . Add ( item );
-								}
-
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-							}
-							catch ( Exception ex )
-							{
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
-							}
-						}
-						catch ( Exception ex )
-						{
-							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
-						}
-					}
-					EventControl . TriggerBankDataLoaded ( null ,
-						new LoadedEventArgs
-						{
-							CallerType = "DAPPERSUPPORT" ,
-							CallerDb = Caller ,
-							DataSource = bvmcollection ,
-							RowCount = bvmcollection . Count
-						} );
-					return;
-				}		  	
-	
-				/// <summary>
-				/// Loads JUST the Customers that have More than ONE Bank Account with this bank
-				/// </summary>
-				/// <param name="collection">ObservableCollection<BankAccount></BankAccount></param>
-				/// <param name="SqlCommand"></param>
-				/// <param name="DbNameToLoad">The Bank Account  to load from</param>
-				/// <param name="Notify">Trigger notification or not</param>
-				/// <param name="Caller">Our Caller  Window name</param>
-				/// <returns></returns>
-				public static ObservableCollection<BankAccountViewModel> GetMultiBankCollection ( ObservableCollection<BankAccountViewModel> collection ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					string Orderby = "" ,
-					string Conditions = "" ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
-				{
-					ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
+		/// <summary>
+		/// ASYNC version that Loads JUST the Customers that have More than ONE Bank Account with this bank
+		/// </summary>
+		/// <param name="collection">ObservableCollection<BankAccount></BankAccount></param>
+		/// <param name="SqlCommand"></param>
+		/// <param name="DbNameToLoad">The Bank Account  to load from</param>
+		/// <param name="Notify">Trigger notification or not</param>
+		/// <param name="Caller">Our Caller  Window name</param>
+		/// <returns></returns>
+		public static void GetMultiBankCollectionAsync ( ObservableCollection<BankAccountViewModel> collection ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			string Orderby = "" ,
+			string Conditions = "" ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+		{
+			ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
 			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			string[] ValidFields=
 					{
 						"ID",
@@ -827,1094 +708,935 @@ namespace MyDev . Dapper
 						"ODATE" ,
 						"CDATE"
 						};
-					string[] errorcolumns;
-					using ( IDbConnection db = new SqlConnection ( ConString ) )
-					{
-						// Utility Support Methods to validate data
-						if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-						{
-							if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-							{
-								MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-								Orderby = "";
-							}
-							else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-							{
-								MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-								Conditions = "";
-							}
-							else
-							{
-								MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-								return null;
-							}
-						}
-
-						//// make sure order by clause is correctly formatted
-						//if ( Orderby . Trim ( ) != "" )
-						//{
-						//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
-						//	{
-						//		Orderby = " Order by " + Orderby;
-						//	}
-						//}
-						//if ( Conditions != "" )
-						//{
-						//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
-						//		Conditions = " Where " + Conditions;
-						//}
-
-						try
-						{
-							// Use DAPPER to to load Bank data using Stored Procedure
-							try
-							{
-								Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-								Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-								var Args = new { Arg1 = "" , Arg2 = " " , Arg3= ""};
-								SqlCommand = $"spLoadMultiBankAccountsOnly";
-								if ( args [ 2 ] == 0 )
-									Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions} " , Arg3 = $" {Orderby}" };
-								else if ( args [ 2 ] > 0 )
-									Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions}  " , Arg3 = $" {Orderby}" };
-								//if ( args [ 2 ] == 0 )
-								//	Args = new { DbName = $" {DbNameToLoad} " , Arg = $" * " , Conditions = $" {Conditions} " , SortBy = $" {Orderby}" };
-								//else if ( args [ 2 ] > 0 )
-								//	Args = new { DbName = $" {DbNameToLoad} " , Arg = $" Top ({args [ 2 ] . ToString ( )}) *  " , Conditions = $" {Conditions}  " , SortBy = $" {Orderby}" };
-								// This syntax WORKS CORRECTLY
-
-								//***************************************************************************************************************//
-								var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
-								//***************************************************************************************************************//
-
-								Console . WriteLine ( result );
-								foreach ( var item in result )
-								{
-									bvmcollection . Add ( item );
-								}
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-							}
-							catch ( Exception ex )
-							{
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
-							}
-						}
-						catch ( Exception ex )
-						{
-							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
-						}
-					}
-					if ( Notify )
-					{
-						EventControl . TriggerBankDataLoaded ( null ,
-							new LoadedEventArgs
-							{
-								CallerType = "SQLSERVER" ,
-								CallerDb = Caller ,
-								DataSource = bvmcollection ,
-								RowCount = bvmcollection . Count
-							} );
-					}
-					return bvmcollection;
-				}
-
-
-				#region Bank loading methods
-				public async static Task<bool> GetBankObsCollectionAsync ( ObservableCollection<BankAccountViewModel> collection ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					string Orderby = "" ,
-					string Conditions = "" ,
-					bool wantSort = false ,
-					bool wantDictionary = false ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
+			string[] errorcolumns;
+			using ( IDbConnection db = new SqlConnection ( ConString ) )
+			{
+				// Utility Support Methods to validate data
+				if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
 				{
-					ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
-			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-			string[] ValidFields=
+					if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
 					{
-						"ID",
-						"CUSTNO",
-						"BANKNO",
-						"ACTYPE",
-						"INTRATE" ,
-						"BALANCE" ,
-						"ODATE" ,
-						"CDATE"
-						};
-					string[] errorcolumns;
-
-					// Use defaullt Db if none received frm caller
-					if ( DbNameToLoad == "" )
-						DbNameToLoad = "BankAccount";
-
-					// Utility Support Methods to validate data
-					if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-					{
-						if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-							Orderby = "";
-						}
-						else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-							Conditions = "";
-						}
-						else
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-							return false;
-						}
-					}
-
-					//// make sure order by clause is correctly formatted
-					//if ( Orderby . Trim ( ) != "" )
-					//{
-					//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
-					//	{
-					//		Orderby = " Order by " + Orderby;
-					//	}
-					//}
-
-					//if ( Conditions != "" )
-					//{
-					//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
-					//		Conditions = " Where " + Conditions;
-					//}
-
-					if ( Flags . USEADOWITHSTOREDPROCEDURES )
-					{
-						//====================================================
-						// Use standard ADO.Net to to load Bank data to run Stored Procedure
-						//====================================================
-						BankAccountViewModel bvm= new BankAccountViewModel();
-				string Con= Flags . CurrentConnectionString;
-				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-				SqlConnection sqlCon=null;
-
-						// Works with default command 31/10/21
-						// works with Records limited 31/10/21
-						// works with Selection conditions limited 31/10/21
-						// works with Sort conditions 31/10/21
-						try
-						{
-							using ( sqlCon = new SqlConnection ( Con ) )
-							{
-								SqlCommand sql_cmnd;
-								sqlCon . Open ( );
-								if ( SqlCommand != "" )
-									sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
-								else
-								{
-									sql_cmnd = new SqlCommand ( "dbo.spLoadBankAccountComplex " , sqlCon );
-
-									sql_cmnd . CommandType = CommandType . StoredProcedure;
-									// Now handle parameters
-									sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
-									if ( args == null )
-										args = dummyargs;
-									if ( args . Length > 0 )
-									{
-										if ( args [ 2 ] > 0 )
-										{
-											string limits = $" Top ({args[2]}) ";
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
-										}
-										else
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-									}
-									else
-										sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-
-									Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
-									Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
-								}
-								var sqlDr = sql_cmnd . ExecuteReader ( );
-								while ( sqlDr . Read ( ) )
-								{
-									bvm . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
-									bvm . CustNo = sqlDr [ "CustNo" ] . ToString ( );
-									bvm . BankNo = sqlDr [ "BankNo" ] . ToString ( );
-									bvm . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
-									bvm . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
-									bvm . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
-									bvm . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
-									bvm . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
-									bvmcollection . Add ( bvm );
-									bvm = new BankAccountViewModel ( );
-								}
-								sqlDr . Close ( );
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
-							}
-							sqlCon . Close ( );
-						}
-						catch ( Exception ex )
-
-						{
-							Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
-							return false;
-						}
-					}
-					else
-					{
-						//====================================
-						// Use STD DAPPER QUERY to load Bank data
-						//====================================
-						IEnumerable < BankAccountViewModel> bvmi;
-						using ( IDbConnection db = new SqlConnection ( ConString ) )
-						{
-							try
-							{
-								// Use DAPPER to to load Bank data using Stored Procedure
-								if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
-								{
-									try
-									{
-										Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-										Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-										SqlCommand = $"spLoadBankAccountComplex";
-										var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
-										if ( args [ 2 ] == 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-										else if ( args [ 2 ] > 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-										// This syntax WORKS CORRECTLY
-
-										//***************************************************************************************************************//
-										var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
-										//***************************************************************************************************************//
-
-										Console . WriteLine ( result );
-										foreach ( var item in result )
-										{
-											bvmcollection . Add ( item );
-										}
-										Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-									}
-									catch ( Exception ex )
-									{
-										Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
-									}
-								}
-								else if ( Flags . USESDAPPERSTDPROCEDURES == true )
-								{
-									//====================================
-									// Use standard DAPPER code to load Bank data
-									//====================================
-									Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-									Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-									if ( Conditions != "" )
-									{
-										if ( args [ 2 ] > 0 && Orderby != "" )
-											SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where {Conditions} Order by {Orderby}";
-										else
-											SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
-									}
-									else
-									{
-										if ( args != null )
-										{
-											if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
-												SqlCommand = $" Select * from {DbNameToLoad} ";
-											else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
-											{
-												if ( args [ 2 ] == 0 )       // no limit on how many records to get
-												{
-													SqlCommand = $" Select * from {DbNameToLoad} ";
-													if ( Conditions != "" )
-														SqlCommand += $" {Conditions} ";
-													else if ( args [ 1 ] != 0 )
-														SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
-												}
-												else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
-													SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
-												else if ( args [ 1 ] > 0 )// All 3 args are received
-													SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-												else
-													SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-											}
-										}
-										if ( Conditions != "" )  // We have conditions
-											SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
-										else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
-											SqlCommand = $"Select * from {DbNameToLoad}  ";
-										// Final Trap to ensure we have a valid command line
-										if ( SqlCommand == "" )
-											SqlCommand = $" Select * from {DbNameToLoad} ";
-
-										if ( wantSort && Orderby != "" )
-
-											SqlCommand += $" order by {Orderby}";
-									}
-									// Read data via Dapper into list<BVM> cos Dapper uses Linq, so we cannot get other types returned
-									//***************************************************************************************************************//
-									bvmi = db . Query<BankAccountViewModel> ( SqlCommand );
-									//***************************************************************************************************************//
-
-									foreach ( var item in bvmi )
-									{
-										bvmcollection . Add ( item );
-									}
-									collection = bvmcollection;
-								}
-							}
-							catch ( Exception ex )
-							{
-								Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-								return false;
-							}
-							finally
-							{
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
-							}
-						}
-					}
-					EventControl . TriggerBankDataLoaded ( null ,
-						new LoadedEventArgs
-						{
-							CallerType = "SQLSERVER" ,
-							CallerDb = Caller ,
-							DataSource = bvmcollection ,
-							RowCount = bvmcollection . Count
-						} );
-					return true;
-				}
-
-				public static ObservableCollection<BankAccountViewModel> GetBankObsCollection ( ObservableCollection<BankAccountViewModel> collection ,
-				string SqlCommand = "" ,
-				string DbNameToLoad = "" ,
-				string Orderby = "" ,
-				string Conditions = "" ,
-				bool wantSort = false ,
-				bool wantDictionary = false ,
-				bool Notify = false ,
-				string Caller = "" ,
-				int [ ] args = null )
-				{
-					ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
-			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-			string[] ValidFields=
-					{
-						"ID",
-						"CUSTNO",
-						"BANKNO",
-						"ACTYPE",
-						"INTRATE" ,
-						"BALANCE" ,
-						"ODATE" ,
-						"CDATE"
-						};
-					string[] errorcolumns;
-
-					// Use defaullt Db if none received frm caller
-					if ( DbNameToLoad == "" )
-						DbNameToLoad = "BankAccount";
-
-					if ( SqlCommand== null || (SqlCommand =="" && DbNameToLoad== ""))
-						return null;
-					if ( DbNameToLoad == null )
-						DbNameToLoad = "";
-					if ( Orderby == null )
+						MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
 						Orderby = "";
-					if ( Conditions== null )
-						Conditions = "";
-					// Utility Support Methods to validate data
-					if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-					{
-						if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-							Orderby = "";
-						}
-						else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-							Conditions = "";
-						}
-						else
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-							return null;
-						}
 					}
-					if ( Flags . USEADOWITHSTOREDPROCEDURES )
+					else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
 					{
-						//====================================================
-						// Use standard ADO.Net to to load Bank data to run Stored Procedure
-						//====================================================
-						BankAccountViewModel bvm= new BankAccountViewModel();
+						MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+						Conditions = "";
+					}
+					else
+					{
+						MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+						return;
+					}
+				}
+
+				//// make sure order by clause is correctly formatted
+				//if ( Orderby . Trim ( ) != "" )
+				//{
+				//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
+				//	{
+				//		Orderby = " Order by " + Orderby;
+				//	}
+				//}
+				//if ( Conditions != "" )
+				//{
+				//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
+				//		Conditions = " Where " + Conditions;
+				//}
+
+				try
+				{
+					// Use DAPPER to to load Bank data using Stored Procedure
+					try
+					{
+						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+						var Args = new { Arg1 = "" , Arg2 = " " , Arg3= ""};
+						SqlCommand = $"spLoadMultiBankAccountsOnly";
+						if ( args [ 2 ] == 0 )
+							Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions} " , Arg3 = $" {Orderby}" };
+						else if ( args [ 2 ] > 0 )
+							Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions}  " , Arg3 = $" {Orderby}" };
+
+						// This syntax WORKS CORRECTLY
+
+						//***************************************************************************************************************//
+						var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
+						//***************************************************************************************************************//
+
+						Console . WriteLine ( result );
+						//process the list of multi a/c Bank accounts
+						foreach ( var item in result )
+						{
+							bvmcollection . Add ( item );
+						}
+
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+					} catch ( Exception ex )
+					{
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
+					}
+				} catch ( Exception ex )
+				{
+					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
+				}
+			}
+			EventControl . TriggerBankDataLoaded ( null ,
+				new LoadedEventArgs
+				{
+					CallerType = "DAPPERSUPPORT" ,
+					CallerDb = Caller ,
+					DataSource = bvmcollection ,
+					RowCount = bvmcollection . Count
+				} );
+			return;
+		}
+
+		/// <summary>
+		/// Loads JUST the Customers that have More than ONE Bank Account with this bank
+		/// </summary>
+		/// <param name="collection">ObservableCollection<BankAccount></BankAccount></param>
+		/// <param name="SqlCommand"></param>
+		/// <param name="DbNameToLoad">The Bank Account  to load from</param>
+		/// <param name="Notify">Trigger notification or not</param>
+		/// <param name="Caller">Our Caller  Window name</param>
+		/// <returns></returns>
+		public static ObservableCollection<BankAccountViewModel> GetMultiBankCollection ( ObservableCollection<BankAccountViewModel> collection ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			string Orderby = "" ,
+			string Conditions = "" ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+		{
+			ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
+			string[] ValidFields=
+					{
+						"ID",
+						"CUSTNO",
+						"BANKNO",
+						"ACTYPE",
+						"INTRATE" ,
+						"BALANCE" ,
+						"ODATE" ,
+						"CDATE"
+						};
+			string[] errorcolumns;
+			using ( IDbConnection db = new SqlConnection ( ConString ) )
+			{
+				// Utility Support Methods to validate data
+				if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+				{
+					if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+					{
+						MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+						Orderby = "";
+					}
+					else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+					{
+						MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+						Conditions = "";
+					}
+					else
+					{
+						MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+						return null;
+					}
+				}
+
+				//// make sure order by clause is correctly formatted
+				//if ( Orderby . Trim ( ) != "" )
+				//{
+				//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
+				//	{
+				//		Orderby = " Order by " + Orderby;
+				//	}
+				//}
+				//if ( Conditions != "" )
+				//{
+				//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
+				//		Conditions = " Where " + Conditions;
+				//}
+
+				try
+				{
+					// Use DAPPER to to load Bank data using Stored Procedure
+					try
+					{
+						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+						var Args = new { Arg1 = "" , Arg2 = " " , Arg3= ""};
+						SqlCommand = $"spLoadMultiBankAccountsOnly";
+						if ( args [ 2 ] == 0 )
+							Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions} " , Arg3 = $" {Orderby}" };
+						else if ( args [ 2 ] > 0 )
+							Args = new { Arg1 = $" {DbNameToLoad} " , Arg2 = $" {Conditions}  " , Arg3 = $" {Orderby}" };
+						//if ( args [ 2 ] == 0 )
+						//	Args = new { DbName = $" {DbNameToLoad} " , Arg = $" * " , Conditions = $" {Conditions} " , SortBy = $" {Orderby}" };
+						//else if ( args [ 2 ] > 0 )
+						//	Args = new { DbName = $" {DbNameToLoad} " , Arg = $" Top ({args [ 2 ] . ToString ( )}) *  " , Conditions = $" {Conditions}  " , SortBy = $" {Orderby}" };
+						// This syntax WORKS CORRECTLY
+
+						//***************************************************************************************************************//
+						var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
+						//***************************************************************************************************************//
+
+						Console . WriteLine ( result );
+						foreach ( var item in result )
+						{
+							bvmcollection . Add ( item );
+						}
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+					} catch ( Exception ex )
+					{
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
+					}
+				} catch ( Exception ex )
+				{
+					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
+				}
+			}
+			if ( Notify )
+			{
+				EventControl . TriggerBankDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "SQLSERVER" ,
+						CallerDb = Caller ,
+						DataSource = bvmcollection ,
+						RowCount = bvmcollection . Count
+					} );
+			}
+			return bvmcollection;
+		}
+
+
+		#region Bank loading methods
+		public async static Task<bool> GetBankObsCollectionAsync ( ObservableCollection<BankAccountViewModel> collection ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			string Orderby = "" ,
+			string Conditions = "" ,
+			bool wantSort = false ,
+			bool wantDictionary = false ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+		{
+			ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
+			string[] ValidFields=
+					{
+						"ID",
+						"CUSTNO",
+						"BANKNO",
+						"ACTYPE",
+						"INTRATE" ,
+						"BALANCE" ,
+						"ODATE" ,
+						"CDATE"
+						};
+			string[] errorcolumns;
+
+			// Use defaullt Db if none received frm caller
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "BankAccount";
+
+			// Utility Support Methods to validate data
+			if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+			{
+				if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+					Orderby = "";
+				}
+				else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+					Conditions = "";
+				}
+				else
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+					return false;
+				}
+			}
+
+			//// make sure order by clause is correctly formatted
+			//if ( Orderby . Trim ( ) != "" )
+			//{
+			//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
+			//	{
+			//		Orderby = " Order by " + Orderby;
+			//	}
+			//}
+
+			//if ( Conditions != "" )
+			//{
+			//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
+			//		Conditions = " Where " + Conditions;
+			//}
+
+			if ( Flags . USEADOWITHSTOREDPROCEDURES )
+			{
+				//====================================================
+				// Use standard ADO.Net to to load Bank data to run Stored Procedure
+				//====================================================
+				BankAccountViewModel bvm= new BankAccountViewModel();
 				string Con= Flags . CurrentConnectionString;
 				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 				SqlConnection sqlCon=null;
 
-						// Works with default command 31/10/21
-						// works with Records limited 31/10/21
-						// works with Selection conditions limited 31/10/21
-						// works with Sort conditions 31/10/21
-						try
+				// Works with default command 31/10/21
+				// works with Records limited 31/10/21
+				// works with Selection conditions limited 31/10/21
+				// works with Sort conditions 31/10/21
+				try
+				{
+					using ( sqlCon = new SqlConnection ( Con ) )
+					{
+						SqlCommand sql_cmnd;
+						sqlCon . Open ( );
+						if ( SqlCommand != "" )
+							sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+						else
 						{
-							using ( sqlCon = new SqlConnection ( Con ) )
+							sql_cmnd = new SqlCommand ( "dbo.spLoadBankAccountComplex " , sqlCon );
+
+							sql_cmnd . CommandType = CommandType . StoredProcedure;
+							// Now handle parameters
+							sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
+							if ( args == null )
+								args = dummyargs;
+							if ( args . Length > 0 )
 							{
-								SqlCommand sql_cmnd;
-								sqlCon . Open ( );
+								if ( args [ 2 ] > 0 )
+								{
+									string limits = $" Top ({args[2]}) ";
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
+								}
+								else
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+							}
+							else
+								sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+
+							Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
+							Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
+						}
+						var sqlDr = sql_cmnd . ExecuteReader ( );
+						while ( sqlDr . Read ( ) )
+						{
+							bvm . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
+							bvm . CustNo = sqlDr [ "CustNo" ] . ToString ( );
+							bvm . BankNo = sqlDr [ "BankNo" ] . ToString ( );
+							bvm . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
+							bvm . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
+							bvm . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
+							bvm . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
+							bvm . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
+							bvmcollection . Add ( bvm );
+							bvm = new BankAccountViewModel ( );
+						}
+						sqlDr . Close ( );
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
+					}
+					sqlCon . Close ( );
+				} catch ( Exception ex )
+
+				{
+					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+					return false;
+				}
+			}
+			else
+			{
+				//====================================
+				// Use STD DAPPER QUERY to load Bank data
+				//====================================
+				IEnumerable < BankAccountViewModel> bvmi;
+				using ( IDbConnection db = new SqlConnection ( ConString ) )
+				{
+					try
+					{
+						// Use DAPPER to to load Bank data using Stored Procedure
+						if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
+						{
+							try
+							{
 								Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
 								Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-								if ( SqlCommand != "" )
-									sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
-								else
-								{
-									sql_cmnd = new SqlCommand ( "dbo.spLoadBankAccountComplex " , sqlCon );
-									sql_cmnd . CommandType = CommandType . StoredProcedure;
-									// Now handle parameters
-									sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
-									if ( args == null )
-										args = dummyargs;
-									if ( args . Length > 0 )
-									{
-										if ( args [ 2 ] > 0 )
-										{
-											string limits = $" Top ({args[2]}) ";
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
-										}
-									}
-									Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-									if ( Conditions != "" )
-										sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
-									if ( Orderby != "" )
-										sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby . Trim ( );
-								}
-								var sqlDr = sql_cmnd . ExecuteReader ( );
-								while ( sqlDr . Read ( ) )
-								{
-									bvm . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
-									bvm . CustNo = sqlDr [ "CustNo" ] . ToString ( );
-									bvm . BankNo = sqlDr [ "BankNo" ] . ToString ( );
-									bvm . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
-									bvm . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
-									bvm . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
-									bvm . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
-									bvm . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
-									bvmcollection . Add ( bvm );
-									bvm = new BankAccountViewModel ( );
-								}
-								sqlDr . Close ( );
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
-							}
-							sqlCon . Close ( );
-						}
-						catch ( Exception ex )
+								SqlCommand = $"spLoadBankAccountComplex";
+								var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
+								if ( args [ 2 ] == 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+								else if ( args [ 2 ] > 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+								// This syntax WORKS CORRECTLY
 
-						{
-							Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
-						}
-						if ( Notify )
-						{
-							EventControl . TriggerBankDataLoaded ( null ,
-							new LoadedEventArgs
+								//***************************************************************************************************************//
+								var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
+								//***************************************************************************************************************//
+
+								Console . WriteLine ( result );
+								foreach ( var item in result )
+								{
+									bvmcollection . Add ( item );
+								}
+								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+							} catch ( Exception ex )
 							{
-								CallerType = "DAPPERSUPPORT" ,
-								CallerDb = Caller ,
-								DataSource = bvmcollection ,
-								RowCount = bvmcollection . Count
-							} );
+								Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
+							}
 						}
-					}
-					else
-					{
-						//====================================
-						// Use STD DAPPER QUERY to load Bank data
-						//====================================
-						IEnumerable < BankAccountViewModel> bvmi;
-						using ( IDbConnection db = new SqlConnection ( ConString ) )
+						else if ( Flags . USESDAPPERSTDPROCEDURES == true )
 						{
+							//====================================
+							// Use standard DAPPER code to load Bank data
+							//====================================
 							Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
 							Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-							try
+							if ( Conditions != "" )
 							{
-								// Use DAPPER to to load Bank data using Stored Procedure
-								if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
+								if ( args [ 2 ] > 0 && Orderby != "" )
+									SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where {Conditions} Order by {Orderby}";
+								else
+									SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
+							}
+							else
+							{
+								if ( args != null )
 								{
-									try
+									if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
+										SqlCommand = $" Select * from {DbNameToLoad} ";
+									else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
 									{
-										var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
-										SqlCommand = $"spLoadBankAccountComplex";
-										if ( args [ 2 ] == 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-										else if ( args [ 2 ] > 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-
-										// This syntax WORKS CORRECTLY
-										//***************************************************************************************************************//
-										var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
-										//***************************************************************************************************************//
-
-										Console . WriteLine ( result );
-										foreach ( var item in result )
+										if ( args [ 2 ] == 0 )       // no limit on how many records to get
 										{
-											bvmcollection . Add ( item );
-										}
-										Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-									}
-									catch ( Exception ex )
-									{
-										Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
-									}
-								}
-								else if ( Flags . USESDAPPERSTDPROCEDURES == true )
-								{
-									//====================================
-									// Use standard DAPPER code to load Bank data
-									//====================================
-									if ( Conditions != "" )
-									{
-										if ( args [ 2 ] > 0 && Orderby != "" )
-											SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad}  where {Conditions} Order by {Orderby}";
-										else
-											SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
-									}
-									else
-									{
-										if ( args != null )
-										{
-											if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
-												SqlCommand = $" Select * from {DbNameToLoad} ";
-											else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
-											{
-												if ( args [ 2 ] == 0 )       // no limit on how many records to get
-												{
-													SqlCommand = $" Select * from {DbNameToLoad} ";
-													if ( Conditions != "" )
-														SqlCommand += $" {Conditions} ";
-													else if ( args [ 1 ] != 0 )
-														SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
-												}
-												else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
-													SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
-												else if ( args [ 1 ] > 0 )// All 3 args are received
-													SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-												else
-													SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-											}
-										}
-										if ( Conditions != "" )  // We have conditions
-											SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
-										else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
-											SqlCommand = $"Select * from {DbNameToLoad}  ";
-										// Final Trap to ensure we have a valid command line
-										if ( SqlCommand == "" )
 											SqlCommand = $" Select * from {DbNameToLoad} ";
-
-										if ( wantSort && Orderby != "" )
-											SqlCommand += $" Order by {Orderby}";
+											if ( Conditions != "" )
+												SqlCommand += $" {Conditions} ";
+											else if ( args [ 1 ] != 0 )
+												SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
+										}
+										else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
+											SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
+										else if ( args [ 1 ] > 0 )// All 3 args are received
+											SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+										else
+											SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
 									}
-									// Read data via Dapper into list<BVM> cos Dapper uses Linq, so we cannot get other types returned
-									//***************************************************************************************************************//
-									bvmi = db . Query<BankAccountViewModel> ( SqlCommand );
-									//***************************************************************************************************************//
-
-									foreach ( var item in bvmi )
-									{
-										bvmcollection . Add ( item );
-									}
-									collection = bvmcollection;
 								}
+								if ( Conditions != "" )  // We have conditions
+									SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
+								else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
+									SqlCommand = $"Select * from {DbNameToLoad}  ";
+								// Final Trap to ensure we have a valid command line
+								if ( SqlCommand == "" )
+									SqlCommand = $" Select * from {DbNameToLoad} ";
+
+								if ( wantSort && Orderby != "" )
+
+									SqlCommand += $" order by {Orderby}";
 							}
-							catch ( Exception ex )
-							{
-								Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-							}
-							finally
-							{
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
-							}
-						}
-					}
-					if ( Notify )
-					{
-						EventControl . TriggerBankDataLoaded ( null ,
-							new LoadedEventArgs
-							{
-								CallerType = "SQLSERVER" ,
-								CallerDb = Caller ,
-								DataSource = bvmcollection ,
-								RowCount = bvmcollection . Count
-							} );
-					}
-					collection = bvmcollection;
-					return bvmcollection;
-				}
-
-
-				public static ObservableCollection<BankAccountViewModel> GetBankObsCollectionWithDict ( ObservableCollection<BankAccountViewModel> collection ,
-					out Dictionary<int , int> Dict ,
-					bool wantDictionary = false ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					bool wantSort = false ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
-				{
-					ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
-					List<BankAccountViewModel> bvmlist = new List<BankAccountViewModel>();
-					Dictionary <int, int> BankDict = new Dictionary<int, int>();
-
-
-					Dict = BankDict;
-			//collection = bvmcollection;
-			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-			if ( DbNameToLoad == "" )
-						DbNameToLoad = "BankAccount";
-
-					using ( IDbConnection db = new SqlConnection ( ConString ) )
-					{
-						try
-						{
-							if ( SqlCommand == "" && args != null )   // no command line received, but we do have args
-							{
-								if ( args [ 2 ] == 0 )       // no limit on how many records to get
-									SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-								else  // All 3 args are received
-									SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-							}
-							else if ( SqlCommand == "" && args == null )    // No inforeceived at all, so use generic command
-								SqlCommand = "Select * from {DbNameToLoad} ";
-
-							if ( wantSort )
-
-								SqlCommand += $" order by CustNo, BankNo";
 							// Read data via Dapper into list<BVM> cos Dapper uses Linq, so we cannot get other types returned
 							//***************************************************************************************************************//
-							bvmlist = db . Query<BankAccountViewModel> ( SqlCommand ) . ToList ( );
+							bvmi = db . Query<BankAccountViewModel> ( SqlCommand );
 							//***************************************************************************************************************//
 
-							if ( bvmlist . Count > 0 )
+							foreach ( var item in bvmi )
 							{
-								// We want a ObservableCollection<BankAccountViewModel>, so create it here, and also a dictionary<int, int>
-								int counter = 0;
-								foreach ( var item in bvmlist )
+								bvmcollection . Add ( item );
+							}
+							collection = bvmcollection;
+						}
+					} catch ( Exception ex )
+					{
+						Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
+						return false;
+					} finally
+					{
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
+					}
+				}
+			}
+			EventControl . TriggerBankDataLoaded ( null ,
+				new LoadedEventArgs
+				{
+					CallerType = "SQLSERVER" ,
+					CallerDb = Caller ,
+					DataSource = bvmcollection ,
+					RowCount = bvmcollection . Count
+				} );
+			return true;
+		}
+
+		public static ObservableCollection<BankAccountViewModel> GetBankObsCollection ( ObservableCollection<BankAccountViewModel> collection ,
+		string SqlCommand = "" ,
+		string DbNameToLoad = "" ,
+		string Orderby = "" ,
+		string Conditions = "" ,
+		bool wantSort = false ,
+		bool wantDictionary = false ,
+		bool Notify = false ,
+		string Caller = "" ,
+		int [ ] args = null )
+		{
+			ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
+			string[] ValidFields=
+					{
+						"ID",
+						"CUSTNO",
+						"BANKNO",
+						"ACTYPE",
+						"INTRATE" ,
+						"BALANCE" ,
+						"ODATE" ,
+						"CDATE"
+						};
+			string[] errorcolumns;
+
+			// Use defaullt Db if none received frm caller
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "BankAccount";
+
+			if ( SqlCommand == null || ( SqlCommand == "" && DbNameToLoad == "" ) )
+				return null;
+			if ( DbNameToLoad == null )
+				DbNameToLoad = "";
+			if ( Orderby == null )
+				Orderby = "";
+			if ( Conditions == null )
+				Conditions = "";
+			// Utility Support Methods to validate data
+			if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+			{
+				if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+					Orderby = "";
+				}
+				else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+					Conditions = "";
+				}
+				else
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+					return null;
+				}
+			}
+			if ( Flags . USEADOWITHSTOREDPROCEDURES )
+			{
+				//====================================================
+				// Use standard ADO.Net to to load Bank data to run Stored Procedure
+				//====================================================
+				BankAccountViewModel bvm= new BankAccountViewModel();
+				string Con= Flags . CurrentConnectionString;
+				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+				SqlConnection sqlCon=null;
+
+				// Works with default command 31/10/21
+				// works with Records limited 31/10/21
+				// works with Selection conditions limited 31/10/21
+				// works with Sort conditions 31/10/21
+				try
+				{
+					using ( sqlCon = new SqlConnection ( Con ) )
+					{
+						SqlCommand sql_cmnd;
+						sqlCon . Open ( );
+						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+						if ( SqlCommand != "" )
+							sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+						else
+						{
+							sql_cmnd = new SqlCommand ( "dbo.spLoadBankAccountComplex " , sqlCon );
+							sql_cmnd . CommandType = CommandType . StoredProcedure;
+							// Now handle parameters
+							sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
+							if ( args == null )
+								args = dummyargs;
+							if ( args . Length > 0 )
+							{
+								if ( args [ 2 ] > 0 )
+								{
+									string limits = $" Top ({args[2]}) ";
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
+								}
+							}
+							Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+							if ( Conditions != "" )
+								sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
+							if ( Orderby != "" )
+								sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby . Trim ( );
+						}
+						var sqlDr = sql_cmnd . ExecuteReader ( );
+						while ( sqlDr . Read ( ) )
+						{
+							bvm . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
+							bvm . CustNo = sqlDr [ "CustNo" ] . ToString ( );
+							bvm . BankNo = sqlDr [ "BankNo" ] . ToString ( );
+							bvm . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
+							bvm . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
+							bvm . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
+							bvm . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
+							bvm . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
+							bvmcollection . Add ( bvm );
+							bvm = new BankAccountViewModel ( );
+						}
+						sqlDr . Close ( );
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
+					}
+					sqlCon . Close ( );
+				} catch ( Exception ex )
+
+				{
+					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+				}
+				if ( Notify )
+				{
+					EventControl . TriggerBankDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "DAPPERSUPPORT" ,
+						CallerDb = Caller ,
+						DataSource = bvmcollection ,
+						RowCount = bvmcollection . Count
+					} );
+				}
+			}
+			else
+			{
+				//====================================
+				// Use STD DAPPER QUERY to load Bank data
+				//====================================
+				IEnumerable < BankAccountViewModel> bvmi;
+				using ( IDbConnection db = new SqlConnection ( ConString ) )
+				{
+					Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+					Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+					try
+					{
+						// Use DAPPER to to load Bank data using Stored Procedure
+						if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
+						{
+							try
+							{
+								var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
+								SqlCommand = $"spLoadBankAccountComplex";
+								if ( args [ 2 ] == 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+								else if ( args [ 2 ] > 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+
+								// This syntax WORKS CORRECTLY
+								//***************************************************************************************************************//
+								var result  = db . Query<BankAccountViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
+								//***************************************************************************************************************//
+
+								Console . WriteLine ( result );
+								foreach ( var item in result )
 								{
 									bvmcollection . Add ( item );
-									if ( wantDictionary )
-									{
-										if ( BankDict . ContainsKey ( int . Parse ( item . CustNo ) ) == false )
-											BankDict . Add ( int . Parse ( item . CustNo ) , counter++ );
-									}
 								}
+								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+							} catch ( Exception ex )
+							{
+								Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
 							}
 						}
-						catch ( Exception ex )
+						else if ( Flags . USESDAPPERSTDPROCEDURES == true )
 						{
-							Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-						}
-						finally
-						{
-							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {bvmcollection . Count} records successfuly" );
-						}
-					}
-					if ( Notify )
-					{
-						EventControl . TriggerBankDataLoaded ( null ,
-							new LoadedEventArgs
+							//====================================
+							// Use standard DAPPER code to load Bank data
+							//====================================
+							if ( Conditions != "" )
 							{
-								CallerType = "SQLSERVER" ,
-								CallerDb = Caller ,
-								DataSource = bvmcollection ,
-								RowCount = bvmcollection . Count
-							} );
-					}
-					collection = bvmcollection;
-					return bvmcollection;
-				}
-
-				public static ObservableCollection<BankAccountViewModel> LoadBankDataToList (
-					ObservableCollection<BankAccountViewModel> BankCollection ,
-					out Dictionary<int , int> Dict ,
-					bool wantDictionary = false ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					bool wantSort = false ,
-					string Caller = "" ,
-					bool NotifyCaller = false ,
-					int [ ] args = null )
-				{
-					ObservableCollection < BankAccountViewModel >DbData = new ObservableCollection<BankAccountViewModel>();
-					List<BankAccountViewModel> bvmlist = new List<BankAccountViewModel>();
-					Dictionary <int, int> BankDict = new Dictionary<int, int>();
-					int counter = 0;
-
-			string ConString = Flags . CurrentConnectionString;
-			//string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-			Dict = BankDict;
-					if ( BankCollection == null )
-						BankCollection = DbData;
-
-					if ( DbNameToLoad == "" )
-						DbNameToLoad = "BankAccount";
-					using ( IDbConnection db = new SqlConnection ( ConString ) )
-					{
-						try
-						{
-							if ( SqlCommand == "" && args != null )   // no command line received, but we do have args
-							{
-								if ( args [ 2 ] == 0 )       // no limit on how many records to get
-									SqlCommand = $" Select * from {DbNameToLoad}  where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-								else  // All 3 args are received
-									SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-							}
-							else if ( SqlCommand == "" && args == null )    // No inforeceived at all, so use generic command
-								SqlCommand = "Select * from {DbNameToLoad} ";
-
-							if ( wantSort )
-
-								SqlCommand += $" order by CustNo, BankNo";
-
-							//***************************************************************************************************************//
-							bvmlist = db . Query<BankAccountViewModel> ( SqlCommand ) . ToList ( );
-							//***************************************************************************************************************//
-
-							if ( bvmlist . Count > 0 )
-							{
-								foreach ( var item in bvmlist )
-								{
-									if ( BankDict . ContainsKey ( int . Parse ( item . BankNo ) ) == false )
-										BankDict . Add ( int . Parse ( item . BankNo ) , counter++ );
-								}
-							}
-						}
-						catch ( Exception ex )
-						{
-							Console . WriteLine ( $"SQL DAPPER error in DAPPERSUPPPORT. LOADBANKDATAVIALIST: {ex . Message}, {ex . Data}" );
-						}
-						finally
-						{
-							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {BankCollection . Count} records successfuly" );
-						}
-					}
-					//if ( NotifyCaller )
-					//{
-					//	EventControl . TriggerBankDataLoaded ( null ,
-					//		new LoadedEventArgs
-					//		{
-					//			CallerType = "SQLSERVER" ,
-					//			CallerDb = Caller ,
-					//			DataSource = BankCollection ,
-					//			RowCount = BankCollection . Count
-					//		} );
-					//}
-					return BankCollection;
-				}
-
-				#endregion Bank loading methods
-
-
-				#region Customer Db Data Loading methods
-
-				public async static Task<bool> GetCustObsCollectionAsync ( ObservableCollection<CustomerViewModel> collection ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					string Orderby = "" ,
-					string Conditions = "" ,
-					bool wantSort = false ,
-					bool wantDictionary = false ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
-
-				{
-					ObservableCollection<CustomerViewModel> cvmcollection = new ObservableCollection<CustomerViewModel>();
-					IEnumerable<CustomerViewModel> cvm ;
-					string[] ValidFields=
-					{
-						"ID",
-						"CUSTNO",
-						"BANKNO",
-						"ACTYPE",
-						"FNAME" ,
-						"LNAME" ,
-						"ADDR1" ,
-						"ADDR2" ,
-						"TOWN" ,
-						"COUNTY",
-						"PCODE" ,
-						"PHONE" ,
-						"MOBILE",
-						"ODATE" ,
-						"CDATE"
-						};
-					string[] errorcolumns;
-			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-
-			if ( DbNameToLoad == "" )
-						DbNameToLoad = "Customer";
-
-
-					// Utility Support Methods to validate data
-					if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-					{
-						if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-							Orderby = "";
-						}
-						else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-							Conditions = "";
-						}
-						else
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-							return false;
-						}
-					}
-
-					//// make sure order by clause is correctly formatted
-					//if ( Orderby . Trim ( ) != "" )
-					//{
-					//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
-					//	{
-					//		Orderby = " Order by " + Orderby;
-					//	}
-					//}
-
-					//if ( Conditions != "" )
-					//{
-					//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
-					//		Conditions = " Where " + Conditions;
-					//}
-					if ( Flags . GETMULTIACCOUNTS )
-					{
-
-					}
-					if ( Flags . USEADOWITHSTOREDPROCEDURES )
-					{
-						//====================================================
-						// Use standard ADO.Net to to load Bank data to run Stored Procedure
-						//====================================================
-						CustomerViewModel cvmi = new CustomerViewModel ( );
-				string Con= Flags . CurrentConnectionString;
-				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-				SqlConnection sqlCon=null;
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-
-						// Works with default command 31/10/21
-						// works with Records limited 31/10/21
-						// works with Selection conditions limited 31/10/21
-						// works with Sort conditions 31/10/21
-						try
-						{
-							using ( sqlCon = new SqlConnection ( Con ) )
-							{
-								SqlCommand sql_cmnd;
-								sqlCon . Open ( );
-								if ( SqlCommand != "" )
-									sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+								if ( args [ 2 ] > 0 && Orderby != "" )
+									SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad}  where {Conditions} Order by {Orderby}";
 								else
-								{
-									sql_cmnd = new SqlCommand ( "dbo.spLoadCustomersComplex " , sqlCon );
-									sql_cmnd . CommandType = CommandType . StoredProcedure;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
-									if ( args == null )
-										args = dummyargs;
-									if ( args . Length > 0 )
-									{
-										if ( args [ 2 ] > 0 )
-										{
-											string limits = $" Top ({args[2]}) ";
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
-										}
-										else
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-									}
-									else
-										sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-
-									sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
-								}
-								// Handle  max records, if any
-								var sqlDr = sql_cmnd . ExecuteReader ( );
-								while ( sqlDr . Read ( ) )
-								{
-									cvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
-									cvmi . CustNo = sqlDr [ "CUSTNO" ] . ToString ( );
-									cvmi . BankNo = sqlDr [ "BANKNO" ] . ToString ( );
-									cvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
-									cvmi . FName = sqlDr [ "FNAME" ] . ToString ( );
-									cvmi . LName = sqlDr [ "LNAME" ] . ToString ( );
-									cvmi . Addr1 = sqlDr [ "ADDR1" ] . ToString ( );
-									cvmi . Addr2 = sqlDr [ "ADDR2" ] . ToString ( );
-									cvmi . Town = sqlDr [ "TOWN" ] . ToString ( );
-									cvmi . County = sqlDr [ "COUNTY" ] . ToString ( );
-									cvmi . PCode = sqlDr [ "PCODE" ] . ToString ( );
-									cvmi . Phone = sqlDr [ "PHONE" ] . ToString ( );
-									cvmi . Mobile = sqlDr [ "MOBILE" ] . ToString ( );
-									cvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
-									cvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
-									cvmcollection . Add ( cvmi );
-									cvmi = new CustomerViewModel ( );
-								}
-								sqlDr . Close ( );
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {cvmcollection . Count} records successfuly" );
+									SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
 							}
-							sqlCon . Close ( );
-						}
-						catch ( Exception ex )
-
-						{
-							Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
-							return false;
-						}
-					}
-					else
-					{
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-						using ( IDbConnection db = new SqlConnection ( ConString ) )
-						{
-							if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
+							else
 							{
-								try
+								if ( args != null )
 								{
-									var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
-									SqlCommand = $"spLoadCustomersComplex";
-									if ( args [ 2 ] == 0 )
-										Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-									else if ( args [ 2 ] > 0 )
-										Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-									if ( SqlCommand == "" )
+									if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
+										SqlCommand = $" Select * from {DbNameToLoad} ";
+									else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
 									{
-										if ( args [ 2 ] == 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-										else if ( args [ 2 ] > 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-										// This syntax WORKS CORRECTLY
-									}
-									//***************************************************************************************************************//
-									var result  = db . Query<CustomerViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
-									//***************************************************************************************************************//
-
-									Console . WriteLine ( result );
-									foreach ( var item in result )
-									{
-										cvmcollection . Add ( item );
-									}
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-								}
-								catch ( Exception ex )
-								{
-									Console . WriteLine ( $"CUSTOMER DB ERROR : {ex . Message}" );
-								}
-							}
-							else if ( Flags . USESDAPPERSTDPROCEDURES == true )
-							{
-								try
-								{
-
-									if ( Conditions != "" )
-									{
-										if ( args [ 2 ] > 0 && Orderby != "" )
-											SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where {Conditions} Order by {Orderby}";
-										else
-											SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
-									}
-									else
-									{
-										if ( args != null )
+										if ( args [ 2 ] == 0 )       // no limit on how many records to get
 										{
-											if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
-												SqlCommand = $" Select * from {DbNameToLoad} ";
-											else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
-											{
-												if ( args [ 2 ] == 0 )       // no limit on how many records to get
-												{
-													SqlCommand = $" Select * from {DbNameToLoad} ";
-													if ( Conditions != "" )
-														SqlCommand += $" {Conditions} ";
-													else if ( args [ 1 ] != 0 )
-														SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
-												}
-												else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
-													SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
-												else if ( args [ 1 ] > 0 )// All 3 args are received
-													SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-												else
-													SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-											}
-										}
-										if ( Conditions != "" )  // We have conditions
-											SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
-										else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
-											SqlCommand = $"Select * from {DbNameToLoad}  ";
-
-										// Final Trap to ensure we have a valid command line
-										if ( SqlCommand == "" )
 											SqlCommand = $" Select * from {DbNameToLoad} ";
-
-										if ( wantSort && Orderby != "" )
-
-											SqlCommand += $" order by  {Orderby}";
+											if ( Conditions != "" )
+												SqlCommand += $" {Conditions} ";
+											else if ( args [ 1 ] != 0 )
+												SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
+										}
+										else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
+											SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
+										else if ( args [ 1 ] > 0 )// All 3 args are received
+											SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+										else
+											SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
 									}
-
-									//***************************************************************************************************************//
-									cvm = db . Query<CustomerViewModel> ( SqlCommand );
-									//***************************************************************************************************************//
-
-									foreach ( var item in cvm )
-									{
-										cvmcollection . Add ( item );
-									}
-
 								}
-								catch ( Exception ex )
-								{
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
-									return false;
-								}
-								finally
-								{
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {cvmcollection . Count} records successfuly" );
-								}
+								if ( Conditions != "" )  // We have conditions
+									SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
+								else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
+									SqlCommand = $"Select * from {DbNameToLoad}  ";
+								// Final Trap to ensure we have a valid command line
+								if ( SqlCommand == "" )
+									SqlCommand = $" Select * from {DbNameToLoad} ";
+
+								if ( wantSort && Orderby != "" )
+									SqlCommand += $" Order by {Orderby}";
+							}
+							// Read data via Dapper into list<BVM> cos Dapper uses Linq, so we cannot get other types returned
+							//***************************************************************************************************************//
+							bvmi = db . Query<BankAccountViewModel> ( SqlCommand );
+							//***************************************************************************************************************//
+
+							foreach ( var item in bvmi )
+							{
+								bvmcollection . Add ( item );
+							}
+							collection = bvmcollection;
+						}
+					} catch ( Exception ex )
+					{
+						Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
+					} finally
+					{
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
+					}
+				}
+			}
+			if ( Notify )
+			{
+				EventControl . TriggerBankDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "SQLSERVER" ,
+						CallerDb = Caller ,
+						DataSource = bvmcollection ,
+						RowCount = bvmcollection . Count
+					} );
+			}
+			collection = bvmcollection;
+			return bvmcollection;
+		}
+
+
+		public static ObservableCollection<BankAccountViewModel> GetBankObsCollectionWithDict ( ObservableCollection<BankAccountViewModel> collection ,
+			out Dictionary<int , int> Dict ,
+			bool wantDictionary = false ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			bool wantSort = false ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+		{
+			ObservableCollection<BankAccountViewModel> bvmcollection = new ObservableCollection<BankAccountViewModel>();
+			List<BankAccountViewModel> bvmlist = new List<BankAccountViewModel>();
+			Dictionary <int, int> BankDict = new Dictionary<int, int>();
+
+
+			Dict = BankDict;
+			//collection = bvmcollection;
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "BankAccount";
+
+			using ( IDbConnection db = new SqlConnection ( ConString ) )
+			{
+				try
+				{
+					if ( SqlCommand == "" && args != null )   // no command line received, but we do have args
+					{
+						if ( args [ 2 ] == 0 )       // no limit on how many records to get
+							SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+						else  // All 3 args are received
+							SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+					}
+					else if ( SqlCommand == "" && args == null )    // No inforeceived at all, so use generic command
+						SqlCommand = "Select * from {DbNameToLoad} ";
+
+					if ( wantSort )
+
+						SqlCommand += $" order by CustNo, BankNo";
+					// Read data via Dapper into list<BVM> cos Dapper uses Linq, so we cannot get other types returned
+					//***************************************************************************************************************//
+					bvmlist = db . Query<BankAccountViewModel> ( SqlCommand ) . ToList ( );
+					//***************************************************************************************************************//
+
+					if ( bvmlist . Count > 0 )
+					{
+						// We want a ObservableCollection<BankAccountViewModel>, so create it here, and also a dictionary<int, int>
+						int counter = 0;
+						foreach ( var item in bvmlist )
+						{
+							bvmcollection . Add ( item );
+							if ( wantDictionary )
+							{
+								if ( BankDict . ContainsKey ( int . Parse ( item . CustNo ) ) == false )
+									BankDict . Add ( int . Parse ( item . CustNo ) , counter++ );
 							}
 						}
 					}
-					EventControl . TriggerCustDataLoaded ( null ,
-						new LoadedEventArgs
-						{
-							CallerType = "SQLSERVER" ,
-							CallerDb = Caller ,
-							DataSource = cvmcollection ,
-							RowCount = cvmcollection . Count
-						} );
-					return true;
-				}
-
-				public static ObservableCollection<CustomerViewModel> GetCustObsCollection ( ObservableCollection<CustomerViewModel> collection ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					string Orderby = "" ,
-					string Conditions = "" ,
-					bool wantSort = false ,
-					bool wantDictionary = false ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
-
+				} catch ( Exception ex )
 				{
-					ObservableCollection<CustomerViewModel> cvmcollection = new ObservableCollection<CustomerViewModel>();
-					IEnumerable<CustomerViewModel> cvm ;
-					string[] ValidFields=
+					Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
+				} finally
+				{
+					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {bvmcollection . Count} records successfuly" );
+				}
+			}
+			if ( Notify )
+			{
+				EventControl . TriggerBankDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "SQLSERVER" ,
+						CallerDb = Caller ,
+						DataSource = bvmcollection ,
+						RowCount = bvmcollection . Count
+					} );
+			}
+			collection = bvmcollection;
+			return bvmcollection;
+		}
+
+		public static ObservableCollection<BankAccountViewModel> LoadBankDataToList (
+			ObservableCollection<BankAccountViewModel> BankCollection ,
+			out Dictionary<int , int> Dict ,
+			bool wantDictionary = false ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			bool wantSort = false ,
+			string Caller = "" ,
+			bool NotifyCaller = false ,
+			int [ ] args = null )
+		{
+			ObservableCollection < BankAccountViewModel >DbData = new ObservableCollection<BankAccountViewModel>();
+			List<BankAccountViewModel> bvmlist = new List<BankAccountViewModel>();
+			Dictionary <int, int> BankDict = new Dictionary<int, int>();
+			int counter = 0;
+
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
+			Dict = BankDict;
+			if ( BankCollection == null )
+				BankCollection = DbData;
+
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "BankAccount";
+			using ( IDbConnection db = new SqlConnection ( ConString ) )
+			{
+				try
+				{
+					if ( SqlCommand == "" && args != null )   // no command line received, but we do have args
+					{
+						if ( args [ 2 ] == 0 )       // no limit on how many records to get
+							SqlCommand = $" Select * from {DbNameToLoad}  where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+						else  // All 3 args are received
+							SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+					}
+					else if ( SqlCommand == "" && args == null )    // No inforeceived at all, so use generic command
+						SqlCommand = "Select * from {DbNameToLoad} ";
+
+					if ( wantSort )
+
+						SqlCommand += $" order by CustNo, BankNo";
+
+					//***************************************************************************************************************//
+					bvmlist = db . Query<BankAccountViewModel> ( SqlCommand ) . ToList ( );
+					//***************************************************************************************************************//
+
+					if ( bvmlist . Count > 0 )
+					{
+						foreach ( var item in bvmlist )
+						{
+							if ( BankDict . ContainsKey ( int . Parse ( item . BankNo ) ) == false )
+								BankDict . Add ( int . Parse ( item . BankNo ) , counter++ );
+						}
+					}
+				} catch ( Exception ex )
+				{
+					Console . WriteLine ( $"SQL DAPPER error in DAPPERSUPPPORT. LOADBANKDATAVIALIST: {ex . Message}, {ex . Data}" );
+				} finally
+				{
+					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {BankCollection . Count} records successfuly" );
+				}
+			}
+			//if ( NotifyCaller )
+			//{
+			//	EventControl . TriggerBankDataLoaded ( null ,
+			//		new LoadedEventArgs
+			//		{
+			//			CallerType = "SQLSERVER" ,
+			//			CallerDb = Caller ,
+			//			DataSource = BankCollection ,
+			//			RowCount = BankCollection . Count
+			//		} );
+			//}
+			return BankCollection;
+		}
+
+		#endregion Bank loading methods
+
+
+		#region Customer Db Data Loading methods
+
+		public async static Task<bool> GetCustObsCollectionAsync ( ObservableCollection<CustomerViewModel> collection ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			string Orderby = "" ,
+			string Conditions = "" ,
+			bool wantSort = false ,
+			bool wantDictionary = false ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+
+		{
+			ObservableCollection<CustomerViewModel> cvmcollection = new ObservableCollection<CustomerViewModel>();
+			IEnumerable<CustomerViewModel> cvm ;
+			string[] ValidFields=
 					{
 						"ID",
 						"CUSTNO",
@@ -1932,670 +1654,668 @@ namespace MyDev . Dapper
 						"ODATE" ,
 						"CDATE"
 						};
-					string[] errorcolumns;
+			string[] errorcolumns;
 			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
 			if ( DbNameToLoad == "" )
-						DbNameToLoad = "Customer";
+				DbNameToLoad = "Customer";
 
 
-					// Utility Support Methods to validate data
-					if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-					{
-						if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-							Orderby = "";
-						}
-						else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-							Conditions = "";
-						}
-						else
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-							return null;
-						}
-					}
+			// Utility Support Methods to validate data
+			if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+			{
+				if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+					Orderby = "";
+				}
+				else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+					Conditions = "";
+				}
+				else
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+					return false;
+				}
+			}
 
-					//// make sure order by clause is correctly formatted
-					//if ( Orderby . Trim ( ) != "" )
-					//{
-					//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
-					//	{
-					//		Orderby = " Order by " + Orderby;
-					//	}
-					//}
+			//// make sure order by clause is correctly formatted
+			//if ( Orderby . Trim ( ) != "" )
+			//{
+			//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
+			//	{
+			//		Orderby = " Order by " + Orderby;
+			//	}
+			//}
 
-					//if ( Conditions != "" )
-					//{
-					//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
-					//		Conditions = " Where " + Conditions;
-					//}
-					if ( Flags . GETMULTIACCOUNTS )
-					{
+			//if ( Conditions != "" )
+			//{
+			//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
+			//		Conditions = " Where " + Conditions;
+			//}
+			if ( Flags . GETMULTIACCOUNTS )
+			{
 
-					}
-					if ( Flags . USEADOWITHSTOREDPROCEDURES )
-					{
-						//====================================================
-						// Use standard ADO.Net to to load Bank data to run Stored Procedure
-						//====================================================
-						CustomerViewModel cvmi = new CustomerViewModel ( );
+			}
+			if ( Flags . USEADOWITHSTOREDPROCEDURES )
+			{
+				//====================================================
+				// Use standard ADO.Net to to load Bank data to run Stored Procedure
+				//====================================================
+				CustomerViewModel cvmi = new CustomerViewModel ( );
 				string Con= Flags . CurrentConnectionString;
 				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 				SqlConnection sqlCon=null;
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
 
-						// Works with default command 31/10/21
-						// works with Records limited 31/10/21
-						// works with Selection conditions limited 31/10/21
-						// works with Sort conditions 31/10/21
-						try
+				// Works with default command 31/10/21
+				// works with Records limited 31/10/21
+				// works with Selection conditions limited 31/10/21
+				// works with Sort conditions 31/10/21
+				try
+				{
+					using ( sqlCon = new SqlConnection ( Con ) )
+					{
+						SqlCommand sql_cmnd;
+						sqlCon . Open ( );
+						if ( SqlCommand != "" )
+							sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+						else
 						{
-							using ( sqlCon = new SqlConnection ( Con ) )
+							sql_cmnd = new SqlCommand ( "dbo.spLoadCustomersComplex " , sqlCon );
+							sql_cmnd . CommandType = CommandType . StoredProcedure;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
+							if ( args == null )
+								args = dummyargs;
+							if ( args . Length > 0 )
 							{
-								SqlCommand sql_cmnd;
-								sqlCon . Open ( );
-								if ( SqlCommand != "" )
-									sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+								if ( args [ 2 ] > 0 )
+								{
+									string limits = $" Top ({args[2]}) ";
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
+								}
 								else
-								{
-									sql_cmnd = new SqlCommand ( "dbo.spLoadCustomersComplex " , sqlCon );
-									sql_cmnd . CommandType = CommandType . StoredProcedure;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
-									if ( args == null )
-										args = dummyargs;
-									if ( args . Length > 0 )
-									{
-										if ( args [ 2 ] > 0 )
-										{
-											string limits = $" Top ({args[2]}) ";
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
-										}
-										//else
-										//	sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-									}
-									//else
-									//	sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-									sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
-								}
-								// Handle  max records, if any
-								var sqlDr = sql_cmnd . ExecuteReader ( );
-								while ( sqlDr . Read ( ) )
-								{
-									cvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
-									cvmi . CustNo = sqlDr [ "CUSTNO" ] . ToString ( );
-									cvmi . BankNo = sqlDr [ "BANKNO" ] . ToString ( );
-									cvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
-									cvmi . FName = sqlDr [ "FNAME" ] . ToString ( );
-									cvmi . LName = sqlDr [ "LNAME" ] . ToString ( );
-									cvmi . Addr1 = sqlDr [ "ADDR1" ] . ToString ( );
-									cvmi . Addr2 = sqlDr [ "ADDR2" ] . ToString ( );
-									cvmi . Town = sqlDr [ "TOWN" ] . ToString ( );
-									cvmi . County = sqlDr [ "COUNTY" ] . ToString ( );
-									cvmi . PCode = sqlDr [ "PCODE" ] . ToString ( );
-									cvmi . Phone = sqlDr [ "PHONE" ] . ToString ( );
-									cvmi . Mobile = sqlDr [ "MOBILE" ] . ToString ( );
-									cvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
-									cvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
-									cvmcollection . Add ( cvmi );
-									cvmi = new CustomerViewModel ( );
-								}
-								sqlDr . Close ( );
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {cvmcollection . Count} records successfuly" );
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
 							}
-							sqlCon . Close ( );
+							else
+								sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+
+							sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
 						}
-						catch ( Exception ex )
+						// Handle  max records, if any
+						var sqlDr = sql_cmnd . ExecuteReader ( );
+						while ( sqlDr . Read ( ) )
 						{
-							Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+							cvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
+							cvmi . CustNo = sqlDr [ "CUSTNO" ] . ToString ( );
+							cvmi . BankNo = sqlDr [ "BANKNO" ] . ToString ( );
+							cvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
+							cvmi . FName = sqlDr [ "FNAME" ] . ToString ( );
+							cvmi . LName = sqlDr [ "LNAME" ] . ToString ( );
+							cvmi . Addr1 = sqlDr [ "ADDR1" ] . ToString ( );
+							cvmi . Addr2 = sqlDr [ "ADDR2" ] . ToString ( );
+							cvmi . Town = sqlDr [ "TOWN" ] . ToString ( );
+							cvmi . County = sqlDr [ "COUNTY" ] . ToString ( );
+							cvmi . PCode = sqlDr [ "PCODE" ] . ToString ( );
+							cvmi . Phone = sqlDr [ "PHONE" ] . ToString ( );
+							cvmi . Mobile = sqlDr [ "MOBILE" ] . ToString ( );
+							cvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
+							cvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
+							cvmcollection . Add ( cvmi );
+							cvmi = new CustomerViewModel ( );
 						}
+						sqlDr . Close ( );
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {cvmcollection . Count} records successfuly" );
 					}
-					else
-					{
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-						using ( IDbConnection db = new SqlConnection ( ConString ) )
-						{
-							if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
-							{
-								try
-								{
-									//var Args = new { DbName = "" , Arg = " " , Conditions = "" , SortBy = "" };
-									//List<CustomerViewModel>  result = new List<CustomerViewModel>();
-									//if ( SqlCommand == "" )
-									//{
-									//	SqlCommand = $"spLoadCustomersComplex";
-									//	if ( args [ 2 ] == 0 )
-									//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $" * " , Conditions = $"{Conditions}" , SortBy = $"{ Orderby}" };
-									//	else if ( args [ 2 ] > 0 )
-									//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $"Top ({args [ 2 ] . ToString ( )}) * " , Conditions = $"{Conditions}" , SortBy = $"{Orderby}" };
-									//	// This syntax WORKS CORRECTLY
-									//}
-									var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
-									//List<CustomerViewModel>  result = new List<CustomerViewModel>();
-									if ( SqlCommand == "" )
-									{
-										SqlCommand = $"spLoadCustomersComplex";
-										if ( args [ 2 ] == 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-										else if ( args [ 2 ] > 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $" {Orderby}" };
-										if ( SqlCommand == "" )
-										{
-											if ( args [ 2 ] == 0 )
-												Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-											else if ( args [ 2 ] > 0 )
-												Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-											// This syntax WORKS CORRECTLY
-										}
-									}
-
-									//***************************************************************************************************************//
-									var result = db . Query<CustomerViewModel> ( SqlCommand , Args , null , false , null , CommandType . StoredProcedure ) . ToList ( );
-									//***************************************************************************************************************//
-
-									Console . WriteLine ( result );
-									foreach ( var item in result )
-									{
-										cvmcollection . Add ( item );
-									}
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-								}
-								catch ( Exception ex )
-								{
-									Console . WriteLine ( $"CUSTOMER DB ERROR : {ex . Message}" );
-								}
-							}
-							else if ( Flags . USESDAPPERSTDPROCEDURES == true )
-							{
-								try
-								{
-									if ( SqlCommand == "" )
-									{
-										if ( Conditions != "" )
-										{
-											if ( args [ 2 ] > 0 && Orderby != "" )
-												SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad}  where {Conditions} Order by {Orderby}";
-											else
-												SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
-										}
-										else
-										{
-											if ( args != null )
-											{
-												if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
-													SqlCommand = $" Select * from {DbNameToLoad} ";
-												else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
-												{
-													if ( args [ 2 ] == 0 )       // no limit on how many records to get
-													{
-														SqlCommand = $" Select * from {DbNameToLoad} ";
-														if ( Conditions != "" )
-															SqlCommand += $" {Conditions} ";
-														else if ( args [ 1 ] != 0 )
-															SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
-													}
-													else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
-														SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
-													else if ( args [ 1 ] > 0 )// All 3 args are received
-														SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-													else
-														SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-												}
-											}
-											if ( Conditions != "" )  // We have conditions
-												SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
-											else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
-												SqlCommand = $"Select * from {DbNameToLoad}  ";
-
-											// Final Trap to ensure we have a valid command line
-											if ( SqlCommand == "" )
-												SqlCommand = $" Select * from {DbNameToLoad} ";
-
-											if ( wantSort && Orderby != "" )
-
-												SqlCommand += $"Order by {Orderby}";
-										}
-									}
-
-									//***************************************************************************************************************//
-									cvm = db . Query<CustomerViewModel> ( SqlCommand );
-									//***************************************************************************************************************//
-
-									foreach ( var item in cvm )
-									{
-										cvmcollection . Add ( item );
-									}
-
-								}
-								catch ( Exception ex )
-								{
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
-								}
-								finally
-								{
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {cvmcollection . Count} records successfuly" );
-								}
-							}
-						}
-					}
-					if ( Notify )
-					{
-						EventControl . TriggerCustDataLoaded ( null ,
-							new LoadedEventArgs
-							{
-								CallerType = "SQLSERVER" ,
-								CallerDb = Caller ,
-								DataSource = cvmcollection ,
-								RowCount = cvmcollection . Count
-							} );
-					}
-					return cvmcollection;
-				}
-
-				#endregion  Customer Db Loading  Methods
-
-				#region Load Customer Db with Dictionary etc (MultiviewViewer only)
-				public static ObservableCollection<CustomerViewModel> GetCustObsCollectionWithDict ( ObservableCollection<CustomerViewModel> collection ,
-					out Dictionary<int , int> Dict ,
-					bool wantDictionary = false ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					bool wantSort = false ,
-					string Caller = "" ,
-					bool NotifyCaller = false ,
-					int [ ] args = null )
+					sqlCon . Close ( );
+				} catch ( Exception ex )
 
 				{
-					object  Bankcollection = new object();
-					ObservableCollection<CustomerViewModel> DbData = new ObservableCollection<CustomerViewModel>();
-					int counter  = 0;
-					//			if ( collection == null )
-					collection = DbData;
-					Dictionary <int, int> CustDict = new Dictionary<int, int>();
-					Dict = CustDict;
-					List<CustomerViewModel> cvmlist = new List<CustomerViewModel>();
-			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-
-			if ( DbNameToLoad == "" )
-						DbNameToLoad = "Customer";
-
-					using ( IDbConnection db = new SqlConnection ( ConString ) )
+					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+					return false;
+				}
+			}
+			else
+			{
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+				using ( IDbConnection db = new SqlConnection ( ConString ) )
+				{
+					if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
 					{
 						try
 						{
-							if ( SqlCommand == "" && args != null )   // no command line received, but we do have args
+							var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
+							SqlCommand = $"spLoadCustomersComplex";
+							if ( args [ 2 ] == 0 )
+								Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+							else if ( args [ 2 ] > 0 )
+								Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+							if ( SqlCommand == "" )
 							{
-								if ( args [ 2 ] == 0 )       // no limit on how many records to get
-									SqlCommand = $" Select * from {DbNameToLoad}  where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-								else  // All 3 args are received
-									SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+								if ( args [ 2 ] == 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+								else if ( args [ 2 ] > 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+								// This syntax WORKS CORRECTLY
 							}
-							else if ( SqlCommand == "" && args == null )    // No inforeceived at all, so use generic command
-								SqlCommand = $"Select * from {DbNameToLoad} ";
-
-							if ( wantSort && SqlCommand . Contains ( "order by" ) == false )
-								SqlCommand += $" order by CustNo, BankNo";
-
 							//***************************************************************************************************************//
-							cvmlist = db . Query<CustomerViewModel> ( SqlCommand ) . ToList ( );
+							var result  = db . Query<CustomerViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
 							//***************************************************************************************************************//
 
-							if ( cvmlist . Count > 0 )
+							Console . WriteLine ( result );
+							foreach ( var item in result )
 							{
-								foreach ( var item in cvmlist )
-								{
-									DbData . Add ( item );
-									if ( CustDict . ContainsKey ( int . Parse ( item . CustNo ) ) == false )
-										CustDict . Add ( int . Parse ( item . CustNo ) , counter++ );
-								}
-								collection = DbData;
+								cvmcollection . Add ( item );
 							}
-							//					Console . WriteLine ( $"SQL DAPPER has loaded : {cvmcollection . Count} Customer  Records" );
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+						} catch ( Exception ex )
+						{
+							Console . WriteLine ( $"CUSTOMER DB ERROR : {ex . Message}" );
 						}
-						catch ( Exception ex )
+					}
+					else if ( Flags . USESDAPPERSTDPROCEDURES == true )
+					{
+						try
+						{
+
+							if ( Conditions != "" )
+							{
+								if ( args [ 2 ] > 0 && Orderby != "" )
+									SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where {Conditions} Order by {Orderby}";
+								else
+									SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
+							}
+							else
+							{
+								if ( args != null )
+								{
+									if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
+										SqlCommand = $" Select * from {DbNameToLoad} ";
+									else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
+									{
+										if ( args [ 2 ] == 0 )       // no limit on how many records to get
+										{
+											SqlCommand = $" Select * from {DbNameToLoad} ";
+											if ( Conditions != "" )
+												SqlCommand += $" {Conditions} ";
+											else if ( args [ 1 ] != 0 )
+												SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
+										}
+										else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
+											SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
+										else if ( args [ 1 ] > 0 )// All 3 args are received
+											SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+										else
+											SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+									}
+								}
+								if ( Conditions != "" )  // We have conditions
+									SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
+								else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
+									SqlCommand = $"Select * from {DbNameToLoad}  ";
+
+								// Final Trap to ensure we have a valid command line
+								if ( SqlCommand == "" )
+									SqlCommand = $" Select * from {DbNameToLoad} ";
+
+								if ( wantSort && Orderby != "" )
+
+									SqlCommand += $" order by  {Orderby}";
+							}
+
+							//***************************************************************************************************************//
+							cvm = db . Query<CustomerViewModel> ( SqlCommand );
+							//***************************************************************************************************************//
+
+							foreach ( var item in cvm )
+							{
+								cvmcollection . Add ( item );
+							}
+
+						} catch ( Exception ex )
 						{
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
-							return null;
-						}
-						finally
+							return false;
+						} finally
 						{
-							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {DbData . Count} records successfuly" );
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {cvmcollection . Count} records successfuly" );
 						}
 					}
-					// ensure we have the data in obscollection
-					collection = DbData;
-
-					if ( NotifyCaller )
-					{
-						EventControl . TriggerCustDataLoaded ( null ,
-							new LoadedEventArgs
-							{
-								CallerType = "SQLSERVER" ,
-								CallerDb = Caller ,
-								DataSource = collection ,
-								RowCount = collection . Count
-							} );
-					}
-					return collection;
 				}
-				#endregion Load Cusmoer Db with Dictionary etc (MultiviewViewer only)
-
-
-				#region Details Db Data Loading methods
-
-				public async static Task<bool> GetDetailsObsCollectionAsync ( ObservableCollection<DetailsViewModel> collection ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					string Orderby = "" ,
-					string Conditions = "" ,
-					bool wantSort = false ,
-					bool wantDictionary = false ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
+			}
+			EventControl . TriggerCustDataLoaded ( null ,
+				new LoadedEventArgs
 				{
-					IEnumerable<DetailsViewModel> dvm ;
-					ObservableCollection<DetailsViewModel> dvmcollection = new ObservableCollection<DetailsViewModel>();
-			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+					CallerType = "SQLSERVER" ,
+					CallerDb = Caller ,
+					DataSource = cvmcollection ,
+					RowCount = cvmcollection . Count
+				} );
+			return true;
+		}
 
+		public static ObservableCollection<CustomerViewModel> GetCustObsCollection ( ObservableCollection<CustomerViewModel> collection ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			string Orderby = "" ,
+			string Conditions = "" ,
+			bool wantSort = false ,
+			bool wantDictionary = false ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+
+		{
+			ObservableCollection<CustomerViewModel> cvmcollection = new ObservableCollection<CustomerViewModel>();
+			IEnumerable<CustomerViewModel> cvm ;
 			string[] ValidFields=
 					{
 						"ID",
 						"CUSTNO",
 						"BANKNO",
 						"ACTYPE",
-						"INTRATE" ,
-						"BALANCE" ,
+						"FNAME" ,
+						"LNAME" ,
+						"ADDR1" ,
+						"ADDR2" ,
+						"TOWN" ,
+						"COUNTY",
+						"PCODE" ,
+						"PHONE" ,
+						"MOBILE",
 						"ODATE" ,
 						"CDATE"
 						};
-					string[] errorcolumns;
+			string[] errorcolumns;
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
-					// Use defaullt Db if none received frm caller
-					if ( DbNameToLoad == "" )
-						DbNameToLoad = "BankAccount";
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "Customer";
 
 
-					// Utility Support Methods to validate data
-					if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-					{
-						if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-							Orderby = "";
-						}
-						else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-							Conditions = "";
-						}
-						else
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-							return false;
-						}
-					}
+			// Utility Support Methods to validate data
+			if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+			{
+				if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+					Orderby = "";
+				}
+				else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+					Conditions = "";
+				}
+				else
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+					return null;
+				}
+			}
 
-					//// make sure order by clause is correctly formatted
-					//if ( Orderby . Trim ( ) != "" )
-					//{
-					//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
-					//	{
-					//		Orderby = " Order by " + Orderby;
-					//	}
-					//}
+			//// make sure order by clause is correctly formatted
+			//if ( Orderby . Trim ( ) != "" )
+			//{
+			//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
+			//	{
+			//		Orderby = " Order by " + Orderby;
+			//	}
+			//}
 
-					//if ( Conditions != "" )
-					//{
-					//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
-					//		Conditions = " Where " + Conditions;
-					//}
-					if ( DbNameToLoad == "" )
-						DbNameToLoad = "SecAccounts";
+			//if ( Conditions != "" )
+			//{
+			//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
+			//		Conditions = " Where " + Conditions;
+			//}
+			if ( Flags . GETMULTIACCOUNTS )
+			{
 
-					if ( Flags . USEADOWITHSTOREDPROCEDURES )
-					{
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-						//====================================================
-						// Use standard ADO.Net to to load Bank data to run Stored Procedure
-						//====================================================
-						DetailsViewModel dvmi = new DetailsViewModel();
+			}
+			if ( Flags . USEADOWITHSTOREDPROCEDURES )
+			{
+				//====================================================
+				// Use standard ADO.Net to to load Bank data to run Stored Procedure
+				//====================================================
+				CustomerViewModel cvmi = new CustomerViewModel ( );
 				string Con= Flags . CurrentConnectionString;
 				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 				SqlConnection sqlCon=null;
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
 
-						// Works with default command 31/10/21
-						// works with Records limited 31/10/21
-						// works with Selection conditions limited 31/10/21
-						// works with Sort conditions 31/10/21
+				// Works with default command 31/10/21
+				// works with Records limited 31/10/21
+				// works with Selection conditions limited 31/10/21
+				// works with Sort conditions 31/10/21
+				try
+				{
+					using ( sqlCon = new SqlConnection ( Con ) )
+					{
+						SqlCommand sql_cmnd;
+						sqlCon . Open ( );
+						if ( SqlCommand != "" )
+							sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+						else
+						{
+							sql_cmnd = new SqlCommand ( "dbo.spLoadCustomersComplex " , sqlCon );
+							sql_cmnd . CommandType = CommandType . StoredProcedure;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
+							if ( args == null )
+								args = dummyargs;
+							if ( args . Length > 0 )
+							{
+								if ( args [ 2 ] > 0 )
+								{
+									string limits = $" Top ({args[2]}) ";
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
+								}
+								//else
+								//	sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+							}
+							//else
+							//	sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+							sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
+						}
+						// Handle  max records, if any
+						var sqlDr = sql_cmnd . ExecuteReader ( );
+						while ( sqlDr . Read ( ) )
+						{
+							cvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
+							cvmi . CustNo = sqlDr [ "CUSTNO" ] . ToString ( );
+							cvmi . BankNo = sqlDr [ "BANKNO" ] . ToString ( );
+							cvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
+							cvmi . FName = sqlDr [ "FNAME" ] . ToString ( );
+							cvmi . LName = sqlDr [ "LNAME" ] . ToString ( );
+							cvmi . Addr1 = sqlDr [ "ADDR1" ] . ToString ( );
+							cvmi . Addr2 = sqlDr [ "ADDR2" ] . ToString ( );
+							cvmi . Town = sqlDr [ "TOWN" ] . ToString ( );
+							cvmi . County = sqlDr [ "COUNTY" ] . ToString ( );
+							cvmi . PCode = sqlDr [ "PCODE" ] . ToString ( );
+							cvmi . Phone = sqlDr [ "PHONE" ] . ToString ( );
+							cvmi . Mobile = sqlDr [ "MOBILE" ] . ToString ( );
+							cvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
+							cvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
+							cvmcollection . Add ( cvmi );
+							cvmi = new CustomerViewModel ( );
+						}
+						sqlDr . Close ( );
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {cvmcollection . Count} records successfuly" );
+					}
+					sqlCon . Close ( );
+				} catch ( Exception ex )
+				{
+					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+				}
+			}
+			else
+			{
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+				using ( IDbConnection db = new SqlConnection ( ConString ) )
+				{
+					if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
+					{
 						try
 						{
-							using ( sqlCon = new SqlConnection ( Con ) )
+							//var Args = new { DbName = "" , Arg = " " , Conditions = "" , SortBy = "" };
+							//List<CustomerViewModel>  result = new List<CustomerViewModel>();
+							//if ( SqlCommand == "" )
+							//{
+							//	SqlCommand = $"spLoadCustomersComplex";
+							//	if ( args [ 2 ] == 0 )
+							//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $" * " , Conditions = $"{Conditions}" , SortBy = $"{ Orderby}" };
+							//	else if ( args [ 2 ] > 0 )
+							//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $"Top ({args [ 2 ] . ToString ( )}) * " , Conditions = $"{Conditions}" , SortBy = $"{Orderby}" };
+							//	// This syntax WORKS CORRECTLY
+							//}
+							var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
+							//List<CustomerViewModel>  result = new List<CustomerViewModel>();
+							if ( SqlCommand == "" )
 							{
-								SqlCommand sql_cmnd;
-								sqlCon . Open ( );
-								if ( SqlCommand != "" )
-									sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
-								else
+								SqlCommand = $"spLoadCustomersComplex";
+								if ( args [ 2 ] == 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+								else if ( args [ 2 ] > 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $" {Orderby}" };
+								if ( SqlCommand == "" )
 								{
-									sql_cmnd = new SqlCommand ( "dbo.spLoadDetailsComplex " , sqlCon );
-									sql_cmnd . CommandType = CommandType . StoredProcedure;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
-									if ( args == null )
-										args = dummyargs;
-									if ( args . Length > 0 )
-									{
-										if ( args [ 2 ] > 0 )
-										{
-											string limits = $" Top ({args[2]}) ";
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
-										}
-										else
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-									}
-									else
-										sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-
-									sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
-								}
-								// Handle  max records, if any
-								var sqlDr = sql_cmnd . ExecuteReader ( );
-								while ( sqlDr . Read ( ) )
-								{
-									dvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
-									dvmi . CustNo = sqlDr [ "CustNo" ] . ToString ( );
-									dvmi . BankNo = sqlDr [ "BankNo" ] . ToString ( );
-									dvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
-									dvmi . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
-									dvmi . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
-									dvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
-									dvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
-									dvmcollection . Add ( dvmi );
-									dvmi = new DetailsViewModel ( );
-								}
-								sqlDr . Close ( );
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
-							}
-							sqlCon . Close ( );
-						}
-						catch ( Exception ex )
-						{
-							Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
-							return false;
-						}
-					}
-					else
-					{
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-						using ( IDbConnection db = new SqlConnection ( ConString ) )
-						{
-							if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
-							{
-								try
-								{
-									//var Args = new { DbName = "" , Arg = " " , Conditions = "" , SortBy = "" };
-									//if ( SqlCommand == "" )
-									//{
-									//	SqlCommand = $"spLoadDetailsComplex";
-									//	if ( args [ 2 ] == 0 )
-									//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $" * " , Conditions = $"{Conditions}" , SortBy = $"{ Orderby}" };
-									//	else if ( args [ 2 ] > 0 )
-									//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $"Top ({args [ 2 ] . ToString ( )}) * " , Conditions = $"{Conditions}" , SortBy = $"{Orderby}" };
-									//	// This syntax WORKS CORRECTLY
-									//}
-									//							List<DetailsViewModel>  result = new List<DetailsViewModel>();
-									var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
-									SqlCommand = $"spLoadDetailsComplex";
 									if ( args [ 2 ] == 0 )
 										Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
 									else if ( args [ 2 ] > 0 )
 										Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-									if ( SqlCommand == "" )
-									{
-										if ( args [ 2 ] == 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-										else if ( args [ 2 ] > 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-										// This syntax WORKS CORRECTLY
-									}
-									//***************************************************************************************************************//
-									var result  = db . Query<DetailsViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
-									//***************************************************************************************************************//
-
-									Console . WriteLine ( result );
-									foreach ( var item in result )
-									{
-										dvmcollection . Add ( item );
-									}
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-								}
-								catch ( Exception ex )
-								{
-									Console . WriteLine ( $"DETAILS DB ERROR : {ex . Message}" );
+									// This syntax WORKS CORRECTLY
 								}
 							}
-							else if ( Flags . USESDAPPERSTDPROCEDURES == true )
+
+							//***************************************************************************************************************//
+							var result = db . Query<CustomerViewModel> ( SqlCommand , Args , null , false , null , CommandType . StoredProcedure ) . ToList ( );
+							//***************************************************************************************************************//
+
+							Console . WriteLine ( result );
+							foreach ( var item in result )
 							{
-
-								try
-								{
-									if ( SqlCommand == "" )
-									{
-										if ( Conditions != "" )
-										{
-											if ( args [ 2 ] > 0 && Orderby != "" )
-												SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where  {Conditions}  Order by  {Orderby}";
-											else
-												SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
-										}
-										else
-										{
-											if ( args != null )
-											{
-												if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
-													SqlCommand = $" Select * from {DbNameToLoad} ";
-												else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
-												{
-													if ( args [ 2 ] == 0 )       // no limit on how many records to get
-													{
-														SqlCommand = $" Select * from {DbNameToLoad} ";
-														if ( Conditions != "" )
-															SqlCommand += $" {Conditions} ";
-														else if ( args [ 1 ] != 0 )
-															SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
-													}
-													else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
-														SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
-													else if ( args [ 1 ] > 0 )// All 3 args are received
-														SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-													else
-														SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-												}
-											}
-											if ( Conditions != "" )  // We have conditions
-												SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
-											else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
-												SqlCommand = $"Select * from {DbNameToLoad}  ";
-
-											// Final Trap to ensure we have a valid command line
-											if ( SqlCommand == "" )
-												SqlCommand = $" Select * from {DbNameToLoad} ";
-
-											if ( wantSort && Orderby != "" )
-												SqlCommand += $" order by {Orderby}";
-										}
-
-										// Read data via Dapper into IEnumerable<DbType>
-										//***************************************************************************************************************//
-										dvm = db . Query<DetailsViewModel> ( SqlCommand );
-										//***************************************************************************************************************//
-
-										foreach ( var item in dvm )
-										{
-											dvmcollection . Add ( item );
-										}
-									}
-									else
-									{
-										// Read data via Dapper into IEnumerable<DbType>
-										//***************************************************************************************************************//
-										dvm = db . Query<DetailsViewModel> ( SqlCommand );
-										//***************************************************************************************************************//
-
-										foreach ( var item in dvm )
-										{
-											dvmcollection . Add ( item );
-										}
-									}
-								}
-								catch ( Exception ex )
-								{
-									Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-								}
-								finally
-								{
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
-								}
+								cvmcollection . Add ( item );
 							}
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+						} catch ( Exception ex )
+						{
+							Console . WriteLine ( $"CUSTOMER DB ERROR : {ex . Message}" );
 						}
 					}
-					EventControl . TriggerDetDataLoaded ( null ,
-							new LoadedEventArgs
+					else if ( Flags . USESDAPPERSTDPROCEDURES == true )
+					{
+						try
+						{
+							if ( SqlCommand == "" )
 							{
-								CallerType = "SQLSERVER" ,
-								CallerDb = Caller ,
-								DataSource = dvmcollection ,
-								RowCount = dvmcollection . Count
-							} );
-					return true;
+								if ( Conditions != "" )
+								{
+									if ( args [ 2 ] > 0 && Orderby != "" )
+										SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad}  where {Conditions} Order by {Orderby}";
+									else
+										SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
+								}
+								else
+								{
+									if ( args != null )
+									{
+										if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
+											SqlCommand = $" Select * from {DbNameToLoad} ";
+										else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
+										{
+											if ( args [ 2 ] == 0 )       // no limit on how many records to get
+											{
+												SqlCommand = $" Select * from {DbNameToLoad} ";
+												if ( Conditions != "" )
+													SqlCommand += $" {Conditions} ";
+												else if ( args [ 1 ] != 0 )
+													SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
+											}
+											else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
+												SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
+											else if ( args [ 1 ] > 0 )// All 3 args are received
+												SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+											else
+												SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+										}
+									}
+									if ( Conditions != "" )  // We have conditions
+										SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
+									else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
+										SqlCommand = $"Select * from {DbNameToLoad}  ";
+
+									// Final Trap to ensure we have a valid command line
+									if ( SqlCommand == "" )
+										SqlCommand = $" Select * from {DbNameToLoad} ";
+
+									if ( wantSort && Orderby != "" )
+
+										SqlCommand += $"Order by {Orderby}";
+								}
+							}
+
+							//***************************************************************************************************************//
+							cvm = db . Query<CustomerViewModel> ( SqlCommand );
+							//***************************************************************************************************************//
+
+							foreach ( var item in cvm )
+							{
+								cvmcollection . Add ( item );
+							}
+
+						} catch ( Exception ex )
+						{
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
+						} finally
+						{
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {cvmcollection . Count} records successfuly" );
+						}
+					}
 				}
-				public static ObservableCollection<DetailsViewModel> GetDetailsObsCollection ( ObservableCollection<DetailsViewModel> collection ,
-					string SqlCommand = "" ,
-					string DbNameToLoad = "" ,
-					string Orderby = "" ,
-					string Conditions = "" ,
-					bool wantSort = false ,
-					bool wantDictionary = false ,
-					bool Notify = false ,
-					string Caller = "" ,
-					int [ ] args = null )
-				{
-					IEnumerable<DetailsViewModel> dvm ;
-					ObservableCollection<DetailsViewModel> dvmcollection = new ObservableCollection<DetailsViewModel>();
+			}
+			if ( Notify )
+			{
+				EventControl . TriggerCustDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "SQLSERVER" ,
+						CallerDb = Caller ,
+						DataSource = cvmcollection ,
+						RowCount = cvmcollection . Count
+					} );
+			}
+			return cvmcollection;
+		}
+
+		#endregion  Customer Db Loading  Methods
+
+		#region Load Customer Db with Dictionary etc (MultiviewViewer only)
+		public static ObservableCollection<CustomerViewModel> GetCustObsCollectionWithDict ( ObservableCollection<CustomerViewModel> collection ,
+			out Dictionary<int , int> Dict ,
+			bool wantDictionary = false ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			bool wantSort = false ,
+			string Caller = "" ,
+			bool NotifyCaller = false ,
+			int [ ] args = null )
+
+		{
+			object  Bankcollection = new object();
+			ObservableCollection<CustomerViewModel> DbData = new ObservableCollection<CustomerViewModel>();
+			int counter  = 0;
+			//			if ( collection == null )
+			collection = DbData;
+			Dictionary <int, int> CustDict = new Dictionary<int, int>();
+			Dict = CustDict;
+			List<CustomerViewModel> cvmlist = new List<CustomerViewModel>();
 			string ConString = Flags . CurrentConnectionString;
-			//					string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
+
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "Customer";
+
+			using ( IDbConnection db = new SqlConnection ( ConString ) )
+			{
+				try
+				{
+					if ( SqlCommand == "" && args != null )   // no command line received, but we do have args
+					{
+						if ( args [ 2 ] == 0 )       // no limit on how many records to get
+							SqlCommand = $" Select * from {DbNameToLoad}  where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+						else  // All 3 args are received
+							SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+					}
+					else if ( SqlCommand == "" && args == null )    // No inforeceived at all, so use generic command
+						SqlCommand = $"Select * from {DbNameToLoad} ";
+
+					if ( wantSort && SqlCommand . Contains ( "order by" ) == false )
+						SqlCommand += $" order by CustNo, BankNo";
+
+					//***************************************************************************************************************//
+					cvmlist = db . Query<CustomerViewModel> ( SqlCommand ) . ToList ( );
+					//***************************************************************************************************************//
+
+					if ( cvmlist . Count > 0 )
+					{
+						foreach ( var item in cvmlist )
+						{
+							DbData . Add ( item );
+							if ( CustDict . ContainsKey ( int . Parse ( item . CustNo ) ) == false )
+								CustDict . Add ( int . Parse ( item . CustNo ) , counter++ );
+						}
+						collection = DbData;
+					}
+					//					Console . WriteLine ( $"SQL DAPPER has loaded : {cvmcollection . Count} Customer  Records" );
+				} catch ( Exception ex )
+				{
+					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
+					return null;
+				} finally
+				{
+					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {DbData . Count} records successfuly" );
+				}
+			}
+			// ensure we have the data in obscollection
+			collection = DbData;
+
+			if ( NotifyCaller )
+			{
+				EventControl . TriggerCustDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "SQLSERVER" ,
+						CallerDb = Caller ,
+						DataSource = collection ,
+						RowCount = collection . Count
+					} );
+			}
+			return collection;
+		}
+		#endregion Load Cusmoer Db with Dictionary etc (MultiviewViewer only)
+
+
+		#region Details Db Data Loading methods
+
+		public async static Task<bool> GetDetailsObsCollectionAsync ( ObservableCollection<DetailsViewModel> collection ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			string Orderby = "" ,
+			string Conditions = "" ,
+			bool wantSort = false ,
+			bool wantDictionary = false ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+		{
+			IEnumerable<DetailsViewModel> dvm ;
+			ObservableCollection<DetailsViewModel> dvmcollection = new ObservableCollection<DetailsViewModel>();
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
 			string[] ValidFields=
 					{
@@ -2608,256 +2328,542 @@ namespace MyDev . Dapper
 						"ODATE" ,
 						"CDATE"
 						};
-					string[] errorcolumns;
+			string[] errorcolumns;
 
-					// Use defaullt Db if none received frm caller
-					if ( DbNameToLoad == "" )
-						DbNameToLoad = "BankAccount";
+			// Use defaullt Db if none received frm caller
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "BankAccount";
 
 
-					// Utility Support Methods to validate data
-					if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
-					{
-						if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
-							Orderby = "";
-						}
-						else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
-							Conditions = "";
-						}
-						else
-						{
-							MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
-							return null;
-						}
-					}
+			// Utility Support Methods to validate data
+			if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+			{
+				if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+					Orderby = "";
+				}
+				else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+					Conditions = "";
+				}
+				else
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+					return false;
+				}
+			}
 
-					//// make sure order by clause is correctly formatted
-					//if ( Orderby . Trim ( ) != "" )
-					//{
-					//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
-					//	{
-					//		Orderby = " Order by " + Orderby;
-					//	}
-					//}
+			//// make sure order by clause is correctly formatted
+			//if ( Orderby . Trim ( ) != "" )
+			//{
+			//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
+			//	{
+			//		Orderby = " Order by " + Orderby;
+			//	}
+			//}
 
-					//if ( Conditions != "" )
-					//{
-					//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
-					//		Conditions = " Where " + Conditions;
-					//}
-					if ( DbNameToLoad == "" )
-						DbNameToLoad = "SecAccounts";
+			//if ( Conditions != "" )
+			//{
+			//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
+			//		Conditions = " Where " + Conditions;
+			//}
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "SecAccounts";
 
-					if ( Flags . USEADOWITHSTOREDPROCEDURES )
-					{
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-						//====================================================
-						// Use standard ADO.Net to to load Bank data to run Stored Procedure
-						//====================================================
-						DetailsViewModel dvmi = new DetailsViewModel();
+			if ( Flags . USEADOWITHSTOREDPROCEDURES )
+			{
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+				//====================================================
+				// Use standard ADO.Net to to load Bank data to run Stored Procedure
+				//====================================================
+				DetailsViewModel dvmi = new DetailsViewModel();
 				string Con= Flags . CurrentConnectionString;
 				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 				SqlConnection sqlCon=null;
 
-						// Works with default command 31/10/21
-						// works with Records limited 31/10/21
-						// works with Selection conditions limited 31/10/21
-						// works with Sort conditions 31/10/21
+				// Works with default command 31/10/21
+				// works with Records limited 31/10/21
+				// works with Selection conditions limited 31/10/21
+				// works with Sort conditions 31/10/21
+				try
+				{
+					using ( sqlCon = new SqlConnection ( Con ) )
+					{
+						SqlCommand sql_cmnd;
+						sqlCon . Open ( );
+						if ( SqlCommand != "" )
+							sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+						else
+						{
+							sql_cmnd = new SqlCommand ( "dbo.spLoadDetailsComplex " , sqlCon );
+							sql_cmnd . CommandType = CommandType . StoredProcedure;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
+							if ( args == null )
+								args = dummyargs;
+							if ( args . Length > 0 )
+							{
+								if ( args [ 2 ] > 0 )
+								{
+									string limits = $" Top ({args[2]}) ";
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
+								}
+								else
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+							}
+							else
+								sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+
+							sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
+						}
+						// Handle  max records, if any
+						var sqlDr = sql_cmnd . ExecuteReader ( );
+						while ( sqlDr . Read ( ) )
+						{
+							dvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
+							dvmi . CustNo = sqlDr [ "CustNo" ] . ToString ( );
+							dvmi . BankNo = sqlDr [ "BankNo" ] . ToString ( );
+							dvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
+							dvmi . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
+							dvmi . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
+							dvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
+							dvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
+							dvmcollection . Add ( dvmi );
+							dvmi = new DetailsViewModel ( );
+						}
+						sqlDr . Close ( );
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
+					}
+					sqlCon . Close ( );
+				} catch ( Exception ex )
+				{
+					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+					return false;
+				}
+			}
+			else
+			{
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+				using ( IDbConnection db = new SqlConnection ( ConString ) )
+				{
+					if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
+					{
 						try
 						{
-							using ( sqlCon = new SqlConnection ( Con ) )
+							//var Args = new { DbName = "" , Arg = " " , Conditions = "" , SortBy = "" };
+							//if ( SqlCommand == "" )
+							//{
+							//	SqlCommand = $"spLoadDetailsComplex";
+							//	if ( args [ 2 ] == 0 )
+							//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $" * " , Conditions = $"{Conditions}" , SortBy = $"{ Orderby}" };
+							//	else if ( args [ 2 ] > 0 )
+							//		Args = new { DbName = $"{DbNameToLoad}" , Arg = $"Top ({args [ 2 ] . ToString ( )}) * " , Conditions = $"{Conditions}" , SortBy = $"{Orderby}" };
+							//	// This syntax WORKS CORRECTLY
+							//}
+							//							List<DetailsViewModel>  result = new List<DetailsViewModel>();
+							var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
+							SqlCommand = $"spLoadDetailsComplex";
+							if ( args [ 2 ] == 0 )
+								Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+							else if ( args [ 2 ] > 0 )
+								Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+							if ( SqlCommand == "" )
 							{
-								SqlCommand sql_cmnd;
-								sqlCon . Open ( );
-								if ( SqlCommand != "" )
-									sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+								if ( args [ 2 ] == 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+								else if ( args [ 2 ] > 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+								// This syntax WORKS CORRECTLY
+							}
+							//***************************************************************************************************************//
+							var result  = db . Query<DetailsViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
+							//***************************************************************************************************************//
+
+							Console . WriteLine ( result );
+							foreach ( var item in result )
+							{
+								dvmcollection . Add ( item );
+							}
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+						} catch ( Exception ex )
+						{
+							Console . WriteLine ( $"DETAILS DB ERROR : {ex . Message}" );
+						}
+					}
+					else if ( Flags . USESDAPPERSTDPROCEDURES == true )
+					{
+
+						try
+						{
+							if ( SqlCommand == "" )
+							{
+								if ( Conditions != "" )
+								{
+									if ( args [ 2 ] > 0 && Orderby != "" )
+										SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where  {Conditions}  Order by  {Orderby}";
+									else
+										SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
+								}
 								else
 								{
-									sql_cmnd = new SqlCommand ( "dbo.spLoadDetailsComplex " , sqlCon );
-									sql_cmnd . CommandType = CommandType . StoredProcedure;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
-									if ( args == null )
-										args = dummyargs;
-									if ( args . Length > 0 )
+									if ( args != null )
 									{
-										if ( args [ 2 ] > 0 )
+										if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
+											SqlCommand = $" Select * from {DbNameToLoad} ";
+										else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
 										{
-											string limits = $" Top ({args[2]}) ";
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
-										}
-										else
-											sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-									}
-									else
-										sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
-
-									sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
-									sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
-								}
-								// Handle  max records, if any
-								var sqlDr = sql_cmnd . ExecuteReader ( );
-								while ( sqlDr . Read ( ) )
-								{
-									dvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
-									dvmi . CustNo = sqlDr [ "CustNo" ] . ToString ( );
-									dvmi . BankNo = sqlDr [ "BankNo" ] . ToString ( );
-									dvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
-									dvmi . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
-									dvmi . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
-									dvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
-									dvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
-									dvmcollection . Add ( dvmi );
-									dvmi = new DetailsViewModel ( );
-								}
-								sqlDr . Close ( );
-								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
-							}
-							sqlCon . Close ( );
-						}
-						catch ( Exception ex )
-
-						{
-							Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
-						}
-					}
-					else
-					{
-						Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
-						Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
-						using ( IDbConnection db = new SqlConnection ( ConString ) )
-						{
-							if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
-							{
-								try
-								{
-
-									var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
-									if ( SqlCommand == "" )
-									{
-										SqlCommand = $"spLoadDetailsComplex";
-										if ( args [ 2 ] == 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-										else if ( args [ 2 ] > 0 )
-											Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-										if ( SqlCommand == "" )
-										{
-											if ( args [ 2 ] == 0 )
-												Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
-											else if ( args [ 2 ] > 0 )
-												Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
-											// This syntax WORKS CORRECTLY
-										}
-									}
-
-									//***************************************************************************************************************//
-									var result  = db . Query<DetailsViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
-									//***************************************************************************************************************//
-
-									Console . WriteLine ( result );
-									foreach ( var item in result )
-									{
-										dvmcollection . Add ( item );
-									}
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-								}
-								catch ( Exception ex )
-								{
-									Console . WriteLine ( $"DETAILS DB ERROR : {ex . Message}" );
-								}
-							}
-							else if ( Flags . USESDAPPERSTDPROCEDURES == true )
-							{
-								try
-								{
-									if ( SqlCommand == "" )
-									{
-										if ( Conditions != "" )
-										{
-											if ( args [ 2 ] > 0 && Orderby != "" )
-												SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where {Conditions} Order by {Orderby}";
-											else
-												SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
-										}
-										else
-										{
-											if ( args != null )
+											if ( args [ 2 ] == 0 )       // no limit on how many records to get
 											{
-												if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
-													SqlCommand = $" Select * from {DbNameToLoad} ";
-												else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
-												{
-													if ( args [ 2 ] == 0 )       // no limit on how many records to get
-													{
-														SqlCommand = $" Select * from {DbNameToLoad} ";
-														if ( Conditions != "" )
-															SqlCommand += $" {Conditions} ";
-														else if ( args [ 1 ] != 0 )
-															SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
-													}
-													else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
-														SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
-													else if ( args [ 1 ] > 0 )// All 3 args are received
-														SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-													else
-														SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
-												}
-											}
-											if ( Conditions != "" )  // We have conditions
-												SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
-											else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
-												SqlCommand = $"Select * from {DbNameToLoad}  ";
-
-											// Final Trap to ensure we have a valid command line
-											if ( SqlCommand == "" )
 												SqlCommand = $" Select * from {DbNameToLoad} ";
-
-											if ( wantSort && Orderby != "" )
-
-												SqlCommand += $" Order by {Orderby}";
+												if ( Conditions != "" )
+													SqlCommand += $" {Conditions} ";
+												else if ( args [ 1 ] != 0 )
+													SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
+											}
+											else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
+												SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
+											else if ( args [ 1 ] > 0 )// All 3 args are received
+												SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+											else
+												SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
 										}
 									}
-									// Read data via Dapper into IEnumerable<DbType>
-									//***************************************************************************************************************//
-									dvm = db . Query<DetailsViewModel> ( SqlCommand );
-									//***************************************************************************************************************//
+									if ( Conditions != "" )  // We have conditions
+										SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
+									else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
+										SqlCommand = $"Select * from {DbNameToLoad}  ";
 
-									foreach ( var item in dvm )
-									{
-										dvmcollection . Add ( item );
-									}
+									// Final Trap to ensure we have a valid command line
+									if ( SqlCommand == "" )
+										SqlCommand = $" Select * from {DbNameToLoad} ";
+
+									if ( wantSort && Orderby != "" )
+										SqlCommand += $" order by {Orderby}";
 								}
-								catch ( Exception ex )
+
+								// Read data via Dapper into IEnumerable<DbType>
+								//***************************************************************************************************************//
+								dvm = db . Query<DetailsViewModel> ( SqlCommand );
+								//***************************************************************************************************************//
+
+								foreach ( var item in dvm )
 								{
-									Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-								}
-								finally
-								{
-									Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
+									dvmcollection . Add ( item );
 								}
 							}
+							else
+							{
+								// Read data via Dapper into IEnumerable<DbType>
+								//***************************************************************************************************************//
+								dvm = db . Query<DetailsViewModel> ( SqlCommand );
+								//***************************************************************************************************************//
+
+								foreach ( var item in dvm )
+								{
+									dvmcollection . Add ( item );
+								}
+							}
+						} catch ( Exception ex )
+						{
+							Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
+						} finally
+						{
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
 						}
 					}
-					if ( Notify )
-					{
-						EventControl . TriggerDetDataLoaded ( null ,
-							new LoadedEventArgs
-							{
-								CallerType = "SQLSERVER" ,
-								CallerDb = Caller ,
-								DataSource = dvmcollection ,
-								RowCount = dvmcollection . Count
-							} );
-					}
-					//collection = dvmcollection;
-					return dvmcollection;
 				}
+			}
+			EventControl . TriggerDetDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "SQLSERVER" ,
+						CallerDb = Caller ,
+						DataSource = dvmcollection ,
+						RowCount = dvmcollection . Count
+					} );
+			return true;
+		}
+		public static ObservableCollection<DetailsViewModel> GetDetailsObsCollection ( ObservableCollection<DetailsViewModel> collection ,
+			string SqlCommand = "" ,
+			string DbNameToLoad = "" ,
+			string Orderby = "" ,
+			string Conditions = "" ,
+			bool wantSort = false ,
+			bool wantDictionary = false ,
+			bool Notify = false ,
+			string Caller = "" ,
+			int [ ] args = null )
+		{
+			IEnumerable<DetailsViewModel> dvm ;
+			ObservableCollection<DetailsViewModel> dvmcollection = new ObservableCollection<DetailsViewModel>();
+			string ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
-				#endregion Details Db Data Loading methods
+			string[] ValidFields=
+					{
+						"ID",
+						"CUSTNO",
+						"BANKNO",
+						"ACTYPE",
+						"INTRATE" ,
+						"BALANCE" ,
+						"ODATE" ,
+						"CDATE"
+						};
+			string[] errorcolumns;
+
+			// Use defaullt Db if none received frm caller
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "BankAccount";
+
+
+			// Utility Support Methods to validate data
+			if ( ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+			{
+				if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+					Orderby = "";
+				}
+				else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+					Conditions = "";
+				}
+				else
+				{
+					MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+					return null;
+				}
+			}
+
+			//// make sure order by clause is correctly formatted
+			//if ( Orderby . Trim ( ) != "" )
+			//{
+			//	if ( Orderby . ToUpper ( ) . Contains ( "ORDER BY " ) == false )
+			//	{
+			//		Orderby = " Order by " + Orderby;
+			//	}
+			//}
+
+			//if ( Conditions != "" )
+			//{
+			//	if ( Conditions . ToUpper ( ) . Contains ( "WHERE" ) == false )
+			//		Conditions = " Where " + Conditions;
+			//}
+			if ( DbNameToLoad == "" )
+				DbNameToLoad = "SecAccounts";
+
+			if ( Flags . USEADOWITHSTOREDPROCEDURES )
+			{
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+				//====================================================
+				// Use standard ADO.Net to to load Bank data to run Stored Procedure
+				//====================================================
+				DetailsViewModel dvmi = new DetailsViewModel();
+				string Con= Flags . CurrentConnectionString;
+				//						string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+				SqlConnection sqlCon=null;
+
+				// Works with default command 31/10/21
+				// works with Records limited 31/10/21
+				// works with Selection conditions limited 31/10/21
+				// works with Sort conditions 31/10/21
+				try
+				{
+					using ( sqlCon = new SqlConnection ( Con ) )
+					{
+						SqlCommand sql_cmnd;
+						sqlCon . Open ( );
+						if ( SqlCommand != "" )
+							sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+						else
+						{
+							sql_cmnd = new SqlCommand ( "dbo.spLoadDetailsComplex " , sqlCon );
+							sql_cmnd . CommandType = CommandType . StoredProcedure;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
+							if ( args == null )
+								args = dummyargs;
+							if ( args . Length > 0 )
+							{
+								if ( args [ 2 ] > 0 )
+								{
+									string limits = $" Top ({args[2]}) ";
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
+								}
+								else
+									sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+							}
+							else
+								sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = " * ";
+
+							sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
+							sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby;
+						}
+						// Handle  max records, if any
+						var sqlDr = sql_cmnd . ExecuteReader ( );
+						while ( sqlDr . Read ( ) )
+						{
+							dvmi . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
+							dvmi . CustNo = sqlDr [ "CustNo" ] . ToString ( );
+							dvmi . BankNo = sqlDr [ "BankNo" ] . ToString ( );
+							dvmi . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
+							dvmi . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
+							dvmi . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
+							dvmi . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
+							dvmi . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
+							dvmcollection . Add ( dvmi );
+							dvmi = new DetailsViewModel ( );
+						}
+						sqlDr . Close ( );
+						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
+					}
+					sqlCon . Close ( );
+				} catch ( Exception ex )
+
+				{
+					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+				}
+			}
+			else
+			{
+				Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+				Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+				using ( IDbConnection db = new SqlConnection ( ConString ) )
+				{
+					if ( Flags . USEDAPPERWITHSTOREDPROCEDURE )
+					{
+						try
+						{
+
+							var Args = new { Arg1 = "" , Arg2 = " " , Arg3= "" , Arg4= "" };
+							if ( SqlCommand == "" )
+							{
+								SqlCommand = $"spLoadDetailsComplex";
+								if ( args [ 2 ] == 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+								else if ( args [ 2 ] > 0 )
+									Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+								if ( SqlCommand == "" )
+								{
+									if ( args [ 2 ] == 0 )
+										Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"" , Arg3 = $"{Conditions}" , Arg4 = $"{ Orderby}" };
+									else if ( args [ 2 ] > 0 )
+										Args = new { Arg1 = $"{DbNameToLoad}" , Arg2 = $"Top ({args [ 2 ] . ToString ( )}) " , Arg3 = $"{Conditions}" , Arg4 = $"{Orderby}" };
+									// This syntax WORKS CORRECTLY
+								}
+							}
+
+							//***************************************************************************************************************//
+							var result  = db . Query<DetailsViewModel>( SqlCommand , Args,null,false, null,CommandType.StoredProcedure).ToList();
+							//***************************************************************************************************************//
+
+							Console . WriteLine ( result );
+							foreach ( var item in result )
+							{
+								dvmcollection . Add ( item );
+							}
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
+						} catch ( Exception ex )
+						{
+							Console . WriteLine ( $"DETAILS DB ERROR : {ex . Message}" );
+						}
+					}
+					else if ( Flags . USESDAPPERSTDPROCEDURES == true )
+					{
+						try
+						{
+							if ( SqlCommand == "" )
+							{
+								if ( Conditions != "" )
+								{
+									if ( args [ 2 ] > 0 && Orderby != "" )
+										SqlCommand = $" Select top ({args [ 2 ]}) * from {DbNameToLoad} where {Conditions} Order by {Orderby}";
+									else
+										SqlCommand = $" Select * from {DbNameToLoad} where {Conditions}";
+								}
+								else
+								{
+									if ( args != null )
+									{
+										if ( Conditions == "" && Orderby == "" && args [ 0 ] == 0 && args [ 1 ] == 0 && args [ 2 ] == 0 )   // we dont even  have args for total records
+											SqlCommand = $" Select * from {DbNameToLoad} ";
+										else if ( args [ 0 ] != 0 || args [ 1 ] != 0 || args [ 2 ] != 0 )   // we do have args for total records
+										{
+											if ( args [ 2 ] == 0 )       // no limit on how many records to get
+											{
+												SqlCommand = $" Select * from {DbNameToLoad} ";
+												if ( Conditions != "" )
+													SqlCommand += $" {Conditions} ";
+												else if ( args [ 1 ] != 0 )
+													SqlCommand += $" where CustNo >= { args [ 0 ]} AND CustNo <= { args [ 1 ]} ";
+											}
+											else if ( args [ 2 ] > 0 && args [ 1 ] == 0 )
+												SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} ";
+											else if ( args [ 1 ] > 0 )// All 3 args are received
+												SqlCommand = $" Select Top ({args [ 2 ]}) * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+											else
+												SqlCommand = $" Select * from {DbNameToLoad} where CustNo >= {args [ 0 ]} AND CustNo <= {args [ 1 ]}";
+										}
+									}
+									if ( Conditions != "" )  // We have conditions
+										SqlCommand = $"Select * from {DbNameToLoad} {Conditions} ";
+									else if ( args == null || args . Length == 0 )    // No args or conditions, so use generic command
+										SqlCommand = $"Select * from {DbNameToLoad}  ";
+
+									// Final Trap to ensure we have a valid command line
+									if ( SqlCommand == "" )
+										SqlCommand = $" Select * from {DbNameToLoad} ";
+
+									if ( wantSort && Orderby != "" )
+
+										SqlCommand += $" Order by {Orderby}";
+								}
+							}
+							// Read data via Dapper into IEnumerable<DbType>
+							//***************************************************************************************************************//
+							dvm = db . Query<DetailsViewModel> ( SqlCommand );
+							//***************************************************************************************************************//
+
+							foreach ( var item in dvm )
+							{
+								dvmcollection . Add ( item );
+							}
+						} catch ( Exception ex )
+						{
+							Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
+						} finally
+						{
+							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
+						}
+					}
+				}
+			}
+			if ( Notify )
+			{
+				EventControl . TriggerDetDataLoaded ( null ,
+					new LoadedEventArgs
+					{
+						CallerType = "SQLSERVER" ,
+						CallerDb = Caller ,
+						DataSource = dvmcollection ,
+						RowCount = dvmcollection . Count
+					} );
+			}
+			//collection = dvmcollection;
+			return dvmcollection;
+		}
+
+		#endregion Details Db Data Loading methods
 
 
 		/// <summary>
@@ -2879,7 +2885,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			BankAccountViewModel bvm = new BankAccountViewModel();
 
 			if ( DbName == "" )
@@ -2912,13 +2922,11 @@ namespace MyDev . Dapper
 						connection . Execute ( @SqlCommand , parameters );
 					}
 
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -2936,7 +2944,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
 			if ( DbName == "" )
 				DbName = "BankAccount";
@@ -2965,13 +2977,11 @@ namespace MyDev . Dapper
 						SqlCommand += " where Id =@Id";
 
 					connection . Execute ( @SqlCommand , parameters );
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db record Updated using DAPPER successfuly" );
@@ -2991,7 +3001,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			CustomerViewModel cvm = new CustomerViewModel ( );
 
 			if ( DbName == "" )
@@ -3031,13 +3045,11 @@ namespace MyDev . Dapper
 							SqlCommand += Conditions;
 						connection . Execute ( @SqlCommand , parameters );
 					}
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3056,7 +3068,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			CustomerViewModel cvm = new CustomerViewModel ( );
 
 			if ( DbName == "" )
@@ -3075,13 +3091,11 @@ namespace MyDev . Dapper
 
 					// GO	AHEAD and INSERT new record into generic table 'GENERICxxxxx'
 					connection . Execute ( @SqlCommand );
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}', {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3099,7 +3113,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			CustomerViewModel cvm = new CustomerViewModel ( );
 
 			if ( DbName == "" )
@@ -3138,13 +3156,11 @@ namespace MyDev . Dapper
 							$"field11=@field11, field12=@field12, field13=@field13, field14=@field14, field15=@field15, field16=@field16, field17=@field17, field18=@field18, field19=@field19, field20=@field20  where field1=@field1";
 						connection . Execute ( @SqlCommand , parameters );
 					}
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3165,7 +3181,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
 			if ( DbName == "" )
 				DbName = "Customer";
@@ -3201,13 +3221,11 @@ namespace MyDev . Dapper
 					else
 						SqlCommand += " where Id =@Id";
 					connection . Execute ( @SqlCommand , parameters );
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db record Updated using DAPPER successfuly" );
@@ -3238,7 +3256,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			DetailsViewModel bvm = new DetailsViewModel();
 
 			if ( DbName == "" )
@@ -3269,13 +3291,11 @@ namespace MyDev . Dapper
 							SqlCommand += Conditions;
 						connection . Execute ( @SqlCommand , parameters );
 					}
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3306,7 +3326,11 @@ namespace MyDev . Dapper
 			bool result = true;
 			int indexer = 0;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
 			if ( DbName == "" )
 				DbName = "SecAccounts";
@@ -3333,13 +3357,11 @@ namespace MyDev . Dapper
 						SqlCommand += " where Id =@Id";
 
 					connection . Execute ( @SqlCommand , parameters );
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				}
-				finally
+				} finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db record updated using DAPPER successfuly" );
@@ -3378,8 +3400,8 @@ namespace MyDev . Dapper
 			//			{
 			//				int currow = 0;
 
-			//				currow = Bankgrid . SelectedIndex != -1 ? Bankgrid . SelectedIndex : 0;
-			//				ss = Bankgrid . SelectedItem as BankAccountViewModel;
+			//				currow = bguv . SelectedIndex != -1 ? bguv . SelectedIndex : 0;
+			//				ss = bguv . SelectedItem as BankAccountViewModel;
 			//			}
 			//			else if ( CurrentDb == "CUSTOMER" )
 			//			{
@@ -3748,7 +3770,11 @@ namespace MyDev . Dapper
 			string[] datain = { "","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""};  // 40 elements 
 			List<string>   DbData = new List<string>();
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			try
 			{
 				using ( IDbConnection db = new SqlConnection ( ConString ) )
@@ -3766,8 +3792,7 @@ namespace MyDev . Dapper
 						collection . Add ( str );
 					}
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"GENERIC DB ERROR : {ex . Message}" );
 				return false;
@@ -3789,7 +3814,11 @@ namespace MyDev . Dapper
 			List<string>   DbData = new List<string>();
 			//static IEnumerable  List<string> strarray;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
 			try
 			{
@@ -3813,8 +3842,7 @@ namespace MyDev . Dapper
 							DbData . Add ( str );
 					}
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"GENERIC DB ERROR : {ex . Message}" );
 			}
@@ -3834,7 +3862,11 @@ namespace MyDev . Dapper
 		{
 			bool result = false;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 
 			try
 			{
@@ -3849,8 +3881,7 @@ namespace MyDev . Dapper
 					//var Data = db . Query<dynamic>( SqlCommand  ). ToList();
 					//					Console . WriteLine ( $"SQL DAPPER {Data . Count} records successfuly" );
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"GENERIC DB ERROR : {ex . Message}" );
 			}
@@ -3869,7 +3900,11 @@ namespace MyDev . Dapper
 			string SqlCommand = "", TestCommand="";
 			bool result = false;
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			using ( IDbConnection connection = new SqlConnection ( ConString ) )
 			{
 				// Check for existence of Db to be created
@@ -3879,8 +3914,7 @@ namespace MyDev . Dapper
 					var  res = connection . QueryFirst<int> ( TestCommand );
 					if ( res > 0 )
 						return false;
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Database not found by test call to Db, proceeding with copy operation" );
 				}
@@ -3891,12 +3925,10 @@ namespace MyDev . Dapper
 
 					connection . Execute ( SqlCommand , CommandType . Text );
 
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {NewDb} could NOT be created from {OriginalDb}, Error info : {ex . Message}, {ex . Data}" );
-				}
-				finally
+				} finally
 				{
 					Console . WriteLine ( $"SQL DAPPER {NewDb} has been created from {OriginalDb} successfully" );
 					result = true;
@@ -3916,8 +3948,11 @@ namespace MyDev . Dapper
 			//====================================
 			ObservableCollection<BankCombinedViewModel> bvmcollection = new ObservableCollection<BankCombinedViewModel>();
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-			//IEnumerable < BankCombinedViewModel> bvmi;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
 			{
 				try
@@ -3942,8 +3977,7 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER BANKCOMBINED DB created successfuly" );
 						collection = bvmcollection;
 						return collection;
-					}
-					catch ( Exception ex )
+					} catch ( Exception ex )
 					{
 						Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
 					}
@@ -3952,8 +3986,7 @@ namespace MyDev . Dapper
 					//{
 					//	Console . WriteLine ("Flags.USEDAPPERWITHSTOREDPROCEDURE not set !!!!");
 					//}
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
 					Utils . trace ( "CreateBankCombinedAsync : " );
@@ -3979,8 +4012,11 @@ namespace MyDev . Dapper
 		{
 			ObservableCollection<BankCombinedViewModel> bvmcollection = new ObservableCollection<BankCombinedViewModel>();
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-			//DbNameToLoad = "BankCombined";
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			//============================================
 			// Use STD DAPPER QUERY to load BankCombined data
 			//============================================
@@ -4100,12 +4136,10 @@ namespace MyDev . Dapper
 						bvmcollection . Add ( item );
 					}
 					collection = bvmcollection;
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-				}
-				finally
+				} finally
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
 				}
@@ -4126,7 +4160,7 @@ namespace MyDev . Dapper
 			string[] temp;
 			char breakchar=' ';
 
-			if ( orderby != ""&& orderby != null)
+			if ( orderby != "" && orderby != null )
 			{
 				temp = orderby . Split ( breakchar );
 				if ( temp . Length > 0 )
@@ -4159,8 +4193,7 @@ namespace MyDev . Dapper
 							{
 								double d = double . Parse ( tmp );
 								isnumeric = true;
-							}
-							catch // let it drop thru
+							} catch // let it drop thru
 							{ }
 
 							if ( tmp != "WHERE" && isnumeric == false )
@@ -4269,8 +4302,7 @@ namespace MyDev . Dapper
 				else if ( gc . field1 != null )
 				{ return 1; }
 				return 0;
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Column count error '{ex . Message}'" );
 			}
@@ -4357,8 +4389,7 @@ namespace MyDev . Dapper
 						break;
 					dict . Add ( item . Key , item . Value );
 					index++;
-				}
-				catch ( Exception ex )
+				} catch ( Exception ex )
 				{
 					MessageBox . Show ( $"ParseDapper error was : \n{ex . Message}\nKey={item . Key} Value={item . Value . ToString ( )}" );
 					break;

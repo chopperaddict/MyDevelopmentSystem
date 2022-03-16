@@ -33,7 +33,7 @@ namespace MyDev . Views
 		//	foreach ( DriveInfo driveInfo in drives )
 		//		tv . Items . Add ( CreateTreeItem ( driveInfo ) );
 		//}
-		//public static void TreeViewItem_Expanded ( object sender , RoutedEventArgs e )
+		//public static void TreeViewItem4_Expanded  ( object sender , RoutedEventArgs e )
 		//{
 		//	string fullpath = "";
 		//	// This is what we are updating in our TreeView
@@ -49,7 +49,7 @@ namespace MyDev . Views
 		//	var drives = Texplorer . GetDrives ( newpath);
 
 		//	string currentdrive = Texplorer.Name;
-			
+
 		//	Console . WriteLine ( $"Count={item . Items . Count}, Content='{item . Items [ 0 ]}'" );
 		//	LbStrings . Clear ( );
 		//	if ( ( item . Items . Count == 1 ) && ( item . Items [ 0 ] is string ) )

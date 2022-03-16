@@ -1,154 +1,243 @@
-﻿using System;
-using System . Collections . Generic;
-using System . IO;
-using System . Linq;
-using System . Text;
-using System . Threading . Tasks;
-using System . Windows . Controls;
-using System . Windows;
+﻿using System . Windows . Controls;
+
+using MyDev . ViewModels;
 
 namespace MyDev . Views
 {
-	public class LazyLoading
+	public class XLazyLoading
 	{
-//		private static bool ShowAllFiles = false;
-		public LazyLoading ( TreeView treeview, bool showall = false)
-		{
- 			DriveInfo[] drives = DriveInfo.GetDrives();
-			foreach ( DriveInfo driveInfo in drives )
-				treeview . Items . Add ( CreateTreeItem ( driveInfo ) );
-		}
+		//		private static bool ShowAllFiles = false;
+		//		private static TreeViews treeviews=null;
+		//		private static ListBox TvListbox = null;
 
-		public static void TreeViewItem_Expanded ( TreeViewItem e, bool showall=false )
-		{
-			// Create and populate the Treeview with entries for current node
-			TreeViews . Tvlistbox . Items . Clear ( );
-			TreeViewItem item = e;//.Source as TreeViewItem;
-			if ( ( item . Items . Count == 1 ) && ( item . Items [ 0 ] is string ) )
-			{
-				item . Items . Clear ( );
+		//		public XLazyLoading ( TreeView treeview , ref Directories directories , bool showall = false )
+		//		{
+		//		}
 
-				DirectoryInfo expandedDir = null;
-				if ( item . Tag is DriveInfo )
-					expandedDir = ( item . Tag as DriveInfo ) . RootDirectory;
-				else if ( item . Tag is DirectoryInfo )
-					expandedDir = ( item . Tag as DirectoryInfo );
-				try
-				{
-					foreach ( DirectoryInfo subDir in expandedDir . GetDirectories ( ) )
-					{
-						// Exclude System files/Folders
-						FileAttributes fa = subDir.Attributes;
-						string entry = subDir.ToString().ToUpper();
-						string s = fa.ToString();
-						if(  
-							( s . ToUpper ( ) . Contains ( "BOOTMGR" ) == false
-							&& s . ToUpper ( ) . Contains ( "BOOTNXT" ) == false
-							&& s . ToUpper ( ) . Contains ( "BOOTSTAT" ) == false
-							&& s . ToUpper ( ) . Contains ( "BOOTSECT" ) == false )
-							&& ( entry . Contains ( "BOOTMGR" ) == false
-							&& entry . Contains ( "BOOTNXT" ) == false
-							&& entry . Contains ( "BOOTSTAT" ) == false
-							&& entry . Contains ( "BOOTNXT" ) == false
-							&& entry . Contains ( "BACKUP_PARTITION" ) == false
-							&& entry . Contains ( "BOOTSECT" ) == false ) )
-						{
-							item . Items . Add ( CreateTreeItem ( subDir ) );
-							TreeViews . Tvlistbox . Items . Add ( "Type :  " + subDir . ToString ( ) );
-						}
-						else if ( showall == true )
-						{
-							item . Items . Add ( CreateTreeItem ( subDir ) );
-							TreeViews . Tvlistbox . Items . Add ( subDir . ToString ( ) );
-							Console . WriteLine ( $"Hidden Directory: subDir" );
-						}
-					}
-				} catch { }
-				try
-				{
-					foreach ( FileInfo subDir in expandedDir . GetFiles ( ) )
-					{
-						// Exclude System files/Folders
-						FileAttributes fa = subDir.Attributes;
-						string entry = subDir.ToString().ToUpper();
-						string s = fa.ToString();
-						if (
-							( s . ToUpper ( ) . Contains ( "BOOTMGR" ) == false
-							&& s . ToUpper ( ) . Contains ( "BOOTNXT" ) == false
-							&& s . ToUpper ( ) . Contains ( "BOOTSTAT" ) == false
-							&& s . ToUpper ( ) . Contains ( "BOOTSECT" ) == false )
-							&& ( entry . Contains ( "BOOTMGR" ) == false
-							&& entry . Contains ( "BOOTNXT" ) == false
-							&& entry . Contains ( "BOOTSTAT" ) == false
-							&& entry . Contains ( "BOOTNXT" ) == false
-							&& entry . Contains ( "BACKUP_PARTITION" ) == false
-							&& entry . Contains ( "BOOTSECT" ) == false ) )
-						{
-							item . Items . Add ( CreateTreeFile ( subDir ) );
-							TreeViews . Tvlistbox . Items . Add ( subDir . ToString ( ) );
-						}
-						else if ( showall == true )
-						{
-							item . Items . Add ( CreateTreeFile ( subDir ) );
-							TreeViews . Tvlistbox . Items . Add ( "Type : " + subDir . ToString ( ) );
-							Console . WriteLine ( $"Hidden file : subDir" );
-						}
-					}
-				} catch { }
-			}
-			TreeViews . Tvlistbox . Refresh ( );
-		}
-		public static int TreeViewItem_Count( TreeViewItem e , bool showall = false )
-		{
-			// Just count all entries DIRECTLY below the selected tree node
-			int EntryCount = 0;
-			TreeViewItem item = e;//.Source as TreeViewItem;
-			if ( ( item . Items . Count == 1 ) && ( item . Items [ 0 ] is string ) )
-			{
-				DirectoryInfo expandedDir = null;
-				if ( item . Tag is DriveInfo )
-					expandedDir = ( item . Tag as DriveInfo ) . RootDirectory;
-				else if ( item . Tag is DirectoryInfo )
-					expandedDir = ( item . Tag as DirectoryInfo );
-				try
-				{
-					foreach ( DirectoryInfo subDir in expandedDir . GetDirectories ( ) )
-					{
-						EntryCount++;
-					}
-				} catch { }
-				try
-				{
-					foreach ( FileInfo subDir in expandedDir . GetFiles ( ) )
-					{
-						EntryCount++;
-					}
-					} catch { }
-			}
-			else 
-				EntryCount = item . Items . Count;
-			return EntryCount;
-		}
+		////		public static void xTreeViewItem4_Expanded  ( object sender, RoutedEventArgs e)
+		//		{
+		//			// Create and populate the Treeview with entries for current node
+		//			// get parent to open
+		////			string path=e.Tag.ToString();
+		//			var directories = new List<string>();
+		//			//tvtree . Items . Clear ( );
+		//			TvListbox . Items . Clear ( );
+		//			TvListbox . UpdateLayout ( );
+		//			var item = sender as TreeViewItem;
 
-	#region Low level update  methods
-		private static TreeViewItem CreateTreeItem ( object o )
-		{
-			TreeViewItem item = new TreeViewItem();
-			item . Header = o . ToString ( );
-			item . Tag = o;
-			item . Items . Add ( "Loading..." );
-			return item;
-		}
-		private static TreeViewItem CreateTreeFile ( object o )
-		{
-			string str = o.ToString();
-			TreeViewItem item = new TreeViewItem();
-			item . Header = o . ToString ( );
-			item . Tag = o;
-			//			item . Items . Add ( o);
-			return item;
-		}
-		#endregion Low level update  methods
+		//			string Fullpath = (string)item.Tag;
+		//			if ( item . Items . Count != 1 || item . Items [ 0 ] != null )
+		//				return;
+		//			try
+		//			{
+		//				var dirs = Directory . GetDirectories( Fullpath);
+		//				if ( dirs . Length > 0 )
+		//					directories . AddRange ( dirs );
+		//			  } catch { }
+		//			directories . ForEach ( directoryPath =>
+		//			{
+		//				var subitem = new TreeViewItem()
+		//				{
+		//					Header = Path.GetDirectoryName(directoryPath),
+		//					Tag = directoryPath
+		//				};
+		//				// add the dummy entry
+		//				subitem. Items . Add ( null );
+		//				// force it  to iterate 
+		//				subitem . Expanded += TreeViewItem4_Expanded ;
+		//				item . Items . Add ( subitem );
+		//				TvListbox . Items . Add ( subitem );
+		//			} );
+		//			//foreach ( var dir in directories )
+		//			//{
+		//			//	Header = dir;
+		//			//	Tag = dir;
+		//			//	tvtree . Items . Add(dir );
+		//			//	TvListbox . Items . Add(item );
+		//			//}
+
+
+		//			{
+		//				//DirectoryInfo expandedDir = null;
+		//				//if ( item . Tag is DriveInfo )
+		//				//	expandedDir = ( item . Tag as DriveInfo ) . RootDirectory;
+		//				//else if ( item . Tag is DirectoryInfo )
+		//				//	expandedDir = ( item . Tag as DirectoryInfo );
+
+		//				//// Read all sub folder first 
+		//				//try
+		//				//{
+		//				//	int count = -1;
+		//				//	foreach ( DirectoryInfo subDir in expandedDir . GetDirectories ( ) )
+		//				//	{
+		//				//		// Exclude System files/Folders
+		//				//		FileAttributes fa = subDir.Attributes;
+		//				//		string entry = subDir.ToString().ToUpper();
+		//				//		string s = fa.ToString();
+		//				//		if ( CheckIsVisible (entry , s , showall ) == false )
+		//				//		{
+		//				//			if ( count == -1 )
+		//				//			{
+		//				//				count = TreeViewItem_CountDirectories ( subDir ,ref directories, showall );
+		//				//				count += TreeViewItem_CountFiles ( subDir , ref directories , showall );
+		//				//			}
+		//				//			if ( count >= 1 )
+		//				//			{
+		//				//				item . Items . Add ( CreateTreeItem ( subDir , ref directories ) );
+		//				//			}
+		//				//			else
+		//				//			{
+		//				//				item . Items . Add ( CreateTreeFile ( subDir ) );
+		//				//			}
+		//				//			treeviews . listBox . Items . Add ( subDir . ToString ( ) );
+		//				//		}
+		//				//		else if ( showall == true )
+		//				//		{
+		//				//			item . Items . Add ( CreateTreeItem ( subDir , ref directories ) );
+		//				//			treeviews . listBox . Items . Add ( subDir . ToString ( ) );
+		//				//			Console . WriteLine ( $"Hidden Directory: subDir" );
+		//				//		}
+		//				//		//directories . DirectoryInfo = subDir;
+		//				//		//directories . CurrentDirectory = subDir . Name;
+		//				//		//directories . FullPath= subDir . FullName;
+		//				//	}
+		//				//} catch { }
+		//			}
+		//	// Now Read all files in this sub folder 
+		//	//try
+		//	//{
+		//	//	foreach ( FileInfo subDir in expandedDir . GetFiles ( ) )
+		//	//	{
+		//	//		// Exclude System files/Folders
+		//	//		FileAttributes fa = subDir.Attributes;
+		//	//		string entry = subDir.ToString().ToUpper();
+		//	//		string s = fa.ToString();
+		//	//		if ( CheckIsVisible ( entry , s , showall ) == false )
+		//	//		{
+		//	//			int count = TreeViewItem_CountFiles( expandedDir , ref directories, showall );
+		//	//			if(count >= 1)
+		//	//				item . Items . Add ( CreateTreeFile ( subDir ) );
+		//	//			else
+		//	//				item . Items . Add ( CreateTreeFile ( subDir ) );
+		//	//			treeviews . listBox . Items . Add ( subDir . ToString ( ) );
+		//	//			directories . FileInfo = subDir;
+		//	//			directories . CurrentSelection = subDir . Name;
+		//	//		}
+		//	//		else if ( showall == true )
+		//	//		{
+		//	//			int count = TreeViewItem_CountFiles( expandedDir , ref directories, showall );
+		//	//			item . Items . Add ( CreateTreeFile ( subDir ) );
+		//	//			treeviews . listBox . Items . Add ( subDir . ToString ( ) );
+		//	//			directories . FileInfo = subDir;
+		//	//			Console . WriteLine ( $"Hidden file : subDir" );
+		//	//		}
+		//	//	}
+		//	//} catch { }
+		//	//}
+		//	//			treeviews . listBox . Refresh ( );
+		//}
+		//public static int xTreeViewItem_CountDirectories ( DirectoryInfo e , ref Directories directories , bool showall = false )
+		//{
+		//	// Just count all entries DIRECTLY below the selected tree node
+		//	int EntryCount = 0;
+		//	try
+		//	{
+		//		Console . WriteLine ( "COUNT RESTART" );
+		//		foreach ( DirectoryInfo subDir in e . GetDirectories ( ) )
+		//		{
+		//			FileAttributes fa = subDir.Attributes;
+		//			string entry = subDir.ToString().ToUpper();
+		//			string s = fa.ToString();
+		//			if ( CheckIsVisible ( entry , s , showall ) == false )
+		//			{
+		//				EntryCount++;
+		//				Console . WriteLine ( $"Dir  : {subDir} / {EntryCount}" );
+		//			}
+		//			else if ( showall )
+		//			{
+		//				EntryCount++;
+		//				Console . WriteLine ( $"Dir  (Hidden) : {subDir} / {EntryCount}" );
+		//			}
+		//		}
+		//	} catch { } finally { }
+		//	try
+		//	{
+		//		foreach ( FileInfo subDir in e . GetFiles ( ) )
+		//		{
+		//			FileAttributes fa = subDir.Attributes;
+		//			string entry = subDir.ToString().ToUpper();
+		//			string s = fa.ToString();
+		//			if ( CheckIsVisible ( entry , s , showall ) == false )
+		//			{
+		//				EntryCount++;
+		//				Console . WriteLine ( $"File : {subDir} / {EntryCount}" );
+		//			}
+		//			else if ( showall )
+		//			{
+		//				EntryCount++;
+		//				Console . WriteLine ( $"File : (Hidden) : {subDir} / {EntryCount}" );
+		//			}
+		//		}
+		//	} catch { }
+		//	Console . WriteLine ( "COUNT END" );
+		//	return EntryCount;
+		//}
+		//private static bool xCheckIsVisible ( string entry , string s , bool showall )
+		//{
+		//	if ( showall == false &&
+		//		( s . ToUpper ( ) . Contains ( "BOOTMGR" ) == false
+		//		&& s . ToUpper ( ) . Contains ( "BOOTNXT" ) == false
+		//		&& s . ToUpper ( ) . Contains ( "BOOTSTAT" ) == false
+		//		&& s . ToUpper ( ) . Contains ( "BOOTSECT" ) == false )
+		//		&& ( entry . Contains ( "BOOTMGR" ) == false
+		//		&& entry . Contains ( "BOOTNXT" ) == false
+		//		&& entry . Contains ( "BOOTSTAT" ) == false
+		//		&& entry . Contains ( "RECOVERY" ) == false
+		//		&& entry . Contains ( "BOOTNXT" ) == false
+		//		&& entry . Contains ( "BACKUP_PARTITION" ) == false
+		//		&& entry . Contains ( "BOOTSECT" ) == false ) )
+		//		return false;
+		//	else
+		//		return true;
+		//}
+		//public static int xTreeViewItem_CountFiles ( DirectoryInfo e , ref Directories directories , bool showall = false )
+		//{
+		//	// Just count all entries DIRECTLY below the selected tree node
+		//	int EntryCount = 0;
+		//	try
+		//	{
+		//		foreach ( FileInfo subDir in e . GetFiles ( ) )
+		//		{
+		//			EntryCount++;
+		//		}
+		//	} catch { }
+		//	return EntryCount;
+		//}
+
+		//#region Low level update  methods
+		//private static TreeViewItem CreateTreeItem ( object o , ref Directories directories )
+		//{
+		//	string obj = o.ToString();
+		//	TreeViewItem item = new TreeViewItem();
+		//	item . Header = obj;
+		//	item . Tag = obj;
+		//	//			 add dummy entry
+		//	item . Items . Add ( "Loading..." );
+		//	if ( obj . Contains ( ":\\" ) )
+		//		directories . CurrentDrive = obj;
+		//	else
+		//		directories . CurrentDirectory = obj;
+		//	return item;
+		//}
+		//private static TreeViewItem CreateTreeFile ( object o )
+		//{
+		//	string str = o.ToString();
+		//	TreeViewItem item = new TreeViewItem();
+		//	item . Header = o . ToString ( );
+		//	item . Tag = o . ToString ( );
+		//	return item;
+		//}
+		//		#endregion Low level update  methods
 	}
 
 }

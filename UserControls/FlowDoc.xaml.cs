@@ -57,18 +57,6 @@ namespace MyDev . UserControls
 			get { return borderSelected; }
 			set { borderSelected = value; }
 		}
-		//private double xPos;
-		//public double XPos
-		//{
-		//	get { return xPos; }
-		//	set { xPos = value; }
-		//}
-		//private double yPos;
-		//public double YPos
-		//{
-		//	get { return yPos; }
-		//	set { yPos = value; }
-		//}
 		private bool keepSize;
 		public bool KeepSize
 		{
@@ -117,6 +105,8 @@ namespace MyDev . UserControls
 			KeepSizeIcon2 = "/Icons/up arroiw red.png";
 		}
 		public void ShowInfo (
+			FlowDoc Flowdoc,
+			Canvas canvas,
 			string line1 = "" ,
 			string clr1 = "Black0" ,
 			string line2 = "" ,
@@ -166,7 +156,7 @@ namespace MyDev . UserControls
 			flowdoc . SetValue ( HeightProperty , DocHeight );
 			flowdoc . SetValue ( WidthProperty , DocWidth );
 			Console . WriteLine ( $"{textRange . Text }\n" );
-			Console . WriteLine ( $"Text Length in Flowdoc = {textRange . Text . Length }" );
+			//Console . WriteLine ( $"Text Length in Flowdoc = {textRange . Text . Length }" );
 			if ( textRange . Text . Length < 100 )
 				flowdoc . SetValue ( HeightProperty , ( double ) 180 + retcount * Flags . FlowdocCrMultplier );
 			else if ( textRange . Text . Length < 150 )
@@ -260,7 +250,7 @@ namespace MyDev . UserControls
 			}
 		}
 
-
+		#region FlowDoc helpers
 		private FlowDocument CreateFlowDocument ( string line1 , string clr1 , string line2 , string clr2 , string line3 , string clr3 , string header , string clr4 )
 		{
 			// Create new FlowDocument to be used by our RichTextBox
@@ -392,13 +382,102 @@ namespace MyDev . UserControls
 			//myFlowDocumentScrollViewer = myFlowDocument;
 			return myFlowDocument;
 		}
+		private void doc_GotFocus ( object sender , RoutedEventArgs e )
+		{
+			e . Handled = true;
+		}
+		private void Border_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//	BorderClicked = false;
+			Border bd = sender as Border;
+			if ( Utils . HitTestBorder ( bd, e ) )
+			{
+				// Over the Border, so let user resize contents
+				BorderClicked = true;
+
+				// Mouse Horizontal (X) position
+				double left = e . GetPosition ( (FdBorder  as FrameworkElement ) . Parent as FrameworkElement ) . X ;
+				double height = this.ActualHeight;
+				// Mouse Vertical (Y) position
+				double MTop = e . GetPosition ( (FdBorder as FrameworkElement ) . Parent as FrameworkElement ) . Y;
+				double MBottom = MTop + this.ActualHeight;
+
+				//Console . WriteLine ( $"Border Hit : Left {left}, Top {MTop}\nWidth {this . ActualWidth}, Height {this . ActualHeight}" );
+				double ValidTopT = FdBorder.BorderThickness.Left ;
+				double ValidBottomT = this.ActualHeight + FdBorder.BorderThickness.Left ;
+				double ValidTopB = MBottom -  (FdBorder.BorderThickness.Left  * 2);
+				double ValidBottomB = MBottom + ( FdBorder.BorderThickness.Left  * 2);
+
+				if ( MTop <= ValidTopT && MTop >=  0)
+				{
+					// Top
+					BorderSelected = 1;
+					if  ( this . ActualWidth - left < 10 )
+						BorderSelected = 4;
+				}
+				else if ( MBottom >= ValidTopB && MBottom <= ValidBottomB && MTop > height - 20 )
+				{
+					// Bottom
+					BorderSelected = 2;
+					if ( this . ActualWidth - left < 10 )
+						BorderSelected = 4;
+				}
+				else if ( left < 10 )
+				{
+					// Left
+					BorderSelected = 3;
+				}
+				else if ( this . ActualWidth - left < 10 )
+				{
+					//Right
+					BorderSelected = 4;
+				}
+//				ExecuteFlowDocBorderMethod ( this , EventArgs . Empty );
+			}
+		}
+
+		private void KeepSize_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			KeepSize = !KeepSize;
+			if ( KeepSize == true )
+			{
+				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon1 , UriKind . Relative ) );
+				SaveLabel . Content = "Using Saved Height =";
+			}
+			else
+			{
+				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon2 , UriKind . Relative ) );
+				SaveLabel . Content = "Using Auto Height =";
+			}
+		}
+
+		private void Border_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			BorderClicked = false;
+		}
+
+		private void FdBorder_MouseMove ( object sender , MouseEventArgs e )
+		{
+			// Flowdoc is being resized
+			if ( BorderClicked )
+			{
+			}
+		}
+
+		private void FlowdocBorder_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			Border border = sender as Border;
+			if ( border . Name == "FdBorder" )
+				BorderClicked = true;
+		}
+
+		#endregion FlowDoc helpers
 		private void Button_Click ( object sender , RoutedEventArgs e )
 		{
 			this . Visibility = Visibility . Hidden;
 			BorderSelected = -1;
 
 		}
-
 
 		#region Dependency properties
 		public Brush borderColor
@@ -582,10 +661,6 @@ namespace MyDev . UserControls
 		}
 
 		#endregion Mouse handlers
-		private void doc_GotFocus ( object sender , RoutedEventArgs e )
-		{
-			e . Handled = true;
-		}
 
 		private void Closebtn_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
@@ -637,91 +712,6 @@ namespace MyDev . UserControls
 
 		#endregion External Hook
 
-		private void Border_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		{
-			//	BorderClicked = false;
-			Border bd = sender as Border;
-			if ( Utils . HitTestBorder ( bd, e ) )
-			{
-				// Over the Border, so let user resize contents
-				BorderClicked = true;
-
-				// Mouse Horizontal (X) position
-				double left = e . GetPosition ( (FdBorder  as FrameworkElement ) . Parent as FrameworkElement ) . X ;
-				double height = this.ActualHeight;
-				// Mouse Vertical (Y) position
-				double MTop = e . GetPosition ( (FdBorder as FrameworkElement ) . Parent as FrameworkElement ) . Y;
-				double MBottom = MTop + this.ActualHeight;
-
-				//Console . WriteLine ( $"Border Hit : Left {left}, Top {MTop}\nWidth {this . ActualWidth}, Height {this . ActualHeight}" );
-				double ValidTopT = FdBorder.BorderThickness.Left ;
-				double ValidBottomT = this.ActualHeight + FdBorder.BorderThickness.Left ;
-				double ValidTopB = MBottom -  (FdBorder.BorderThickness.Left  * 2);
-				double ValidBottomB = MBottom + ( FdBorder.BorderThickness.Left  * 2);
-
-				if ( MTop <= ValidTopT && MTop >=  0)
-				{
-					// Top
-					BorderSelected = 1;
-					if  ( this . ActualWidth - left < 10 )
-						BorderSelected = 4;
-				}
-				else if ( MBottom >= ValidTopB && MBottom <= ValidBottomB && MTop > height - 20 )
-				{
-					// Bottom
-					BorderSelected = 2;
-					if ( this . ActualWidth - left < 10 )
-						BorderSelected = 4;
-				}
-				else if ( left < 10 )
-				{
-					// Left
-					BorderSelected = 3;
-				}
-				else if ( this . ActualWidth - left < 10 )
-				{
-					//Right
-					BorderSelected = 4;
-				}
-				Console . WriteLine ( $"BorderSelected = {BorderSelected}" );
-				ExecuteFlowDocBorderMethod ( this , EventArgs . Empty );
-			}
-		}
-
-		private void KeepSize_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
-		{
-			KeepSize = !KeepSize;
-			if ( KeepSize == true )
-			{
-				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon1 , UriKind . Relative ) );
-				SaveLabel . Content = "Using Saved Height =";
-			}
-			else
-			{
-				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon2 , UriKind . Relative ) );
-				SaveLabel . Content = "Using Auto Height =";
-			}
-		}
-
-		private void Border_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
-		{
-			BorderClicked = false;
-		}
-
-		private void FdBorder_MouseMove ( object sender , MouseEventArgs e )
-		{
-			// Flowdoc is being resized
-			if ( BorderClicked )
-			{
-			}
-		}
-
-		private void FlowdocBorder_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		{
-			Border border = sender as Border;
-			if ( border . Name == "FdBorder" )
-				BorderClicked = true;
-		}
 	}
 	public class FlowArgs : EventArgs
 	{

@@ -311,45 +311,45 @@ namespace MyDev . Sql
 				else
 					gc = gcc;
 
-				if ( gc . field20 != null )
+				if ( gc . field20 != null  && gc.field20 != "")
 				{ return 20; }
-				else if ( gc . field19 != null )
+				else if ( gc . field19 != null && gc . field19 != "" )
 				{ return 19; }
-				else if ( gc . field18 != null )
+				else if ( gc . field18 != null && gc . field18 != "" )
 				{ return 18; }
-				else if ( gc . field17 != null )
+				else if ( gc . field17 != null && gc . field17 != "" )
 				{ return 17; }
-				else if ( gc . field16 != null )
+				else if ( gc . field16 != null && gc . field16 != "" )
 				{ return 16; }
-				else if ( gc . field15 != null )
+				else if ( gc . field15 != null   && gc.field15 != "")
 				{ return 15; }
-				else if ( gc . field14 != null )
+				else if ( gc . field14 != null   && gc.field14 != "")
 				{ return 14; }
-				else if ( gc . field13 != null )
+				else if ( gc . field13 != null   && gc.field13 != "")
 				{ return 13; }
-				else if ( gc . field12 != null )
+				else if ( gc . field12 != null   && gc.field12 != "")
 				{ return 12; }
-				else if ( gc . field11 != null )
+				else if ( gc . field11 != null   && gc.field11 != "")
 				{ return 11; }
-				else if ( gc . field10 != null )
+				else if ( gc . field10 != null   && gc.field10 != "")
 				{ return 10; }
-				else if ( gc . field9 != null )
+				else if ( gc . field9 != null   && gc.field9 != "")
 				{ return 9; }
-				else if ( gc . field8 != null )
+				else if ( gc . field8 != null   && gc.field8 != "")
 				{ return 8; }
-				else if ( gc . field7 != null )
+				else if ( gc . field7 != null   && gc.field7!= "")
 				{ return 7; }
-				else if ( gc . field6 != null )
+				else if ( gc . field6 != null   && gc.field6!= "")
 				{ return 6; }
-				else if ( gc . field5 != null )
+				else if ( gc . field5 != null   && gc.field5 != "")
 				{ return 5; }
-				else if ( gc . field4 != null )
+				else if ( gc . field4 != null   && gc.field4 != "")
 				{ return 4; }
-				else if ( gc . field3 != null )
+				else if ( gc . field3 != null   && gc.field3 != "")
 				{ return 3; }
-				else if ( gc . field2 != null )
+				else if ( gc . field2 != null   && gc.field2 != "")
 				{ return 2; }
-				else if ( gc . field1 != null )
+				else if ( gc . field1 != null   && gc.field1 != "")
 				{ return 1; }
 				return 0;
 			} catch ( Exception ex )

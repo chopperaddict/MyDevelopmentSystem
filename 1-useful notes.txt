@@ -1,4 +1,163 @@
 ﻿===============================================================================================================
+	// How to use my  Flowdoc in any file
+===============================================================================================================
+
+//ALL METHODS to be added to source file :
+
+		// Flowdoc file wide variables
+		// Pointer to the special library FlowdocLib.cs
+		FlowdocLib fdl = new FlowdocLib();
+		private double XLeft=0;
+		private double YTop=0;
+
+		//Maximize hook  +/- statements
+		Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
+		Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
+
+	#region FlowDoc support
+		/// <summary>
+		///  These are the only methods any window needs to provide support for my FlowDoc system.
+
+		protected void MaximizeFlowDoc ( object sender , EventArgs e )
+		{
+			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
+			// or return to its original size and position courtesy of the Event declard in FlowDoc
+			fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
+		}
+		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			// Window wide  !!
+			// Called  when a Flowdoc MOVE has ended
+			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc, MovingObject, e );
+			ReleaseMouseCapture ( );
+		}
+		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//In this event, we get current mouse position on the control to use it in the MouseMove event.
+			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc,  e );
+		}
+
+		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
+		{
+			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
+			fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
+		}
+
+		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
+		{
+			Flowdoc . BorderClicked = false;
+		}
+		// Shortened version proxy call		
+		public void fdmsg ( string line1 , string line2 )
+		{
+			//We have to pass the Flowdoc.Name, and Canvas.Name as well as 2 strings of message
+			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 );
+		}
+
+		/ how tp call flowdoc
+		fdl.ShowInfo ( Flowdoc, canvas , $"The request for the default Bank Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid ..." ,
+				  "Blue3" ,
+				  "" ,
+				  "" ,
+				  "" ,
+				  "" ,
+				   "Default Bank Account data table" ,
+				    "Red3" );
+
+	     or just
+
+
+	    in the XAML files
+	    =============
+
+        in <Window 
+	  xmlns:user="clr-namespace:MyDev.UserControls" >
+	  <Grid>
+
+		// I suggest it is always named ""Flowdoc""
+
+		// You need to wrap the entire window area in a Canvas (I suggest it is named ""canvas"")
+		// Ensure it is set as Visibility="HIDDEN"
+		<Canvas x:Name="canvas" Grid.Row="0">
+				Canvas.Left="0" Canvas.Top="0">
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Height="{Binding Path=Height, ElementName=MainGrid}"
+				Width="{Binding Path=Width, ElementName=MainGrid}"
+				Panel.ZIndex="4"
+				Background="Transparent"
+MUST BE -		Visibility="Hidden">
+
+	    		<user:FlowDoc x:Name="Flowdoc"
+				backGround="{StaticResource Gray5}"
+				borderColor="{StaticResource Orange1}"
+				Canvas.Left="45"
+				Canvas.Top="64"
+				Height="300"
+				Margin="0 0 0 0"
+				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"
+				MouseMove="Flowdoc_MouseMove"
+				LostFocus="Flowdoc_LostFocus"
+				Opacity="1"
+				Panel.ZIndex="4"
+				PreviewMouseLeftButtonDown="LvFlowdoc_PreviewMouseLeftButtonDown"
+				Visibility="Hidden"
+				Width="520" />
+
+			</Canvas>
+					......  all other functionality goes here .....
+	</Grid>
+
+
+	#endregion FlowDoc support
+
+===============================================================================================================
+	// How to ensure that the Db Domain is correct BEFORE trying to access Stored Procedures or other Tables
+	// that are not in the default (IAN1) SQL domain used most f the time (Adventureworks etc)
+===============================================================================================================
+
+		private static void CheckDbDomain(string DbDomain="IAN1")
+
+===============================================================================================================
+	// How to access ICommands
+===============================================================================================================
+		// Declare it
+		// NB MUST have {get; set;} else it will NOT work
+		public ICommand CloseWindow { get; set; }
+		
+		// set it up in Constructor
+		CloseWindow = new RelayCommand ( ExecuteCloseWindow , CanExecuteCloseWindow );
+
+		// Provide ICommand methods as below
+		public void ExecuteCloseWindow(object arg)
+		public void CanExecuteCloseWindow(object arg)
+
+		// Make sure that the DataContext in XAML matches wherever the code above lives !!!
+
+===============================================================================================================
+	// How to access Viewmodels etc classes in the various  classes as needed
+===============================================================================================================
+	// Declare variables in class
+	PersonViewModel pvm;
+	...................mgm;
+	.........
+
+	// in the Loaded clause add the following :
+			pvm =  Resources [ "PersonViewmodel" ] as PersonViewModel;
+			mgm = Resources [ "MvvmGenModel"] as MvvmGenericModel ;
+			person = Resources [ "person" ] as Person;
+
+			// in The Main windows XAML add :-
+				<Window.Resources>
+					<view:MvvmViewModel x:Key="vm"/>
+					<viewmodels:PersonViewModel x:Key="PersonViewmodel"/>
+					<viewmodels:MvvmGenericModel x:Key="MvvmGenModel"/>
+					<model:Person x:Key="person"/>
+				</Window.Resources>
+
+				// Now you can access these live classes anytime you need to
+
+===============================================================================================================
 	// How to HOOK into a method in another control/usercontrol/w.h.y Events
 	// **** This could be used in many scenarios to allow "Remote" handling of other controls/Windows ****//
 ===============================================================================================================
@@ -967,7 +1126,8 @@ Height="{Binding Height, ElementName=Innergrid, Converter={StaticResource AddTop
 ===============================================================================================================
 /// How to pass a click event thru to end user of any UserControl
 ===============================================================================================================
-            / Must declare the event
+            // Host window
+		// Must declare the event
             public event RoutedEventHandler Click;
 
 		//Setup handler to handle click event  from UserControl

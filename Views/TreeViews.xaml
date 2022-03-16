@@ -10,8 +10,11 @@
 	  KeyDown="Window_KeyDown"
 	  xmlns:behaviors="clr-namespace:MyDev.ViewModels"
         mc:Ignorable="d"
-	  Loaded="Window_Loaded"
-        Title="Tree Views" Height="450" Width="1260">
+	  Loaded="Window_Loaded"  
+	  Name="TREEViews"
+  	  ResizeMode="CanResizeWithGrip"
+        Title="Tree Views" Height="450" Width="1080"
+	  MinHeight="450" MinWidth="1080">
 	<Window.Background>
 		<LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
 			<GradientStop Offset="0" Color="#FFAAAAAA" />
@@ -25,6 +28,7 @@
 	<Window.Resources>
 		<conv:BoolToYesNo x:Key="boolToYesNo"/>
 
+		<!--#region working styles-->
 		<Style x:Key="TreeViewItemFocusVisual">
 			<Setter Property="Control.Template">
 				<Setter.Value>
@@ -107,10 +111,10 @@
 							<MultiTrigger>
 								<MultiTrigger.Conditions>
 									<Condition Property="IsSelected" Value="true"/>
-									<Condition Property="IsSelectionActive" Value="false"/>
+									<!--<Condition Property="IsSelectionActive" Value="false"/>-->
 								</MultiTrigger.Conditions>
-								<Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-								<Setter Property="Foreground" Value="{StaticResource White0}"/>
+								<Setter TargetName="Bd" Property="Background" Value="{StaticResource White0}"/>
+								<Setter Property="Foreground" Value="{StaticResource Red5}"/>
 							</MultiTrigger>
 							<Trigger Property="IsEnabled" Value="false">
 								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
@@ -119,6 +123,210 @@
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
+		</Style>
+		<!--#endregion working styles-->
+
+		<SolidColorBrush x:Key="GlyphBrush" Color="#444" />
+
+		<!--// Togglebutton style - WORKS !-->
+		<Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
+			<Setter Property="Focusable" Value="False"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ToggleButton">
+						<Grid
+							Width="25"
+							Height="25"
+							Background="Transparent">
+							<Path x:Name="ExpandPath"
+								HorizontalAlignment="Left" 
+								VerticalAlignment="Center" 
+								Margin="1,1,1,1"
+								Fill="{StaticResource Red5}"
+								Data="M 4 0 L 15 7 L 4 15 Z"/>
+							<!--Fill="{StaticResource GlyphBrush}"-->
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsChecked" Value="True">
+								<Setter Property="Data" TargetName="ExpandPath" Value="M 9 0 L 15 15 L 0 15 Z"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!--#region not in use-->
+		<!--// This controls the Togglebuton style above ...-->
+		<!--<Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+			<Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+			<Setter Property="Padding" Value="1,0,0,0"/>
+			<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+			<Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type TreeViewItem}">
+						<Grid >
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition MinWidth="25" Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
+							<ToggleButton x:Name="Expander"
+					                  Style="{StaticResource ExpandCollapseToggleStyle}" IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
+							<Border Name="Bd"
+								  Grid.Column="1"
+								  Background="{TemplateBinding Background}"
+								  BorderBrush="{TemplateBinding BorderBrush}"
+								  BorderThickness="{TemplateBinding BorderThickness}"
+								  Padding="{TemplateBinding Padding}">
+								<ContentPresenter x:Name="PART_Header"
+									    ContentSource="Header"
+									    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+									    VerticalAlignment="Center"/>
+							</Border>
+							<ItemsPresenter x:Name="ItemsHost"
+								Grid.Row="1"
+								Grid.Column="1"
+								Grid.ColumnSpan="2"/>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsExpanded" Value="false">
+								<Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+							</Trigger>
+							<Trigger Property="HasItems" Value="false">
+								<Setter TargetName="Expander" Property="Visibility" Value="Hidden"/>
+							</Trigger>
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="HasHeader" Value="false"/>
+									<Condition Property="Width" Value="Auto"/>
+								</MultiTrigger.Conditions>
+								<MultiTrigger.Setters>
+									<Setter TargetName="PART_Header" Property="MinWidth" Value="75"/>
+								</MultiTrigger.Setters>
+							</MultiTrigger>
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="HasHeader" Value="false"/>
+									<Condition Property="Height" Value="Auto"/>
+								</MultiTrigger.Conditions>
+								<MultiTrigger.Setters>
+									<Setter TargetName="PART_Header" Property="MinHeight" Value="25"/>
+								</MultiTrigger.Setters>
+							</MultiTrigger>
+							
+							-->
+		<!--<Trigger Property="IsSelected" Value="true">
+								<Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+							</Trigger>-->
+
+		<!--// These next 2 control color of ToggleButton when selected and/or focused-->
+		<!--
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="IsSelected" Value="true"/>
+									<Condition Property="IsSelectionActive" Value="false"/>
+								</MultiTrigger.Conditions>
+								<MultiTrigger.Setters>
+									<Setter TargetName="Bd" Property="Background" Value="{StaticResource Red5}"/>
+									<Setter Property="Foreground" Value="{StaticResource White0}"/>
+									<Setter Property="FontWeight" Value="Regular"/>
+								</MultiTrigger.Setters>
+							</MultiTrigger>
+							<MultiTrigger>
+								<MultiTrigger.Conditions>
+									<Condition Property="IsSelected" Value="true"/>
+									<Condition Property="IsSelectionActive" Value="true"/>
+								</MultiTrigger.Conditions>
+								<MultiTrigger.Setters>
+									<Setter TargetName="Bd" Property="Background" Value="{StaticResource Red5}"/>
+									<Setter Property="Foreground" Value="{StaticResource White0}"/>
+									<Setter Property="FontWeight" Value="DemiBold"/>
+								</MultiTrigger.Setters>
+							</MultiTrigger>
+
+							<Trigger Property="IsEnabled" Value="false">
+								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>-->
+
+		<!--#endregion not in use-->
+
+		<Style TargetType="{x:Type TreeViewItem}">
+			<Setter Property="HeaderTemplate">
+				<Setter.Value>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<!--<Image Width="20" Margin="3" 
+								 Source="{Binding 
+									RelativeSource={RelativeSource 
+									Mode=FindAncestor,
+									AncestorType={x:Type TreeViewItem}}, Path=Tag, 
+									Converter={x:Static conv:StringToImageConverter.Instance}, 
+									ConverterParameter=IsExpanded}"/>-->
+							<Image Width="20" Margin="3" 
+								 Source="{Binding 
+									RelativeSource={RelativeSource 
+									Mode=FindAncestor,
+									AncestorType={x:Type TreeViewItem}}, Path=Tag, 
+									Converter={x:Static conv:TreeviewItemToImage.Instance}}"/>
+							<!--XPath=IsExpanded}"/>-->
+
+							<!--<Image  Height="20" Width="20">
+								<Image.Source>
+
+									<MultiBinding Converter="{x:Static conv:StringToImageMultiConverter.Instance}">
+										<Binding Path="Tag" RelativeSource="{RelativeSource 
+											Mode=FindAncestor,
+											AncestorType={x:Type TreeViewItem}}" />
+										<Binding Path="IsExpanded" ElementName="TreeViewItem" />
+									</MultiBinding>
+								</Image.Source>
+							</Image>-->
+
+							<TextBlock VerticalAlignment="Center" Text="        "/>
+							<TextBlock VerticalAlignment="Center" Text="{Binding}"/>
+						</StackPanel>
+					</DataTemplate>
+				</Setter.Value>
+
+			</Setter>
+			<Style.Triggers>
+				<MultiTrigger>
+					<MultiTrigger.Conditions>
+						<Condition Property="IsSelected" Value="True"/>
+					</MultiTrigger.Conditions>
+					<MultiTrigger.Setters>
+						<Setter Property="Height" Value="25"/>
+						<Setter Property="Background" Value="{StaticResource Green1}"/>
+						<Setter Property="TextElement.Foreground" Value="{StaticResource White0}"/>
+						<Setter Property="MinWidth" Value="300"/>
+					</MultiTrigger.Setters>
+				</MultiTrigger>
+				<!--<MultiTrigger>
+					<MultiTrigger.Conditions>
+						<Condition Property="IsExpanded" Value="True"/>
+					</MultiTrigger.Conditions>
+					<MultiTrigger.Setters>
+						<Setter Property="Height" Value="25"/>
+						<Setter Property="Background" Value="{StaticResource Red5}"/>
+						<Setter Property="TextElement.Foreground" Value="{StaticResource White0}"/>
+						<Setter Property="MinWidth" Value="300"/>
+					</MultiTrigger.Setters>
+				</MultiTrigger>-->
+			</Style.Triggers>
 		</Style>
 
 	</Window.Resources>
@@ -129,225 +337,122 @@
 	<Grid Margin="0,-2,1,2">
 
 		<Grid.RowDefinitions>
-			<!--<RowDefinition Height="5" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="5" />-->
+			<RowDefinition Height="5" />
+			<RowDefinition x:Name="row1" Height="3*" />
+			<RowDefinition Height="1.3*" />
+
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="5" />
-			<ColumnDefinition Width="200" />
-			<ColumnDefinition Width="250" />
 			<ColumnDefinition Width="350" />
-			<ColumnDefinition x:Name="col4" Width="450" />
-			<ColumnDefinition Width="10" />
+			<ColumnDefinition x:Name="col3" Width="350" />
+			<ColumnDefinition x:Name="col4" Width="1*" />
+			<ColumnDefinition Width="5" />
 		</Grid.ColumnDefinitions>
 		<!--#region TreeViews-->
 
-		<TreeView x:Name="treeView1" 
-			    Grid.Column="1"
-			    Margin="0,0,0,132" 
-			    Background="Yellow" 
-			    BorderThickness="1"
-			    BorderBrush="{StaticResource Red4}"
-			    FontSize="16"
-			    Foreground="White"
-			    SelectedItemChanged="treeView1_SelectedItemChanged"
-			    HorizontalAlignment="Left"
-			    Width="200">
-			<TreeViewItem Header="Cold Drinks" IsExpanded="True">
-				<TreeViewItem Header="Coke"/>
-				<TreeViewItem Header="Pepsi"/>
-				<TreeViewItem Header="Orange Juice"/>
-				<TreeViewItem Header="Milk"/>
-				<TreeViewItem Header="Iced Tea"/>
-				<TreeViewItem Header="Mango Shake"/>
-			</TreeViewItem>
-			<TreeViewItem Header="Hot Drinks" IsExpanded="True">
-				<TreeViewItem Header="Tea"/>
-				<TreeViewItem Header="Coffee"/>
-			</TreeViewItem>
-			<TreeViewItem Name="Child1" IsExpanded="True">
-				<TreeViewItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<Image Source="/Icons/redcross.png" Height="30"></Image>
-						<TextBlock Text="Ice Creams"></TextBlock>
-					</StackPanel>
-				</TreeViewItem.Header>
-				<TreeViewItem Header="Plain Vanilla"/>
-				<TreeViewItem Header="Chocolate"/>
-				<TreeViewItem Header="Orange"/>
-			</TreeViewItem>
-		</TreeView>
+		<!--#region Disk Directory tree-->
+		<!--// Uses default style in Resources !!!-->
+		<!--ItemsSource="{Binding DirectoryItemViewModel}"-->
+		<TreeView x:Name="treeViewModel" 
+				Grid.Column="1" 			    
+				Grid.Row="1"
+				Background="{StaticResource Yellow3}"
+				FontSize="18"
+				Foreground="White" 
+			    Padding="5 5 5 5"
+				SelectedItemChanged="treeViewModel_SelectedItemChanged"
+				TreeViewItem.Expanded="treeViewModel_Expanded"
+				TreeViewItem.Collapsed="treeViewModel_Collapsed"
+				TreeViewItem.Selected="treeViewModel_Selected"
+				HorizontalAlignment="Center" 
+				ScrollViewer.HorizontalScrollBarVisibility="Auto"
+				ScrollViewer.VerticalScrollBarVisibility="Auto"
+				Width="320" >
 
-		<!--// HIDDEN-->
-		<TreeView x:Name="treeView2" 				
-			    Grid.Column="2"
-			    Margin="258,19,485,133" 
-				Background="{StaticResource Blue0}" 
-				BorderBrush="{StaticResource White0}"
-				FontSize="16"
-				Foreground="{StaticResource White0}"
-			    SelectedItemChanged="treeView2_SelectedItemChanged"
-			    Visibility="Hidden">
-			<!--<TreeViewItem Header="Cold Drinks" 
-					  IsExpanded="False" 
-					  Foreground="{StaticResource White0}">
-				<TreeViewItem Header="Coke"
-					Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Pepsi"
-						Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Orange Juice"
-						Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Milk"
-						Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Iced Tea"
-						Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Mango Shake"
-						Foreground="{StaticResource White0}"/>
-			</TreeViewItem>
-
-			<TreeViewItem Header="Hot Drinks" 
-					IsExpanded="True"
-					Foreground="{StaticResource White0}">
-
-				<TreeViewItem Header="Tea"
-						Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Coffee"
-						Foreground="{StaticResource White0}"/>
-			</TreeViewItem>
-
-			<TreeViewItem Name="Icecreams" Foreground="{StaticResource White0}" IsExpanded="True">
-				<TreeViewItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<Image Source="/Icons/redcross.png" Height="30"/>
-						<TextBlock Text="Ice Creams"/>
-					</StackPanel>
-				</TreeViewItem.Header>
-				<TreeViewItem Header="Plain Vanilla" Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Chocolate" Foreground="{StaticResource White0}"/>
-				<TreeViewItem Header="Orange" Foreground="{StaticResource White0}"/>
-			</TreeViewItem>-->
-		</TreeView>
-
-
-		<!--DataType="{x:Type self:MenuItem}"-->
-		<!--behaviors:TreeViewSelectedItemExBehavior.SelectedItemEx="{Binding SelectedItemTreeViewSs}">-->
-		<TreeView Name="treeView3" 
-			    Grid.Column="2"
-			    Margin="0,0,0,132" 
-			    Background="LightGreen"
-			    MouseDoubleClick="treeView3_MouseDoubleClick" 
-			    SelectedItemChanged="treeView3_SelectedItemChanged"
-			    Width="240" HorizontalAlignment="Right">
-
-			<TreeView.Resources>
-				<!--<Style x:Key="xxx">
-					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-					<Style.Triggers>
-						<Trigger Property="IsSelected" Value="True">
-							<Setter Property="FontWeight" Value="Bold" />
-						</Trigger>
-					</Style.Triggers>
-				</Style>-->
-				<!--// How to use Hierarchcal Templates-->
-				<HierarchicalDataTemplate DataType="{x:Type local:Family}" ItemsSource="{Binding Members}">
-					<StackPanel Orientation="Horizontal">
-						<Image Source="/WpfTutorialSamples;component/Images/group.png" Margin="0,0,5,0" 
-								 />
-						<TextBlock Text="{Binding Name}" />
-						<TextBlock Text=" [" Foreground="Blue" />
-						<TextBlock Text="{Binding Members.Count}" Foreground="Blue" />
-						<TextBlock Text="]" Foreground="Blue" />
-					</StackPanel>
-				</HierarchicalDataTemplate>
-				<DataTemplate DataType="{x:Type local:FamilyMember}">
-					<Grid 
-						PreviewMouseLeftButtonDown="tv3Item_PreviewMouseLeftButtonDown">
-						<Grid.RowDefinitions>
-							<RowDefinition Height =" 20"/>
-							<RowDefinition Height ="40"/>
-						</Grid.RowDefinitions>
-
-						<StackPanel x:Name="Membername" Orientation="Horizontal" Grid.Row="0"
-								PreviewMouseLeftButtonDown="tv3Item_PreviewMouseLeftButtonDown" Tag="{Binding Name}">
-							<TextBlock Text="{Binding Name}" />
-							<TextBlock Text=" (" Foreground="Green" />
-							<TextBlock Text="{Binding Age}" Foreground="Green" />
-							<TextBlock Text=" years)" Foreground="Green" />
-						</StackPanel>
-
-						<StackPanel Orientation="Vertical" Grid.Row="1">
-							<StackPanel Orientation="Horizontal" >
-								<Image Source="/Icons/greencross.png" Width="15" Height="15" Margin="0,0,5,0" />
-								<TextBlock Text="Gender : "/>
-								<TextBlock Text="{Binding Gender}" Foreground="Red" />
-							</StackPanel>
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Text="Employed :  "/>
-								<TextBlock Text="{Binding Path=Employed, Converter={StaticResource boolToYesNo}}"  Foreground="{StaticResource Orange0}" />
-							</StackPanel>
-						</StackPanel>
-					</Grid>
-					<DataTemplate.Triggers>
-						<!--<MultiTrigger>
-							<MultiTrigger.Conditions>
-								<Condition Property="IsSelected" Value="true"/>
-							</MultiTrigger.Conditions>
-							<MultiTrigger.Setters>
-								<Setter Property="{Binding Path=tv3SelectedItem, RelativeSource={RelativeSource Self}}" Value="true"	/>
-							</MultiTrigger.Setters>
-						</MultiTrigger>-->
-					</DataTemplate.Triggers>
-				</DataTemplate>
-			</TreeView.Resources>
 		</TreeView>
 
 		<TreeView x:Name="treeView4" 
-			Grid.Column="4"
-			Margin="0,0,10,132" 
-			Background="Green"
-			FontSize="14"
-			Foreground="White"
-			MouseDoubleClick="treeView3_MouseDoubleClick" 
-			SelectedItemChanged="treeView4_SelectedItemChanged"
-			TreeViewItem.Expanded="TreeViewItem_Expanded"
-			TreeViewItem.Selected="treeView4_Selected"
-			HorizontalAlignment="Left" 
-			    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-			    ScrollViewer.VerticalScrollBarVisibility="Auto"
-			    VerticalAlignment="Top"
-			    Height="Auto"
-			    Width="Auto">
-
-			<TreeViewItem Style="{StaticResource TreeViewStyle1}" Height="295" Width="454"/>
-
+			    DataContext="{Binding this}"
+				Grid.Column="3" 			    
+				Grid.Row="1"
+			    MouseDoubleClick="treeView4_MouseDoubleClick"
+				Background="Green"
+				FontSize="16"
+				Foreground="White" 
+			    Padding="5 5 5 5"
+				SelectedItemChanged="treeView4_SelectedItemChanged"
+				TreeViewItem.Expanded="TreeViewItem4_Expanded"
+				TreeViewItem.Collapsed="treeView4_Collapsed"
+				HorizontalAlignment="Stretch" 
+				ScrollViewer.HorizontalScrollBarVisibility="Auto"
+				ScrollViewer.VerticalScrollBarVisibility="Auto" 
+				TreeViewItem.Selected="treeView4_Selected"
+			    Height="{Binding row1.Height}"
+			    Width="{Binding Path=Width, ElementName=col4}"
+				>
+			<!--<ToggleButton Style="{StaticResource ExpandCollapseToggleStyle}"/>-->
 		</TreeView>
+		<!--#endregion Disk Directory tree-->
+
 		<!--#endregion TreeViews-->
 
-		<ListBox x:Name="listBox" 
-			    Grid.Column="3"
-			    Margin="10,0,8,132" 
-			Background="{StaticResource White4}"
-			/>
+		<Grid Grid.Row="1"  Grid.Column="2" Grid.ColumnSpan="1" MinHeight="250" >
 
-		<TextBox x:Name="Textbox" 
+			<Grid.RowDefinitions>
+				<RowDefinition Height="25" />
+				<RowDefinition Height="274.33" />
+			</Grid.RowDefinitions>
+			<TextBlock x:Name="CurrentFolder"
+				Text="Current Folder Contents" 
+				     Grid.Row="0"				   
+				     Background="Red" 
+				     Foreground="White" 
+				     HorizontalAlignment="Center"
+				     TextAlignment="Center"
+				     Padding="0 5 0 0" 
+				     MinWidth="249"
+				     Height="25" Width="494"/>
+
+			<ListBox x:Name="listBox" 
+				     Grid.Row="1"
+				Margin="0,5,12,0" 
+				Background="{StaticResource White4}"
+			/>
+			<!--MinHeight="235"-->
+		</Grid>
+
+		<Button x:Name="Test" 
+			  Grid.Column="1"
+			Grid.Row="2"
+			  Margin="0,0,2,71" 
+			  Click="TestViewModel"
+			  Content="{Binding Test}"
+			  Foreground="White"
+			  Height="40" 
+			  HorizontalAlignment="Right"
+			  Template="{StaticResource HorizontalGradientTemplateYellow}"
+			  VerticalAlignment="Bottom"
+			  Width="100"/>
+
+		<!--<TextBox x:Name="Textbox" 
 			    Grid.Column="1"
+			Grid.Row="2"
 			    Margin="0,0,0,20" 
 			   Background="Aqua"
 			   Foreground="Black"
 			   Height="25"
 			   HorizontalAlignment="Left"
-			   Width="230"
+			   Width="200"
 			   VerticalAlignment="Bottom"
-			   />
+			   />-->
 
 		<!--#region buttons-->
 
-		<Button x:Name="AddItem" 
-			    Grid.Column="1"
-			    Margin="0,0,0,72" 
+		<!--<Button x:Name="AddItem" 
+			    Grid.Column="3"
+			Grid.Row="2"
+			    Margin="248,0,0,69" 
 				Click="AddItem_Click"			  
 				Content="Add"
 				Foreground="White"
@@ -355,11 +460,12 @@
 				HorizontalAlignment="Left"
 				Template="{StaticResource HorizontalGradientTemplateGreen}"
 				VerticalAlignment="Bottom"
-				Width="89"/>
+				Width="89" RenderTransformOrigin="10.697,0.525"/>-->
 
-		<Button x:Name="DeleteItem" 
-			    Grid.Column="1"
-			    Margin="109,0,0,72" 
+		<!--<Button x:Name="DeleteItem" 
+			    Grid.Column="3"
+			Grid.Row="2"
+			    Margin="249,0,0,18" 
 				Click="DeleteItem_Click"
 				Content="Delete"
 				Foreground="White"
@@ -367,9 +473,10 @@
 				HorizontalAlignment="Left"
 			     Template="{StaticResource HorizontalGradientTemplateRed}"
 				VerticalAlignment="Bottom"	
-				 Width="89"/>
+				 Width="89"/>-->
 		<Button x:Name="AllCloseBtn" 
-			    Grid.Column="4"
+			    Grid.Column="3"
+			Grid.Row="2"
 			    Margin="0,0,11,12" 
 			     Click="App_Close"
 			     Content="Close App"
@@ -380,19 +487,21 @@
 			     VerticalAlignment="Bottom"
 			     Width="110" />
 		<Button x:Name="Close_Copy" 
-			    Grid.Column="4"
-			    Margin="202,0,0,12" 
+			    Grid.Column="3"
+			Grid.Row="2"
+			    Margin="0,0,129,12" 
 			  Click="Close_Btn"
 			  Content="Close"
 			  Foreground="{StaticResource ResourceKey=White0}"
 			  Height="40" 
-			  HorizontalAlignment="Left"
+			  HorizontalAlignment="Right"
 			  Template="{StaticResource HorizontalGradientTemplateGreen}"
 			  VerticalAlignment="Bottom"
-			  Width="110" RenderTransformOrigin="6.2,0.6"   />
+			  Width="110"  />
 		<Button x:Name="Expand_All" 
-			    Grid.Column="2"
-			    Margin="16,0,0,70" 
+			    Grid.Column="3"
+			Grid.Row="2"
+			    Margin="4,0,0,78" 
 			  Click="ExpandAll"
 			  Content="Expand All"
 			  Foreground="White"
@@ -401,47 +510,44 @@
 			  Template="{StaticResource HorizontalGradientTemplateGreen}"
 			  VerticalAlignment="Bottom"
 			  Width="100"/>
-		<Button x:Name="Contract_All_Copy" 
-			  Grid.Column="2"
-			  Margin="0,0,2,68" 
-			  Click="ContractAll"
-			  Content="Contract All"
-			  Foreground="White"
-			  Height="40" 
-			  HorizontalAlignment="Right"
-			  Template="{StaticResource HorizontalGradientTemplateYellow}"
-			  VerticalAlignment="Bottom"
-			  Width="100"/>
 		<!--#endregion buttons-->
 
 		<TextBox x:Name="Selection" 
-			    Grid.Column="2"
-			   Grid.ColumnSpan="2"
-			    Margin="10,0,0,20" 
+			    Grid.Column="1"
+			Grid.Row="2"
+			   Grid.ColumnSpan="4"
+			    Margin="0,0,263,17" 
 			Background="{StaticResource Red5}"
 			Foreground="White"
 			Height="25"
-			HorizontalAlignment="Right"
+			HorizontalAlignment="Left"
 			HorizontalContentAlignment="Center"
-			Width="361"
+			   Padding="0 3 0 0"
+			Width="782"
+			   Text="Information panel ..."
 			VerticalAlignment="Bottom"
 			   />
 		<CheckBox x:Name="ShowallFiles" IsChecked="false"
-			    Grid.Column="4"
+			    Grid.Column="2"
+			Grid.Row="2"
 			    Click="ShowallFiles_Click"
-			    Content="Show ALL Files"
+			    Content="Show ALL Files. including Hidden"
 			    FontSize="18"
-			    Margin="31,325,269,69"/>
+			    Padding="0 3 0 0"
+			    Margin="25,0,149,87"
+			    VerticalAlignment="Bottom"/>
+
 		<Button x:Name="Close_Copy1" 
-	  Grid.Column="4"
-	  Margin="337,0,0,79" 
-	  Click="Refresh_Btn"
-	  Content="Refresh"
-	  Foreground="{StaticResource ResourceKey=White0}"
-	  Height="40" 
-	  HorizontalAlignment="Left"
-	  Template="{StaticResource HorizontalGradientTemplateGreen}"
-	  VerticalAlignment="Bottom"
-	  Width="110" RenderTransformOrigin="6.2,0.6"   />
+			  Grid.Column="3"
+			Grid.Row="2"
+			  Margin="0,0,6,81" 
+			  Click="Refresh_Btn"
+			  Content="Refresh"
+			  Foreground="{StaticResource ResourceKey=White0}"
+			  Height="40" 
+			  HorizontalAlignment="Right"
+			  Template="{StaticResource HorizontalGradientTemplateGreen}"
+			  VerticalAlignment="Bottom"
+			  Width="110"   />
 	</Grid>
 </Window>

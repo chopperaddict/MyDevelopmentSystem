@@ -8,9 +8,10 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="\Dicts\ColorsDictionary.xaml" />
 				<ResourceDictionary Source="\Dicts\ButtonsMaster.xaml" />
-				<ResourceDictionary Source="\MyStyles\ListBoxViewStyles.xaml"/>
+				<ResourceDictionary Source="\ViewModels\ListBoxViewStyles.xaml"/>
 				<ResourceDictionary Source="\Dicts\AppButtonsDictionary.xaml"/>
-				<ResourceDictionary Source="\MyStyles\MenuStyles.xaml"/>
+				<ResourceDictionary Source="\ViewModels\MenuStyles.xaml"/>
+				<ResourceDictionary Source="\ViewModels\MvvmStyles.xaml"/>
 				<ResourceDictionary Source="\DataTemplates\BankDataTemplates.xaml"/>
 				<ResourceDictionary Source="\DataTemplates\CustomerDataTemplates.xaml"/>
 				<ResourceDictionary Source="\DataTemplates\GenericDataTemplates.xaml"/>

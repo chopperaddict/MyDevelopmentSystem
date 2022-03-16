@@ -1,4 +1,5 @@
 ﻿using MyDev . Dapper;
+using MyDev . Models;
 using MyDev . Sql;
 using MyDev . SQL;
 using MyDev . UserControls;
@@ -116,14 +117,13 @@ namespace MyDev . Views
 		private string CurrentSPDb { get; set; }
 		private string SqlCommand="";
 		private string DefaultSqlCommand="Select * from BankAccount";
-		//		string Nwconnection = "NorthwindConnectionString";
 		string CurrentDbName = "IAN1";
 		string CurrentTableName="BANKACCOUNT";
 		string CurrentDataTable = "";
 
 		public static string CurrentSqlConnection = "BankSysConnectionString";
 		public static Dictionary <string, string> DefaultSqlCommands = new Dictionary<string, string>();
-
+		public FlowdocLib fdl = new FlowdocLib();
 		#endregion  Public variables
 
 		#region private variables
@@ -139,10 +139,10 @@ namespace MyDev . Views
 		private bool  TvMouseCaptured = false;
 
 		// These ARE used
-		private  double flowdocHeight=0;
-		private  double flowdocWidth=0;
-		private  double flowdocTop=0;
-		private  double flowdocLeft=0;
+		//private  double flowdocHeight=0;
+		//private  double flowdocWidth=0;
+		//private  double flowdocTop=0;
+		//private  double flowdocLeft=0;
 		private double XLeft=0;
 		private double YTop=0;
 		private bool Startup = false;
@@ -150,28 +150,33 @@ namespace MyDev . Views
 		private bool Usetimer = true;
 		private bool ComboSelectionActive = false;
 		private static Stopwatch timer = new Stopwatch();
+		public Colorpicker ColorPickerObject = new Colorpicker();
 		//Datagrids dGrids = new Datagrids();
 
 		//Variables  for resizing FlowDoc
 		// Needed to be global to improve performance!
-		private double newWidth=0;
-		private double newHeight =0;
-		private double YDiff = 0;
-		private double XDiff = 0;
-		private double FdLeft = 0;
-		private double FdTop =0;
-		private double FdHeight=0;
-		private double FdWidth=0;
-		private double MLeft=0;
-		private double MTop=0;
-		private bool CornerDrag = false;
-		private double FdBorderWidth=0;
-		private double FdBottom =0;
-		private double ValidTop = 0;
-		private double ValidBottom =0;
-		Thickness th = new Thickness(0,0,0,0);
+		//private double newWidth=0;
+		//private double newHeight =0;
+		//private double YDiff = 0;
+		//private double XDiff = 0;
+		//private double FdLeft = 0;
+		//private double FdTop =0;
+		//private double FdHeight=0;
+		//private double FdWidth=0;
+		//private double MLeft=0;
+		//private double MTop=0;
+		//private bool CornerDrag = false;
+		//private double FdBorderWidth=0;
+		//private double FdBottom =0;
+		//private double ValidTop = 0;
+		//private double ValidBottom =0;
+		//Thickness th = new Thickness(0,0,0,0);
+		Colorpicker ColorpickerObject = new Colorpicker();
+		private double  TvFirstXPos;
+		private double TvFirstYPos ;
+
 		#endregion private variables
-	
+
 		#region Full Properties
 
 		// Full properties used in Binding to I/f objects
@@ -179,13 +184,13 @@ namespace MyDev . Views
 		public int DbCountlb
 		{
 			get { return dbCountlb; }
-			set { dbCountlb = value; OnPropertyChanged ( "DbCountlb" ); Console . WriteLine ( $"DbCountlb set to {value}" ); }
+			set { dbCountlb = value; OnPropertyChanged ( "DbCountlb" ); } //Console . WriteLine ( $"DbCountlb set to {value}" ); }
 		}
 		private int dbCountlv;
 		public int DbCountlv
 		{
 			get { return dbCountlv; }
-			set { dbCountlv = value; OnPropertyChanged ( "DbCountlv" ); Console . WriteLine ( $"DbCountlv set to {value}" ); }
+			set { dbCountlv = value; OnPropertyChanged ( "DbCountlv" ); } //Console . WriteLine ( $"DbCountlv set to {value}" ); }
 		}
 
 		private bool ismouseDown;
@@ -200,50 +205,50 @@ namespace MyDev . Views
 			get { return movingobject; }
 			set { movingobject = value; }
 		}
-		private object Colorpickerobject;
-		public object ColorpickerObject
-		{
-			get { return Colorpickerobject; }
-			set { Colorpickerobject = value; }
-		}
+		//private object Colorpickerobject;
+		//public object ColorpickerObject
+		//{
+		//	get { return Colorpickerobject; }
+		//	set { Colorpickerobject = value; }
+		//}
 
-		private bool flowdocResizing;
-		public bool FlowdocResizing
-		{
-			get { return flowdocResizing; }
-			set { flowdocResizing = value; }
-		}
-		private double flowdocFloatingTop;
-		public double FlowdocFloatingTop
-		{
-			get { return flowdocFloatingTop; }
-			set { flowdocFloatingTop = value; }
-		}
-		private double flowdocFloatingLeft;
-		public double FlowdocFloatingLeft
-		{
-			get { return flowdocFloatingLeft; }
-			set { flowdocFloatingLeft = value; }
-		}
-		private double flowdocFloatingHeight;
-		public double FlowdocFloatingHeight
-		{
-			get { return flowdocFloatingHeight; }
-			set { flowdocFloatingHeight = value; }
-		}
-		private double flowdocFloatingWidth;
-		public double FlowdocFloatingWidth
-		{
-			get { return flowdocFloatingWidth; }
-			set { flowdocFloatingWidth = value; }
-		}
+		//private bool flowdocResizing;
+		//public bool FlowdocResizing
+		//{
+		//	get { return flowdocResizing; }
+		//	set { flowdocResizing = value; }
+		//}
+		//private double flowdocFloatingTop;
+		//public double FlowdocFloatingTop
+		//{
+		//	get { return flowdocFloatingTop; }
+		//	set { flowdocFloatingTop = value; }
+		//}
+		//private double flowdocFloatingLeft;
+		//public double FlowdocFloatingLeft
+		//{
+		//	get { return flowdocFloatingLeft; }
+		//	set { flowdocFloatingLeft = value; }
+		//}
+		//private double flowdocFloatingHeight;
+		//public double FlowdocFloatingHeight
+		//{
+		//	get { return flowdocFloatingHeight; }
+		//	set { flowdocFloatingHeight = value; }
+		//}
+		//private double flowdocFloatingWidth;
+		//public double FlowdocFloatingWidth
+		//{
+		//	get { return flowdocFloatingWidth; }
+		//	set { flowdocFloatingWidth = value; }
+		//}
 
 
 		private double CpFirstXPos=0;
 		private double CpFirstYPos=0;
 
-		private double TvFirstXPos=0;
-		private double TvFirstYPos = 0;
+		//private double TvFirstXPos=0;
+		//private double TvFirstYPos = 0;
 		#endregion Full Properties
 
 		//Data  for font size/rowheight
@@ -331,16 +336,16 @@ namespace MyDev . Views
 			CurrentDataTable = DataTemplatesLv . Items [ 0 ] . ToString ( );
 
 			// Hook into our Flowdoc so we can resize it in  the canvas !!!
-			// Flowdoc has an Event declared (ExecuteFlowDocSizeMethod ) that we are  hooking into
-			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( ParentWPF_method );
-			Flowdoc . ExecuteFlowDocResizeMethod += Flowdoc_ExecuteFlowDocResizeMethod;
+			// Flowdoc has an Event declared (ExecuteFlowDocReSizeMethod ) that we are  hooking into
+			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
+//			Flowdoc . ExecuteFlowDocResizeMethod += Flowdoc_ExecuteFlowDocResizeMethod;
 			Flowdoc . ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
 			Colorpicker . ExecuteSaveToClipboardMethod += Colorpicker_ExecuteSaveToClipboardMethod;
 
 			// LOAD BOTH VIEWERS (NO PARAMETER)
 			LoadGrid_IAN1 ( );
 			Startup = false;
-			ShowInfo ( header: "Load completed successfully" , clr4: "Red5" ,
+			ShowInfo ( Flowdoc, canvas, header: "Load completed successfully" , clr4: "Red5" ,
 				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 				line2: $"" ,
 				line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -359,6 +364,12 @@ namespace MyDev . Views
 			MouseoverSelectedForeground = Brushes . White;
 		}
 
+		//protected  void MaximizeFlowDoc ( object sender , EventArgs e )
+		//{
+		//	// Clever "Hook" method that Allows the flowdoc to be resized to fill window
+		//	// or return to its original size and position courtesy of the Event declard in FlowDoc
+		//	fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
+		//}
 
 		private void ListViewWindow_PreviewKeyDown ( object sender , KeyEventArgs e )
 		{
@@ -473,14 +484,14 @@ namespace MyDev . Views
 				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
 				if ( genaccts . Count > 0 )
 				{
-					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
 				}
 				else
 				{
-					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
@@ -545,14 +556,14 @@ namespace MyDev . Views
 				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
 				if ( genaccts . Count > 0 )
 				{
-					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
 				}
 				else
 				{
-					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
@@ -605,14 +616,14 @@ namespace MyDev . Views
 				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
 				if ( genaccts . Count > 0 )
 				{
-					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
 				}
 				else
 				{
-					ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
@@ -658,7 +669,7 @@ namespace MyDev . Views
 					listBox . Focus ( );
 					listView . Focus ( );
 				}
-				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
+				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
@@ -727,7 +738,7 @@ namespace MyDev . Views
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
 				}
-				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
+				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Secondary Accounts data table" );
@@ -794,7 +805,7 @@ namespace MyDev . Views
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "" , genaccts . Count );
 					}
-					ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+					fdl . ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 						line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 						line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -842,7 +853,7 @@ namespace MyDev . Views
 					listBox . SelectedIndex = 0;
 					listView . SelectedIndex = 0;
 				}
-				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {nwcustomeraccts . Count} records returned are displayed in the table below" , clr1: "Black0" ,
+				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {nwcustomeraccts . Count} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
@@ -966,7 +977,7 @@ namespace MyDev . Views
 						listBox . SelectedIndex = 0;
 					}
 				}
-				ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+				ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 					line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -1014,7 +1025,7 @@ namespace MyDev . Views
 					listBox . SelectedIndex = 0;
 					listView . SelectedIndex = 0;
 				}
-				ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {pubauthors . Count} records returned are displayed in the table below" , clr1: "Black0" ,
+				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {pubauthors . Count} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
@@ -1123,7 +1134,7 @@ namespace MyDev . Views
 							HandleCaption ( "" , genaccts . Count );
 							listBox . SelectedIndex = 0;
 						}
-						ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+						ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 							line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 							line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 							line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -1204,13 +1215,13 @@ namespace MyDev . Views
 		{
 			if ( LoadDbTables ( DbMain . SelectedItem . ToString ( ) ) == true )
 			{
-				ShowInfo ( header: "List of Tables in current Db reloaded successfully" , clr4: "Red5" ,
+				ShowInfo ( Flowdoc , canvas , header: "List of Tables in current Db reloaded successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3"
 					);
 			}
 			else
 			{
-				ShowInfo ( header: "List of Tables in current Db could not be reloaded" , clr4: "Red5" ,
+				ShowInfo ( Flowdoc , canvas , header: "List of Tables in current Db could not be reloaded" , clr4: "Red5" ,
 					line1: $"Request failed...!" , clr1: "Red3"
 					);
 			}
@@ -1853,43 +1864,44 @@ namespace MyDev . Views
 		#endregion Load List of Tables in current Db
 
 		#region FlowDoc support
-		private void ShowInfo ( string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
+		private void ShowInfo ( FlowDoc Flowdoc, Canvas canvas, string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
 		{
-			if ( UseFlowdoc == false )
-				return;
-			if ( UseFlowdocBeep == false )
-				beep = false;
-			Flowdoc . ShowInfo ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
-			canvas . Visibility = Visibility . Visible;
-			canvas . BringIntoView ( );
-			Flowdoc . Visibility = Visibility . Visible;
+			Flowdoc . ShowInfo (Flowdoc, canvas,  line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
+			//if ( UseFlowdoc == false )
+			//	return;
+			//if ( UseFlowdocBeep == false )
+			//	beep = false;
+			//Flowdoc . ShowInfo ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
+			//canvas . Visibility = Visibility . Visible;
+			//canvas . BringIntoView ( );
+			//Flowdoc . Visibility = Visibility . Visible;
 
-			if ( Flowdoc . KeepSize == false )
-			{
-				if ( Flowdoc . Height != flowdocFloatingHeight )
-					flowdocFloatingHeight = Flowdoc . Height;
-			}
-			var docheight = Convert.ToDouble ( flowdocFloatingHeight == 0 ? 250 : flowdocFloatingHeight);
-			var docwidth = Convert.ToDouble ( flowdocFloatingWidth == 0 ? 450 : flowdocFloatingWidth);
-			// Save properties
-			flowdocFloatingHeight = docheight;
-			flowdocFloatingWidth = docwidth;
-			flowdocFloatingTop = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
-			flowdocFloatingLeft = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
-			//Position Control on Canvas
-			double canvasheight = canvas.ActualHeight;
-			if ( docheight >= canvasheight )
-				Flowdoc . Height = canvasheight - 20;
-			// Set size of Control
-			Flowdoc . Width = flowdocFloatingWidth;
-			Flowdoc . Height = flowdocFloatingHeight;
+			//if ( Flowdoc . KeepSize == false )
+			//{
+			//	if ( Flowdoc . Height != flowdocFloatingHeight )
+			//		flowdocFloatingHeight = Flowdoc . Height;
+			//}
+			//var docheight = Convert.ToDouble ( flowdocFloatingHeight == 0 ? 250 : flowdocFloatingHeight);
+			//var docwidth = Convert.ToDouble ( flowdocFloatingWidth == 0 ? 450 : flowdocFloatingWidth);
+			//// Save properties
+			//flowdocFloatingHeight = docheight;
+			//flowdocFloatingWidth = docwidth;
+			//flowdocFloatingTop = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
+			//flowdocFloatingLeft = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
+			////Position Control on Canvas
+			//double canvasheight = canvas.ActualHeight;
+			//if ( docheight >= canvasheight )
+			//	Flowdoc . Height = canvasheight - 20;
+			//// Set size of Control
+			//Flowdoc . Width = flowdocFloatingWidth;
+			//Flowdoc . Height = flowdocFloatingHeight;
 
-			Flowdoc . BringIntoView ( );
-			if ( Flags . PinToBorder == true )
-			{
-				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-			}
+			//Flowdoc . BringIntoView ( );
+			//if ( Flags . PinToBorder == true )
+			//{
+			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
+			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+			//}
 		}
 
 		#region  Dependency properties
@@ -1911,282 +1923,185 @@ namespace MyDev . Views
 
 		#endregion  Dependency properties
 
-		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
-		{
-			// Called  when a Flowdoc MOVE has ended
-			ReleaseMouseCapture ( );
-			MovingObject = null;
-			FlowdocResizing = false;
-			Flowdoc . BorderClicked = false;
-			Flowdoc . BorderSelected = -1;
-			CornerDrag = false;
-			TvMouseCaptured = false;
-			FdLeft = FdTop = th . Left = 0;
-		}
-
-		private void LvFlowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		{
-			//double FdWidth=0;
-			//double FdHeight = 0;
-			//In this event, we get current mouse position on the control to use it in the MouseMove event.
-			Border border = e . OriginalSource as Border;
-			if ( border != null )
-			{
-				FlowdocResizing = true;
-				flowdocLeft = e . GetPosition ( Flowdoc ) . X;
-				flowdocTop = e . GetPosition ( Flowdoc ) . Y;
-				flowdocHeight = Flowdoc . ActualHeight;
-				flowdocWidth = Flowdoc . ActualWidth;
-				Flowdoc . CaptureMouse ( );
-				//flowdocWidth = border . ActualWidth;
-				//FdHeight = border . ActualHeight;
-				//flowdocTop= e . GetPosition ( Flowdoc ) . Y;
-				//flowdocLeft = e . GetPosition ( Flowdoc ) . X;
-				////MovingObject = sender;
-				return;
-			}
-			else
-			{
-				Button btn = sender as Button;
-				if ( btn != null )
-					return;
-			}
-			flowdocLeft = e . GetPosition ( Flowdoc ) . X;
-			flowdocTop = e . GetPosition ( Flowdoc ) . Y;
-			flowdocHeight = Flowdoc . ActualHeight;
-			flowdocWidth = Flowdoc . ActualWidth;
-			double currcursorH = e . GetPosition ( Flowdoc) . Y;
-			double currcursorW = e . GetPosition ( Flowdoc) . X;
-			CpFirstXPos = e . GetPosition ( sender as Control ) . X;
-			CpFirstYPos = e . GetPosition ( sender as Control ) . Y;
-			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - CpFirstXPos;
-			double FirstArrowYPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . Y - CpFirstYPos;
-			MovingObject = sender;
-			//if ( border != null )
-			//{
-			//	FlowdocResizing = true;
-			//	XLeft = e . GetPosition ( sender as Control ) . X;
-			//	XWidth = Flowdoc . Width;
-			//	YTop = e . GetPosition ( sender as Control ) . Y;
-			//	YHeight = Flowdoc . Height;
-
-			//	double Hdiff = XLeft - currcursorW;
-			//	double Vdiff = YTop - currcursorH;
-
-			//	if ( YTop - currcursorH <= 15 || YTop - currcursorH > 15 )
-			//		ResizeMode = 0;   // Height
-			//	else if ( XLeft - currcursorW <= 10 || XLeft - currcursorW > 10 )
-			//		ResizeMode = 1;   // Width
-			//}
-		}
-
-		private void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
-		{
-			// EVENTHANDLER to Handle resizing
-			FlowDoc fd = sender as FlowDoc;
-			Point pt = Mouse . GetPosition (canvas );
-			double dLeft = pt.X;
-			double dTop= pt.Y;
-			Console . WriteLine ( $"{pt . X}, {pt . Y}" );
-			if ( Flowdoc . BorderSelected == 1 )
-			{ //Top border
-			  //double left = (FlowDoc)Flowdoc.GetPosition () . X ;
-			  //				double top = fd . GetPosition ( ( Flowdoc as FrameworkElement ) . Parent as FrameworkElement ) . Y ;
-				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Top " );
-			}
-			else if ( Flowdoc . BorderSelected == 2 )
-			{ //Bottom border
-				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Bottom " );
-			}
-			else if ( Flowdoc . BorderSelected == 3 )
-			{ //Left border
-				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Left " );
-			}
-			else if ( Flowdoc . BorderSelected == 4 )
-			{ //Right border
-				Console . WriteLine ( $"Border = {Flowdoc . BorderSelected} - Right" );
-			}
-		}
-
 		#region Resize Flowdoc Window
-		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
-		{
-			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
-			//			MovingObject = sender;
-			if ( Flowdoc . BorderClicked )
-			{
-				// Get current sizes and position of Flowdoc windowo intilize our calculations
-				if ( FdLeft == 0 )
-					FdLeft = Canvas . GetLeft ( Flowdoc );
-				if ( FdTop == 0 )
-					FdTop = Canvas . GetTop ( Flowdoc );
-				FdHeight = Flowdoc . ActualHeight;
-				FdWidth = Flowdoc . ActualWidth;
-				//Get mouse cursor position
-				Point pt = Mouse . GetPosition (canvas );
-				MLeft = pt . X;
-				MTop = pt . Y;
-				//				if ( th . Left == 0 )
-				th = Flowdoc . FdBorder . BorderThickness;
-				FdBorderWidth = th . Left * 2;
-				FdBottom = FdTop + FdHeight;
-				ValidTop = FdBottom - ( FdBorderWidth / 2 );
-				ValidBottom = FdBottom + ( FdBorderWidth / 2 );
+		//private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
+		//{
+		//	// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
+		//	//			MovingObject = sender;
+		//	if ( Flowdoc . BorderClicked )
+		//	{
+		//		// Get current sizes and position of Flowdoc windowo intilize our calculations
+		//		if ( FdLeft == 0 )
+		//			FdLeft = Canvas . GetLeft ( Flowdoc );
+		//		if ( FdTop == 0 )
+		//			FdTop = Canvas . GetTop ( Flowdoc );
+		//		FdHeight = Flowdoc . ActualHeight;
+		//		FdWidth = Flowdoc . ActualWidth;
+		//		//Get mouse cursor position
+		//		Point pt = Mouse . GetPosition (canvas );
+		//		MLeft = pt . X;
+		//		MTop = pt . Y;
+		//		//				if ( th . Left == 0 )
+		//		th = Flowdoc . FdBorder . BorderThickness;
+		//		FdBorderWidth = th . Left * 2;
+		//		FdBottom = FdTop + FdHeight;
+		//		ValidTop = FdBottom - ( FdBorderWidth / 2 );
+		//		ValidBottom = FdBottom + ( FdBorderWidth / 2 );
 
-				if ( Flowdoc . BorderSelected == 1 )  // Top
-				{
-					// Top border - WORKING CORRECTLY
-					Canvas . SetTop ( Flowdoc , MTop );
-					YDiff = MTop - FdTop;
-					FdTop = MTop;
+		//		if ( Flowdoc . BorderSelected == 1 )  // Top
+		//		{
+		//			// Top border - WORKING CORRECTLY
+		//			Canvas . SetTop ( Flowdoc , MTop );
+		//			YDiff = MTop - FdTop;
+		//			FdTop = MTop;
 
-					newHeight = FdHeight - YDiff;
-					if ( newHeight < 200 )
-						newHeight = 200;
-					Flowdoc . Height = newHeight;
-					return;
-				}
-				else if ( Flowdoc . BorderSelected == 2 )
-				{     // Bottom border
-					newHeight = MTop - FdTop;
-					Flowdoc . Height = newHeight;
-					return;
-				}
-				else if ( Flowdoc . BorderSelected == 3 )
-				{
-					// Left hand side border  - WORKING CORRECTLY
-					XDiff = MLeft - FdLeft;
-					newWidth = FdWidth - XDiff;
-					if ( newWidth < 350 )
-						newWidth = 350;
-					Flowdoc . Width = newWidth;
-					Canvas . SetLeft ( Flowdoc , MLeft );
-					FdLeft = MLeft;
-					return;
-				}
-				// Right  border or right lower corner
-				else if ( Flowdoc . BorderSelected == 4 )
-				{
-					// Right hand side border  OR Top Right Corner 
-					if ( CornerDrag || MTop - FdTop <= FdBorderWidth || FdTop - MTop <= -FdBorderWidth )
-					{
-						//if ( MTop >= ValidTop && MTop <= ValidBottom)
-						if ( FdTop - MTop >= -FdBorderWidth )
-						{
-							// Top Right corner clicked	- working very well - resizes in BOTH directions
-							CornerDrag = true;
+		//			newHeight = FdHeight - YDiff;
+		//			if ( newHeight < 200 )
+		//				newHeight = 200;
+		//			Flowdoc . Height = newHeight;
+		//			return;
+		//		}
+		//		else if ( Flowdoc . BorderSelected == 2 )
+		//		{     // Bottom border
+		//			newHeight = MTop - FdTop;
+		//			Flowdoc . Height = newHeight;
+		//			return;
+		//		}
+		//		else if ( Flowdoc . BorderSelected == 3 )
+		//		{
+		//			// Left hand side border  - WORKING CORRECTLY
+		//			XDiff = MLeft - FdLeft;
+		//			newWidth = FdWidth - XDiff;
+		//			if ( newWidth < 350 )
+		//				newWidth = 350;
+		//			Flowdoc . Width = newWidth;
+		//			Canvas . SetLeft ( Flowdoc , MLeft );
+		//			FdLeft = MLeft;
+		//			return;
+		//		}
+		//		// Right  border or right lower corner
+		//		else if ( Flowdoc . BorderSelected == 4 )
+		//		{
+		//			// Right hand side border  OR Top Right Corner 
+		//			if ( CornerDrag || MTop - FdTop <= FdBorderWidth || FdTop - MTop <= -FdBorderWidth )
+		//			{
+		//				//if ( MTop >= ValidTop && MTop <= ValidBottom)
+		//				if ( FdTop - MTop >= -FdBorderWidth )
+		//				{
+		//					// Top Right corner clicked	- working very well - resizes in BOTH directions
+		//					CornerDrag = true;
 
-							YDiff = FdTop - MTop;
-							FdTop = MTop;
-							Canvas . SetTop ( Flowdoc , MTop );
-							// Handle Height
-							newHeight = FdHeight + YDiff;
-							if ( newHeight < 200 )
-								newHeight = 200;
-							Flowdoc . Height = FdHeight;
-							// handle width
-							newWidth = MLeft - FdLeft;
-							FdWidth = newWidth;
-							Flowdoc . Width = FdWidth;
-							Flowdoc . SetValue ( HeightProperty , newHeight );
-							Flowdoc . SetValue ( WidthProperty , newWidth );
-							return;
-						}
-						else if (
-							( ( FdTop + FdHeight - MTop >= FdBorderWidth )
-							|| ( FdTop + FdHeight - MTop <= FdBorderWidth ) )
-							&& ( MTop > FdBorderWidth + FdBorderWidth + 5 )
-							)
-						{
-							// Right Border or Lower Right corner
-							if ( MTop >= ValidTop - th . Left && MTop <= ValidBottom + th . Left )
-							{     // WORKING 23/2//2022
-								// Pointer is in lower right corner, so drag both ways
-								CornerDrag = true;
-								// Reset height.  Mouse is at bottom right, so pinpoint where iti s in real terms
-								double mouseposY = FdTop + FdHeight;
-								YDiff = MTop - FdTop - FdHeight;
-								newHeight = FdHeight + YDiff;// - FdLeft;
-								Flowdoc . Height = newHeight;
-								if ( newHeight < 0 )
-									return;
-								//Reset width - WORKING
-								newWidth = MLeft - FdLeft;
-								Flowdoc . Width = newWidth;
-								Flowdoc . SetValue ( HeightProperty , newHeight );
-								Flowdoc . SetValue ( WidthProperty , newWidth );
-								return;
-							}
-							else
-							{     // WORKING 23/2//2022
-								// Just dragging right border	    
-								newWidth = MLeft - FdLeft;
-								Flowdoc . Width = newWidth;
-								Flowdoc . SetValue ( WidthProperty , newWidth );
-								CornerDrag = true;
-								return;
-							}
-						}
-						else
-						{
-							// just dragging right border WORKING CORRECTLY  for right border
-							newWidth = MLeft - FdLeft;
-							Flowdoc . Width = newWidth;
-							Flowdoc . SetValue ( WidthProperty , newWidth );
-							CornerDrag = true;
-							return;
-						}
-					}
-					else if ( CornerDrag || MTop - FdTop + FdHeight <= FdBorderWidth )
-					{
-						if ( ( FdTop + FdHeight - MTop ) >= -FdBorderWidth )
-						{
-							if ( FdTop - MTop >= -FdBorderWidth )
-							{
-								// Bottom Right corner clicked
-								CornerDrag = true;
-								Canvas . SetTop ( Flowdoc , FdTop );
-								newHeight = FdHeight - YDiff;
-								if ( newHeight < 0 )
-									return;
-								XDiff = ( MLeft - FdWidth ) - FdLeft;
-								Flowdoc . Width += XDiff;
-								Flowdoc . Refresh ( );
-								return;
-							}
-						}
-					}
-					else
-					{
-						// if we get here, we are only draggig the RIGHT Border of the window to change it's with
-						newWidth = MLeft - FdLeft;// - FdLeft;
-						Flowdoc . Width = newWidth;
-					}
-				}
-				return;
-			}
-			else
-			{
-				var obj = MovingObject as FlowDoc;
-				if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed && Flowdoc . BorderClicked == false )
-				{
-					// MOVING WINDOW around the Parent window (MDI ?)
-					// Get mouse position IN FlowDoc !!
-					double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - CpFirstXPos ;
-					double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - CpFirstYPos ;
-					double trueleft = left - CpFirstXPos;
-					double truetop = left - CpFirstYPos;
-					if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
-						( MovingObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
-					if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
-						( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
-				}
-				else if ( FlowdocResizing == false )
-				{
-					int x = 0;
-				}
-			}
-		}
+		//					YDiff = FdTop - MTop;
+		//					FdTop = MTop;
+		//					Canvas . SetTop ( Flowdoc , MTop );
+		//					// Handle Height
+		//					newHeight = FdHeight + YDiff;
+		//					if ( newHeight < 200 )
+		//						newHeight = 200;
+		//					Flowdoc . Height = FdHeight;
+		//					// handle width
+		//					newWidth = MLeft - FdLeft;
+		//					FdWidth = newWidth;
+		//					Flowdoc . Width = FdWidth;
+		//					Flowdoc . SetValue ( HeightProperty , newHeight );
+		//					Flowdoc . SetValue ( WidthProperty , newWidth );
+		//					return;
+		//				}
+		//				else if (
+		//					( ( FdTop + FdHeight - MTop >= FdBorderWidth )
+		//					|| ( FdTop + FdHeight - MTop <= FdBorderWidth ) )
+		//					&& ( MTop > FdBorderWidth + FdBorderWidth + 5 )
+		//					)
+		//				{
+		//					// Right Border or Lower Right corner
+		//					if ( MTop >= ValidTop - th . Left && MTop <= ValidBottom + th . Left )
+		//					{     // WORKING 23/2//2022
+		//						// Pointer is in lower right corner, so drag both ways
+		//						CornerDrag = true;
+		//						// Reset height.  Mouse is at bottom right, so pinpoint where iti s in real terms
+		//						double mouseposY = FdTop + FdHeight;
+		//						YDiff = MTop - FdTop - FdHeight;
+		//						newHeight = FdHeight + YDiff;// - FdLeft;
+		//						Flowdoc . Height = newHeight;
+		//						if ( newHeight < 0 )
+		//							return;
+		//						//Reset width - WORKING
+		//						newWidth = MLeft - FdLeft;
+		//						Flowdoc . Width = newWidth;
+		//						Flowdoc . SetValue ( HeightProperty , newHeight );
+		//						Flowdoc . SetValue ( WidthProperty , newWidth );
+		//						return;
+		//					}
+		//					else
+		//					{     // WORKING 23/2//2022
+		//						// Just dragging right border	    
+		//						newWidth = MLeft - FdLeft;
+		//						Flowdoc . Width = newWidth;
+		//						Flowdoc . SetValue ( WidthProperty , newWidth );
+		//						CornerDrag = true;
+		//						return;
+		//					}
+		//				}
+		//				else
+		//				{
+		//					// just dragging right border WORKING CORRECTLY  for right border
+		//					newWidth = MLeft - FdLeft;
+		//					Flowdoc . Width = newWidth;
+		//					Flowdoc . SetValue ( WidthProperty , newWidth );
+		//					CornerDrag = true;
+		//					return;
+		//				}
+		//			}
+		//			else if ( CornerDrag || MTop - FdTop + FdHeight <= FdBorderWidth )
+		//			{
+		//				if ( ( FdTop + FdHeight - MTop ) >= -FdBorderWidth )
+		//				{
+		//					if ( FdTop - MTop >= -FdBorderWidth )
+		//					{
+		//						// Bottom Right corner clicked
+		//						CornerDrag = true;
+		//						Canvas . SetTop ( Flowdoc , FdTop );
+		//						newHeight = FdHeight - YDiff;
+		//						if ( newHeight < 0 )
+		//							return;
+		//						XDiff = ( MLeft - FdWidth ) - FdLeft;
+		//						Flowdoc . Width += XDiff;
+		//						Flowdoc . Refresh ( );
+		//						return;
+		//					}
+		//				}
+		//			}
+		//			else
+		//			{
+		//				// if we get here, we are only draggig the RIGHT Border of the window to change it's with
+		//				newWidth = MLeft - FdLeft;// - FdLeft;
+		//				Flowdoc . Width = newWidth;
+		//			}
+		//		}
+		//		return;
+		//	}
+		//	else
+		//	{
+		//		var obj = MovingObject as FlowDoc;
+		//		if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed && Flowdoc . BorderClicked == false )
+		//		{
+		//			// MOVING WINDOW around the Parent window (MDI ?)
+		//			// Get mouse position IN FlowDoc !!
+		//			double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - CpFirstXPos ;
+		//			double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - CpFirstYPos ;
+		//			double trueleft = left - CpFirstXPos;
+		//			double truetop = left - CpFirstYPos;
+		//			if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
+		//				( MovingObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
+		//			if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
+		//				( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
+		//		}
+		//		else if ( FlowdocResizing == false )
+		//		{
+		//			int x = 0;
+		//		}
+		//	}
+		//}
 
 		#endregion Resize Flowdoc Window
 
@@ -2521,8 +2436,8 @@ namespace MyDev . Views
 				flowdocswitch = true;
 				UseFlowdoc = true;
 			}
-			Console . WriteLine ( $"loaded {count} records for table columns" );
-			ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+			//Console . WriteLine ( $"loaded {count} records for table columns" );
+			ShowInfo ( Flowdoc, canvas, header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 				line2: $"the structure of the table [{dbNameLb . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
 				line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -2551,14 +2466,14 @@ namespace MyDev . Views
 				output += row + "\n";
 				count++;
 			}
-			Console . WriteLine ( $"loaded {count} records for table columns" );
+			//Console . WriteLine ( $"loaded {count} records for table columns" );
 			// Fiddle  to allow Flowdoc  to show Field info even though Flowdoc use is disabled
 			if ( UseFlowdoc == false )
 			{
 				flowdocswitch = true;
 				UseFlowdoc = true;
 			}
-			ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+			ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 				line2: $"the structure of the table [{dbNameLv . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
 				line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -2605,85 +2520,6 @@ namespace MyDev . Views
 			}
 		}
 
-		#region Hook to Flowdoc Maximize buttoin
-		protected void ParentWPF_method ( object sender , EventArgs e )
-		{
-			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
-			// or return to its original size and position courtesy of the Event declard in FlowDoc
-			if ( Flowdoc . BorderClicked )
-			{
-				return;
-			}
-			double height = canvas . Height;
-			double width = canvas . Width;
-			if ( Flowdoc . Height < canvas . Height && Flowdoc . Width < canvas . Width )
-			{
-				// it is in NORMAL mode right now
-				// Set flowdoc size into variables for later use
-				flowdocFloatingTop = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
-				flowdocFloatingLeft = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
-				flowdocFloatingHeight = Flowdoc . ActualHeight;
-				flowdocFloatingWidth = Flowdoc . ActualWidth;
-				flowdocHeight = Flowdoc . Height;
-				flowdocWidth = Flowdoc . Width;
-				flowdocTop = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
-				flowdocLeft = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
-				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-				Flowdoc . Height = height;
-				Flowdoc . Width = width;
-				// save current size/position
-			}
-			else
-			{
-				// it is MAXIMIZED right now
-				// We re returning it to normal position/Size
-				Flowdoc . Height = flowdocFloatingHeight;
-				Flowdoc . Width = flowdocFloatingWidth;
-				if ( Flags . PinToBorder )
-				{
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-				}
-				else
-				{
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) flowdocFloatingLeft );
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) flowdocFloatingTop );
-				}
-			}
-		}
-		#endregion Hook to Flowdoc Maximize buttoin
-		private void Flowdoc_ExecuteFlowDocResizeMethod ( object sender , FlowArgs e )
-		{
-			// Resizing FlowDoc window  - called  by hook from Flowdoc
-			if ( e . BorderClicked == false )
-				return;
-			XLeft = e . CLeft;
-			YTop = e . CTop;
-			double FdHeight = e . Height;
-			double FdWidth = e . Width;
-			double currcursorH = e . Xpos;
-			double currcursorW = e . Ypos;
-			( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) e . Xpos );
-			( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) e . Ypos );
-			Flowdoc . Height = FdHeight;
-			Flowdoc . Width = FdWidth;
-
-			//if ( FdHeight < canvas . Height && Flowdoc . Width < canvas . Width )
-			//{
-			//	// it is in NORMAL mode right now
-			//	// Set flowdoc size into variables for later use
-			//	flowdocHeight = Flowdoc . Height;
-			//	flowdocWidth = Flowdoc . Width;
-			//	flowdocTop = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
-			//	flowdocLeft = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
-			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-			//	//Flowdoc . Height = height;
-			//	//Flowdoc . Width = width;
-			//}
-		}
-
 
 		private void Park_Click ( object sender , RoutedEventArgs e )
 		{
@@ -2719,7 +2555,7 @@ namespace MyDev . Views
 			CpFirstYPos = e . GetPosition ( sender as Control ) . Y;
 			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - CpFirstXPos;
 			double FirstArrowYPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . Y - CpFirstYPos;
-			ColorpickerObject = sender;
+			ColorpickerObject = sender as Colorpicker;
 		}
 		private void PickColors_MouseMove ( object sender , MouseEventArgs e )
 		{
@@ -2744,8 +2580,8 @@ namespace MyDev . Views
 		private void ListViewWindow_Closed ( object sender , EventArgs e )
 		{
 			Colorpicker . ExecuteSaveToClipboardMethod -= Colorpicker_ExecuteSaveToClipboardMethod;
-			Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( ParentWPF_method );
-			Flowdoc . ExecuteFlowDocResizeMethod -= Flowdoc_ExecuteFlowDocResizeMethod;
+			Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
+//			Flowdoc . ExecuteFlowDocResizeMethod -= Flowdoc_ExecuteFlowDocResizeMethod;
 			Flowdoc . ExecuteFlowDocBorderMethod -= FlowDoc_ExecuteFlowDocBorderMethod;
 		}
 
@@ -3029,12 +2865,12 @@ namespace MyDev . Views
 					string fdinput = $"Procedure Name : {SqlSpCommand . ToUpper ( )}\n\n";
 					fdinput += output;
 					fdinput += $"\n\nPress ESCAPE to close this window...\n";
-					ShowInfo ( line1: fdinput , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
+					ShowInfo ( Flowdoc , canvas , line1: fdinput , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
 				}
 				else
 				{
 					Mouse . OverrideCursor = Cursors . Arrow;
-					ShowInfo ( line1: $"Procedure [{SqlSpCommand . ToUpper ( )}] \ndoes not Support / Require any arguments" , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
+					ShowInfo ( Flowdoc , canvas , line1: $"Procedure [{SqlSpCommand . ToUpper ( )}] \ndoes not Support / Require any arguments" , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
 				}
 				if ( resetUse )
 					UseFlowdoc = false;
@@ -3064,10 +2900,10 @@ namespace MyDev . Views
 				else
 				{
 					var v = sender as ItemsControl;
-					foreach ( var item in v . Items )
-					{
-						Console . WriteLine ( item . ToString ( ) );
-					}
+					//foreach ( var item in v . Items )
+					//{
+					//	Console . WriteLine ( item . ToString ( ) );
+					//}
 					var treeItems = Utils.FindVisualParent<TextBlock> (this);
 					//treeItems . ForEach ( I => i . IsExpanded = false );
 				}
@@ -3199,7 +3035,7 @@ namespace MyDev . Views
 					UseFlowdoc = true;
 				}
 				Console . WriteLine ( $"loaded {count} records for table columns" );
-				ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+				ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 					line2: $"the structure of the table [{SqlSpCommand }] is listed below : \n{output}" ,
 					line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -3212,7 +3048,7 @@ namespace MyDev . Views
 			}
 			else
 			{
-				ShowInfo ( header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+				ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 					line1: $"The request was made succesfully, but no Table Fields were returned..." , clr1: "Red3" ,
 					line2: $"The table queried was [{SqlSpCommand }]" ,
 					line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -3244,10 +3080,10 @@ namespace MyDev . Views
 				else
 				{
 					var v = sender as ItemsControl;
-					foreach ( var item in v . Items )
-					{
-						Console . WriteLine ( item . ToString ( ) );
-					}
+					//foreach ( var item in v . Items )
+					//{
+					//	Console . WriteLine ( item . ToString ( ) );
+					//}
 					var treeItems = Utils.FindVisualParent<TextBlock> (this);
 					//treeItems . ForEach ( I => i . IsExpanded = false );
 				}
@@ -3260,15 +3096,11 @@ namespace MyDev . Views
 
 		}
 
-		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
-		{
-			Flowdoc . BorderClicked = false;
-		}
-
+	
 		private void ListViewWindow_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			MovingObject = null;
-			FlowdocResizing = false;
+			fdl.FlowdocResizing = false;
 			Flowdoc . BorderClicked = false;
 			ReleaseMouseCapture ( );
 			TvMouseCaptured = false;
@@ -3353,6 +3185,61 @@ namespace MyDev . Views
 		{
 		}
 		#endregion Treeview  handlers
+
+		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+
+		}
+		#region   Flowdoc Support
+		#region Flowdoc support via library
+		protected void MaximizeFlowDoc ( object sender , EventArgs e )
+		{
+			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
+			// or return to its original size and position courtesy of the Event declard in FlowDoc
+			fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
+		}
+		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			// Window wide  !!
+			// Called  when a Flowdoc MOVE has ended
+			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc , MovingObject , e );
+			ReleaseMouseCapture ( );
+		}
+		private void LvFlowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//In this event, we get current mouse position on the control to use it in the MouseMove event.
+			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc , e );
+		}
+
+		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
+		{
+			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
+			fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
+		}
+
+		public void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
+		{
+			// EVENTHANDLER to Handle resizing
+			FlowDoc fd = sender as FlowDoc;
+			Point pt = Mouse . GetPosition (canvas );
+			double dLeft = pt.X;
+			double dTop= pt.Y;
+		}
+		// Shortened version proxy call		
+		public void fdmsg ( string line1 , string line2 = "" , string line3 = "" )
+		{
+			//We have to pass the Flowdoc.Name, and Canvas.Name as well as up   to 3 strings of message
+			//  you can  just provie one if required
+			// eg fdmsg("message text");
+			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 , line3 );
+		}
+		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
+		{
+			Flowdoc . BorderClicked = false;
+		}
+		#endregion Flowdoc support via library
+
+		#endregion   Flowdoc Support
 	}
 }
 

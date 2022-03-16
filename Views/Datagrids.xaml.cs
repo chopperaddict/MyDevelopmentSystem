@@ -1,7 +1,9 @@
 ﻿
 using MyDev . Dapper;
+using MyDev . Models;
 using MyDev . Sql;
 using MyDev . SQL;
+using MyDev . UserControls;
 using MyDev . ViewModels;
 
 using System;
@@ -18,6 +20,9 @@ using System . Windows . Data;
 using System . Windows . Input;
 using System . Windows . Media;
 using System . Windows . Threading;
+using System . Xml . Linq;
+
+using static System . Net . WebRequestMethods;
 
 namespace MyDev . Views
 {
@@ -109,8 +114,14 @@ namespace MyDev . Views
 		private  bool ShowFullScript = false;
 		private bool LoadAll = false;
 		private bool Usetimer = true;
-		private bool UseScrollViewer= true;
+		//		private bool UseScrollViewer= true;
 		private static Stopwatch timer = new Stopwatch();
+		
+		// Flowdoc file wide variables
+		FlowdocLib fdl = new FlowdocLib();
+		private double XLeft=0;
+		private double YTop=0;
+		
 		#endregion private variables
 
 		#region Binding full props
@@ -156,6 +167,7 @@ namespace MyDev . Views
 			// Set flags so we get the right SQL command method used...
 			UseDirectLoad = true;
 			SqlCommand = DefaultSqlCommand;
+			MovingObject = null;
 		}
 
 		private void Window_Loaded ( object sender , RoutedEventArgs e )
@@ -165,6 +177,13 @@ namespace MyDev . Views
 			EventControl . CustDataLoaded += EventControl_CustDataLoaded;
 			EventControl . DetDataLoaded += EventControl_DetDataLoaded;
 			EventControl . GenDataLoaded += EventControl_GenDataLoaded;
+			Listviews lv = new Listviews();
+
+			// FlowDoc support
+			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
+//			Flowdoc . ExecuteFlowDocResizeMethod +=Flowdoc_ExecuteFlowDocResizeMethod;
+//			Flowdoc . ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
+
 			this . SizeChanged += Datagrids_SizeChanged;
 
 			// set global flag so we can access it via this pointer
@@ -189,6 +208,11 @@ namespace MyDev . Views
 			EventControl . CustDataLoaded -= EventControl_CustDataLoaded;
 			EventControl . DetDataLoaded -= EventControl_DetDataLoaded;
 			EventControl . GenDataLoaded -= EventControl_GenDataLoaded;
+
+			Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
+			Listviews lv = new Listviews();
+//			Flowdoc . ExecuteFlowDocResizeMethod -= lv . Flowdoc_ExecuteFlowDocResizeMethod;
+//			Flowdoc . ExecuteFlowDocBorderMethod -= lv . FlowDoc_ExecuteFlowDocBorderMethod;
 		}
 		private void App_Close ( object sender , RoutedEventArgs e )
 		{
@@ -209,7 +233,7 @@ namespace MyDev . Views
 			bankaccts = e . DataSource as ObservableCollection<BankAccountViewModel>;
 			DbCount = bankaccts . Count;
 			LoadGrid ( );
-			ShowInfo ( $"The request for the default Bank Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid ..." ,
+			fdl.ShowInfo ( Flowdoc, canvas , $"The request for the default Bank Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid ..." ,
 				  "Blue3" ,
 				  "" ,
 				  "" ,
@@ -218,6 +242,7 @@ namespace MyDev . Views
 				   "Default Bank Account data table" ,
 				    "Red3" );
 			Grid1 . SelectedIndex = 0;
+
 			Grid1 . Focus ( );
 			//ShowLoadtime ( timer . ElapsedMilliseconds );
 		}
@@ -228,7 +253,7 @@ namespace MyDev . Views
 			custaccts = e . DataSource as ObservableCollection<CustomerViewModel>;
 			DbCount = custaccts . Count;
 			LoadGrid ( );
-			ShowInfo ( line1: $"The request for the default Customer Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid..." , "Orange0" , header: "Default Customers data table" );
+			fdl. ShowInfo ( Flowdoc, canvas,  line1: $"The request for the default Customer Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid..." , "Orange0" , header: "Default Customers data table" );
 			Grid1 . SelectedIndex = 0;
 			Grid1 . Focus ( );
 			//ShowLoadtime ();
@@ -240,7 +265,7 @@ namespace MyDev . Views
 			detaccts = e . DataSource as ObservableCollection<DetailsViewModel>;
 			DbCount = detaccts . Count;
 			LoadGrid ( );
-			ShowInfo ( line1: $"The request for the default Secondary Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid ..." , clr1: "Green0" , header: "Default Secondary Bank Accounts data table" );
+			fdl . ShowInfo ( Flowdoc,  canvas ,line1: $"The request for the default Secondary Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid ..." , clr1: "Green0" , header: "Default Secondary Bank Accounts data table" );
 			Grid1 . SelectedIndex = 0;
 			Grid1 . Focus ( );
 			//ShowLoadtime ( );
@@ -252,7 +277,7 @@ namespace MyDev . Views
 			genaccts = e . DataSource as ObservableCollection<GenericClass>;
 			DbCount = genaccts . Count;
 			LoadGrid ( );
-			ShowInfo ( line1: $"The requested Generic table type [{CurrentType}] request succeeded, and the results are shown in the datagrid ..." , "header:Generic data table" );
+			fdl . ShowInfo ( Flowdoc,  canvas,  line1: $"The requested Generic table type [{CurrentType}] request succeeded, and the results are shown in the datagrid ..." , "header:Generic data table" );
 			Grid1 . SelectedIndex = 0;
 			Grid1 . Focus ( );
 			//ShowLoadtime ( );
@@ -474,8 +499,7 @@ namespace MyDev . Views
 						MessageBox . Show ( $"No Argument information is available" , $"[{spName }] SP Script Information" , MessageBoxButton . OK , MessageBoxImage . Warning );
 					return "";
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				MessageBox . Show ( $"SQL ERROR 1125 - {ex . Message}" );
 				return "";
@@ -529,7 +553,7 @@ namespace MyDev . Views
 					fdinput += output;
 					fdinput += $"\n\nPress ESCAPE to close this window...\n";
 
-					ShowInfo ( line1: fdinput , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
+					fdl . ShowInfo ( Flowdoc, canvas, line1: fdinput , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
 					//GridData_Display . Visibility = Visibility . Visible;
 					//SetViewButtons ( 2 , ( GridData_Display . Visibility == Visibility . Visible ? true : false ) , ( DisplayGrid . Visibility == Visibility . Visible ? true : false ) );
 					//GridData_Display . Focus ( );
@@ -538,7 +562,7 @@ namespace MyDev . Views
 				{
 					Mouse . OverrideCursor = Cursors . Arrow;
 					//Utils . Mbox ( this , string1: $"Procedure [{Storedprocs . SelectedItem . ToString ( ) . ToUpper ( )}] \ndoes not Support / Require any arguments" , string2: "" , caption: "" , iconstring: "\\icons\\Information.png" , Btn1: MB . OK , Btn2: MB . NNULL , defButton: MB . OK );
-					ShowInfo ( line1: $"Procedure [{Storedprocs . SelectedItem . ToString ( ) . ToUpper ( )}] \ndoes not Support / Require any arguments" , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
+					fdl . ShowInfo ( Flowdoc,  canvas , line1: $"Procedure [{Storedprocs . SelectedItem . ToString ( ) . ToUpper ( )}] \ndoes not Support / Require any arguments" , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
 				}
 			}
 			ShowLoadtime ( );
@@ -563,13 +587,11 @@ namespace MyDev . Views
 					SqlDataAdapter sda = new SqlDataAdapter ( cmd );
 					sda . Fill ( dt );
 				}
-			}
-			catch ( Exception ex )
+			} catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"ERROR in PROCESSSQLCOMMAND(): Failed to load Datatable :\n {ex . Message}, {ex . Data}" );
 				MessageBox . Show ( $"ERROR in PROCESSSQLCOMMAND(): Failed to load datatable\n{ex . Message}" );
-			}
-			finally
+			} finally
 			{
 				Console . WriteLine ( $" SQL data loaded from SQLCommand [{SqlCommand . ToUpper ( )}]" );
 				con . Close ( );
@@ -642,7 +664,7 @@ namespace MyDev . Views
 						genaccts = new ObservableCollection<GenericClass> ( );
 						genaccts = SqlSupport . LoadGenericCollection ( dt );
 						if ( genaccts . Count == 0 )
-							ShowInfo ( line1: $"Although the request you made was completed succesfully " , line2: $"the table [{CurrentType}] that was queried returned a zero record count, so it\nappears that it does not contain any records" , header: "Unrecognised table type Accessed" , clr4: "Red5" );
+							fdl . ShowInfo ( Flowdoc,  canvas , line1: $"Although the request you made was completed succesfully " , line2: $"the table [{CurrentType}] that was queried returned a zero record count, so it\nappears that it does not contain any records" , header: "Unrecognised table type Accessed" , clr4: "Red5" );
 					} );
 				}
 			}
@@ -722,7 +744,7 @@ namespace MyDev . Views
 			}
 		}
 
-		public   string CheckLimits ( )
+		public string CheckLimits ( )
 		{
 			int val = 0;
 			string [] fields={"","","","","","","","","","" };
@@ -766,7 +788,7 @@ namespace MyDev . Views
 
 		#region Utility  support Methods
 		// Create SQLCommand string from fields on UI
-		public  string GetSqlCommand ( int count = 0 , int table = 0 , string condition = "" , string sortorder = "" )
+		public string GetSqlCommand ( int count = 0 , int table = 0 , string condition = "" , string sortorder = "" )
 		{
 			// Parse fields into a valid SQL Command string
 			string output = "Select  ";
@@ -791,7 +813,7 @@ namespace MyDev . Views
 					return;
 				Grid1 . ItemsSource = bankaccts;
 				DbCount = bankaccts . Count;
-				ShowInfo ( line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
+				fdl . ShowInfo ( Flowdoc,  canvas , line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
@@ -804,7 +826,7 @@ namespace MyDev . Views
 					return;
 				Grid1 . ItemsSource = custaccts;
 				DbCount = custaccts . Count;
-				ShowInfo ( line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
+				fdl . ShowInfo ( Flowdoc,  canvas , line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "All Customers data table" , clr4: "Red5" );
@@ -817,7 +839,7 @@ namespace MyDev . Views
 					return;
 				Grid1 . ItemsSource = detaccts;
 				DbCount = detaccts . Count;
-				ShowInfo ( line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
+				fdl . ShowInfo ( Flowdoc,  canvas , line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Secondary Accounts data table" );
@@ -828,7 +850,7 @@ namespace MyDev . Views
 			{
 				if ( genaccts . Count == 0 )
 				{
-					ShowInfo ( line1: $"The requested table [ {CurrentType} ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
+					fdl . ShowInfo ( Flowdoc,  canvas , line1: $"The requested table [ {CurrentType} ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
 					Grid1 . ItemsSource = null;
 					Grid1 . Refresh ( );
 					return;
@@ -837,9 +859,9 @@ namespace MyDev . Views
 				// //visible in the grid so do NOT repopulate the grid after making this call
 				//				SqlServerCommands sqlc = new SqlServerCommands();
 				SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
-//				Grid1 . ItemsSource = genaccts;
+				//				Grid1 . ItemsSource = genaccts;
 				DbCount = genaccts . Count;
-				ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+				fdl . ShowInfo ( Flowdoc,  canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 					line2: $"the table [{CurrentType}] that was queried returned a record count of {DbCount}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -897,7 +919,7 @@ namespace MyDev . Views
 		{
 			//This call returns us a DataTable
 			DataTable dt = DataLoadControl . GetDataTable ( sqlcommand );
-			if(dt != null)
+			if ( dt != null )
 				list = Utils . GetDataDridRowsAsListOfStrings ( dt );
 			return list;
 		}
@@ -939,49 +961,7 @@ namespace MyDev . Views
 		// Executes any SP successfully when it is right clicked in the Combo list
 		// If any rows are returned ,they are shown in Grid1 DataGrid
 		//otherwise a Message box appears
-	
-		#region FlowDoc Drag methods
-		// All working perfectly
-		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		{
-			//In this event, we get current mouse position on the control to use it in the MouseMove event.
-			if ( Utils . HitTestScrollBar ( sender , e ) == true )
-			{
-				if ( e . OriginalSource . ToString ( ) . Contains ( ".Run" ) == false )
-				{
-					return;
-				}
-			}
-			FirstXPos = e . GetPosition ( sender as Control ) . X;
-			FirstYPos = e . GetPosition ( sender as Control ) . Y;
-			double FirstArrowXPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . X - FirstXPos;
-			double FirstArrowYPos = e . GetPosition ( ( sender as Control ) . Parent as Control ) . Y - FirstYPos;
-			MovingObject = sender;
-		}
 
-		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
-		{
-			MovingObject = null;
-			//ReleaseMouseCapture ( );
-			//Console . WriteLine ( "Mouse RELEASED..(Flowdoc_MouseLeftButtonUp." );
-		}
-
-		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
-		{
-			if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed )
-			{
-				// Get mouse position IN FlowDoc !!
-				double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - FirstXPos ;
-				double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - FirstYPos ;
-				double trueleft = left - FirstXPos;
-				double truetop = left - FirstYPos;
-				if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
-					( MovingObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
-				if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
-					( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
-			}
-		}
-		#endregion FlowDoc Drag methods
 
 		#region Mouse handlers
 		private void dbName_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )
@@ -990,9 +970,9 @@ namespace MyDev . Views
 			e . Handled = true;
 			dbName . Items . Clear ( );
 			LoadTablesList ( );
-			for (int x = 0; x < dbName.Items.Count ; x++ )
+			for ( int x = 0 ; x < dbName . Items . Count ; x++ )
 			{
-				if ( dbName . Items [ x ].ToString().ToUpper() == currsel )
+				if ( dbName . Items [ x ] . ToString ( ) . ToUpper ( ) == currsel )
 				{
 					dbName . SelectedIndex = x;
 					break;
@@ -1011,18 +991,18 @@ namespace MyDev . Views
 			Grid1 . Refresh ( );
 			string cmd = Storedprocs.SelectedItem.ToString();
 			if ( SpArgs . Text != "" && SpArgs . Text . Contains ( "Enter Arg" ) == false )
-				args += $" {SpArgs . Text }";
+				args += $"{SpArgs . Text }";
 			genaccts = SqlSupport . ExecuteStoredProcedure ( cmd , genaccts , out errmsg , Arguments: args );
 			DbCount = genaccts . Count;
 			if ( DbCount > 0 )
 			{
 				SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
 				//				Grid1 . ItemsSource = genaccts;
-				ShowInfo ( line1: $"Stored Procedure was completed successfully, and returned the {DbCount} records shown in the Grid below !" , "Black0" ,
+				fdl . ShowInfo ( Flowdoc,  canvas , line1: $"Stored Procedure was completed successfully, and returned the {DbCount} records shown in the Grid below !" , "Black0" ,
 					    line2: $"Procedure executed was :" , clr2: "Black0" , line3: $"{cmd . ToUpper ( )}" , clr3: "" , header: "Stored Procedure execution" , "Orange1" );
 			}
 			else if ( errmsg != "" )
-				ShowInfo ( line1: $"Stored Procedure [{cmd . ToUpper ( )}] returned the following information !\n\n[{errmsg}]\n " , "Red4" , "Stored Procedure execution" , "Orange1" );
+				fdl . ShowInfo ( Flowdoc,  canvas , line1: $"Stored Procedure [{cmd . ToUpper ( )}] returned the following information !\n\n[{errmsg}]\n " , "Red4" , "Stored Procedure execution" , "Orange1" );
 		}
 		#endregion Mouse handlers
 
@@ -1036,14 +1016,9 @@ namespace MyDev . Views
 				this . Close ( );           // Close the window
 			else if ( e . Key == Key . F8 )
 			{
-				//				ReleaseMouseCapture ( );
-				//				Console . WriteLine ( "Mouse RELEASED ...Window_PreviewKeyDown()" );
+				// Short form usageo f a 2 /3 line FlowDoc
+				fdmsg ( "A test of my message system with only one line of text only supplied to ensure it prefills the other two lines" );
 			}
-		}
-		private void Flowdoc_PreviewKeyDown ( object sender , KeyEventArgs e )
-		{
-			if ( e . Key == Key . Escape )
-				Flowdoc . Visibility = Visibility . Hidden;
 		}
 		#endregion keyboard handlers
 
@@ -1052,7 +1027,7 @@ namespace MyDev . Views
 		{
 			SpArgs . Background = FindResource ( "White0" ) as SolidColorBrush;
 			SpArgs . Foreground = FindResource ( "Black0" ) as SolidColorBrush;
-			if(SpArgs.Text == "Enter Arguments  for current S.P" )
+			if ( SpArgs . Text == "Enter Arguments  for current S.P" )
 				SpArgs . Text = "";
 		}
 		//Handle gray text in text fields on field entry
@@ -1127,24 +1102,46 @@ namespace MyDev . Views
 
 		#endregion Checkbox handlers
 
-		private void ShowInfo ( string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
+		#region FlowDoc support
+		/// <summary>
+		///  These are the only methods any window needs ot provide support for my FlowDoc system.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+	
+		protected void MaximizeFlowDoc ( object sender , EventArgs e )
 		{
-			if ( UseFlowdoc )
-			{
-				if ( UseFlowdocBeep == false )
-					beep = false;
-				Flowdoc . ShowInfo ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
-				canvas . Visibility = Visibility . Visible;
-				canvas . BringIntoView ( );
-				Flowdoc . Visibility = Visibility . Visible;
-				Flowdoc . BringIntoView ( );
-				if ( Flags . PinToBorder == true )
-				{
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-				}
-			}
+			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
+			// or return to its original size and position courtesy of the Event declard in FlowDoc
+			fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
 		}
+		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			// Window wide  !!
+			// Called  when a Flowdoc MOVE has ended
+			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc, MovingObject, e );
+			ReleaseMouseCapture ( );
+		}
+		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//In this event, we get current mouse position on the control to use it in the MouseMove event.
+			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc,  e );
+		}
+
+		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
+		{
+			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
+			fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
+		}
+		// Shortened version proxy call		
+		public void fdmsg ( string line1 , string line2="" , string line3="" )
+		{
+			//We have to pass the Flowdoc.Name, and Canvas.Name as well as up   to 3 strings of message
+			//  you can  just provie one if required
+			// eg fdmsg("message text");
+			fdl . FdMsg ( Flowdoc , canvas , line1 , line2, line3  );
+		}
+		#endregion FlowDoc support
 
 	}
 }

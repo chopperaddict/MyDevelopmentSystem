@@ -12,6 +12,7 @@ using System . Text;
 using System . Threading . Tasks;
 using System . Windows;
 using MyDev . Views;
+using MyDev . Models;
 
 namespace MyDev . ViewModels
 {
@@ -236,6 +237,11 @@ namespace MyDev . ViewModels
 			string commandline = "";
 			string selection = seltype.ToUpper();
 			ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			//			ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 			Debug . WriteLine ( $"Making new SQL connection in BANKCOLLECTION" );
 			con = new SqlConnection ( ConString );
@@ -364,7 +370,11 @@ namespace MyDev . ViewModels
 			SqlCommand cmd = null;
 			string ConString = "";
 			ConString = Flags . CurrentConnectionString;
-			//ConString = ( string ) Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			con = new SqlConnection ( ConString );
 			try
 			{
@@ -435,6 +445,11 @@ namespace MyDev . ViewModels
 			try
 			{
 				ConString = Flags . CurrentConnectionString;
+				if ( ConString == "" )
+				{
+					GenericDbHandlers . CheckDbDomain ( "IAN1" );
+					ConString = Flags . CurrentConnectionString;
+				}
 				//				ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 				Debug . WriteLine ( $"Making new SQL connection in BANKCOLLECTION" );
 				con = new SqlConnection ( ConString );
@@ -512,6 +527,11 @@ namespace MyDev . ViewModels
 			string ConString = "";
 			string commandline = "";
 			ConString = Flags . CurrentConnectionString;
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			//			ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 			Debug . WriteLine ( $"Making new SQL connection in BANKCOLLECTION" );
 			con = new SqlConnection ( ConString );

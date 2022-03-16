@@ -316,7 +316,8 @@ namespace MyDev
 			try
 			{
 				dict . Remove ( value );
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Unable to access Dictionary {dict} to delete key value [{value}]" );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
@@ -329,7 +330,8 @@ namespace MyDev
 			try
 			{
 				dict . Remove ( value );
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Unable to access Dictionary {dict} to delete key value [{value}]" );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
@@ -342,7 +344,8 @@ namespace MyDev
 			try
 			{
 				dict . Remove ( value );
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Unable to access Dictionary {dict} to delete key value [{value}]" );
 				Utils . DoErrorBeep ( 250 , 50 , 1 );
@@ -463,7 +466,8 @@ namespace MyDev
 						break;
 					else
 						output += tmp;
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( "trace() Crashed...\n" );
 					output += "\ntrace() Crashed...\n";
@@ -704,7 +708,8 @@ namespace MyDev
 					bvm . CDate = Convert . ToDateTime ( data [ index ] );
 				}
 				return bvm;
-			} catch
+			}
+			catch
 			{
 				//Check to see if the data includes the data type in it
 				//As we have to parse it diffrently if not - see index....
@@ -714,7 +719,8 @@ namespace MyDev
 					int x = int . Parse ( donor );
 					// if we get here, it IS a NUMERIC VALUE
 					index = 0;
-				} catch
+				}
+				catch
 				{
 					//its probably the Data Type string, so ignore it for our Data creation processing
 					index = 1;
@@ -763,7 +769,8 @@ namespace MyDev
 					bvm . CDate = Convert . ToDateTime ( data [ index ] );
 					return bvm;
 				}
-			} catch
+			}
+			catch
 			{
 				//Check to see if the data includes the data type in it
 				//As we have to parse it diffrently if not - see index....
@@ -773,7 +780,8 @@ namespace MyDev
 					int x = int . Parse ( donor );
 					// if we get here, it IS a NUMERIC VALUE
 					index = 0;
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					//its probably the Data Type string, so ignore it for our Data creation processing
 					index = 1;
@@ -858,7 +866,8 @@ namespace MyDev
 				cvm . ODate = Convert . ToDateTime ( data [ index++ ] );
 				cvm . CDate = Convert . ToDateTime ( data [ index ] );
 				return cvm;
-			} catch
+			}
+			catch
 			{
 				//Check to see if the data includes the data type in it
 				//As we have to parse it diffrently if not - see index....
@@ -868,7 +877,8 @@ namespace MyDev
 					int x = int . Parse ( donor );
 					// if we get here, it IS a NUMERIC VALUE
 					index = 0;
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					//its probably the Data Type string, so ignore it for our Data creation processing
 					index = 1;
@@ -1255,7 +1265,8 @@ namespace MyDev
 			try
 			{
 				brs = System . Windows . Application . Current . FindResource ( brushname ) as Brush;
-			} catch
+			}
+			catch
 			{
 
 			}
@@ -1583,17 +1594,17 @@ namespace MyDev
 			else if ( key1 && e . Key == Key . F6 )  // CTRL + F6
 			{
 				// list various Flags in Console
-				Debug . WriteLine ( $"\nCTRL + F6 pressed..." );
+				//Debug . WriteLine ( $"\nCTRL + F6 pressed..." );
 				Flags . UseBeeps = !Flags . UseBeeps;
 				e . Handled = true;
 				key1 = false;
-				Debug . WriteLine ( $"Flags.UseBeeps reset to  {Flags . UseBeeps }" );
+				//Debug . WriteLine ( $"Flags.UseBeeps reset to  {Flags . UseBeeps }" );
 				return;
 			}
 			else if ( key1 && e . Key == Key . F7 )  // CTRL + F7
 			{
 				// list various Flags in Console
-				Debug . WriteLine ( $"\nCTRL + F7 pressed..." );
+				//Debug . WriteLine ( $"\nCTRL + F7 pressed..." );
 				//TRANSFER				Flags . PrintDbInfo ( );
 				e . Handled = true;
 				key1 = false;
@@ -1601,7 +1612,7 @@ namespace MyDev
 			}
 			else if ( key1 && e . Key == Key . F8 )     // CTRL + F8
 			{
-				Debug . WriteLine ( $"\nCTRL + F8 pressed..." );
+				//Debug . WriteLine ( $"\nCTRL + F8 pressed..." );
 				EventHandlers . ShowSubscribersCount ( );
 				e . Handled = true;
 				key1 = false;
@@ -1609,7 +1620,7 @@ namespace MyDev
 			}
 			else if ( key1 && e . Key == Key . F9 )     // CTRL + F9
 			{
-				Debug . WriteLine ( "\nCtrl + F9 NOT Implemented" );
+				//Debug . WriteLine ( "\nCtrl + F9 NOT Implemented" );
 				key1 = false;
 				return;
 
@@ -1617,7 +1628,7 @@ namespace MyDev
 			else if ( key1 && e . Key == Key . System )     // CTRL + F10
 			{
 				// Major  listof GV[] variables (Guids etc]
-				Debug . WriteLine ( $"\nCTRL + F10 pressed..." );
+				//Debug . WriteLine ( $"\nCTRL + F10 pressed..." );
 				//TRANSFER				Flags . ListGridviewControlFlags ( 1 );
 				key1 = false;
 				e . Handled = true;
@@ -1626,7 +1637,7 @@ namespace MyDev
 			else if ( key1 && e . Key == Key . F11 )  // CTRL + F11
 			{
 				// list various Flags in Console
-				Debug . WriteLine ( $"\nCTRL + F11 pressed..." );
+				//Debug . WriteLine ( $"\nCTRL + F11 pressed..." );
 				Flags . PrintSundryVariables ( );
 				e . Handled = true;
 				key1 = false;
@@ -1646,68 +1657,68 @@ namespace MyDev
 				{
 					if ( original . GetType ( ) . Equals ( typeof ( DataGrid ) ) )
 					{
-						Console . WriteLine ( "DataGrid is clicked" );
+						//						Console . WriteLine ( "DataGrid is clicked" );
 					}
 					else if ( original . GetType ( ) . Equals ( typeof ( Paragraph ) ) )
 					{
-						Console . WriteLine ( "Pararaph clicked" );
+						//						Console . WriteLine ( "Pararaph clicked" );
 						return false;
 					}
 					else if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
 					{
-						Console . WriteLine ( "Border clicked" );
+						//						Console . WriteLine ( "Border clicked" );
 						return false;
 					}
 					else if ( FindVisualParent<ScrollBar> ( original as DependencyObject ) != null )
 					{
 						//scroll bar is clicked
-						Console . WriteLine ( "Calling FindVisualParent" );
+						//						Console . WriteLine ( "Calling FindVisualParent" );
 						return true;
 					}
 					return false;
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
 			}
 			return true;
 		}
-		public static bool HitTestBorder( object sender , MouseButtonEventArgs e )
+		public static bool HitTestBorder ( object sender , MouseButtonEventArgs e )
 		{
-			//			HitTestResult hit = VisualTreeHelper . HitTest ( ( Visual ) sender, e . GetPosition ( ( IInputElement ) sender ) );
-			//			return hit . VisualHit . GetVisualAncestor<ScrollBar> ( ) != null;
 			object original = e . OriginalSource;
 			try
 			{
 				var v = original . GetType ( );
-				//bool isScrollbar = original . GetType ( ) . Equals ( typeof ( ScrollBar ) );
-				//if ( !isScrollbar . Equals ( typeof ( ScrollBar ) ) )
-				//{
-				//	if ( original . GetType ( ) . Equals ( typeof ( DataGrid ) ) )
-				//	{
-				//		Console . WriteLine ( "DataGrid is clicked" );
-				//	}
-				//	else if ( original . GetType ( ) . Equals ( typeof ( Paragraph ) ) )
-				//	{
-				//		Console . WriteLine ( "Pararaph clicked" );
-				//		return false;
-				//	}
-					if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
-					{
-						Console . WriteLine ( "Border clicked" );
-						return true;
-					}
-					else if ( FindVisualParent<ScrollBar> ( original as DependencyObject ) != null )
-					{
-						//scroll bar is clicked
-						Console . WriteLine ( "Calling FindVisualParent" );
-						return true;
-					}
+				if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
+				{
+					Console . WriteLine ( "Border clicked" );
+					return true;
+				}
+				Type type = original . GetType ( );
+				if ( type . Equals ( typeof ( TextBlock ) ) )
+				{
+					Console . WriteLine ( "TextBlock clicked" );
 					return false;
+				}
+				if ( type . Equals ( typeof ( Grid ) ) )
+				{
+					Console . WriteLine ( "Grid clicked" );
+					return false;
+				}
+				else if ( FindVisualParent<Border> ( original as DependencyObject ) != null )
+				{
+					//scroll bar is clicked
+					Console . WriteLine ( "Calling FindVisualParent" );
+					return true;
+				}
+				return false;
 				//}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
+				return false;
 			}
 			return true;
 		}
@@ -1785,7 +1796,8 @@ namespace MyDev
 						Console . WriteLine ( "Key: {0} Value: {1}" , key , appSettings [ key ] );
 					}
 				}
-			} catch ( ConfigurationErrorsException )
+			}
+			catch ( ConfigurationErrorsException )
 			{
 				Console . WriteLine ( "Error reading app settings" );
 			}
@@ -1798,7 +1810,8 @@ namespace MyDev
 				var appSettings = ConfigurationManager . AppSettings;
 				result = appSettings [ key ] ?? "Not Found";
 				Console . WriteLine ( result );
-			} catch ( ConfigurationErrorsException )
+			}
+			catch ( ConfigurationErrorsException )
 			{
 				Console . WriteLine ( "Error reading app settings" );
 			}
@@ -1904,7 +1917,8 @@ namespace MyDev
 					}
 					fs . Close ( );
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Utils . Mbox ( null , string1: "The image could not be saved for the following reason " , string2: $"{ex . Message}" , caption: "" , iconstring: "\\icons\\Information.png" , Btn1: MB . OK , Btn2: MB . NNULL , defButton: MB . OK );
 			}
@@ -1922,7 +1936,8 @@ namespace MyDev
 				Settings . Default . Save ( );
 				Settings . Default . Upgrade ( );
 				ConfigurationManager . RefreshSection ( setting );
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"Unable to save property {setting} of [{value}]\nError was {ex . Data}, {ex . Message}, Stack trace = \n{ex . StackTrace}" );
 			}
@@ -2030,7 +2045,8 @@ namespace MyDev
 						r . IsSelected = false;
 						r . IsSelected = true;
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Debug . WriteLine ( $"{ex . Message}, {ex . Data}" );
 				}
@@ -2108,7 +2124,7 @@ namespace MyDev
 				//Handle the button NOT being the left mouse button
 				// which will crash the DragMove Fn.....
 				MouseButtonState mbs =   Mouse. RightButton ;
-				Console . WriteLine ( $"{mbs . ToString ( )}" );
+				//Console . WriteLine ( $"{mbs . ToString ( )}" );
 				if ( mbs == MouseButtonState . Pressed )
 					return;
 				inst . MouseDown += delegate
@@ -2117,13 +2133,15 @@ namespace MyDev
 						try
 						{
 							inst?.DragMove ( );
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							return;
 						}
 					}
 				};
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				return;
 			}
@@ -2182,16 +2200,18 @@ namespace MyDev
 		{
 			try
 			{
-				if(Flags . ConnectionStringsDict.Count > 0)
+				if ( Flags . ConnectionStringsDict . Count > 0 )
 					return;
 				Flags . ConnectionStringsDict . Add ( "IAN1" , ( string ) Properties . Settings . Default [ "BankSysConnectionString" ] );
 				Flags . ConnectionStringsDict . Add ( "NORTHWIND" , ( string ) Properties . Settings . Default [ "NorthwindConnectionString" ] );
 				//Flags.ConnectionStringsDict . Add ( "NEWBANKACCOUNT" , ( string ) Properties . Settings . Default [ "NewBanksys" ] );
 				Flags . ConnectionStringsDict . Add ( "PUBS" , ( string ) Properties . Settings . Default [ "PubsConnectionString" ] );
-			} catch ( NullReferenceException ex )
+			}
+			catch ( NullReferenceException ex )
 			{
-				Console . WriteLine ( $"Dictionary  entrry [{ ( string ) Properties . Settings . Default [ "BankSysConnectionString" ]}] already exists");					 
-			} finally
+				Console . WriteLine ( $"Dictionary  entrry [{ ( string ) Properties . Settings . Default [ "BankSysConnectionString" ]}] already exists" );
+			}
+			finally
 			{
 
 			}

@@ -20,11 +20,11 @@ namespace MyDev . Views
 	/// </summary>
 	public partial class Grabviewer : Window
 	{
-		private static double imgheight = 0;
-		private static double imgwidth = 0;
-		private static double WindowExtraSize = 0;
-		private static double scrnwidth= 0;
-		private static double scrnheight= 0;
+		//private static double imgheight = 0;
+		//private static double imgwidth = 0;
+		//private static double WindowExtraSize = 0;
+		//private static double scrnwidth= 0;
+		//private static double scrnheight= 0;
 		private string Imagepath= "C:\\WPFPages-11nov21\\Icons\\Grabimage.png";
 		private RenderTargetBitmap  img;
 		Window caller;

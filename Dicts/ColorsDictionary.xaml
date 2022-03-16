@@ -156,14 +156,14 @@
 	<SolidColorBrush x:Key="Gray7" Color="#FFE1E1E1" />
 	<SolidColorBrush x:Key="Gray8" Color="#FFE1E1E1" />
 
-	<SolidColorBrush x:Key="Orange0" Color="#FFFE7808" />
-	<SolidColorBrush x:Key="Orange1" Color="#FFFE8808" />
-	<SolidColorBrush x:Key="Orange2" Color="#FFFE9208" />
+	<SolidColorBrush x:Key="Orange0" Color="#57FE6F42" />
+	<SolidColorBrush x:Key="Orange1" Color="#FFFE8442" />
+	<SolidColorBrush x:Key="Orange2" Color="#FFFEA042" />
 	<SolidColorBrush x:Key="Orange3" Color="#FFFEA208" />
-	<SolidColorBrush x:Key="Orange4" Color="#FFFE9F07" />
-	<SolidColorBrush x:Key="Orange5" Color="#FFFEAE07" />
-	<SolidColorBrush x:Key="Orange6" Color="#FFFEBA07" />
-	<SolidColorBrush x:Key="Orange7" Color="#FFFEC807" />
+	<SolidColorBrush x:Key="Orange4" Color="#FFFEB042" />
+	<SolidColorBrush x:Key="Orange5" Color="#FFFEBF42" />
+	<SolidColorBrush x:Key="Orange6" Color="#FFFEBF16" />
+	<SolidColorBrush x:Key="Orange7" Color="#FFFEFF00" />
 
 	<SolidColorBrush x:Key="Yellow0" Color="#FFFFFF00" />
 	<SolidColorBrush x:Key="Yellow1" Color="#FFDDD200" />
@@ -195,16 +195,15 @@
 	<SolidColorBrush x:Key="Red9" Color="#FFFF9FA1" />
 	<SolidColorBrush x:Key="Red10" Color="#FFFFB8BA" />
 
-	<SolidColorBrush x:Key="Cyan0" Color="#FF5C72CE" />
-	<SolidColorBrush x:Key="Cyan1" Color="#FF409DF8" />
-	<SolidColorBrush x:Key="Cyan2" Color="#FF40A7EA" />
-	<SolidColorBrush x:Key="Cyan3" Color="#FF40B1EA" />
-	<SolidColorBrush x:Key="Cyan4" Color="#FF40C1EA" />
-	<SolidColorBrush x:Key="Cyan5" Color="#FF40CEEA" />
-	<SolidColorBrush x:Key="Cyan6" Color="#FF40E1EA" />
-	<SolidColorBrush x:Key="Cyan7" Color="#FF91F5D1" />
-	<SolidColorBrush x:Key="Cyan8" Color="#FFB4F5D1" />
-	<SolidColorBrush x:Key="Cyan9" Color="#FFCBF5D1" />
+	<SolidColorBrush x:Key="Cyan0" Color="#FF00FFFF" />
+	<SolidColorBrush x:Key="Cyan1" Color="#FF00B7FF" />
+	<SolidColorBrush x:Key="Cyan2" Color="#FF00A8FF" />
+	<SolidColorBrush x:Key="Cyan3" Color="#FF0097F1" />
+	<SolidColorBrush x:Key="Cyan4" Color="#FF3482F1" />
+	<SolidColorBrush x:Key="Cyan5" Color="#FF3400B5" />
+	<SolidColorBrush x:Key="Cyan6" Color="#FF34008C" />
+	<SolidColorBrush x:Key="Cyan7" Color="#FF340078" />
+	<SolidColorBrush x:Key="Cyan8" Color="#FF340065" />
 
 	<SolidColorBrush x:Key="Blue0" Color="#FF000067" />
 	<SolidColorBrush x:Key="Blue1" Color="#FF00007A" />

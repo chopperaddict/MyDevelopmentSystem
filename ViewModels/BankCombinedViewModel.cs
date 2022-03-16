@@ -10,12 +10,12 @@ using System . Threading . Tasks;
 namespace MyDev . ViewModels
 {
 	// combination of BankAccount with personal Customer details added
-	public class BankCombinedViewModel : BankAccountViewModel
+	public class BankCombinedViewModel : BankAccountViewModel 
 	{
 
 		#region PropertyChanged
 
-		new public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		private void OnPropertyChanged ( string propertyName )
 		{

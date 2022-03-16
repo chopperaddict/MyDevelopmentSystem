@@ -1,0 +1,311 @@
+﻿<Window x:Class="MyDev.Views.GenericMvvmWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:MyDev.ViewModels"
+        xmlns:model="clr-namespace:MyDev.Models"
+        xmlns:view="clr-namespace:MyDev.Views"
+        xmlns:cmd="clr-namespace:MyDev.Commands"
+        mc:Ignorable="d"	 
+	  Loaded="Genmvvm_Loaded"
+	  x:Name="Genmvvm"
+       Title="MVVM Testing setup (" Height="499" Width="800">
+	<!--Loaded="Genmvvm_Loaded"-->
+	<!--KeyDown="Genmvvm_KeyDown"-->
+	<Window.Background>
+		<LinearGradientBrush  StartPoint="1,0" EndPoint="0,0.0">
+			<GradientStop Offset="0" Color="#FF0000FC" />
+			<GradientStop Offset="0.3" Color="#FF0292FF" />
+			<GradientStop Offset="0.609" Color="#FF0294FF" />
+			<GradientStop Offset="1" Color="#FF02B3FF" />
+			<!--<GradientStop Offset="0" Color="#FF193A44" />-->
+		</LinearGradientBrush>
+	</Window.Background>
+
+	<Window.InputBindings>
+		<KeyBinding Key="Enter" Command="{Binding ConvertTextComand}"/>
+		<!--<KeyBinding Key="C" Command="{Binding CloseWindow}"/>-->
+	</Window.InputBindings>
+
+	<Window.CommandBindings>
+		<!--<CommandBinding Command="view:MyCommands.CloseWindow"
+				CanExecute="CanExecute"	
+				Executed="ExecuteMyMethod "/>-->
+	</Window.CommandBindings>
+
+	<Window.Resources>
+		<!--<view:MvvmViewModel x:Key="vm"/>-->
+		<viewmodels:PersonViewModel x:Key="PersonViewmodel"/>
+		<viewmodels:MvvmGenericModel x:Key="MvvmGenModel"/>
+		<model:Person x:Key="person"/>
+	</Window.Resources>
+
+	<Grid x:Name="Outergrid" HorizontalAlignment="Center" Width="800" Height="472" VerticalAlignment="Top">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="5" />
+			<RowDefinition Height="220" />
+			<RowDefinition Height="390" />
+			<RowDefinition Height="5" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10" />
+			<ColumnDefinition Width="1.5*" />
+			<ColumnDefinition Width="1.5*" />
+			<ColumnDefinition Width="10" />
+		</Grid.ColumnDefinitions>
+
+		<!--======================================================-->
+		<!--The outer grid has DataContext set in code behind -->
+		<!--======================================================-->
+		<!--#region top left Grid-->
+		<Grid  x:Name="GridTopLeft" Margin="0,0,0,9"
+			 Grid.Row="1" Grid.Column="1">
+			<Grid.DataContext>
+				<viewmodels:MvvmGenericModel/>
+			</Grid.DataContext>
+
+			<StackPanel x:Name="GenericDisplay" 
+				Orientation="Vertical" Margin="0,0,0,118" 
+				Visibility="Visible">
+
+				<TextBlock
+					Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+					d:Text="Ian"
+					Foreground="Black" >
+				</TextBlock>
+				<TextBlock 
+					Foreground="DarkOliveGreen" 
+					d:Text="38 Liggard Court"   				     
+					Text="{Binding Address1,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+				<TextBlock 
+					Text="{Binding Address2,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+					Foreground="DarkCyan" 
+					d:Text="Mythop Road"/>
+				<TextBlock 
+					Text="{Binding Address3,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+					Foreground="DarkGoldenrod" 
+					d:Text="Lytham"/>
+			</StackPanel>
+
+			<StackPanel x:Name="Updatemvvm" 
+				Orientation="Vertical" 
+				Grid.Row="1" 
+				Grid.Column="1" 
+				VerticalAlignment="Bottom">
+
+				<TextBox Text="John Wilson"	x:Name="AddText1" Foreground="Blue" />
+				<Button Content="Change Name"
+					  Command="{Binding UpdateName}" CommandParameter="{Binding  ElementName=AddText1, Path=Text}" 
+					  Width="113" 
+					  Background="Green" 
+					  Foreground="White" 
+					  HorizontalAlignment="Right">
+				</Button>
+
+				<TextBox Text="47, Alington Crescent"	x:Name="Addr1" Foreground="DarkOrange"/>
+
+				<Button Content="Change Address 1" 
+					Command="{Binding UpdateAddr1}" CommandParameter="{Binding  ElementName=Addr1, Path=Text}" 
+					Width="113" 
+					Background="Green"
+					Foreground="White" 
+					HorizontalAlignment="Right">
+				</Button>
+
+				<TextBox Text="Wembley"	x:Name="Addr2" Foreground="DarkOrange"/>
+
+				<Button Content="Change Address 2" 
+					  Command="{Binding UpdateAddr2}" CommandParameter="{Binding  ElementName=Addr2, Path=Text}" 
+					  Width="113" 
+					  Background="Green"
+					  Foreground="White" 
+					  HorizontalAlignment="Right">
+				</Button>
+			</StackPanel>
+
+			<!--#endregion top left grid-->
+		</Grid>
+		<!--======================================================-->
+
+		<!--#region Stack panels-->
+
+		<!--#region Bottom left person sample-->
+		<!--// Uses PersonViewModel-->
+		<Grid  x:Name="GridBottomLeft"
+			Grid.Row="2" Grid.Column="1" Margin="0,0,2,173">
+
+			<Grid.DataContext>
+				<viewmodels:PersonViewModel/>
+			</Grid.DataContext>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="120" />
+				<RowDefinition Height="150" />
+			</Grid.RowDefinitions>
+			
+			<ListView x:Name="PersonsList" 
+				    Grid.Row="0"
+				    ItemsSource="{Binding People}" 
+				    Margin="-2,1,2,0" 
+				    Height="107" 
+				    VerticalAlignment="Top" 
+				    >
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
+						<GridViewColumn Header="Address" Width="200" DisplayMemberBinding="{Binding Address}"/>
+					</GridView>
+				</ListView.View>
+			</ListView>
+
+			<Grid Grid.Row="2">
+				<!--<Grid.DataContext>
+					<viewmodels:PersonViewModel/>
+				</Grid.DataContext>-->
+				<TextBox x:Name="NameFld"
+					Text="{Binding PersonsList.SelectedItem.Name, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+						VerticalAlignment="Top" 
+						Height="25"
+						Foreground="{StaticResource Red2}"
+						Margin="0,4,121,0" />
+				<Button Margin="275,4,5,120"
+					  Command="{Binding UpdateName}" CommandParameter="{Binding  ElementName=NameFld, Path=Text}" 
+					  Height="25"
+					Content="Update Name"  />
+				<TextBox  x:Name="AddressFld"
+					    Text="{Binding PersonsList.SelectedItem.Address, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+						Height="25"
+						Foreground="{StaticResource Red2}"
+						VerticalAlignment="Top" Margin="0,39,123,0"/>
+				<Button Margin="275,37,4,88"
+					  Command="{Binding UpdateAddress}" CommandParameter="{Binding  ElementName=AddressFld, Path=Text}" 
+						Height="25"
+						Content="Update Address"  />
+			</Grid>
+		</Grid>
+		<!--#endregion person sample-->
+		<!--======================================================-->
+
+		<!--#region Top Right Grid;-->
+		<Grid x:Name="GridTopRight" Grid.Row="1" Grid.Column="2" Margin="0,0,0,386" Grid.RowSpan="2">
+			<Grid.DataContext>
+				<viewmodels:Presenter/>
+			</Grid.DataContext>
+			<StackPanel x:Name="TextConvDisplay" 
+				Orientation="Vertical" Height="223" VerticalAlignment="Center">
+
+				<Label Foreground="Yellow" Margin="5,5,5,0">Text To Convert</Label>
+				<TextBox Text="{Binding SomeText}" Margin="5"/>
+				<Label Foreground="Yellow" Margin="5,5,5,0">History</Label>
+				<ListBox x:Name ="GenericListbox" ItemsSource="{Binding History}" Height="66" Margin="5"/>
+				<Button Command="{Binding ConvertTextCommand}" Margin="5" Height="20">Convert</Button>
+			</StackPanel>
+		</Grid>
+		<!--#endregion Top Right panel;-->
+
+		<!--#endregion Stack panels-->
+
+		<!--<StackPanel Orientation="Vertical"
+			Grid.Row="1" 
+			Grid.Column="1" Margin="0,219,0,159" Grid.RowSpan="2">
+			<TextBlock Text="{Binding Name}"   Height="35" Foreground="Black"
+			     Background="Aquamarine">
+			</TextBlock>
+			<TextBlock Text="{Binding Address1}"   Height="35" Foreground="Black"
+			     Background="Beige" >
+			</TextBlock>
+			<TextBlock Text="{Binding Address2}"   Height="35" Foreground="Black"
+			     Background="Bisque" >
+			</TextBlock>
+		</StackPanel>-->
+
+		<!--</Grid>-->
+		<Grid   x:Name="GridLowerRightListbox" Margin="0,13,0,149"
+			  Grid.Row="2" Grid.Column="2">
+			<Grid.DataContext>
+				<viewmodels:GenListboxClass/>
+			</Grid.DataContext>
+
+			<ListBox x:Name="Lbdata" 
+				ItemsSource="{Binding LbDataCollection, UpdateSourceTrigger=PropertyChanged}"
+				Height="123" 
+				Margin="5,3,8,0" 
+				BorderThickness="2" 
+   				ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
+				BorderBrush="Red" 
+				   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+				   ScrollViewer.VerticalScrollBarVisibility="Auto"
+				SelectedIndex="0" 
+				SelectedItem="0" 
+				IsSynchronizedWithCurrentItem="True" 
+				SourceUpdated="Lbdata_SourceUpdated"
+				VerticalAlignment="Top">
+
+				<!--<ListBoxItem x:Name="LbItem" >
+					<TextBlock Text="{Binding}"/>
+					<ListBoxItem.DataContext>
+						<viewmodels:GenListboxClass/>
+					</ListBoxItem.DataContext>
+				</ListBoxItem>-->
+			</ListBox>
+
+			<Button 
+					Command="{Binding ReloadCommand}" CommandParameter="Lbdata" 
+					Width="120"
+					Height="32"
+					Margin="0,0,12,58" 
+					HorizontalAlignment="Right"
+					Content="Reload List"
+					VerticalAlignment="Bottom">
+				<!--<Button.DataContext>
+						<viewmodels:GenListboxClass/>
+					</Button.DataContext>-->
+			</Button>
+
+		</Grid>
+
+
+		<Grid
+			 Grid.Row="2" Grid.Column="2" Margin="146,193,0,153" Grid.ColumnSpan="2">
+
+			<Button  x:Name="CloseButton"
+				  Command="{Binding CloseWindow}" 
+				  Width="100" Height="35" 
+				  VerticalAlignment="Top"	 
+				  HorizontalAlignment="Right" 
+				  Content="Close" 
+				  Background="Red" 
+				  Foreground="White" Margin="0,0,23,1">
+				<Button.DataContext>
+					<view:MvvmViewModel/>
+				</Button.DataContext>
+			</Button>
+
+			<Button 
+				Command="{Binding debugger}" 
+				Width="100"	 
+				Height="35"
+				HorizontalAlignment="Right" 
+				Content="Debug" 
+				Background="LightGreen" 
+				VerticalAlignment="Top"	 
+				Foreground="Black" Margin="0,0,147,1">
+				<!--<Button.DataContext>
+					<view:MvvmViewModel/>
+				</Button.DataContext>-->
+			</Button>
+		</Grid>
+		<Grid x:Name="RefreshButtonGrid" Margin="121,142,141,203" Grid.Column="2" Grid.Row="2" >
+			<!--<Grid.DataContext>
+				<view:GenericMvvm/>
+			</Grid.DataContext>-->
+			<Button x:Name="RefrehButton"
+				Command="{Binding RefreshListbox}"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Height="32" 
+				Content="Refresh Listbox " Width="117" />
+		</Grid>
+	</Grid>
+</Window>

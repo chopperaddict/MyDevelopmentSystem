@@ -258,22 +258,26 @@ namespace MyDev
 
 		private void button4_Click ( object sender , RoutedEventArgs e )
 		{
-
+			VmTest vmt = new VmTest();
+			vmt . Show ( );
 		}
 
 		private void button5_Click ( object sender , RoutedEventArgs e )
 		{
-
+			GenericMvvmWindow gmvvm = new GenericMvvmWindow();
+			gmvvm . Show ( );
 		}
 
 		private void button6_Click ( object sender , RoutedEventArgs e )
 		{
-
+			MvvmDataGrid bg = new MvvmDataGrid();
+			bg . Show ( );
 		}
 
 		private void button7_Click ( object sender , RoutedEventArgs e )
 		{
-
+			MvvmUserTest mut = new MvvmUserTest();
+			mut . Show ( );
 		}
 
 		private void button8_Click ( object sender , RoutedEventArgs e )
@@ -296,12 +300,22 @@ namespace MyDev
 		{
 			if ( e . Key == Key . D )
 				button1_Click ( sender , null );
-			if ( e . Key == Key . L )
+			else if ( e . Key == Key . L )
 				button3_Click ( sender , null );
-			if ( e . Key == Key . T )
+			else if ( e . Key == Key . T )
 				button3_Click ( sender , null );
-			if ( e . Key == Key . Enter )
-				button3_Click ( sender , null );
+			else if ( e . Key == Key . V )
+				button4_Click ( sender , null );
+			else if ( e . Key == Key . M )
+				button5_Click ( sender , null );
+			else if ( e . Key == Key . G )
+				button6_Click ( sender , null );
+			else if ( e . Key == Key . U )
+				button7_Click ( sender , null );
+			else if ( e . Key == Key . Enter )
+				button7_Click ( sender , null );
+			else if ( e . Key == Key . Escape )
+				Application . Current . Shutdown ( );
 		}
 	}
 }

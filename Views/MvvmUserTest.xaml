@@ -1,0 +1,153 @@
+﻿<Window x:Class="MyDev.Views.MvvmUserTest"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:local="clr-namespace:MyDev.Views"
+	xmlns:conv="clr-namespace:MyDev.Converts"
+	xmlns:userctrl="clr-namespace:MyDev.UserControls"
+	mc:Ignorable="d"
+	Title="User Controls Demonstration System" 
+	WindowChrome.ResizeGripDirection="BottomRight"
+	ResizeMode="CanResizeWithGrip"
+	Height="625" Width="1200"
+	MinHeight="525" MinWidth="1100"
+	x:Name="UserTestWindow"
+	Background="{StaticResource Orange4}">
+
+	<Window.Resources>
+		<conv:ReduceByParamValue x:Key="ReduceByParamValue"/>
+	</Window.Resources>
+
+	<Grid x:Name="Grid1" Visibility="Visible" Margin="0,0,0,0"
+					Height="{Binding ElementName=UserTestWindow, Path=Height	 ,
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=0}"
+					Width="{Binding Path=Width, ElementName=UserTestWindow,
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=0}">
+
+		<!--#region Screen s/ Canvas etup-->
+		<Canvas x:Name="canvas"
+			  Background="Transparent"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top"
+					Height="{Binding ElementName=Grid1, Path=ActualHeight	 ,
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=0}"
+					Width="{Binding Path=ActualWidth, ElementName=Grid1,
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=280}">
+	
+				<userctrl:Ucontrol1 x:Name="Ucontrol1"
+					Canvas.Left="10"
+					Canvas.Top="10"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Visibility="Hidden"
+					Height="{Binding ActualHeight, ElementName=canvas, 
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=50}"
+					Width="{Binding ActualWidth, ElementName=canvas, 
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=20}"
+					/>
+
+				<userctrl:MulltiDbUserControl
+					x:Name="Multigrid"
+					Visibility="Hidden" 
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Height="{Binding ActualHeight, ElementName=canvas, 
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=50}"
+					Width="{Binding ActualWidth, ElementName=canvas, 
+						Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=180}"
+					Canvas.Top="10"
+					Canvas.Left="10"/>
+
+				<userctrl:StdDataUserControl x:Name="stddatagrid"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Visibility="Hidden" 
+					Canvas.Top="10"
+					Canvas.Left="10"
+					Width="{Binding ElementName=canvas, Path=ActualWidth,
+						Converter={StaticResource ReduceByParamValue},ConverterParameter=20}"	/>
+
+			<!--#endregion Screen setup-->
+
+			<!--#region Buttons panel-->
+			<Border x:Name="ButtonPanel"
+				BorderThickness="0" BorderBrush="Green" 
+				  Height="270"
+				  Margin="0,0,0,63" 
+				  HorizontalAlignment="Right"
+				  VerticalAlignment="Bottom"
+				  Canvas.Top="{Binding ActualHeight,ElementName=Grid1,Converter={StaticResource ReduceByParamValue}, ConverterParameter=300}"
+				  Canvas.Right="{Binding ActualWidth, ElementName=canvas,
+					Converter={StaticResource ReduceByParamValue}, ConverterParameter=1180}" 
+				  >
+				<Grid Margin="0,0,3,-5" Width="230">
+
+					<WrapPanel Orientation="Vertical" Margin="0,0,4,0">
+						<WrapPanel Orientation="Horizontal" Width="228">
+							<Button x:Name="OpengridViewer"
+								Content="Multi Db Viewer"
+								BorderBrush="{StaticResource Green5}"
+								BorderThickness="2"
+								Foreground="White" 
+								Style="{StaticResource StandardYtoRGradientButton}"
+								FontSize="14"
+								Click="OpenMultiDbControl" Width="165" Height="48"/>
+							<Image Source="\icons\blue folder open.png" Height="30" Width="30" Margin="20 10 0 0"/>
+
+							<Button x:Name="dummyViewer"
+								Content="Dummy  Viewer"
+								  Margin="0 15 0 0"
+								Style="{StaticResource StandardYtoRGradientButton}"
+								BorderBrush="{StaticResource Green5}"
+								BorderThickness="2"
+								Foreground="White" 
+								FontSize="14"
+								Click="OpenDummy" Width="165" Height="48"/>
+							<Image Source="\icons\ProgressSkip.ico" Height="30" Width="30" Margin="20 10 0 0"/>
+
+							<!--<WrapPanel Orientation="Horizontal" Width="218"-->
+							<Button x:Name="OpenDataGridViewer"
+							     Margin="0 10 20 0"
+								Content="Std Db's Viewer"
+								Style="{StaticResource StandardYtoRGradientButton}"
+								BorderBrush="{StaticResource Green5}"
+								BorderThickness="2"
+								Foreground="White" 
+								FontSize="14"
+								Click="OpenStdControl" Width="165" Height="48"/>
+
+							<Image Source="\icons\DatabaseProject.ico" Height="30" Width="30" Margin="0 5 0 0"/>
+
+							<!--</WrapPanel>-->
+						</WrapPanel>
+
+						<WrapPanel Orientation="Horizontal"   Margin="0 10 0 0" Width="218">
+							<Button Content="Close Window" 
+							FontSize="14"
+							FontWeight="Bold"
+							Foreground="White"
+							BorderBrush="{StaticResource Red2}"
+							BorderThickness="4"
+							Click="CloseThisWindow" Width="165" Height="48" 
+							Style="{StaticResource StandardYtoRGradientButton}"
+							Padding="0 0  0 0"
+							Margin="0,5,0,0" />
+							<Image Source="\icons\redcross.png" Height="40" Width="40" Margin="10 7 0 0"/>
+						</WrapPanel>
+					</WrapPanel>
+				</Grid>
+			</Border>
+			<!--#endregion Buttons panel-->
+		</Canvas>
+
+	</Grid>
+</Window>

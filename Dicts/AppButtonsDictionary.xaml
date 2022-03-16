@@ -83,14 +83,14 @@
 		<Setter Property="Height" Value="50" />
 		<Setter Property="Width" Value="150" />
 		<Setter Property="BorderBrush" Value="White" />
-		<Setter Property="Foreground" Value="Blue" />
+		<Setter Property="Foreground" Value="Black" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="FontSize" Value="20" />
-		<Setter Property="FontWeight" Value="Normal" />
+		<Setter Property="FontWeight" Value="SemiBold" />
 		<Setter Property="Background">
 			<Setter.Value>
 				<LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
-					<GradientStop Color="GREEN" Offset="0.25" />
+					<!--<GradientStop Color="GREEN" Offset="0.25" />-->
 					<!--<GradientStop Color="{StaticResource BackgroundColor2}" Offset="0.25" />-->
 					<GradientStop Offset="0.25" Color="#FFFFD190" />
 					<GradientStop Offset="0.65" Color="#F94334" />
@@ -98,9 +98,7 @@
 				</LinearGradientBrush>
 			</Setter.Value>
 		</Setter>
-
-
-		<!--Lets change the Border as well but use the colors
+								 		<!--Lets change the Border as well but use the colors
 			defined in the Buttons declaration in the xaml code-->
 
 		<Setter Property="Control.Template">
@@ -109,7 +107,8 @@
 					<Border
 						Background="{TemplateBinding Background}"
 						BorderBrush="{TemplateBinding BorderBrush}"
-						BorderThickness="{TemplateBinding BorderThickness}">
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="8,8,8,8">
 
 						<!--MOST IMPORTANT the ContentPresenter lives here and displays our
 							"Content" text correctly NB: Interestingly, it is in the BORDER which
@@ -134,9 +133,10 @@
 			<Trigger Property="IsMouseOver" Value="True">
 				<Setter Property="Background">
 					<Setter.Value>
-						<LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
-							<GradientStop Offset="0" Color="#F9A68B" />
-							<GradientStop Offset="1" Color="#6B1D04" />
+						<LinearGradientBrush StartPoint="1,0" EndPoint="0, 1">
+							<GradientStop Offset="0.25" Color="#FFFFD190" />
+							<GradientStop Offset="0.65" Color="#F94334" />
+							<GradientStop Offset="1" Color="#9C700A" />
 						</LinearGradientBrush>
 					</Setter.Value>
 				</Setter>
@@ -149,14 +149,25 @@
 							<GradientStop Offset="0" Color="Beige" />
 							<GradientStop Offset="1" Color="Green" />
 						</RadialGradientBrush>
-						<!--<LinearGradientBrush="0,0" EndPoint="1,0">
-							<GradientStop Color="Aquamarine" Offset="0.35" />
-							<GradientStop Color="Goldenrod" Offset="0.95" />
-							<GradientStop Color="DarkGray" Offset="1" />
-						</LinearGradientBrush>-->
 					</Setter.Value>
 				</Setter>
 			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsEnabled" Value="False"/>
+				</MultiTrigger.Conditions>
+				<MultiTrigger.Setters>
+					<Setter Property="Background">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+								<GradientStop Color="LightGray" Offset="0.35" />
+								<GradientStop Color="DarkGray" Offset="1" />
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+					<Setter Property="TextElement.Foreground" Value="{StaticResource Black5}"/>
+				</MultiTrigger.Setters>
+			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
 
@@ -318,8 +329,7 @@
 	<!--This works pretty well overall
 		used by main button bar is in this app-->
 
-	<Style
-		x:Key="RedToBlackButton"
+	<Style  x:Key="RedToBlackButton"
 		BasedOn="{StaticResource StandardYtoRGradientButton}"
 		TargetType="Button">
 		<Setter Property="OverridesDefaultStyle" Value="true" />

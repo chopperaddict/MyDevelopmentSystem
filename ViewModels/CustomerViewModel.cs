@@ -1,5 +1,6 @@
 ﻿using Dapper;
 
+using MyDev . Models;
 using MyDev . Views;
 //#define PERSISTENTDATA
 using System;
@@ -18,7 +19,7 @@ namespace MyDev . ViewModels
 	//CUSTOMER VIEW MODEL CLASS
 	//===========================
 	[Serializable]
-	public partial class CustomerViewModel : INotifyPropertyChanged
+	public partial class CustomerViewModel//: INotifyPropertyChanged
 	{
 		#region CONSTRUCTORS
 
@@ -221,7 +222,11 @@ namespace MyDev . ViewModels
 		{
 			List<CustomerViewModel> cvmlist = new List<CustomerViewModel>();
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
 			{
 				try
@@ -250,15 +255,20 @@ namespace MyDev . ViewModels
 				return cvmlist;
 			}
 		}
-		public static ObservableCollection<CustomerViewModel> GetCustObsCollection ( ObservableCollection<CustomerViewModel> collection , string SqlCommand = "" , bool Notify = false , string Caller = "" )
+		public  ObservableCollection<CustomerViewModel> GetCustObsCollection ( ObservableCollection<CustomerViewModel> collection , string SqlCommand = "" , bool Notify = false , string Caller = "" )
 		{
 			ObservableCollection<CustomerViewModel> cvmcollection = new ObservableCollection<CustomerViewModel>();
 			cvmcollection = collection;
 			List<CustomerViewModel> cvmlist = new List<CustomerViewModel>();
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
+				//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 
-			using ( IDbConnection db = new SqlConnection ( ConString ) )
+				using ( IDbConnection db = new SqlConnection ( ConString ) )
 			{
 				try
 				{
@@ -302,7 +312,11 @@ namespace MyDev . ViewModels
 			IDictionary <int, string> CustDict = new Dictionary<int, string>();
 			List<CustomerViewModel> cvmlist = new List<CustomerViewModel>();
 			string ConString = Flags . CurrentConnectionString;
-			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			if ( ConString == "" )
+			{
+				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				ConString = Flags . CurrentConnectionString;
+			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
 			{
 				try

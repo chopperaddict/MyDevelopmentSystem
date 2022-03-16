@@ -3109,9 +3109,9 @@ namespace MyDev . Views
 			}
 			if ( ValidBorderSizes . Contains ( value ) == false )
 			{
-				return false;
 				Utils . DoErrorBeep ( 280 , 100 , 1 );
 				Utils . DoErrorBeep ( 200 , 250 , 1 );
+				return false;
 			}
 			return true;
 		}

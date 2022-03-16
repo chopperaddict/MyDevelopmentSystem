@@ -16,7 +16,7 @@ using MyDev . Views;
 namespace MyDev . ViewModels
 {
 	[Serializable]
-	public partial class DetailsViewModel : INotifyPropertyChanged
+	public partial class DetailsViewModel// : INotifyPropertyChanged
 	{
 
 		#region PropertyChanged
