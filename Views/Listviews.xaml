@@ -13,9 +13,9 @@
 	  Closed="ListViewWindow_Closed"
 		x:Name="ListViewWindow"
 	  PreviewKeyDown="ListViewWindow_PreviewKeyDown"
-	  PreviewMouseLeftButtonUp="Flowdoc_PreviewMouseLeftButtonDown"
+	  PreviewMouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"
        Title="List Views"
-	  MinHeight="830" MinWidth="1220"
+	  MinHeight="630" MinWidth="1220"
 	  Height="830" Width="1226"
 	  WindowChrome.ResizeGripDirection="BottomRight"
 	  ResizeMode="CanResizeWithGrip"
@@ -118,6 +118,7 @@
 	</Window.Background>
 
 	<Grid x:Name="MainGrid">
+		
 
 		<Grid.RowDefinitions>
 			<RowDefinition  Height="35" />
@@ -136,7 +137,8 @@
 
 		<!--#region Flowdoc/PickColors/Treeviews-->
 
-		<Canvas x:Name="canvas" Grid.Row="0"
+		<Canvas x:Name="canvas" 
+			  Grid.Row="0"
 			  Grid.Column="0"
 			  Grid.RowSpan="5"
 			  Grid.ColumnSpan="5"
@@ -151,13 +153,13 @@
 				Canvas.Left="45"
 				Canvas.Top="64"
 				Height="300"
-				Margin="0 0 0 0"
-				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"	 
-				MouseMove="Flowdoc_MouseMove"
 				LostFocus="Flowdoc_LostFocus"
+				Margin="0 0 0 0"
+				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"	
+				MouseMove="Flowdoc_MouseMove"
 				Opacity="1"
-				Panel.ZIndex="4"
-				PreviewMouseLeftButtonDown="LvFlowdoc_PreviewMouseLeftButtonDown"
+				Panel.ZIndex="2"
+				PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"
 				Visibility="Hidden"
 				Width="520" />
 

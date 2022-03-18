@@ -27,6 +27,7 @@ namespace MyDev . UserControls
 	/// </summary>
 	public partial class FlowDoc : UserControl
 	{
+		#region Properties
 		private bool mouseCaptured  ;
 		public bool MouseCaptured
 		{
@@ -75,6 +76,7 @@ namespace MyDev . UserControls
 			get { return keepSizeIcon2; }
 			set { keepSizeIcon2 = value; }
 		}
+		#endregion Properties
 
 		public FlowDoc ( )
 		{
@@ -103,6 +105,10 @@ namespace MyDev . UserControls
 			}
 			KeepSizeIcon1 = "/Icons/down arroiw red.png";
 			KeepSizeIcon2 = "/Icons/up arroiw red.png";
+
+			Thickness th = new Thickness();
+			th . Left = th . Right = th . Top = th . Bottom = 10;
+			FdBorder . BorderThickness = th;
 		}
 		public void ShowInfo (
 			FlowDoc Flowdoc,
@@ -414,10 +420,13 @@ namespace MyDev . UserControls
 					BorderSelected = 1;
 					if  ( this . ActualWidth - left < 10 )
 						BorderSelected = 4;
+					Mouse . SetCursor ( Cursors . SizeNS );
+
 				}
 				else if ( MBottom >= ValidTopB && MBottom <= ValidBottomB && MTop > height - 20 )
 				{
 					// Bottom
+					Mouse . SetCursor ( Cursors . SizeNS );
 					BorderSelected = 2;
 					if ( this . ActualWidth - left < 10 )
 						BorderSelected = 4;
@@ -425,11 +434,13 @@ namespace MyDev . UserControls
 				else if ( left < 10 )
 				{
 					// Left
+					Mouse . SetCursor ( Cursors . SizeWE );
 					BorderSelected = 3;
 				}
 				else if ( this . ActualWidth - left < 10 )
 				{
 					//Right
+					Mouse . SetCursor ( Cursors . SizeWE );
 					BorderSelected = 4;
 				}
 //				ExecuteFlowDocBorderMethod ( this , EventArgs . Empty );
@@ -453,6 +464,7 @@ namespace MyDev . UserControls
 
 		private void Border_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
+//			this . Visibility = Visibility . Hidden;
 			BorderClicked = false;
 		}
 
@@ -532,6 +544,7 @@ namespace MyDev . UserControls
 		#endregion keyboard handlers
 
 		#region Mouse handlers
+		// ONLY Called when flowdoc Document  or Scrollviewer area  is clicked on
 		private void flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			if ( Utils . HitTestScrollBar ( sender , e ) )
@@ -664,8 +677,11 @@ namespace MyDev . UserControls
 
 		private void Closebtn_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
-			this . Visibility = Visibility . Hidden;
+			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
+			this . Visibility = Visibility . Hidden;
+			
+			
 		}
 
 		private void dummy_Click ( object sender , RoutedEventArgs e )
@@ -676,6 +692,7 @@ namespace MyDev . UserControls
 		private void Exit_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			this . Visibility = Visibility . Hidden;
+			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
 		}
 

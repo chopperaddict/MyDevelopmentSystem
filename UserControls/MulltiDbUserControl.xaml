@@ -73,9 +73,9 @@
 					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Margin="10 0 0 0"
-					Canvas.Left="{Binding Path=ActualWidth, ElementName=bgcanvas,
-						Converter={StaticResource ReduceByParamValue}, ConverterParameter=0}"
-					Visibility="Visible">
+					Canvas.Left="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, 
+						ConverterParameter=0, ElementName=bgcanvas}"
+					Visibility="Visible" Height="504">
 
 				<!--// Record counter-->
 				<WrapPanel Orientation="Horizontal"
@@ -95,7 +95,7 @@
 									TextAlignment="Center"
 									Foreground="White"
 									FontSize="20"
-									Text=""/>
+									Text="{Binding RecordsCount}"/>
 
 					<Label Content="Records Shown" 
 									Foreground="White"
@@ -147,41 +147,11 @@
 						</ComboBox.ItemTemplate>
 					</ComboBox>
 
-					<!--<ComboBox  x:Name="dbName"
-						     AllowDrop="True"
-						     FontSize="14"
-						     FontWeight="DemiBold"
-						     att:MenuAttachedProperties.NormalBackground="{StaticResource Green0}"
-						     att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
-						     att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
-						     att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
-						     Height="25"
-						     Margin="5 0 0 0"
-						     HorizontalAlignment="Left"
-						     HorizontalContentAlignment="Center"
-						     MaxDropDownHeight="257"
-						     Padding="0 3 0 0"
-						     PreviewMouseRightButtonUp="DbMain_PreviewMouseRightButtonUp"
-						     TabIndex="4"
-						     Text="Db Name..."
-						     VerticalAlignment="Top"
-						     Width="228">
-							-->
-					<!--SelectionChanged="dbMain_SelectionChanged"-->
-					<!--
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
-				     Content="{Binding}"
-				     Width="{Binding ActualWidth, ElementName=dbNameLv}" />
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>-->
 					<TextBlock Text="Available Data Tables in current Domain"
 							     Foreground="White" Width="215"/>
 
 					<ListBox x:Name="DbListbox"
-						Height="150" Width="227" Margin="5 5 0 0"
+						Height="303" Width="227" Margin="5 5 0 0"
 						ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
 						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 						ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -213,7 +183,7 @@
 						Click="ReloadFromDomain"
 						   Grid.Column="2" Grid.ColumnSpan="2"  />-->
 
-					<Button 
+					<!--<Button 
 						Height="42" 	  Width="156"
 						HorizontalAlignment="Left"
 						VerticalAlignment="Bottom" 
@@ -226,12 +196,12 @@
 						Margin="45,0,0,10" 
 						Grid.Column="2" 
 						Grid.Row="1" 
-						Grid.RowSpan="2" />
+						Grid.RowSpan="2" />-->
 				</WrapPanel>
 				<!--#endregion Button panel-->
 			</Grid>
 			<!--#endregion buttons-->
-			
+
 		</Canvas>
 		<!--</Border>-->
 	</Grid>

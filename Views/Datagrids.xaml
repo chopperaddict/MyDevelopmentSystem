@@ -16,7 +16,7 @@
 	Title="Datagrids"
 	Height="760"
 	Width="800"
-	MinHeight="700"
+	MinHeight="750"
 	MinWidth="800"
 	WindowStartupLocation="CenterScreen">
 	<!--d:DataContext="{d:DesignInstance Type=local:Datagrids}"-->
@@ -362,6 +362,7 @@
 
 		<DataGrid x:Name="Grid1"
 			AllowDrop="True"
+			    AlternatingRowBackground="{StaticResource Cyan0}"
 			Grid.Column="1"
 			Grid.ColumnSpan="3"
 			Grid.Row="1"
@@ -373,7 +374,8 @@
 		<!--#region Canvas / FlowDoc-->
 
 		<!--SelectionChanged="sp_SelectionChanged"-->
-		<Canvas x:Name="canvas" Grid.Row="0"
+		<Canvas x:Name="canvas" 
+			  Grid.Row="0"
 			  Grid.Column="0"
 			  Grid.RowSpan="5"
 			  Grid.ColumnSpan="5"
@@ -390,6 +392,7 @@
 				Canvas.Left="45"
 				Canvas.Top="64"
 				Height="300"
+				LostFocus="Flowdoc_LostFocus"
 				Margin="0 0 0 0"
 				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"	
 				MouseMove="Flowdoc_MouseMove"
@@ -471,7 +474,7 @@
 			  Grid.Row="2"
 			  Height="40"
 			  HorizontalAlignment="Left"
-			  Margin="147,107,0,0"
+			  Margin="6,107,0,0"
 			  TabIndex="6"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Top"
@@ -628,7 +631,7 @@
 			Height="22"
 			HorizontalAlignment="Left"
 			IsChecked="False"
-			Margin="10,167,0,0"
+			Margin="10,174,0,0"
 			Panel.ZIndex="2"
 			VerticalAlignment="Top"
 			Width="215" Grid.Column="1" />
@@ -638,7 +641,7 @@
 			  FontSize="14"
 			  Grid.Row="2"
 			  HorizontalAlignment="Left"
-			  Margin="10,192,0,0"
+			  Margin="10,198,0,0"
 			  VerticalAlignment="Top"
 			  Width="231" Height="23" Grid.Column="1" Grid.RowSpan="2" />
 		<CheckBox x:Name="UseScrollview"
@@ -647,16 +650,16 @@
 			FontSize="14"
 			Grid.Row="3"
 			HorizontalAlignment="Left"
-			Margin="10,11,0,0"
+			Margin="10,15,0,0"
 			VerticalAlignment="Top"
-			Width="119" Height="23" Grid.Column="1" />
+			Width="181" Height="23" Grid.Column="1" />
 		<CheckBox x:Name="UseTimer"
 			  Click="Timer_Click"
 			  Content="Show Load  times"
 			FontSize="14"
 			Grid.Row="3"
 			  HorizontalAlignment="Left"
-			  Margin="10,35,0,0"
+			  Margin="10,38,0,0"
 			  VerticalAlignment="Top"
 			  Width="208" Height="23" Grid.Column="1" Grid.RowSpan="2" />
 		<CheckBox x:Name="LoadViaSqlCmd"
@@ -666,7 +669,7 @@
 			FontSize="14"
 			Grid.Row="4"
 			HorizontalAlignment="Left"
-			Margin="10,5,0,0"
+			Margin="10,7,0,0"
 			VerticalAlignment="Top"
 			Width="208" Height="23"
 			Grid.Column="1" />
@@ -679,7 +682,6 @@
 			FontWeight="DemiBold"
 			Foreground="{StaticResource Orange0}"
 			Grid.Row="4"
-			Grid.RowSpan="2"
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
 			Width="314" Margin="10,30,0,0" Grid.Column="1" />
@@ -812,6 +814,16 @@
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Top"
 			  Width="110" Grid.ColumnSpan="2" />
+		<CheckBox x:Name="UseTrueColNames"
+			Click="UseColumnNames_Click"
+			Content="Use Original Field names for Generic Tables"
+			FontSize="14"
+			Grid.Row="2"
+			HorizontalAlignment="Left"
+			Margin="10,153,0,0"
+			VerticalAlignment="Top"
+			IsChecked="true"
+			Width="297" Height="23" Grid.Column="1" />
 
 		<!--#endregion TextBoxes-->
 	</Grid>

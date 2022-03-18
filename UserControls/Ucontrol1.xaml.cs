@@ -67,5 +67,17 @@ namespace MyDev . UserControls
 					listbox1 . Items . Add ( item.Substring(0, item.Length-1) );
 			}
 		}
+
+		private void Btn1_Click ( object sender , RoutedEventArgs e )
+		{
+			listbox1 . Items . Clear ( );
+		}
+
+		private void Btn3_Click ( object sender , RoutedEventArgs e )
+		{
+			listbox1 . Items . Clear ( );
+			U1Ctrl_Loaded ( sender , e );
+
+		}
 	}
 }

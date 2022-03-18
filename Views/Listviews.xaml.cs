@@ -205,44 +205,6 @@ namespace MyDev . Views
 			get { return movingobject; }
 			set { movingobject = value; }
 		}
-		//private object Colorpickerobject;
-		//public object ColorpickerObject
-		//{
-		//	get { return Colorpickerobject; }
-		//	set { Colorpickerobject = value; }
-		//}
-
-		//private bool flowdocResizing;
-		//public bool FlowdocResizing
-		//{
-		//	get { return flowdocResizing; }
-		//	set { flowdocResizing = value; }
-		//}
-		//private double flowdocFloatingTop;
-		//public double FlowdocFloatingTop
-		//{
-		//	get { return flowdocFloatingTop; }
-		//	set { flowdocFloatingTop = value; }
-		//}
-		//private double flowdocFloatingLeft;
-		//public double FlowdocFloatingLeft
-		//{
-		//	get { return flowdocFloatingLeft; }
-		//	set { flowdocFloatingLeft = value; }
-		//}
-		//private double flowdocFloatingHeight;
-		//public double FlowdocFloatingHeight
-		//{
-		//	get { return flowdocFloatingHeight; }
-		//	set { flowdocFloatingHeight = value; }
-		//}
-		//private double flowdocFloatingWidth;
-		//public double FlowdocFloatingWidth
-		//{
-		//	get { return flowdocFloatingWidth; }
-		//	set { flowdocFloatingWidth = value; }
-		//}
-
 
 		private double CpFirstXPos=0;
 		private double CpFirstYPos=0;
@@ -293,7 +255,6 @@ namespace MyDev . Views
 		private void ListViewWindow_Loaded ( object sender , RoutedEventArgs e )
 		{
 			this . DataContext = this;
-			canvas . Visibility = Visibility . Visible;
 			// Initialize all connection strings  in Flags
 			Utils . LoadConnectionStrings ( );
 
@@ -338,14 +299,15 @@ namespace MyDev . Views
 			// Hook into our Flowdoc so we can resize it in  the canvas !!!
 			// Flowdoc has an Event declared (ExecuteFlowDocReSizeMethod ) that we are  hooking into
 			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
-//			Flowdoc . ExecuteFlowDocResizeMethod += Flowdoc_ExecuteFlowDocResizeMethod;
+			//			Flowdoc . ExecuteFlowDocResizeMethod += Flowdoc_ExecuteFlowDocResizeMethod;
 			Flowdoc . ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
 			Colorpicker . ExecuteSaveToClipboardMethod += Colorpicker_ExecuteSaveToClipboardMethod;
 
 			// LOAD BOTH VIEWERS (NO PARAMETER)
 			LoadGrid_IAN1 ( );
 			Startup = false;
-			ShowInfo ( Flowdoc, canvas, header: "Load completed successfully" , clr4: "Red5" ,
+			if ( UseFlowdoc )
+				ShowInfo ( Flowdoc , canvas , header: "Load completed successfully" , clr4: "Red5" ,
 				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 				line2: $"" ,
 				line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -361,6 +323,7 @@ namespace MyDev . Views
 			MouseoverBackground = Brushes . Blue;
 			MouseoverForeground = Brushes . White;
 			MouseoverSelectedBackground = Brushes . Black;
+			canvas . Visibility = Visibility . Visible;
 			MouseoverSelectedForeground = Brushes . White;
 		}
 
@@ -484,14 +447,16 @@ namespace MyDev . Views
 				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
 				if ( genaccts . Count > 0 )
 				{
-					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+					if ( UseFlowdoc )
+						ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
 				}
 				else
 				{
-					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+					if ( UseFlowdoc )
+						ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
@@ -556,14 +521,16 @@ namespace MyDev . Views
 				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
 				if ( genaccts . Count > 0 )
 				{
-					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+					if ( UseFlowdoc )
+						ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
 				}
 				else
 				{
-					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+					if ( UseFlowdoc )
+						ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
@@ -616,14 +583,16 @@ namespace MyDev . Views
 				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
 				if ( genaccts . Count > 0 )
 				{
-					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+					if ( UseFlowdoc )
+						ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
 				}
 				else
 				{
-					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+					if ( UseFlowdoc )
+						ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
 						line2: $"The command line used was" , clr2: "Red2" ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 						header: "Generic style data table" , clr4: "Red5" );
@@ -669,7 +638,8 @@ namespace MyDev . Views
 					listBox . Focus ( );
 					listView . Focus ( );
 				}
-				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
@@ -738,7 +708,8 @@ namespace MyDev . Views
 					listView . SelectedIndex = 0;
 					listView . Focus ( );
 				}
-				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {DbCountlb} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Secondary Accounts data table" );
@@ -753,6 +724,10 @@ namespace MyDev . Views
 					{
 						listView . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
@@ -761,6 +736,10 @@ namespace MyDev . Views
 					{
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
@@ -771,6 +750,10 @@ namespace MyDev . Views
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "" , genaccts . Count );
 						listBox . SelectedIndex = 0;
@@ -786,6 +769,10 @@ namespace MyDev . Views
 					{
 						listView . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "VIEW" , genaccts . Count );
 					}
@@ -793,6 +780,10 @@ namespace MyDev . Views
 					{
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "BOX" , genaccts . Count );
 					}
@@ -802,10 +793,15 @@ namespace MyDev . Views
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "" , genaccts . Count );
 					}
-					fdl . ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+					if ( UseFlowdoc )
+						fdl . ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 						line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 						line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -853,7 +849,8 @@ namespace MyDev . Views
 					listBox . SelectedIndex = 0;
 					listView . SelectedIndex = 0;
 				}
-				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {nwcustomeraccts . Count} records returned are displayed in the table below" , clr1: "Black0" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {nwcustomeraccts . Count} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
@@ -901,11 +898,14 @@ namespace MyDev . Views
 			{
 				if ( genaccts . Count > 0 )
 				{
-					//ShowInfo ( line1: $"The requested table [ {CurrentTableName } ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
@@ -914,6 +914,10 @@ namespace MyDev . Views
 					{
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
@@ -923,6 +927,10 @@ namespace MyDev . Views
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "" , genaccts . Count );
 						listBox . SelectedIndex = 0;
@@ -940,6 +948,10 @@ namespace MyDev . Views
 						//SqlSupport . LoadActiveRowsOnlyInLView ( listView , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
 						listView . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						if ( genaccts . Count == 0 )
 							return;
@@ -959,6 +971,10 @@ namespace MyDev . Views
 						// //visible in the grid so do NOT repopulate the grid after making this call
 						//SqlSupport . LoadActiveRowsOnlyInLBox ( listBox , genaccts , DapperSupport . GetGenericColumnCount ( genaccts ) );
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						listBox . SelectedIndex = 0;
 						HandleCaption ( "BOX" , genaccts . Count );
@@ -971,17 +987,22 @@ namespace MyDev . Views
 							return;
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						listView . SelectedIndex = 0;
 						HandleCaption ( "" , genaccts . Count );
 						listBox . SelectedIndex = 0;
 					}
 				}
-				ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
-					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
-					line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
-					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
-					);
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+						line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
+						line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
+						line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
+						);
 
 				ShowLoadtime ( );
 			}
@@ -1025,7 +1046,8 @@ namespace MyDev . Views
 					listBox . SelectedIndex = 0;
 					listView . SelectedIndex = 0;
 				}
-				ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {pubauthors . Count} records returned are displayed in the table below" , clr1: "Black0" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , line1: $"The requested table [{CurrentTableName }] was loaded successfully, and the {pubauthors . Count} records returned are displayed in the table below" , clr1: "Black0" ,
 					line2: $"The command line used was" , clr2: "Red2" ,
 					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 					header: "Bank Accounts data table" , clr4: "Red5" );
@@ -1072,13 +1094,16 @@ namespace MyDev . Views
 			{
 				if ( genaccts . Count > 0 )
 				{
-					//ShowInfo ( line1: $"The requested table [ {CurrentTableName } ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
 					if ( type == "VIEW" )
 					{
 						listView . ItemsSource = genaccts;
 						if ( genaccts . Count == 0 )
 							return;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "VIEW" , genaccts . Count );
 						listView . SelectedIndex = 0;
@@ -1089,6 +1114,10 @@ namespace MyDev . Views
 						if ( genaccts . Count == 0 )
 							return;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						HandleCaption ( "BOX" , genaccts . Count );
 						listBox . SelectedIndex = 0;
@@ -1104,6 +1133,10 @@ namespace MyDev . Views
 							if ( genaccts . Count == 0 )
 								return;
 							SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+							if ( Flags . ReplaceFldNames )
+							{
+								GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+							}
 							dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 							listView . SelectedIndex = 0;
 							HandleCaption ( "" , genaccts . Count );
@@ -1117,6 +1150,10 @@ namespace MyDev . Views
 							if ( genaccts . Count == 0 )
 								return;
 							SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+							if ( Flags . ReplaceFldNames )
+							{
+								GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+							}
 							dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 							listBox . SelectedIndex = 0;
 							HandleCaption ( "BOX" , genaccts . Count );
@@ -1129,12 +1166,17 @@ namespace MyDev . Views
 								return;
 							listBox . ItemsSource = genaccts;
 							SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+							if ( Flags . ReplaceFldNames )
+							{
+								GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+							}
 							dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 							listView . SelectedIndex = 0;
 							HandleCaption ( "" , genaccts . Count );
 							listBox . SelectedIndex = 0;
 						}
-						ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
+						if ( UseFlowdoc )
+							ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
 							line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 							line2: $"the table [{CurrentTableName }] that was queried returned a record count of {genaccts . Count}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 							line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
@@ -1150,6 +1192,10 @@ namespace MyDev . Views
 					{
 						listView . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						lvHeader . Text = $"List View Display :  No records returned...";
 					}
@@ -1157,6 +1203,10 @@ namespace MyDev . Views
 					{
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						lbHeader . Text = $"List Box Display :  No records returned...";
 						dGridHeader . Text = $"List Box Display :  No records returned...";
@@ -1166,6 +1216,10 @@ namespace MyDev . Views
 						listView . ItemsSource = genaccts;
 						listBox . ItemsSource = genaccts;
 						SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+						if ( Flags . ReplaceFldNames )
+						{
+							GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+						}
 						dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 						lvHeader . Text = $"List View Display :  No records returned...";
 						listBox . ItemsSource = genaccts;
@@ -1215,13 +1269,15 @@ namespace MyDev . Views
 		{
 			if ( LoadDbTables ( DbMain . SelectedItem . ToString ( ) ) == true )
 			{
-				ShowInfo ( Flowdoc , canvas , header: "List of Tables in current Db reloaded successfully" , clr4: "Red5" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , header: "List of Tables in current Db reloaded successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3"
 					);
 			}
 			else
 			{
-				ShowInfo ( Flowdoc , canvas , header: "List of Tables in current Db could not be reloaded" , clr4: "Red5" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , header: "List of Tables in current Db could not be reloaded" , clr4: "Red5" ,
 					line1: $"Request failed...!" , clr1: "Red3"
 					);
 			}
@@ -1864,9 +1920,9 @@ namespace MyDev . Views
 		#endregion Load List of Tables in current Db
 
 		#region FlowDoc support
-		private void ShowInfo ( FlowDoc Flowdoc, Canvas canvas, string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
+		private void ShowInfo ( FlowDoc Flowdoc , Canvas canvas , string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
 		{
-			Flowdoc . ShowInfo (Flowdoc, canvas,  line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
+			Flowdoc . ShowInfo ( Flowdoc , canvas , line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
 			//if ( UseFlowdoc == false )
 			//	return;
 			//if ( UseFlowdocBeep == false )
@@ -1923,187 +1979,6 @@ namespace MyDev . Views
 
 		#endregion  Dependency properties
 
-		#region Resize Flowdoc Window
-		//private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
-		//{
-		//	// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
-		//	//			MovingObject = sender;
-		//	if ( Flowdoc . BorderClicked )
-		//	{
-		//		// Get current sizes and position of Flowdoc windowo intilize our calculations
-		//		if ( FdLeft == 0 )
-		//			FdLeft = Canvas . GetLeft ( Flowdoc );
-		//		if ( FdTop == 0 )
-		//			FdTop = Canvas . GetTop ( Flowdoc );
-		//		FdHeight = Flowdoc . ActualHeight;
-		//		FdWidth = Flowdoc . ActualWidth;
-		//		//Get mouse cursor position
-		//		Point pt = Mouse . GetPosition (canvas );
-		//		MLeft = pt . X;
-		//		MTop = pt . Y;
-		//		//				if ( th . Left == 0 )
-		//		th = Flowdoc . FdBorder . BorderThickness;
-		//		FdBorderWidth = th . Left * 2;
-		//		FdBottom = FdTop + FdHeight;
-		//		ValidTop = FdBottom - ( FdBorderWidth / 2 );
-		//		ValidBottom = FdBottom + ( FdBorderWidth / 2 );
-
-		//		if ( Flowdoc . BorderSelected == 1 )  // Top
-		//		{
-		//			// Top border - WORKING CORRECTLY
-		//			Canvas . SetTop ( Flowdoc , MTop );
-		//			YDiff = MTop - FdTop;
-		//			FdTop = MTop;
-
-		//			newHeight = FdHeight - YDiff;
-		//			if ( newHeight < 200 )
-		//				newHeight = 200;
-		//			Flowdoc . Height = newHeight;
-		//			return;
-		//		}
-		//		else if ( Flowdoc . BorderSelected == 2 )
-		//		{     // Bottom border
-		//			newHeight = MTop - FdTop;
-		//			Flowdoc . Height = newHeight;
-		//			return;
-		//		}
-		//		else if ( Flowdoc . BorderSelected == 3 )
-		//		{
-		//			// Left hand side border  - WORKING CORRECTLY
-		//			XDiff = MLeft - FdLeft;
-		//			newWidth = FdWidth - XDiff;
-		//			if ( newWidth < 350 )
-		//				newWidth = 350;
-		//			Flowdoc . Width = newWidth;
-		//			Canvas . SetLeft ( Flowdoc , MLeft );
-		//			FdLeft = MLeft;
-		//			return;
-		//		}
-		//		// Right  border or right lower corner
-		//		else if ( Flowdoc . BorderSelected == 4 )
-		//		{
-		//			// Right hand side border  OR Top Right Corner 
-		//			if ( CornerDrag || MTop - FdTop <= FdBorderWidth || FdTop - MTop <= -FdBorderWidth )
-		//			{
-		//				//if ( MTop >= ValidTop && MTop <= ValidBottom)
-		//				if ( FdTop - MTop >= -FdBorderWidth )
-		//				{
-		//					// Top Right corner clicked	- working very well - resizes in BOTH directions
-		//					CornerDrag = true;
-
-		//					YDiff = FdTop - MTop;
-		//					FdTop = MTop;
-		//					Canvas . SetTop ( Flowdoc , MTop );
-		//					// Handle Height
-		//					newHeight = FdHeight + YDiff;
-		//					if ( newHeight < 200 )
-		//						newHeight = 200;
-		//					Flowdoc . Height = FdHeight;
-		//					// handle width
-		//					newWidth = MLeft - FdLeft;
-		//					FdWidth = newWidth;
-		//					Flowdoc . Width = FdWidth;
-		//					Flowdoc . SetValue ( HeightProperty , newHeight );
-		//					Flowdoc . SetValue ( WidthProperty , newWidth );
-		//					return;
-		//				}
-		//				else if (
-		//					( ( FdTop + FdHeight - MTop >= FdBorderWidth )
-		//					|| ( FdTop + FdHeight - MTop <= FdBorderWidth ) )
-		//					&& ( MTop > FdBorderWidth + FdBorderWidth + 5 )
-		//					)
-		//				{
-		//					// Right Border or Lower Right corner
-		//					if ( MTop >= ValidTop - th . Left && MTop <= ValidBottom + th . Left )
-		//					{     // WORKING 23/2//2022
-		//						// Pointer is in lower right corner, so drag both ways
-		//						CornerDrag = true;
-		//						// Reset height.  Mouse is at bottom right, so pinpoint where iti s in real terms
-		//						double mouseposY = FdTop + FdHeight;
-		//						YDiff = MTop - FdTop - FdHeight;
-		//						newHeight = FdHeight + YDiff;// - FdLeft;
-		//						Flowdoc . Height = newHeight;
-		//						if ( newHeight < 0 )
-		//							return;
-		//						//Reset width - WORKING
-		//						newWidth = MLeft - FdLeft;
-		//						Flowdoc . Width = newWidth;
-		//						Flowdoc . SetValue ( HeightProperty , newHeight );
-		//						Flowdoc . SetValue ( WidthProperty , newWidth );
-		//						return;
-		//					}
-		//					else
-		//					{     // WORKING 23/2//2022
-		//						// Just dragging right border	    
-		//						newWidth = MLeft - FdLeft;
-		//						Flowdoc . Width = newWidth;
-		//						Flowdoc . SetValue ( WidthProperty , newWidth );
-		//						CornerDrag = true;
-		//						return;
-		//					}
-		//				}
-		//				else
-		//				{
-		//					// just dragging right border WORKING CORRECTLY  for right border
-		//					newWidth = MLeft - FdLeft;
-		//					Flowdoc . Width = newWidth;
-		//					Flowdoc . SetValue ( WidthProperty , newWidth );
-		//					CornerDrag = true;
-		//					return;
-		//				}
-		//			}
-		//			else if ( CornerDrag || MTop - FdTop + FdHeight <= FdBorderWidth )
-		//			{
-		//				if ( ( FdTop + FdHeight - MTop ) >= -FdBorderWidth )
-		//				{
-		//					if ( FdTop - MTop >= -FdBorderWidth )
-		//					{
-		//						// Bottom Right corner clicked
-		//						CornerDrag = true;
-		//						Canvas . SetTop ( Flowdoc , FdTop );
-		//						newHeight = FdHeight - YDiff;
-		//						if ( newHeight < 0 )
-		//							return;
-		//						XDiff = ( MLeft - FdWidth ) - FdLeft;
-		//						Flowdoc . Width += XDiff;
-		//						Flowdoc . Refresh ( );
-		//						return;
-		//					}
-		//				}
-		//			}
-		//			else
-		//			{
-		//				// if we get here, we are only draggig the RIGHT Border of the window to change it's with
-		//				newWidth = MLeft - FdLeft;// - FdLeft;
-		//				Flowdoc . Width = newWidth;
-		//			}
-		//		}
-		//		return;
-		//	}
-		//	else
-		//	{
-		//		var obj = MovingObject as FlowDoc;
-		//		if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed && Flowdoc . BorderClicked == false )
-		//		{
-		//			// MOVING WINDOW around the Parent window (MDI ?)
-		//			// Get mouse position IN FlowDoc !!
-		//			double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - CpFirstXPos ;
-		//			double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - CpFirstYPos ;
-		//			double trueleft = left - CpFirstXPos;
-		//			double truetop = left - CpFirstYPos;
-		//			if ( left >= 0 ) // && left <= canvas.ActualWidth - Flowdoc.ActualWidth)
-		//				( MovingObject as FrameworkElement ) . SetValue ( Canvas . LeftProperty , left );
-		//			if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
-		//				( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
-		//		}
-		//		else if ( FlowdocResizing == false )
-		//		{
-		//			int x = 0;
-		//		}
-		//	}
-		//}
-
-		#endregion Resize Flowdoc Window
 
 		#endregion FlowDoc support
 
@@ -2313,6 +2188,10 @@ namespace MyDev . Views
 				{
 					listView . ItemsSource = genaccts;
 					SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+					if ( Flags . ReplaceFldNames )
+					{
+						GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+					}
 					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					DbCountlv = genaccts . Count;
 				}
@@ -2366,6 +2245,10 @@ namespace MyDev . Views
 				{
 					listBox . ItemsSource = genaccts;
 					SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+					if ( Flags . ReplaceFldNames )
+					{
+						GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+					}
 					dGrid . SelectedItem = dGrid . SelectedIndex = 0;
 					DbCountlb = genaccts . Count;
 				}
@@ -2437,7 +2320,8 @@ namespace MyDev . Views
 				UseFlowdoc = true;
 			}
 			//Console . WriteLine ( $"loaded {count} records for table columns" );
-			ShowInfo ( Flowdoc, canvas, header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+			if ( UseFlowdoc )
+				ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 				line2: $"the structure of the table [{dbNameLb . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
 				line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -2473,7 +2357,8 @@ namespace MyDev . Views
 				flowdocswitch = true;
 				UseFlowdoc = true;
 			}
-			ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+			if ( UseFlowdoc )
+				ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 				line2: $"the structure of the table [{dbNameLv . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
 				line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -2581,7 +2466,7 @@ namespace MyDev . Views
 		{
 			Colorpicker . ExecuteSaveToClipboardMethod -= Colorpicker_ExecuteSaveToClipboardMethod;
 			Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
-//			Flowdoc . ExecuteFlowDocResizeMethod -= Flowdoc_ExecuteFlowDocResizeMethod;
+			//			Flowdoc . ExecuteFlowDocResizeMethod -= Flowdoc_ExecuteFlowDocResizeMethod;
 			Flowdoc . ExecuteFlowDocBorderMethod -= FlowDoc_ExecuteFlowDocBorderMethod;
 		}
 
@@ -2836,7 +2721,8 @@ namespace MyDev . Views
 						{
 							break;
 						}
-					} catch ( Exception ex )
+					}
+					catch ( Exception ex )
 					{ }
 
 				}
@@ -2870,7 +2756,8 @@ namespace MyDev . Views
 				else
 				{
 					Mouse . OverrideCursor = Cursors . Arrow;
-					ShowInfo ( Flowdoc , canvas , line1: $"Procedure [{SqlSpCommand . ToUpper ( )}] \ndoes not Support / Require any arguments" , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
+					if ( UseFlowdoc )
+						ShowInfo ( Flowdoc , canvas , line1: $"Procedure [{SqlSpCommand . ToUpper ( )}] \ndoes not Support / Require any arguments" , clr1: "Black0" , line2: "" , clr2: "Black0" , line3: "" , clr3: "Black0" , header: "" , clr4: "Black0" );
 				}
 				if ( resetUse )
 					UseFlowdoc = false;
@@ -3035,7 +2922,8 @@ namespace MyDev . Views
 					UseFlowdoc = true;
 				}
 				Console . WriteLine ( $"loaded {count} records for table columns" );
-				ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 					line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
 					line2: $"the structure of the table [{SqlSpCommand }] is listed below : \n{output}" ,
 					line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -3048,7 +2936,8 @@ namespace MyDev . Views
 			}
 			else
 			{
-				ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+				if ( UseFlowdoc )
+					ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
 					line1: $"The request was made succesfully, but no Table Fields were returned..." , clr1: "Red3" ,
 					line2: $"The table queried was [{SqlSpCommand }]" ,
 					line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
@@ -3096,16 +2985,16 @@ namespace MyDev . Views
 
 		}
 
-	
-		private void ListViewWindow_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
-		{
-			MovingObject = null;
-			fdl.FlowdocResizing = false;
-			Flowdoc . BorderClicked = false;
-			ReleaseMouseCapture ( );
-			TvMouseCaptured = false;
 
-		}
+		//private void ListViewWindow_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		//{
+		//	MovingObject = null;
+		//	fdl.FlowdocResizing = false;
+		//	Flowdoc . BorderClicked = false;
+		//	ReleaseMouseCapture ( );
+		//	TvMouseCaptured = false;
+
+		//}
 
 		private void TreeviewBorder_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
@@ -3186,13 +3075,8 @@ namespace MyDev . Views
 		}
 		#endregion Treeview  handlers
 
-		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-		{
-
-		}
-		#region   Flowdoc Support
 		#region Flowdoc support via library
-		protected void MaximizeFlowDoc ( object sender , EventArgs e )
+		private void MaximizeFlowDoc ( object sender , EventArgs e )
 		{
 			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
 			// or return to its original size and position courtesy of the Event declard in FlowDoc
@@ -3205,18 +3089,21 @@ namespace MyDev . Views
 			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc , MovingObject , e );
 			ReleaseMouseCapture ( );
 		}
-		private void LvFlowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			//In this event, we get current mouse position on the control to use it in the MouseMove event.
 			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc , e );
 		}
-
 		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
 		{
 			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
 			fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
 		}
-
+		// Shortened version proxy call		
+		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
+		{
+			Flowdoc . BorderClicked = false;
+		}
 		public void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
 		{
 			// EVENTHANDLER to Handle resizing
@@ -3225,7 +3112,6 @@ namespace MyDev . Views
 			double dLeft = pt.X;
 			double dTop= pt.Y;
 		}
-		// Shortened version proxy call		
 		public void fdmsg ( string line1 , string line2 = "" , string line3 = "" )
 		{
 			//We have to pass the Flowdoc.Name, and Canvas.Name as well as up   to 3 strings of message
@@ -3233,13 +3119,7 @@ namespace MyDev . Views
 			// eg fdmsg("message text");
 			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 , line3 );
 		}
-		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
-		{
-			Flowdoc . BorderClicked = false;
-		}
 		#endregion Flowdoc support via library
-
-		#endregion   Flowdoc Support
 	}
 }
 

@@ -16,6 +16,8 @@ using System . Windows . Media;
 using System . Windows . Media . Imaging;
 using System . Windows . Shapes;
 
+using static System . Windows . Forms . VisualStyles . VisualStyleElement . Window;
+
 namespace MyDev . Views
 {
 	/// <summary>
@@ -28,6 +30,7 @@ namespace MyDev . Views
 		public event RoutedEventHandler Click;
 		StdDataUserControl SduCtrl { get; set; }
 		MulltiDbUserControl MduCtrl { get; set; }
+		ListBoxUserControl LbuCtrl { get; set; }
 		Ucontrol1 U1ctrl { get; set; }
 		public double Col1width=260;
 		private double ButtonPanelMaxOffset = 155;
@@ -45,6 +48,7 @@ namespace MyDev . Views
 			SduCtrl . SetParent ( this );
 			MduCtrl = Multigrid;
 			U1ctrl = Ucontrol1;
+			LbuCtrl = listboxCtrl;
 			this . DataContext = this;
 			// setup the user control
 			//SduCtrl . Visibility = Visibility . Visible;
@@ -56,28 +60,44 @@ namespace MyDev . Views
 			//bguv . canvas . Width = canvas . Width;
 			//Setup handler to handle click event  from UserControl
 			//			Click += new RoutedEventHandler ( CloseThisWindow );
-			this . Title = "User Control Demonstratioin System - Standard Db's Viewer";
-
+			this . Title = "MVVM User Control Host Demonstration System - Standard Db's Viewer";
 		}
+
+		private void UserTestWindow_Loaded ( object sender , RoutedEventArgs e )
+		{
+			//Mouse . SetCursor ( Cursors . Wait);
+			//OpenMultiDbControl ( null, null);
+			//Mouse . SetCursor ( Cursors . Arrow );
+			}
 
 		private void MvvmUserTest_SizeChanged ( object sender , SizeChangedEventArgs e )
 		{
 			// Handlle resizing of client user controls
-			double height =  e . NewSize . Height;
+			double height = 0;
+			double width = 0;
+			if ( e == null )
+			{
+				height = this . Height;
+				width = this.Width;
+			}
+			else
+			{
+				height = e . NewSize . Height;
+				width=(double) e . NewSize . Width;
+			}
 			this . Grid1 . Height = height;
 			this . canvas . Height=height;
-			double width=(double) e . NewSize . Width;
 			this . canvas . Width = width;
 
 			// Std Viewer - HEIGHT - All Working
 			if ( CurrentClient == "STD")
 			{
-				SduCtrl . Height = height - 70;
+				SduCtrl . Height = height - 1;
 				SduCtrl . MAINgrid_Grid1 . Height = height;
-				SduCtrl . dgcanvas . Height = height - 30;
-				SduCtrl . dataGrid . Height = height - 120;
+				SduCtrl . dgcanvas . Height = height - 20;
+				SduCtrl . dataGrid . Height = height - 100;
 				// Std Viewer - WIDTH
-				SduCtrl . Width = width - ButtonPanelLeftOffset - 30 ;
+				SduCtrl . Width = width - (ButtonPanelLeftOffset - 10 );
 				SduCtrl . dgcanvas . Width = SduCtrl . Width + 60;// - ButtonPanelLeftOffset;
 				SduCtrl . MAINgrid_Grid1 . Width = this . canvas . Width +160;
 				SduCtrl . dataGrid . Width = SduCtrl . dgcanvas . Width - ButtonPanelLeftOffset;
@@ -87,12 +107,13 @@ namespace MyDev . Views
 			else if ( CurrentClient == "MULTI" )
 			{
 				////Handle Multi grid positioning
-				Multigrid . Height = height - 70;
+				Multigrid . Height = height - 35;
 				Multigrid . MAIN_Grid1 . Height = height;
 				Multigrid . bgcanvas . Height = height - 30;
-				Multigrid . BankDataGrid . Height = height - 90;
+				Multigrid . BankDataGrid . Height = height - 50;
+				( Multigrid . BankDataGrid as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
 				// Std Viewer - WIDTH
-				Multigrid . Width = width - ButtonPanelLeftOffset - 30;
+				Multigrid . Width = width - ( ButtonPanelLeftOffset - 10 );
 				Multigrid . bgcanvas . Width = Multigrid . Width;// - ButtonPanelLeftOffset;
 				Multigrid . MAIN_Grid1 . Width = this . canvas . Width - ButtonPanelLeftOffset;
 				Multigrid . BankDataGrid . Width = Multigrid . bgcanvas . Width - ButtonPanelLeftOffset;
@@ -101,36 +122,81 @@ namespace MyDev . Views
 				( Multigrid . ButtonGroup as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) Multigrid . BankDataGrid . Width );
 				Console . WriteLine ( $"MG Cv.Width {Multigrid . bgcanvas . Width },  " );
 			}
+			else if ( CurrentClient == "LISTBOX" )
+			{
+				LbuCtrl . listbox1 . Visibility = Visibility . Visible;
+				////Handle Multi grid positioning
+				double val = 40;
+				( LbuCtrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) -10 );
+				LbuCtrl . Height = height-val;
+				double newheight = height-val;
+				//( LbuCtrl . MainGrid as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+				//( LbuCtrl . ListboxGroup as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+				//( LbuCtrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) -30 );
+				LbuCtrl . MainGrid . Height = newheight +10;
+				LbuCtrl . ListboxGroup . Height = newheight + 10;
+				LbuCtrl . listbox1 . Height = newheight - 10;
+				( LbuCtrl  as FrameworkElement ) . SetValue ( Canvas . TopProperty, ( double ) 0 );
+				// Std Viewer - WIDTH
+				LbuCtrl . Width = width - ( ButtonPanelLeftOffset - 10 );
+				LbuCtrl . MainGrid . Width = this . canvas . Width - ButtonPanelLeftOffset;
+				( LbuCtrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double )0 );
+			}
 			else
 			{
-				U1ctrl. Height = height - 70;
-				U1ctrl . MainGrid . Height = height;
-				U1ctrl . uccanvas . Height = height - 30;
-				U1ctrl . listbox1 . Height = height - 140;
+				// Height is working 18/3/22
+				//Dummy
+				( U1ctrl . Caption as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 10 );
+				( U1ctrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 35 );
+				( U1ctrl . UiButtons as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 35 );
+				//( U1ctrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 10 );
+				U1ctrl . Height = height - 45;//+ 25;
+				U1ctrl . MainGrid . Height = height - 45;
+				U1ctrl . uccanvas . Height = height - 5;
+				U1ctrl . listbox1 . Height = height - 55;
+				U1ctrl . UiButtons.Height = height - 55;
+
 				// Std Viewer - WIDTH
-				U1ctrl . Width = width - ButtonPanelLeftOffset - 30;
-				U1ctrl . uccanvas . Width = U1ctrl . Width;// - ButtonPanelLeftOffset;
-				U1ctrl . MainGrid . Width = this . canvas . Width - ButtonPanelLeftOffset;
-				U1ctrl . listbox1 . Width = U1ctrl . uccanvas . Width - ButtonPanelLeftOffset;
-				( U1ctrl . uccanvas as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-				( U1ctrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-				( U1ctrl . UiButtons as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) U1ctrl . listbox1 . Width );
-				Console . WriteLine ( $"MG Cv.Width {U1ctrl . uccanvas . Width },  " );
+				U1ctrl . uccanvas . Width = width + 35;// - ButtonPanelLeftOffset;
+				U1ctrl . Width = width - 10;// + U1ctrl . UiButtons.Width;
+				U1ctrl . listbox1 . Width = U1ctrl . Width-485;
+				//U1ctrl . UiButtons . Width = U1ctrl . uccanvas.Width - U1ctrl . UiButtons . Width;
+
+				//U1ctrl . MainGrid . Width = this . canvas . Width;// - U1ctrl . UiButtons.Width;
+				//U1ctrl . listbox1 . Width = U1ctrl . uccanvas . Width - ButtonPanelLeftOffset;
+
+				//( U1ctrl . uccanvas as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double )45 );
+				//( U1ctrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
+				//				U1ctrl . UiButtons . Width = 200;
+				//			    ( U1ctrl . UiButtons as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double )800);
+				//				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) U1ctrl . MainGrid . Width );
+				//Console . WriteLine ( $"MG Cv.Width {U1ctrl . uccanvas . Width },  " );
 			}
 			// Handle the windows own buttons
-			ButtonPanel . VerticalAlignment = VerticalAlignment . Bottom;
+			ButtonPanel . VerticalAlignment = VerticalAlignment . Top;
 			if ( this . WindowState == WindowState . Maximized )
 			{
 				Console . WriteLine ( $"Canvas Max panel={canvas . Width}, Button AWidth={ButtonPanel . ActualWidth}" );
 				canvas . Width = this . Width;
 				double cheight = canvas.ActualHeight;
-				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) cheight +( ButtonPanel.Height - ButtonPanelMaxOffset ) );
+				(ButtonPanel as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+//				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) cheight +( ButtonPanel.Height - ButtonPanelMaxOffset ) );
 				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) this . ActualWidth - ButtonPanelLeftOffset );
 			}
 			else
 			{
-				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) Height -310 );
-				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) Width - ButtonPanelLeftOffset );
+				// Handle button panel resizing, including buttons positioning
+				(ButtonPanel as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
+				//				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . WidthProperty , ( double ) Width - ButtonPanelLeftOffset - 0 );
+				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . HeightProperty , ( double ) Height - 37 );
+				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) Width - ButtonPanelLeftOffset +10 );
+				
+				BtnPanelGrid .Width = ButtonPanel.Width + 20;
+				CloseBtn . Width = BtnPanelGrid . Width + 0;
+				Thickness th = new Thickness();
+				th . Top =Height - 95;// - (CloseBtn . Height + 50);
+				th . Left = th . Right = th.Bottom = 0;
+				CloseBtn . Margin = th;
 			}
 
 		}
@@ -151,7 +217,9 @@ namespace MyDev . Views
 				return;
 			MduCtrl . Visibility = Visibility . Hidden;
 			U1ctrl . Visibility = Visibility . Hidden;
+			LbuCtrl . Visibility = Visibility . Hidden;
 			this . Height += 1;
+			MvvmUserTest_SizeChanged ( sender , null );
 			this . UpdateLayout ( );
 			this. Refresh ( );
 			if ( SduCtrl . Visibility == Visibility . Hidden )
@@ -160,10 +228,10 @@ namespace MyDev . Views
 				SduCtrl . Refresh ( );
 				SduCtrl . Width -= 1;
 				SduCtrl . UpdateLayout ( );
-				SduCtrl . Height = this . canvas . Height - 70;//= canvas . Width;
-				SduCtrl . Width = this . canvas . Width - 300;
-				SduCtrl . UpdateLayout ( );
-				this . Title = "User Control Demonstratioin System - Standard Db's Viewer";
+				//SduCtrl . Height = this . canvas . Height - 70;//= canvas . Width;
+				//SduCtrl . Width = this . canvas . Width - 300;
+				//SduCtrl . UpdateLayout ( );
+				this . Title = "MVVM User Control Host Demonstration System - Standard Db's Viewer";
 			}
 			else
 				SduCtrl . Visibility = Visibility . Hidden;
@@ -174,22 +242,24 @@ namespace MyDev . Views
 			CurrentClient = "MULTI";
 			U1ctrl . Visibility = Visibility . Hidden;
 			SduCtrl . Visibility = Visibility . Hidden;
+			LbuCtrl . Visibility = Visibility . Hidden;
 			MduCtrl . Width = 860;
 			this . Height += 1;
 			this . UpdateLayout ( );
 			if ( MduCtrl . Visibility == Visibility . Hidden )
 			{
+				MvvmUserTest_SizeChanged ( sender , null );
 				MduCtrl . Visibility = Visibility . Visible;
 				MduCtrl . Width -= 1;
 				MduCtrl . UpdateLayout ( );
 				MduCtrl . Refresh ( );
-				MduCtrl . Height= this . canvas . Height - 70;
-				MduCtrl . Width = this . canvas . Width - 300;
+				//MduCtrl . Height= this . canvas . Height - 70;
+				//MduCtrl . Width = this . canvas . Width - 300;
 				if ( MduCtrl . DbMain . Items . Count == 0 )
 					MduCtrl . InitialLoad ( );
-				MduCtrl . Width += 1;
+				//MduCtrl . Width += 1;
 				MduCtrl . UpdateLayout();
-				this . Title = "User Control Demonstratioin System - Multi Db Viewer";
+				this . Title = "MVVM User Control Host Demonstration System - Multi Db Viewer";
 			}
 			else
 				MduCtrl . Visibility = Visibility . Hidden;
@@ -200,6 +270,7 @@ namespace MyDev . Views
 			CurrentClient = "DUMMY";
 			MduCtrl . Visibility = Visibility . Hidden;
 			SduCtrl . Visibility = Visibility . Hidden;
+			LbuCtrl . Visibility = Visibility . Hidden;
 			U1ctrl . Width = 860;
 			this . Height += 1;
 			this . UpdateLayout ( );
@@ -207,14 +278,15 @@ namespace MyDev . Views
 			{
 				U1ctrl . Visibility = Visibility . Visible;
 				U1ctrl . Width -= 1;
+				MvvmUserTest_SizeChanged ( sender , null );
 				U1ctrl . UpdateLayout ( );
 				U1ctrl . Refresh();
-				U1ctrl . Height = this . canvas . Height - 70;//= canvas . Width;
-				U1ctrl . Width = canvas . Width - 300;
+				//U1ctrl . Height = this . canvas . Height - 70;//= canvas . Width;
+				//U1ctrl . Width = canvas . Width - 300;
 				//				U1ctrl . uccanvas . Width = this.canvas.Width - 220;
 				//UiButtons.
 				U1ctrl . UpdateLayout ( );
-				this . Title = "User Control Demonstratioin System - Dummy Grid Viewer";
+				this . Title = "MVVM User Control Host Demonstration System - Dummy Grid Viewer";
 			}
 			else
 			{
@@ -222,10 +294,29 @@ namespace MyDev . Views
 			}
 		}
 
-		private void UserTestWindow_ContentRendered ( object sender , EventArgs e )
-		{
-		}
 
+		private void OpenListboxControl ( object sender , RoutedEventArgs e )
+		{
+			MduCtrl . Visibility = Visibility . Hidden;
+			SduCtrl . Visibility = Visibility . Hidden;
+			U1ctrl . Visibility = Visibility . Hidden;
+			if ( LbuCtrl . Visibility == Visibility . Visible )
+				LbuCtrl . Visibility = Visibility . Hidden;
+			else
+			{
+				listboxCtrl . Visibility = Visibility . Visible;
+				LbuCtrl . Width += 1;
+				CurrentClient = "LISTBOX";
+				MvvmUserTest_SizeChanged ( sender , null);
+				LbuCtrl . UpdateLayout ( );
+				LbuCtrl . Refresh ( );
+			}
+			CurrentClient = "LISTBOX";
+			if ( LbuCtrl . listbox1 . Items . Count == 0 )
+				LbuCtrl . InitialLoad ( );
+			this . Title = "MVVM User Control Host Demonstration System - Listbox Db contents Viewer";
+
+		}
 		private void CloseThisWindow ( object sender , RoutedEventArgs e )
 		{
 			WindowCollection  v = Application .Current.Windows;
@@ -245,5 +336,9 @@ namespace MyDev . Views
 				}
 			}
 		}
+		private void UserTestWindow_ContentRendered ( object sender , EventArgs e )
+		{
+		}
+
 	}
 }

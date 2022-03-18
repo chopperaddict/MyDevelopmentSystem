@@ -278,7 +278,7 @@
 				  Background="Red" 
 				  Foreground="White" Margin="0,0,23,1">
 				<Button.DataContext>
-					<view:MvvmViewModel/>
+					<viewmodels:MvvmViewModel/>
 				</Button.DataContext>
 			</Button>
 

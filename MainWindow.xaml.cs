@@ -287,6 +287,8 @@ namespace MyDev
 
 		private void button9_Click ( object sender , RoutedEventArgs e )
 		{
+			SysConfig scfg = new         SysConfig();
+			scfg . Show ( );
 
 		}
 

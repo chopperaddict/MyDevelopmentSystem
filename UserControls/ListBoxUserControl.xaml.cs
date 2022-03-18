@@ -1,35 +1,48 @@
-﻿using MyDev . SQL;
-using MyDev . ViewModels;
-using MyDev . Views;
-using MyDev . UserControls;
-
-using System;
+﻿using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
-using System . Data . SqlClient;
-using System . Diagnostics;
-using System . Linq;
-using System . Text;
-using System . Threading;
-using System . Windows;
-using System . Windows . Controls;
-using System . Windows . Input;
-
-using static System . Net . WebRequestMethods;
 using System . ComponentModel;
 using System . Data;
+using System . Diagnostics;
+using System . Linq;
+using System . Linq . Expressions;
+using System . Text;
+using System . Threading . Tasks;
+using System . Windows;
+using System . Windows . Controls;
+using System . Windows . Data;
+using System . Windows . Documents;
+using System . Windows . Input;
+using System . Windows . Media;
+using System . Windows . Media . Imaging;
+using System . Windows . Navigation;
+using System . Windows . Shapes;
+
 using MyDev . Dapper;
-using System . Xml . Linq;
-using MyDev . Sql;
+
 using MyDev . Models;
+
+using MyDev . Sql;
+
+using MyDev . SQL;
+
+using MyDev . ViewModels;
+
+using MyDev . Views;
 
 namespace MyDev . UserControls
 {
 	/// <summary>
-	/// Interaction logic for BankGridUserControl.xaml
+	/// Interaction logic for ListBoxUserControl.xaml
 	/// </summary>
-	public partial class MulltiDbUserControl : UserControl
+	public partial class ListBoxUserControl : UserControl
 	{
+		public ListBoxUserControl ( )
+		{
+			InitializeComponent ( );
+			this . DataContext = this;
+		}
+
 		// Individual records
 		public BankAccountViewModel bvm = new BankAccountViewModel();
 		public CustomerViewModel cvm = new CustomerViewModel ();
@@ -58,12 +71,13 @@ namespace MyDev . UserControls
 		private string CurrentSPDb { get; set; }
 		private string SqlCommand="";
 		private string DefaultSqlCommand="Select * from BankAccount";
-		private string CurrentType= "BANKACCOUNT";
+		//private string CurrentType= "BANKACCOUNT";
 
 		string CurrentDbName = "IAN1";
 		string CurrentTableName="BANKACCOUNT";
 		string CurrentDataTable = "";
 		private bool IsSelectionChanged=false;
+		private bool IsLoading =true;
 		public static string CurrentSqlConnection = "BankSysConnectionString";
 		public static Dictionary <string, string> DefaultSqlCommands = new Dictionary<string, string>();
 
@@ -84,14 +98,9 @@ namespace MyDev . UserControls
 		{
 			win = parent;
 		}
-		public MulltiDbUserControl ( )
-		{
-			InitializeComponent ( );
-			this . DataContext = this;
-			//Utils . SetupWindowDrag ( this );
-		}
 		public void InitialLoad ( )
 		{
+			IsLoading = true;
 			Utils . LoadConnectionStrings ( );
 			// Get list of Dbs (just 3 right now)
 			LoadAllDbNames ( );
@@ -124,34 +133,38 @@ namespace MyDev . UserControls
 			// now load list of tables in IAN1 Db
 			LoadDbTables ( "IAN1" );
 			this . UpdateLayout ( );
-			this . SizeChanged += BankGridUserControl_SizeChanged;
-			CurrentType = "BANKACCOUNT";
-			SqlCommand = GetSqlCommand ( 0, DbListbox . SelectedIndex , "" , "" );
-			LoadData ( );
-			LoadGrid ( );
+			this . SizeChanged += ListBoxUserControl_SizeChanged;
+			//CurrentType = "BANKACCOUNT";
+			//			SqlCommand = GetSqlCommand ( 0 , DbListbox . SelectedIndex , "" , "" );
+			//			LoadData ( );
+			//			LoadGrid ( );
+			this . Width += 1;
+			this . Refresh ( );
+			IsLoading = false;
 		}
-		private void BankGridUserControl_SizeChanged ( object sender , SizeChangedEventArgs e )
+		private void ListBoxUserControl_SizeChanged ( object sender , SizeChangedEventArgs e )
 		{
-			Console . WriteLine ( $"bgcanvas width={bgcanvas . Width}, grid" );
+			//Console . WriteLine ( $"bgcanvas width={canvas . Width}, grid" );
+			//this . Refresh ( );
 		}
-		private void ReloadDatagrids ( object sender , RoutedEventArgs e )
-		{
-			int max=0;
-			//ShowInfo ( "" );
-			// Load Db based on Parameters entered by user
-			//var result = int . TryParse ( RecCount . Text , out max);
-			if ( DbMain . Items . Count == 0 )
-				InitialLoad ( );
-			bankaccts = new ObservableCollection<BankAccountViewModel> ( );
-			BankDataGrid . ItemsSource = null;
-			BankDataGrid . Refresh ( );
-			SqlCommand = GetSqlCommand ( max , DbListbox . SelectedIndex , "" , "" );
-			if ( SqlCommand == "" )
-				SqlCommand = $"";
-			//ShowInfo ( info: $"Processing command [{SqlCommand}] ..." );
-			LoadData ( );
-			LoadGrid ( );
-		}
+		//private void ReloadListbox( object sender , RoutedEventArgs e )
+		//{
+		//	int max=0;
+		//	//ShowInfo ( "" );
+		//	// Load Db based on Parameters entered by user
+		//	//var result = int . TryParse ( RecCount . Text , out max);
+		//	if ( DbMain . Items . Count == 0 )
+		//		InitialLoad ( );
+		//	bankaccts = new ObservableCollection<BankAccountViewModel> ( );
+		//	listbox1. ItemsSource = null;
+		//	listbox1 . Refresh ( );
+		//	SqlCommand = GetSqlCommand ( max , DbListbox . SelectedIndex , "" , "" );
+		//	if ( SqlCommand == "" )
+		//		SqlCommand = $"";
+		//	//ShowInfo ( info: $"Processing command [{SqlCommand}] ..." );
+		//	LoadData ( );
+		//	LoadGrid ( );
+		//}
 		public string GetSqlCommand ( int count = 0 , int table = 0 , string condition = "" , string sortorder = "" )
 		{
 			// Parse fields into a valid SQL Command string
@@ -162,7 +175,7 @@ namespace MyDev . UserControls
 			output += DbListbox . SelectedItem . ToString ( );
 			output += condition . Trim ( ) != "" ? " Where " + condition + " " : "";
 			output += sortorder . Trim ( ) != "" ? " Order by " + sortorder . Trim ( ) : "";
-			CurrentType = DbListbox . Items [ table ] . ToString ( ) . ToUpper ( );
+			CurrentTableName = DbListbox . Items [ table ] . ToString ( ) . ToUpper ( );
 			return output;
 		}
 		private void LoadData ( )
@@ -172,17 +185,17 @@ namespace MyDev . UserControls
 			// SIMPLER METHODS !!
 			if ( Usetimer )
 				timer . Start ( );
-			if ( CurrentType == "BANKACCOUNT" )
+			if ( CurrentTableName == "BANKACCOUNT" )
 			{
 				bankaccts = new ObservableCollection<BankAccountViewModel> ( );
 				bankaccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
 			}
-			else if ( CurrentType == "CUSTOMER" )
+			else if ( CurrentTableName == "CUSTOMER" )
 			{
 				custaccts = new ObservableCollection<CustomerViewModel> ( );
 				custaccts = SqlSupport . LoadCustomer ( SqlCommand , 0 , true );
 			}
-			else if ( CurrentType == "SECACCOUNTS" )
+			else if ( CurrentTableName == "SECACCOUNTS" )
 			{
 				detaccts = new ObservableCollection<DetailsViewModel> ( );
 				detaccts = SqlSupport . LoadDetails ( SqlCommand , 0 , true );
@@ -192,13 +205,7 @@ namespace MyDev . UserControls
 				// WORKING 5.2.22
 				// This creates and loads a GenericClass table if data is found in the selected table
 				string ResultString="";
-				CurrentTableName = DbListbox . SelectedItem . ToString ( ) . ToUpper ( );
-				string tablename = CurrentTableName ;
-				if ( Utils . CheckResetDbConnection ( DbMain . SelectedItem . ToString ( ) , out string constr ) == false )
-				{
-					Console . WriteLine ( $"Failed to set connection string for {CurrentTableName . ToUpper ( )} Db" );
-					return;
-				}
+				string tablename = DbListbox . SelectedItem . ToString ( );
 				SqlCommand = $"Select *from {tablename}";
 				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
 				if ( genaccts . Count > 0 )
@@ -206,6 +213,31 @@ namespace MyDev . UserControls
 					LoadGrid ( genaccts );
 				}
 			}
+			//	}
+			//	else
+			//	{
+			//		// MORE COMPLEX METHODS !!
+			//		if ( Usetimer )
+			//			timer . Start ( );
+			//		if ( CurrentType == "BANKACCOUNT" )
+			//			DapperSupport . GetBankObsCollection ( bankaccts , DbNameToLoad: "BankAccount" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
+			//		else if ( CurrentType == "CUSTOMER" )
+			//			DapperSupport . GetCustObsCollection ( custaccts , DbNameToLoad: "Customer" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
+			//		else if ( CurrentType == "SECACCOUNTS" )
+			//			DapperSupport . GetDetailsObsCollection ( detaccts , DbNameToLoad: "SecAccounts" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
+			//	}
+			//}
+		}
+		private TextBlock CreateItemLayout ( string prefix , Dictionary<string , string> dict )
+		{
+			TextBlock Tmplt = new TextBlock();
+			foreach ( var item in dict )
+			{
+				Tmplt . Text += prefix + item . Key . ToString ( );
+				Tmplt . Text += ",  ";
+			}
+			LbDataTemplate = Tmplt;
+			return Tmplt;
 		}
 		private void LoadGrid ( object obj = null )
 		{
@@ -213,67 +245,79 @@ namespace MyDev . UserControls
 			//			ShowLoadtime ( );
 
 			// Load whatever data we have received into DataGrid
-			if ( CurrentType . ToUpper ( ) == "BANKACCOUNT" )
+			if ( CurrentTableName . ToUpper ( ) == "BANKACCOUNT" )
 			{
 				if ( bankaccts == null )
 					return;
-				BankDataGrid . ItemsSource = bankaccts;
+				listbox1 . Items . Clear ( );
+				Dictionary<string, string> dict = new Dictionary<string, string>();
+				List<string> list = new List<string>();
+				ObservableCollection<GenericClass> gc = new   ObservableCollection<GenericClass> ();
+				// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
+				dict = GenericDbHandlers . GetDbTableColumns ( ref gc , ref list , "BankAccount" , "IAN1" );
+				//foreach ( var item in dict )
+				//{
+				//	gc.
+				//}
+				//TextBlock tb = CreateItemLayout ( "gc.",dict );
+				//LbDataTemplate = tb;
+				listbox1 . ItemsSource = bankaccts;
 				//DbCount = bankaccts . Count;
 				//ShowInfo ( line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
 				//	line2: $"The command line used was" , clr2: "Red2" ,
 				//	line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 				//	header: "Bank Accounts data table" , clr4: "Red5" );
-				BankDataGrid . SelectedIndex = 0;
-				BankDataGrid . Focus ( );
-				RecordsCount = BankDataGrid . Items . Count;
+				listbox1 . SelectedIndex = 0;
+				listbox1 . Focus ( );
+				RecordsCount = listbox1 . Items . Count;
 			}
-			else if ( CurrentType . ToUpper ( ) == "CUSTOMER" )
+			else if ( CurrentTableName . ToUpper ( ) == "CUSTOMER" )
 			{
 				if ( custaccts == null )
 					return;
-				BankDataGrid . ItemsSource = custaccts;
+				listbox1 . ItemsSource = custaccts;
 				//DbCount = custaccts . Count;
 				//ShowInfo ( line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
 				//	line2: $"The command line used was" , clr2: "Red2" ,
 				//	line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 				//	header: "All Customers data table" , clr4: "Red5" );
-				BankDataGrid . SelectedIndex = 0;
-				BankDataGrid . Focus ( );
-				RecordsCount = BankDataGrid . Items . Count;
+				listbox1 . SelectedIndex = 0;
+				listbox1 . Focus ( );
+				RecordsCount = listbox1 . Items . Count;
 			}
-			else if ( CurrentType . ToUpper ( ) == "SECACCOUNTS" )
+			else if ( CurrentTableName . ToUpper ( ) == "SECACCOUNTS" )
 			{
 				if ( detaccts == null )
 					return;
-				BankDataGrid . ItemsSource = detaccts;
+				listbox1 . ItemsSource = detaccts;
 				//				DbCount = detaccts . Count;
 				//				ShowInfo ( line1: $"The requested table [{CurrentType}] was loaded successfully, and the {DbCount} records returned are displayed in the table below" , clr1: "Black0" ,
 				//					line2: $"The command line used was" , clr2: "Red2" ,
 				//					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
 				//					header: "Secondary Accounts data table" );
-				BankDataGrid . SelectedIndex = 0;
-				BankDataGrid . Focus ( );
-				RecordsCount = BankDataGrid . Items . Count;
+				listbox1 . SelectedIndex = 0;
+				listbox1 . Focus ( );
+				RecordsCount = listbox1 . Items . Count;
 			}
 			else
 			{
 				if ( genaccts . Count == 0 )
 				{
 					//ShowInfo ( line1: $"The requested table [ {CurrentType} ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
-					BankDataGrid . ItemsSource = null;
-					BankDataGrid . Refresh ( );
-					RecordsCount = BankDataGrid . Items . Count;
+					listbox1 . ItemsSource = null;
+					listbox1 . Refresh ( );
+					RecordsCount = listbox1 . Items . Count;
 					return;
 				}
 				// Caution : This loads the data into the Datarid with only the selected rows
 				// //visible in the grid so do NOT repopulate the grid after making this call
 				//				SqlServerCommands sqlc = new SqlServerCommands();
-				SqlServerCommands . LoadActiveRowsOnlyInGrid ( BankDataGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
-				if ( Flags . ReplaceFldNames )
-				{
-					string CurrentDomain = DbMain. SelectedItem . ToString ( ) . ToUpper ( );
-					GenericDbHandlers . ReplaceDataGridFldNames ( CurrentType, ref BankDataGrid , CurrentDomain);
-				}
+				listbox1 . ItemsSource = genaccts;
+				//				SqlServerCommands . LoadActiveRowsOnlyInGrid ( listbox1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+				//if ( Flags . ReplaceFldNames )
+				//{
+				//	GenericDbHandlers . ReplaceDataGridFldNames ( CurrentType , ref listbox1 );
+				//}
 				//				Grid1 . ItemsSource = genaccts;
 				//				DbCount = genaccts . Count;
 				//				ShowInfo ( header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
@@ -281,98 +325,9 @@ namespace MyDev . UserControls
 				//					line2: $"the table [{CurrentType}] that was queried returned a record count of {DbCount}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
 				//					line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4"
 				//					);
-				BankDataGrid . SelectedIndex = 0;
-				BankDataGrid . Focus ( );
-				RecordsCount = BankDataGrid . Items . Count;
-			}
-		}
-		private void LoadData_Ian1 ( string viewertype )
-		{
-			//if ( Usetimer )
-			//	Timer . Start ( );
-			if ( CurrentTableName == "BANKACCOUNT" )
-			{
-				//// Looad available DataTemplates into combo(s) ??
-				//				LoadDataTemplates_Ian1 ( "BANKACCOUNT" , viewertype );
-				bankaccts = new ObservableCollection<BankAccountViewModel> ( );
-				//				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//				if ( Startup )
-				//					SqlCommand = DefaultSqlCommand;
-				bankaccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
-				BankDataGrid . ItemsSource = bankaccts;
-			}
-			else if ( CurrentTableName == "CUSTOMER" )
-			{
-				//				LoadDataTemplates_Ian1 ( "CUSTOMER" , viewertype );
-				custaccts = new ObservableCollection<CustomerViewModel> ( );
-				//				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//				if ( Startup )
-				//					SqlCommand = DefaultSqlCommand;
-				custaccts = SqlSupport . LoadCustomer ( SqlCommand , 0 , true );
-				BankDataGrid . ItemsSource = custaccts;
-			}
-			else if ( CurrentTableName == "SECACCOUNTS" )
-			{
-				//				LoadDataTemplates_Ian1 ( "SECACCOUNTS" , viewertype );
-				detaccts = new ObservableCollection<DetailsViewModel> ( );
-				//				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//				if ( Startup )
-				//					SqlCommand = DefaultSqlCommand;
-				detaccts = SqlSupport . LoadDetails ( SqlCommand , 0 , true );
-				BankDataGrid . ItemsSource = detaccts;
-			}
-			else
-			{
-				string tablename="";
-				////				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
-				genaccts = new ObservableCollection<GenericClass> ( );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//if ( viewertype == "VIEW" )
-				//	tablename = dbNameLv . SelectedItem . ToString ( );
-				//else
-				//	tablename = dbNameLb . SelectedItem . ToString ( );
-				SqlCommand = $"Select *from {tablename}";
-				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
-				if ( SqlCommand == "" )
-					SqlCommand = $"Select * from {tablename}";
-				// need to do this cos the SQL command is changed to load the tables list....
-				//				if ( Startup )
-				//					SqlCommand = DefaultSqlCommand;
-				string ResultString="";
-				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
-				BankDataGrid . ItemsSource = genaccts;
-
-				//if ( genaccts . Count > 0 )
-				//{
-				//	ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
-				//		line2: $"The command line used was" , clr2: "Red2" ,
-				//		line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
-				//		header: "Generic style data table" , clr4: "Red5" );
-				//}
-				//else
-				//{
-				//	ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
-				//		line2: $"The command line used was" , clr2: "Red2" ,
-				//		line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
-				//		header: "Generic style data table" , clr4: "Red5" );
-
-
-				//}
-				//else
-				{
-					// MORE COMPLEX METHODS !!
-					if ( Usetimer )
-						timer . Start ( );
-					if ( CurrentType == "BANKACCOUNT" )
-						DapperSupport . GetBankObsCollection ( bankaccts , DbNameToLoad: "BankAccount" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
-					else if ( CurrentType == "CUSTOMER" )
-						DapperSupport . GetCustObsCollection ( custaccts , DbNameToLoad: "Customer" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
-					else if ( CurrentType == "SECACCOUNTS" )
-						DapperSupport . GetDetailsObsCollection ( detaccts , DbNameToLoad: "SecAccounts" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
-				}
+				listbox1 . SelectedIndex = 0;
+				listbox1 . Focus ( );
+				RecordsCount = listbox1 . Items . Count;
 			}
 		}
 
@@ -381,6 +336,8 @@ namespace MyDev . UserControls
 		{
 			int bankindex = 0, count=0;
 			List<string> list = new List<string>      ();
+
+			DbMain . Items . Clear ( );
 			SqlCommand = "spGetAllDatabaseNames";
 			Datagrids . CallStoredProcedure ( list , SqlCommand );
 			//This call returns us a DataTable
@@ -520,27 +477,27 @@ namespace MyDev . UserControls
 			//// Set flag  to ignore limits check
 			//LoadAll = true;
 			//string currdb = GetCurrentDatabase ( );
-			CurrentTableName = DbListbox . SelectedItem . ToString ( ) . ToUpper ( );
-			if ( Utils . CheckResetDbConnection ( DbMain . SelectedItem . ToString ( ) , out string constr ) == false )
+			string CurrentDb = DbMain. SelectedItem . ToString ( ) . ToUpper ( );
+			if ( Utils . CheckResetDbConnection ( CurrentDb , out string constr ) == false )
 			{
 				Console . WriteLine ( $"Failed to set connection string for {CurrentTableName . ToUpper ( )} Db" );
 				return;
 			}
 
-			if ( CurrentTableName == "IAN1" )
+			if ( CurrentDb == "IAN1" )
 			{
 				LoadData_Ian1 ( "BOX" );
 				//				LoadGrid_IAN1 ( "BOX" );
 			}
-			else if ( CurrentTableName == "NORTHWIND" )
+			else if ( CurrentDb == "NORTHWIND" )
 			{
 				LoadData_NorthWind ( "BOX" );
 				//				LoadGrid_NORTHWIND ( "BOX" );
 			}
-			else if ( CurrentTableName == "PUBS" )
+			else if ( CurrentDb == "PUBS" )
 			{
 				genaccts = null;
-				//LoadData_Publishers ( "BOX" , out genaccts );
+				LoadData_Publishers ( "BOX" , out genaccts );
 				//if ( genaccts != null )
 				//{
 				//	listBox . ItemsSource = genaccts;
@@ -558,115 +515,213 @@ namespace MyDev . UserControls
 				//}
 				//LoadGrid_PUBS ( "BOX" );
 			}
-			BankDataGrid . SelectedIndex = 0;
-			BankDataGrid . SelectedItem = 0;
+			listbox1 . SelectedIndex = 0;
+			listbox1 . SelectedItem = 0;
 			//LoadAll = false;
 		}
 
-		public void LoadData_NorthWind ( string viewertype )
+		private void LoadData_Ian1 ( string viewertype )
 		{
-			if ( Usetimer )
-				timer . Start ( );
-			if ( CurrentTableName == "CUSTOMERS" )
+			try
 			{
-
-				//				LoadDataTemplates_NorthWind ( "CUSTOMERS" , viewertype );
-				nwcustomeraccts = new ObservableCollection<nwcustomer> ( );
-				nwcustomeraccts = nwc . GetNwCustomers ( );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//if ( Startup )
-				//	SqlCommand = DefaultSqlCommand;
-			}
-			else if ( CurrentTableName == "ORDERS" )
-			{
-
-				//				LoadDataTemplates_NorthWind ( "ORDERS" , viewertype );
-				nworderaccts = new ObservableCollection<nworder> ( );
-				nworderaccts = nwo . LoadOrders ( );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//if ( Startup )
-				//	SqlCommand = DefaultSqlCommand;
-			}
-			else
-			{
-				string tablename="";
-				//				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
-				genaccts = new ObservableCollection<GenericClass> ( );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//if ( viewertype == "VIEW" )
-				//	tablename = dbNameLv . SelectedItem . ToString ( );
-				//else
-				tablename = DbListbox . SelectedItem . ToString ( );
-				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
-				if ( SqlCommand == "" )
-					SqlCommand = $"Select * from {tablename}";
-				// need to do this cos the SQL command is changed to load the tables list....
-				//if ( Startup )
-				//	SqlCommand = DefaultSqlCommand;
-				string ResultString="";
-				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
-			}
-		}
-		public void LoadData_Publishers ( string viewertype , out ObservableCollection<GenericClass> generics )
-		{
-			generics = null;
-			//ObservableCollection<GenericClass> generics = new ObservableCollection<GenericClass>();
-			//			if ( Usetimer )
-			//				timer . Start ( );
-			if ( CurrentTableName == "AUTHORS" )
-			{
-				//				LoadDataTemplates_PubAuthors ( "AUTHORS" , viewertype );
-				pubauthors = new ObservableCollection<PubAuthors> ( );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//				if ( Startup )
-				//					SqlCommand = DefaultSqlCommand;
-				//				nwcustomeraccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
-			}
-			else if ( CurrentTableName == "ORDERS" )
-			{
-
-				//				LoadDataTemplates_NorthWind ( "ORDERS" , viewertype );
-				nworderaccts = new ObservableCollection<nworder> ( );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//				if ( Startup )
-				//					SqlCommand = DefaultSqlCommand;
-				//				nwcustomeraccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
-			}
-			else
-			{
-				string tablename="";
-				//				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
-				genaccts = new ObservableCollection<GenericClass> ( );
-				// need to do this cos the SQL command is changed to load the tables list....
-				//if ( viewertype == "VIEW" )
-				//	tablename = dbNameLv . SelectedItem . ToString ( );
-				//else
-				tablename = DbListbox . SelectedItem . ToString ( );
-				SqlCommand = $"Select *from {tablename}";
-				SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
-				if ( SqlCommand == "" )
-					SqlCommand = $"Select * from {tablename}";
-				// need to do this cos the SQL command is changed to load the tables list....
-				//if ( Startup )
-				//	SqlCommand = DefaultSqlCommand;
-				string ResultString="";
-				genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
-				if ( genaccts . Count > 0 )
+				CurrentTableName = DbListbox . SelectedItem . ToString ( ) . ToUpper ( );
+				if ( CurrentTableName == "BANKACCOUNT" )
 				{
-					//ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
-					//	line2: $"The command line used was" , clr2: "Red2" ,
-					//	line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
-					//	header: "Generic style data table" , clr4: "Red5" );
+					bankaccts = new ObservableCollection<BankAccountViewModel> ( );
+					SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+					bankaccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
+					listbox1 . ItemTemplate = FindResource ( "BankTemplate" ) as DataTemplate;
+					listbox1 . ItemsSource = bankaccts;
+					RecordsCount = bankaccts . Count;
+				}
+				else if ( CurrentTableName == "CUSTOMER" )
+				{
+					custaccts = new ObservableCollection<CustomerViewModel> ( );
+					SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+					custaccts = SqlSupport . LoadCustomer ( SqlCommand , 0 , true );
+					listbox1 . ItemTemplate = FindResource ( "CustomerTemplate" ) as DataTemplate;
+					listbox1 . ItemsSource = custaccts;
+					RecordsCount = custaccts . Count;
+				}
+				else if ( CurrentTableName == "SECACCOUNTS" )
+				{
+					detaccts = new ObservableCollection<DetailsViewModel> ( );
+					SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+					detaccts = SqlSupport . LoadDetails ( SqlCommand , 0 , true );
+					listbox1 . ItemTemplate = FindResource ( "DetailTemplate" ) as DataTemplate;
+					listbox1 . ItemsSource = detaccts;
+					RecordsCount = detaccts . Count;
 				}
 				else
 				{
-					//ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
-					//	line2: $"The command line used was" , clr2: "Red2" ,
-					//	line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
-					//	header: "Generic style data table" , clr4: "Red5" );
+					string tablename=DbListbox.SelectedItem.ToString();
+					genaccts = new ObservableCollection<GenericClass> ( );
+					SqlCommand = $"Select * from {tablename}";
+					SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+					if ( SqlCommand == "" )
+						SqlCommand = $"Select * from {tablename}";
+					string ResultString="";
+					genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
+					listbox1 . ItemTemplate = FindResource ( "GenericTemplate" ) as DataTemplate;
+					listbox1 . ItemsSource = genaccts;
+					RecordsCount = genaccts . Count;
+
+					if ( genaccts . Count == 0 )
+					{
+						//ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+						//	line2: $"The command line used was" , clr2: "Red2" ,
+						//	line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+						//	header: "Generic style data table" , clr4: "Red5" );
+					}
 				}
-				generics = genaccts;
+				//else
+				{
+					// MORE COMPLEX METHODS !!
+					if ( Usetimer )
+						timer . Start ( );
+					if ( CurrentTableName == "BANKACCOUNT" )
+						DapperSupport . GetBankObsCollection ( bankaccts , DbNameToLoad: "BankAccount" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
+					else if ( CurrentTableName == "CUSTOMER" )
+						DapperSupport . GetCustObsCollection ( custaccts , DbNameToLoad: "Customer" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
+					else if ( CurrentTableName == "SECACCOUNTS" )
+						DapperSupport . GetDetailsObsCollection ( detaccts , DbNameToLoad: "SecAccounts" , Orderby: "Custno, BankNo" , wantSort: true , Caller: "DATAGRIDS" , Notify: true );
+				}
 			}
+			catch ( Exception ex ) {; }
+		}
+		public void LoadData_NorthWind ( string viewertype )
+		{
+			try
+			{
+				if ( Usetimer )
+					timer . Start ( );
+				CurrentTableName = DbListbox . SelectedItem . ToString ( );
+				if ( CurrentTableName == "CUSTOMERS" )
+				{
+					//				LoadDataTemplates_NorthWind ( "CUSTOMERS" , viewertype );
+					nwcustomeraccts = new ObservableCollection<nwcustomer> ( );
+					nwcustomeraccts = nwc . GetNwCustomers ( );
+					listbox1 . ItemTemplate = FindResource ( "GenDataTemplate1" ) as DataTemplate;
+					listbox1 . ItemsSource = nwcustomeraccts;
+					RecordsCount = nwcustomeraccts . Count;
+				}
+				else if ( CurrentTableName == "ORDERS" )
+				{
+					//				LoadDataTemplates_NorthWind ( "ORDERS" , viewertype );
+					nworderaccts = new ObservableCollection<nworder> ( );
+					nworderaccts = nwo . LoadOrders ( );
+					listbox1 . ItemTemplate = FindResource ( "GenDataTemplate1" ) as DataTemplate;
+					listbox1 . ItemsSource = nworderaccts;
+					RecordsCount = nworderaccts . Count;
+				}
+				else
+				{
+					string tablename="";
+					//				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
+					genaccts = new ObservableCollection<GenericClass> ( );
+					tablename = DbListbox . SelectedItem . ToString ( );
+					SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+					if ( SqlCommand == "" )
+						SqlCommand = $"Select * from {tablename}";
+					// need to do this cos the SQL command is changed to load the tables list....
+					string ResultString="";
+					genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
+					listbox1 . ItemTemplate = FindResource ( "GenDataTemplate1" ) as DataTemplate;
+					listbox1 . ItemsSource = genaccts;
+					RecordsCount = genaccts . Count;
+					//if ( genaccts . Count > 0 )
+					//{
+					//	ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+					//		line2: $"The command line used was" , clr2: "Red2" ,
+					//		line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+					//		header: "Generic style data table" , clr4: "Red5" );
+					//}
+					//else
+					//{
+					//	ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+					//		line2: $"The command line used was" , clr2: "Red2" ,
+					//		line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+					//		header: "Generic style data table" , clr4: "Red5" );
+					//}
+				}
+			}
+			catch ( Exception ex ) {; }
+		}
+		public void LoadData_Publishers ( string viewertype , out ObservableCollection<GenericClass> Generics )
+		{
+			ObservableCollection<GenericClass> generics = new ObservableCollection<GenericClass>();
+			Generics = generics;
+			try
+			{
+				generics = null;
+				//			if ( Usetimer )
+				//				timer . Start ( );
+				CurrentTableName = DbListbox . SelectedItem . ToString ( );
+				if ( CurrentTableName == "AUTHORS" )
+				{
+					//				LoadDataTemplates_PubAuthors ( "AUTHORS" , viewertype );
+					pubauthors = new ObservableCollection<PubAuthors> ( );
+					listbox1 . ItemTemplate = FindResource ( "PubsAuthorTemplate1" ) as DataTemplate;
+					listbox1 . ItemsSource = pubauthors;
+					RecordsCount = pubauthors . Count;
+					// need to do this cos the SQL command is changed to load the tables list....
+					//				if ( Startup )
+					//					SqlCommand = DefaultSqlCommand;
+					//				nwcustomeraccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
+				}
+				else if ( CurrentTableName == "ORDERS" )
+				{
+
+					//				LoadDataTemplates_NorthWind ( "ORDERS" , viewertype );
+					nworderaccts = new ObservableCollection<nworder> ( );
+					listbox1 . ItemTemplate = FindResource ( "PubsOrderTemplate1" ) as DataTemplate;
+					listbox1 . ItemsSource = nworderaccts;
+					RecordsCount = nworderaccts . Count;
+					// need to do this cos the SQL command is changed to load the tables list....
+					//				if ( Startup )
+					//					SqlCommand = DefaultSqlCommand;
+					//				nwcustomeraccts = SqlSupport . LoadBank ( SqlCommand , 0 , true );
+				}
+				else
+				{
+					string tablename="";
+					//				LoadDataTemplates_Ian1 ( "GENERIC" , viewertype );
+					genaccts = new ObservableCollection<GenericClass> ( );
+					// need to do this cos the SQL command is changed to load the tables list....
+					//if ( viewertype == "VIEW" )
+					//	tablename = dbNameLv . SelectedItem . ToString ( );
+					//else
+					tablename = DbListbox . SelectedItem . ToString ( );
+					SqlCommand = $"Select *from {tablename}";
+					SqlCommand = GetDefaultSqlCommand ( CurrentTableName );
+					if ( SqlCommand == "" )
+						SqlCommand = $"Select * from {tablename}";
+					// need to do this cos the SQL command is changed to load the tables list....
+					//if ( Startup )
+					//	SqlCommand = DefaultSqlCommand;
+					string ResultString="";
+					genaccts = SqlSupport . LoadGeneric ( SqlCommand , out ResultString , 0 , true );
+					if ( genaccts . Count > 0 )
+					{
+						listbox1 . ItemTemplate = FindResource ( "GenDataTemplate1" ) as DataTemplate;
+						listbox1 . ItemsSource = genaccts;
+						RecordsCount = genaccts . Count;
+						//ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, and {genaccts . Count} records were returned,\nThe data is shown in  the viewer below" , clr1: "Black0" ,
+						//	line2: $"The command line used was" , clr2: "Red2" ,
+						//	line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+						//	header: "Generic style data table" , clr4: "Red5" );
+					}
+					else
+					{
+						//ShowInfo ( line1: $"The requested table [{CurrentTableName }] was loaded successfully, but ZERO records were returned,\nThe Table is  " , clr1: "Black0" ,
+						//	line2: $"The command line used was" , clr2: "Red2" ,
+						//	line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" ,
+						//	header: "Generic style data table" , clr4: "Red5" );
+					}
+					generics = genaccts;
+				}
+			}
+			catch ( Exception ex ) {; }
 		}
 		// load a list of all SP's
 		private void LoadSpList ( )
@@ -790,7 +845,7 @@ namespace MyDev . UserControls
 			////					sqlt . tablename = row;
 			//					SqlTableCollection . Add ( sqlt );
 			//				}
-			//				BankDataGrid . ItemsSource = SqlTableCollection;
+			//				listbox1 . ItemsSource = SqlTableCollection;
 			//DbTablesTree . ItemsSource = SqlTableCollection;
 
 
@@ -865,7 +920,7 @@ namespace MyDev . UserControls
 			set { SetValue ( FontsizeProperty , value ); }
 		}
 		public static readonly DependencyProperty FontsizeProperty =
-			DependencyProperty.Register("Fontsize", typeof(double), typeof(MulltiDbUserControl), new PropertyMetadata((double)12));
+			DependencyProperty.Register("Fontsize", typeof(double), typeof(ListBoxUserControl), new PropertyMetadata((double)12));
 
 		public double ItemsHeight
 		{
@@ -873,7 +928,7 @@ namespace MyDev . UserControls
 			set { SetValue ( ItemsHeightProperty , value ); }
 		}
 		public static readonly DependencyProperty ItemsHeightProperty =
-			DependencyProperty.Register("ItemsHeight", typeof(double), typeof(MulltiDbUserControl), new PropertyMetadata((double)20));
+			DependencyProperty.Register("ItemsHeight", typeof(double), typeof(ListBoxUserControl), new PropertyMetadata((double)20));
 
 
 		public int RecordsCount
@@ -884,7 +939,16 @@ namespace MyDev . UserControls
 
 		// Using a DependencyProperty as the backing store for RecordsCount.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty RecordsCountProperty =
-		    DependencyProperty.Register("RecordsCount", typeof(int), typeof(MulltiDbUserControl), new PropertyMetadata(0));
+		    DependencyProperty.Register("RecordsCount", typeof(int), typeof(ListBoxUserControl), new PropertyMetadata(0));
+
+		public TextBlock LbDataTemplate
+		{
+			get { return ( TextBlock ) GetValue ( LbDataTemplateProperty ); }
+			set { SetValue ( LbDataTemplateProperty , value ); }
+		}
+		// Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty LbDataTemplateProperty =
+			    DependencyProperty.Register("LbDataTemplate", typeof(TextBlock ), typeof(ListBoxUserControl), new PropertyMetadata((TextBlock)null));
 
 
 		#endregion  Dependency properties
@@ -895,7 +959,7 @@ namespace MyDev . UserControls
 
 		private void ReloadFromDomain ( object sender , RoutedEventArgs e )
 		{
-			if ( IsSelectionChanged == true )
+			if ( IsSelectionChanged == true || IsLoading == true)
 				return;
 
 			var  domain = DbMain.SelectedItem;
@@ -906,7 +970,6 @@ namespace MyDev . UserControls
 			}
 			DbListbox . Items . Clear ( );
 			LoadTablesList ( domain . ToString ( ) );
-			
 			//IsSelectionChanged = true;
 		}
 
@@ -922,6 +985,11 @@ namespace MyDev . UserControls
 			this . Width += 1;
 			this . UpdateLayout ( );
 			this . Refresh ( );
+		}
+
+		private void UserControl_Loaded ( object sender , RoutedEventArgs e )
+		{
+			InitialLoad ( );
 		}
 	}
 }

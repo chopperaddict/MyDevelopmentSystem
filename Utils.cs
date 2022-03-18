@@ -1638,7 +1638,7 @@ namespace MyDev
 			{
 				// list various Flags in Console
 				//Debug . WriteLine ( $"\nCTRL + F11 pressed..." );
-				Flags . PrintSundryVariables ( );
+//				Flags . PrintSundryVariables ( );
 				e . Handled = true;
 				key1 = false;
 				return;
@@ -1693,6 +1693,7 @@ namespace MyDev
 				if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
 				{
 					Console . WriteLine ( "Border clicked" );
+//					Mouse . SetCursor ( Cursors . SizeAll );
 					return true;
 				}
 				Type type = original . GetType ( );

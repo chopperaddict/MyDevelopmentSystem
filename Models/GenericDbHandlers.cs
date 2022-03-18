@@ -18,6 +18,7 @@ using Dapper;
 using System . Collections;
 using System . Linq . Expressions;
 using System . Windows . Documents;
+using System . Windows . Controls;
 
 namespace MyDev . Models
 {
@@ -26,23 +27,23 @@ namespace MyDev . Models
 		public static Dictionary<string, string> dict = new Dictionary<string, string>();
 		private static string ConnString { get; set; }
 
-		public  static void CheckDbDomain(string DbDomain="IAN1")
+		public static void CheckDbDomain ( string DbDomain = "IAN1" )
 		{
-			if(Flags . ConnectionStringsDict == null || Flags . ConnectionStringsDict.Count == 0  )
+			if ( Flags . ConnectionStringsDict == null || Flags . ConnectionStringsDict . Count == 0 )
 				Utils . LoadConnectionStrings ( );
 			Utils . CheckResetDbConnection ( DbDomain , out string constring );
 			ConnString = constring;
 			Flags . CurrentConnectionString = constring;
 		}
 
-		public static Dictionary<string , string> GetDbTableColumns ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list,  string dbName , string DbDomain= "IAN1")
+		public static Dictionary<string , string> GetDbTableColumns ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list , string dbName , string DbDomain = "IAN1" )
 		{
 			// Make sure we are accessing the correct Db Domain
 			CheckDbDomain ( DbDomain );
-			dict = GetSpArgs ( ref Gencollection, ref list, dbName ,DbDomain );
+			dict = GetSpArgs ( ref Gencollection , ref list , dbName , DbDomain );
 			return dict;
 		}
-		private static Dictionary<string , string> GetSpArgs ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list, string dbName, string DbDomain )
+		private static Dictionary<string , string> GetSpArgs ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list , string dbName , string DbDomain )
 		{
 			string output = "";
 			string errormsg="";
@@ -51,12 +52,12 @@ namespace MyDev . Models
 			DataTable dt = new DataTable();
 			GenericClass genclass = new GenericClass();
 			Dictionary<string, string> dict = new Dictionary<string, string>();
-			
+
 			try
 			{
 				Gencollection . Clear ( );
-				Gencollection = LoadDbAsGenericData ( ref Gencollection , ref list , "spGetTableColumns" ,dbName, DbDomain );
-			} 
+				Gencollection = LoadDbAsGenericData ( ref Gencollection , ref list , "spGetTableColumns" , dbName , DbDomain );
+			}
 			catch ( Exception ex )
 			{
 				MessageBox . Show ( $"SQL ERROR 1125 - {ex . Message}" );
@@ -75,13 +76,14 @@ namespace MyDev . Models
 					dict . Add ( gc . field1 , gc . field2 );
 					list . Add ( gc . field1 . ToString ( ) );
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
-				Console . WriteLine (ex.Message);
+				Console . WriteLine ( ex . Message );
 			}
 			return dict;
 		}
-		private static ObservableCollection<GenericClass> LoadDbAsGenericData ( ref ObservableCollection<GenericClass> GenClass , ref  List<string> list, string SqlCommand , string Arguments , string DbDomain )
+		private static ObservableCollection<GenericClass> LoadDbAsGenericData ( ref ObservableCollection<GenericClass> GenClass , ref List<string> list , string SqlCommand , string Arguments , string DbDomain )
 		{
 			string result = "";
 			bool IsSuccess = false;
@@ -158,7 +160,8 @@ namespace MyDev . Models
 												tmp = pair . Key . ToString ( ) + "=" + pair . Value . ToString ( );
 												buffer += tmp + ",";
 											}
-										} catch ( Exception ex )
+										}
+										catch ( Exception ex )
 										{
 											Console . WriteLine ( $"Dictionary ERROR : {ex . Message}" );
 											result = ex . Message;
@@ -168,7 +171,8 @@ namespace MyDev . Models
 									//string s = buffer . Substring (0, buffer . Length - 1 );
 									//buffer = s;
 									//genericlist . Add ( buffer );
-								} catch ( Exception ex )
+								}
+								catch ( Exception ex )
 								{
 									result = $"SQLERROR : {ex . Message}";
 									Console . WriteLine ( result );
@@ -180,7 +184,8 @@ namespace MyDev . Models
 								dict . Clear ( );
 								dictcount = 1;
 							}
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"OUTER DICT/PROCEDURE ERROR : {ex . Message}" );
 							if ( ex . Message . Contains ( "not find stored procedure" ) )
@@ -207,12 +212,37 @@ namespace MyDev . Models
 							}
 						}
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{ }
 			}
 			return GenClass;
 		}
-
+		/// <summary>
+		/// This Method recieves a datagrid prefilled with GENERIC STYLE data (field1, field2, etc)
+		/// and then uses the spGetTableNames S.Proc toi get the real field names
+		/// and replaces the column headers with them instead, assuming they are retrieved successfully
+		/// </summary>
+		/// <param name="CurrentType"></param>
+		/// <param name="Grid1"></param>
+		public static void ReplaceDataGridFldNames ( string CurrentType, ref DataGrid Grid1, string Domain= "IAN1" )
+		{
+			List<string> list = new List<string>();
+			ObservableCollection<GenericClass> GenericClass = new ObservableCollection<GenericClass>();
+			Dictionary<string, string> dict = new Dictionary<string, string>();
+			// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
+			dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , CurrentType, Domain);
+			int index = 0;
+			if ( list . Count > 0 )
+			{
+				// use the list to get the correct column header info
+				foreach ( var item in Grid1 . Columns )
+				{
+					DataGridColumn dgc = item;
+					dgc . Header = list [ index++ ];
+				}
+			}
+		}
 		#region Support methods
 		private static DataTable ProcessSqlCommand ( string SqlCommand )
 		{
@@ -233,11 +263,13 @@ namespace MyDev . Models
 					SqlDataAdapter sda = new SqlDataAdapter ( cmd );
 					sda . Fill ( dt );
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"ERROR in PROCESSSQLCOMMAND(): Failed to load Datatable :\n {ex . Message}, {ex . Data}" );
 				MessageBox . Show ( $"ERROR in PROCESSSQLCOMMAND(): Failed to load datatable\n{ex . Message}" );
-			} finally
+			}
+			finally
 			{
 				Console . WriteLine ( $" SQL data loaded from SQLCommand [{SqlCommand . ToUpper ( )}]" );
 				con . Close ( );

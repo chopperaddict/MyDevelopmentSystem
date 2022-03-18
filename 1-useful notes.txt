@@ -5,7 +5,7 @@
 //ALL METHODS to be added to source file :
 
 		// Flowdoc file wide variables
-		// Pointer to the special library FlowdocLib.cs
+		// Pointer to the special library FlowdocLib.cs 
 		FlowdocLib fdl = new FlowdocLib();
 		private double XLeft=0;
 		private double YTop=0;
@@ -14,6 +14,8 @@
 		Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
 		Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
 
+=======================================================================================
+ place in .CS Code behind
 	#region FlowDoc support
 		/// <summary>
 		///  These are the only methods any window needs to provide support for my FlowDoc system.
@@ -28,32 +30,44 @@
 		{
 			// Window wide  !!
 			// Called  when a Flowdoc MOVE has ended
-			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc, MovingObject, e );
+			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc , MovingObject , e );
 			ReleaseMouseCapture ( );
 		}
+		// CALLED WHEN  LEFT BUTTON PRESSED
 		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			//In this event, we get current mouse position on the control to use it in the MouseMove event.
-			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc,  e );
+			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc , e );
+			Console . WriteLine ($"MvvmDataGrid Btn down {MovingObject}");
 		}
-
 		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
 		{
 			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
-			fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
+				fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
 		}
-
+		// Shortened version proxy call		
 		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
 		{
 			Flowdoc . BorderClicked = false;
 		}
-		// Shortened version proxy call		
-		public void fdmsg ( string line1 , string line2 )
+		public void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
 		{
-			//We have to pass the Flowdoc.Name, and Canvas.Name as well as 2 strings of message
-			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 );
+			// EVENTHANDLER to Handle resizing
+			FlowDoc fd = sender as FlowDoc;
+			Point pt = Mouse . GetPosition (canvas );
+			double dLeft = pt.X;
+			double dTop= pt.Y;
+		}
+		public void fdmsg ( string line1 , string line2 = "" , string line3 = "" )
+		{
+			//We have to pass the Flowdoc.Name, and Canvas.Name as well as up   to 3 strings of message
+			//  you can  just provie one if required
+			// eg fdmsg("message text");
+			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 , line3 );
 		}
 
+		#endregion Flowdoc support via library
+=======================================================================================
 		/ how tp call flowdoc
 		fdl.ShowInfo ( Flowdoc, canvas , $"The request for the default Bank Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid ..." ,
 				  "Blue3" ,
@@ -64,7 +78,9 @@
 				   "Default Bank Account data table" ,
 				    "Red3" );
 
-	     or just
+	     or just the short form of up to 3 lines of text...
+
+	     fdmsg ( string line1 , string line2 = "" , string line3 = "" )
 
 
 	    in the XAML files
@@ -72,11 +88,14 @@
 
         in <Window 
 	  xmlns:user="clr-namespace:MyDev.UserControls" >
-	  <Grid>
 
-		// I suggest it is always named ""Flowdoc""
+	  
+	  <Grid>	// Main Wrapper for window (can be any type)
+
+		// the UserControl MUST always be named ""Flowdoc""   EXACTLY (case sensitive)
 
 		// You need to wrap the entire window area in a Canvas (I suggest it is named ""canvas"")
+		// but it can be placed anywhere inside the main Grid or whatever is used  to wrap the entire window
 		// Ensure it is set as Visibility="HIDDEN"
 		<Canvas x:Name="canvas" Grid.Row="0">
 				Canvas.Left="0" Canvas.Top="0">
@@ -101,11 +120,11 @@ MUST BE -		Visibility="Hidden">
 				Opacity="1"
 				Panel.ZIndex="4"
 				PreviewMouseLeftButtonDown="LvFlowdoc_PreviewMouseLeftButtonDown"
-				Visibility="Hidden"
+MUST BE -				Visibility="Hidden"
 				Width="520" />
 
 			</Canvas>
-					......  all other functionality goes here .....
+					......  all other Window functionality goes here .....
 	</Grid>
 
 

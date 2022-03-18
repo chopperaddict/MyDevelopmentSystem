@@ -1,11 +1,13 @@
-﻿using MyDev . UserControls;
-using MyDev . ViewModels;
+﻿using MyDev . Models;
+using MyDev . UserControls;
+using MyDev . Views;
 
 using System;
 using System . Collections . Generic;
 using System . Data . SqlClient;
 using System . Diagnostics;
 using System . Linq;
+using System . Security . Policy;
 using System . Text;
 using System . Threading . Tasks;
 using System . Windows;
@@ -14,7 +16,7 @@ using System . Windows . Data;
 using System . Windows . Input;
 using System . Xml . Linq;
 
-namespace MyDev . Views
+namespace MyDev . ViewModels
 {
 	/// <summary>
 	/// VIEWMODEL for MvvmDataGrid.
@@ -27,13 +29,16 @@ namespace MyDev . Views
 		internal MvvmGridModel mvgm { get; set; }
 		public MvvmDataGrid ParentBGView { get; set; }
 		public FlowDoc Flowdoc { get; set; }
-		private static bool IsBankActive { get; set; } = true;
+		public FlowdocLib fdl { get; set; }
+		public Canvas canvas { get; set; }
+		public bool IsBankActive { get; set; } = true;
 
 		public ICommand debugger { get; set; }
 		public ICommand CloseWindow { get; set; }
 		public ICommand LoadData { get; set; }
 
 		private  bool UseFlowdoc = true;
+		public object MovingObject { get; set; }
 
 		#region Full Properties
 		private string fillterlabel;
@@ -50,10 +55,10 @@ namespace MyDev . Views
 		}
 		#region Filter TextBoxes
 		private string  filtertextbox;
-		public string FillterTextBox
+		public string FilterTextBox
 		{
 			get { return filtertextbox; }
-			set { filtertextbox = value; OnPropertyChanged ( FillterTextBox ); }
+			set { filtertextbox = value; OnPropertyChanged ( FilterTextBox ); }
 		}
 		private string  acFilterTextBox;
 		public string ACFilterTextBox
@@ -73,7 +78,7 @@ namespace MyDev . Views
 		public string ActiveTable
 		{
 			get { return activeTable; }
-			set { activeTable = value; OnPropertyChanged ( ActiveTable ); }		
+			set { activeTable = value; OnPropertyChanged ( ActiveTable ); }
 		}
 
 		#endregion Full Properties
@@ -95,10 +100,11 @@ namespace MyDev . Views
 			FilterLabel = "Filter Bank A/c's Col : CustNo";
 			LoadButtonText = "Load Customer A/cs";
 			ActiveTable = "All Bank Accounts";
-
 			// Handle  filtering by calling MvvmGridModel to process it
 			ParentBGView . filtertext . TextChanged += mvgm . filter_TextChanged;
 			ParentBGView . acfiltertext . TextChanged += mvgm . acfilter_TextChanged;
+
+			fdl = new FlowdocLib();
 		}
 		#region ICommand Methods 
 		// ICommand CanExecute's
@@ -113,14 +119,14 @@ namespace MyDev . Views
 
 		// IComand Handelrs
 		public void ExecuteDebugger ( object obj )
-		{mvgm . ExecuteDebugger (null );}
+		{ mvgm . ExecuteDebugger ( null ); }
 		public void ExecuteCloseWindow ( object parameter )
 		{
-//			Console . WriteLine ( "We have Hit the close ICommand ..." );
+			//			Console . WriteLine ( "We have Hit the close ICommand ..." );
 			WindowCollection  v = Application .Current.Windows;
 			foreach ( Window item in v )
 			{
-				if ( item .ToString(). Contains ( "GenericMvvmWindow" ) )
+				if ( item . ToString ( ) . Contains ( "MvvmDataGrid" ) )
 				{
 					MessageBoxResult res = MessageBox . Show ( "Close App down entirely ?" , "Application Closedown Options" , MessageBoxButton . YesNoCancel , MessageBoxImage. Question , MessageBoxResult . Yes );
 					if ( res == MessageBoxResult . Yes )
@@ -156,45 +162,43 @@ namespace MyDev . Views
 				LoadButtonText = "Load Customer A/cs";
 				ActiveTable = "All Bank Accounts";
 			}
-			ShowInfo ( line1: $"The requ" , clr1: "Black0" ,
+			ShowInfo (Flowdoc, canvas, line1: $"The requ" , clr1: "Black0" ,
 				line2: $"The command line used was" , clr2: "Red2" ,
 				header: "Generic style data table" , clr4: "Red5" );
 		}
 		#endregion ICommand Methods EXECUTEDEBUGGER, EXECUTECLOSEWINDOW
-		private void ShowInfo ( string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
+
+		public void ShowRecordData ( DataGrid dgrid)
+		{
+			if ( IsBankActive )
+			{
+				BankAccountViewModel bvm = dgrid.SelectedItem as   BankAccountViewModel;
+				string data = "Record Contents :-\n";
+				data += "Customer # :	" + bvm . CustNo+ "\n";
+				data += "Bank A/C  # :	" + bvm . BankNo + "\n";
+				data += "A/c Type :	" + bvm . AcType+ "\n";
+				data +="Balance :	" +  bvm .Balance + "\n";
+				data +="Interest  rate :	" +  bvm .IntRate + "\n";
+				data +="Date opened :	" +  bvm .ODate + "\n";
+				data += "Date Closed:	" + bvm .CDate + "\n";
+				fdmsg ( "testing flowdoc from MvvmViewModel", data);
+			}
+
+		}
+		public void fdmsg ( string line1 , string line2 = "" , string line3 = "" )
+		{
+			//We have to pass the Flowdoc.Name, and Canvas.Name as well as up   to 3 strings of message
+			//  you can  just provie one if required
+			// eg fdmsg("message text");
+			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 , line3 );
+		}
+
+		private void ShowInfo (FlowDoc Flowdoc, Canvas canvas, string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
 		{
 			if ( UseFlowdoc == false )
 				return;
-			//Flowdoc . ShowInfo ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
-			//ParentBGView.canvas . Visibility = Visibility . Visible;
-			//ParentBGView . canvas . BringIntoView ( );
-			//Flowdoc . Visibility = Visibility . Visible;
-			//if ( Flowdoc . KeepSize == false )
-			//{
-			//	if ( Flowdoc . Height != flowdocFloatingHeight )
-			//		flowdocFloatingHeight = Flowdoc . Height;
-			//}
-			//var docheight = Convert.ToDouble ( flowdocFloatingHeight == 0 ? 250 : flowdocFloatingHeight);
-			//var docwidth = Convert.ToDouble ( flowdocFloatingWidth == 0 ? 450 : flowdocFloatingWidth);
-			//// Save properties
-			//flowdocFloatingHeight = docheight;
-			//flowdocFloatingWidth = docwidth;
-			//flowdocFloatingTop = Convert . ToDouble ( Flowdoc . GetValue ( TopProperty ) );
-			//flowdocFloatingLeft = Convert . ToDouble ( Flowdoc . GetValue ( LeftProperty ) );
-			////Position Control on Canvas
-			//double canvasheight = canvas.ActualHeight;
-			//if ( docheight >= canvasheight )
-			//	Flowdoc . Height = canvasheight - 20;
-			//// Set size of Control
-			//Flowdoc . Width = flowdocFloatingWidth;
-			//Flowdoc . Height = flowdocFloatingHeight;
+			ShowInfo (	Flowdoc ,canvas ,line1 ,clr1,line2,clr2,line3,clr3,header ,clr4,beep );
 
-			//Flowdoc . BringIntoView ( );
-			//if ( Flags . PinToBorder == true )
-			//{
-			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-			//	( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
-			//}
 		}
 	}
 }

@@ -80,6 +80,9 @@
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Models\FlowdocLib.cs" />
     <Compile Include="Models\GenericDbHandlers.cs" />
+    <Compile Include="UserControls\ListBoxUserControl.xaml.cs">
+      <DependentUpon>ListBoxUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MulltiDbUserControl.xaml.cs">
       <DependentUpon>MulltiDbUserControl.xaml</DependentUpon>
     </Compile>
@@ -98,7 +101,7 @@
     <Compile Include="Views\MvvmUserTest.xaml.cs">
       <DependentUpon>MvvmUserTest.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MvvmViewModel.cs" />
+    <Compile Include="ViewModels\MvvmViewModel.cs" />
     <Compile Include="Views\MyCommands.cs" />
     <Compile Include="Converts\BoolToYesNo.cs" />
     <Compile Include="Converts\DateTimeToShortStringConverter.cs" />
@@ -210,6 +213,9 @@
     </Compile>
     <Compile Include="Sql\SqlBackgroundLoad.cs" />
     <Compile Include="Views\SupportMethods.cs" />
+    <Compile Include="Views\SysConfig.xaml.cs">
+      <DependentUpon>SysConfig.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TreeViews.xaml.cs">
       <DependentUpon>TreeViews.xaml</DependentUpon>
     </Compile>
@@ -268,6 +274,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\ListBoxUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\MulltiDbUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -353,6 +363,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Setup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SysConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

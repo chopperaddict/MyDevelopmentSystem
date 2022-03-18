@@ -75,6 +75,100 @@
 		NB The OverridesDefaultStyle=True line lets us define default properties
 		but allows the programmer to override them in his definitions if required-->
 
+	<Style x:Key="StandardWtoGGradientButton" TargetType="Button">
+		<!--Default layout-->
+		<Setter Property="OverridesDefaultStyle" Value="True" />
+		<!--These defaults can be overriden by the Button Code in the design-->
+		<Setter Property="Height" Value="50" />
+		<Setter Property="Width" Value="150" />
+		<Setter Property="BorderBrush" Value="White" />
+		<Setter Property="Foreground" Value="Black" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="FontSize" Value="20" />
+		<Setter Property="FontWeight" Value="SemiBold" />
+		<Setter Property="Background">
+			<Setter.Value>
+				<LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+					<!--<GradientStop Color="GREEN" Offset="0.25" />-->
+					<!--<GradientStop Color="{StaticResource BackgroundColor2}" Offset="0.25" />-->
+					<GradientStop Offset="0" Color="#FF657C3B" />
+					<GradientStop Offset="0.55" Color="#FF27A300" />
+					<GradientStop Offset="1" Color="#FF99B280" />
+				</LinearGradientBrush>
+			</Setter.Value>
+		</Setter>
+		<!--Lets change the Border as well but use the colors
+			defined in the Buttons declaration in the xaml code-->
+
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<Border  x:Name="border"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="0,0,0,0">
+
+						<!--MOST IMPORTANT the ContentPresenter lives here and displays our
+							"Content" text correctly NB: Interestingly, it is in the BORDER which
+							is the Outermost part of a buttons "design" as shown very clearly in
+							the Visual Tree so that is where I need to put it with other controls
+							
+							V.Tree shows that inside the ContentPresenter is a StackPanel that
+							actually contains the Contents text-->
+
+						<ContentPresenter
+							Margin="2"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							RecognizesAccessKey="True" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+
+		<!--Now to handle those pesky Triggers-->
+		<Style.Triggers>
+			<Trigger Property="IsMouseOver" Value="True">
+				<Setter Property="TextElement.Foreground"  Value="{StaticResource Black5}"/>
+				<Setter Property="Background">
+					<Setter.Value>
+						<LinearGradientBrush StartPoint="1,0" EndPoint="0, 1">
+							<GradientStop Offset="0.25" Color="#FFFFD190" />
+							<GradientStop Offset="0.65" Color="#F94334" />
+							<GradientStop Offset="1" Color="#9C700A" />
+						</LinearGradientBrush>
+					</Setter.Value>
+				</Setter>
+			</Trigger>
+			<Trigger Property="IsPressed" Value="True">
+				<Setter Property="Background">
+					<Setter.Value>
+						<!--Makes gradient fill work horizontally-->
+						<RadialGradientBrush Center="0.5, 1.0">
+							<GradientStop Offset="0" Color="Beige" />
+							<GradientStop Offset="1" Color="Green" />
+						</RadialGradientBrush>
+					</Setter.Value>
+				</Setter>
+			</Trigger>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="IsEnabled" Value="False"/>
+				</MultiTrigger.Conditions>
+				<MultiTrigger.Setters>
+					<Setter Property="Background">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+								<GradientStop Color="LightGray" Offset="0.35" />
+								<GradientStop Color="DarkGray" Offset="1" />
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</MultiTrigger.Setters>
+			</MultiTrigger>
+		</Style.Triggers>
+	</Style>
 
 	<Style x:Key="StandardYtoRGradientButton" TargetType="Button">
 		<!--Default layout-->
@@ -98,17 +192,17 @@
 				</LinearGradientBrush>
 			</Setter.Value>
 		</Setter>
-								 		<!--Lets change the Border as well but use the colors
+	 		<!--Lets change the Border as well but use the colors
 			defined in the Buttons declaration in the xaml code-->
 
 		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Button}">
-					<Border
+					<Border x:Name="border"
 						Background="{TemplateBinding Background}"
 						BorderBrush="{TemplateBinding BorderBrush}"
 						BorderThickness="{TemplateBinding BorderThickness}"
-						CornerRadius="8,8,8,8">
+						CornerRadius="0,0,0,0">
 
 						<!--MOST IMPORTANT the ContentPresenter lives here and displays our
 							"Content" text correctly NB: Interestingly, it is in the BORDER which
@@ -145,7 +239,7 @@
 				<Setter Property="Background">
 					<Setter.Value>
 						<!--Makes gradient fill work horizontally-->
-						<RadialGradientBrush Center="0.5, 0.8">
+						<RadialGradientBrush Center="0.5, 1.0">
 							<GradientStop Offset="0" Color="Beige" />
 							<GradientStop Offset="1" Color="Green" />
 						</RadialGradientBrush>
@@ -197,7 +291,7 @@
 		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Button}">
-					<Border
+					<Border x:Name="border"
 						Background="{TemplateBinding Background}"
 						BorderBrush="{TemplateBinding BorderBrush}"
 						BorderThickness="{TemplateBinding BorderThickness}"
@@ -224,7 +318,6 @@
 		<!--Now to handle those pesky Triggers-->
 		<Style.Triggers>
 			<Trigger Property="IsMouseOver" Value="True">
-				<Setter Property="Foreground" Value="Black" />
 				<Setter Property="Background">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
@@ -261,7 +354,7 @@
 		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Button}">
-					<Border
+					<Border x:Name="border"
 						Background="{TemplateBinding Background}"
 						BorderBrush="{TemplateBinding BorderBrush}"
 						BorderThickness="{TemplateBinding BorderThickness}"
@@ -288,7 +381,6 @@
 		<!--No need to handle those pesky Triggers-->
 		<Style.Triggers>
 			<Trigger Property="IsMouseOver" Value="True">
-				<Setter Property="Foreground" Value="Black" />
 				<Setter Property="Background">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="0,1" EndPoint="1,0">

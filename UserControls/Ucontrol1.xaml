@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
 		 Loaded="U1Ctrl_Loaded"
 		 x:Name="U1Ctrl"
-		 Height="520"
+		 Height="570"
 		 Width="900" >
 	<UserControl.Background>
 		<LinearGradientBrush  StartPoint="0,0" EndPoint="1,0">
@@ -25,41 +25,27 @@
 	</UserControl.Resources>
 
 	<Grid x:Name="MainGrid"
-		Height="{Binding ElementName=U1Ctrl, Path=ActualHeight}" 
+		Height="{Binding ElementName=U1Ctrl, Path=ActualHeight,
+			Converter={StaticResource ReduceByParamValue},ConverterParameter=0}"
 		Width="{Binding ElementName=U1Ctrl, Path=ActualWidth,
 			Converter={StaticResource ReduceByParamValue},ConverterParameter=0}"
 		HorizontalAlignment="Stretch"
 		VerticalAlignment="Stretch">
 
 		<Grid.RowDefinitions>
-			<RowDefinition Height="35"/>
-			<RowDefinition Height="*"/>
+			<!--<RowDefinition Height="0"/>
+			<RowDefinition Height="*"/>-->
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="270" />
+			<ColumnDefinition  x:Name="col1" Width="*" />
+			<ColumnDefinition x:Name="col2" Width="270" />
 		</Grid.ColumnDefinitions>
 
-		<TextBlock x:Name="Caption"
-				Canvas.Left="0"
-				Canvas.Top="0"
-				Grid.ColumnSpan="2"
-			     Height="25"
-			     Margin="0 10 0 0 "
-			     Padding="0 4 0 0"
-			     Text="ListBox for Bank Accounts"
-			     Width="{Binding Path=ActualWidth, ElementName=MainGrid}"
-			     HorizontalAlignment="Left"
-			     TextAlignment="Center"
-			     VerticalAlignment="Top"
-			     FontWeight="DemiBold"
-			     Background="{StaticResource Red5}"
-			     Foreground="{StaticResource White0}"/>
-
 		<Canvas x:Name="uccanvas"
-				Grid.Row="1"
+				Grid.Row="0"
 				Grid.Column="0"
-			     Margin="0 0 0 0 "
+				Grid.ColumnSpan="1"
+			     Margin="0 -10 0 0 "
 				HorizontalAlignment="Left"
 				VerticalAlignment="Top"
 				Height="{Binding ElementName=MainGrid, Path=ActualHeight,
@@ -69,95 +55,111 @@
 					Converter={StaticResource ReduceByParamValue},
 					ConverterParameter=270}"	>
 
-			<ListBox x:Name="listbox1"
+			<TextBlock x:Name="Caption"
 				Canvas.Left="0"
-				Canvas.Top="5"
+				Canvas.Top="0"
+			     Height="25"
+			     Margin="0 0 0 0 "
+			     Padding="0 4 0 0"
+			     Text="ListBox for Bank Accounts"
+			     Width="{Binding Path=ActualWidth, ElementName=MainGrid}"
+			     HorizontalAlignment="Left"
+			     TextAlignment="Center"
+			     VerticalAlignment="Top"
+			     FontWeight="DemiBold"
+			     Background="{StaticResource Orange3}"
+			     Foreground="{StaticResource Black0}"/>
+
+			<ListBox x:Name="listbox1"
+				Canvas.Top="25"
 				BorderThickness="2"
-				BorderBrush="{StaticResource Red5}"
-				Grid.Column="0"
-				Margin="10 10 10 0"
-				HorizontalAlignment="Stretch"
-				VerticalAlignment="Top"
+				BorderBrush="{StaticResource Black0}"
+				Margin="0 0 0 0"
 				ItemsSource="{Binding Path=strings, ElementName=U1Ctrl}"
 				Background="{StaticResource Orange6}"
 				Foreground="{StaticResource Blue3}"
-				Width="{Binding ElementName=uccanvas, Path=ActualWidth,
-					Converter={StaticResource ReduceByParamValue},
-					ConverterParameter=20}"	
-				Height="{Binding Path=ActualHeight, ElementName=uccanvas,
-				Converter={StaticResource ReduceByParamValue},ConverterParameter=70}">
-					<ListBoxItem 
+				Width="662" 
+				Height="520"	>
+				<!--Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"Width="{Binding ActualWidth, Converter={StaticResource ReduceByParamValue}, ConverterParameter=60, ElementName=uccanvas}"-->
+				<!--Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="{Binding ActualHeight, Converter={StaticResource ReduceByParamValue}, ConverterParameter=70, ElementName=uccanvas}"Height="530">-->
+				<ListBoxItem 
 					FontSize="20"
 					Style="{Binding GenericListBoxItemStyle1}">
-					</ListBoxItem>
-				</ListBox>
-		</Canvas>
+				</ListBoxItem>
+			</ListBox>
 
-		<Border x:Name="UiButtons"
-				Grid.Column="1"
-				Grid.Row="1"
-				Margin="10 10 0 40"
-				BorderBrush="{StaticResource Yellow3}"
-				BorderThickness="1">
-				
-				<Grid Height="175"
-					VerticalAlignment="Bottom">
+			<!--Height="{Binding Path=ActualHeight, ElementName=MainGrid,
+					Converter={StaticResource ReduceByParamValue},
+					ConverterParameter=50}"-->
+			<Border x:Name="UiButtons"
+			  Background="{StaticResource Orange2}"
+				Canvas.Left ="{Binding Path=ActualWidth, ElementName=listbox1}"
+				Canvas.Top="25"
+				Margin="0,0,0,0"
+				BorderBrush="{StaticResource Black0}"
+				BorderThickness="1"
+				Width="240"
+				VerticalAlignment="Top" 
+				Height="{Binding Path=ActualHeight, ElementName=listbox1}">
+
+				<Grid Height="252"  Width="250"
+					VerticalAlignment="Bottom" Margin="0,0,-12,0">
 					<Grid.RowDefinitions>
-						<RowDefinition Height="35" />
-						<RowDefinition Height="35" />
-						<RowDefinition Height="35" />
-						<RowDefinition Height="35" />
-						<RowDefinition Height="35" />
+						<RowDefinition Height="47" />
+						<RowDefinition Height="47" />
+						<RowDefinition Height="47" />
+						<RowDefinition Height="47" />
+						<RowDefinition Height="47" />
 						<!--<RowDefinition Height="35" />
 					<RowDefinition Height="35" />-->
 					</Grid.RowDefinitions>
 
-					<Rectangle 
+					<TextBlock 
+					Text="Options"
+					FontWeight="Bold"
+					TextAlignment="Center"
 					Grid.Row="0"
-					Height="25"
-					HorizontalAlignment="Stretch"
+					Height="35"
+					Width="237"
+					Padding="0 6 0 0 "
+					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
-					Fill="{StaticResource Blue5}"	/>
+					Foreground="{StaticResource White0}"
+					Background="{StaticResource Blue5}"	/>
 
 					<Button x:Name="Btn1"
+					  Click="Btn1_Click"
 					Grid.Row="1"
-					Height="25"
-					Width="150"
-					HorizontalAlignment="Center"
+					Height="48"
+					Width="237"
+					HorizontalAlignment="Left"
 					Background="{StaticResource Green5}"
 					Foreground="{StaticResource Red5}"
 					Content="Clear Grid"/>
 
 					<Button x:Name="Btn2"
 					Grid.Row="2"
-					Height="25"
-					Width="150"
-					HorizontalAlignment="Center"
+					Height="48"
+					Width="237"
+					HorizontalAlignment="Left"
 					Background="{StaticResource Green5}"
 					Foreground="{StaticResource Black1}"
 					Content="Print Grid"/>
 
 					<Button x:Name="Btn3"
+						  Click="Btn3_Click"
 					Grid.Row="3"
-					Height="25"
-					Width="150"
-					HorizontalAlignment="Center"
+					Height="48"
+					Width="237"
+					HorizontalAlignment="Left"
 					Background="{StaticResource Green5}"
 					Foreground="{StaticResource Black1}"
 					Content="Reload Grid"/>
 
-					<Button x:Name="Btn4"
-					Grid.Row="4"
-					Height="25"
-					Width="150"
-					HorizontalAlignment="Center"
-					Background="{StaticResource Red4}"
-					Foreground="{StaticResource Yellow0}"
-					Content="Close"/>
-
 				</Grid>
 			</Border>
 
+		</Canvas>
 	</Grid>
 
 </UserControl>

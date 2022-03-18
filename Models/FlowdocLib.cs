@@ -9,6 +9,7 @@ using System . Text;
 using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Controls;
+using System . Windows . Forms . VisualStyles;
 using System . Windows . Input;
 
 namespace MyDev . Models
@@ -120,10 +121,11 @@ namespace MyDev . Models
 				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 0 );
 			}
 		}
+		// THIS GETS CALLED WHENEVER A FLOWDOC IS MOVED !!
 		public void Flowdoc_MouseMove ( FlowDoc Flowdoc , Canvas canvas , object MovingObject , MouseEventArgs e )
 		{
 			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
-			if ( Flowdoc . BorderClicked )
+			if ( FlowdocResizing ||  Flowdoc . BorderClicked )
 			{
 				// Get current sizes and position of Flowdoc windowo intilize our calculations
 				if ( FdLeft == 0 )
@@ -146,6 +148,7 @@ namespace MyDev . Models
 				if ( Flowdoc . BorderSelected == 1 )  // Top
 				{
 					// Top border - WORKING CORRECTLY
+					Mouse . SetCursor ( Cursors . SizeNS );
 					Canvas . SetTop ( Flowdoc , MTop );
 					YDiff = MTop - FdTop;
 					FdTop = MTop;
@@ -158,6 +161,7 @@ namespace MyDev . Models
 				}
 				else if ( Flowdoc . BorderSelected == 2 )
 				{     // Bottom border
+					Mouse . SetCursor ( Cursors . SizeNS );
 					newHeight = MTop - FdTop;
 					Flowdoc . Height = newHeight;
 					return;
@@ -165,6 +169,7 @@ namespace MyDev . Models
 				else if ( Flowdoc . BorderSelected == 3 )
 				{
 					// Left hand side border  - WORKING CORRECTLY
+					Mouse . SetCursor ( Cursors . SizeWE );
 					XDiff = MLeft - FdLeft;
 					newWidth = FdWidth - XDiff;
 					if ( newWidth < 350 )
@@ -178,9 +183,11 @@ namespace MyDev . Models
 				else if ( Flowdoc . BorderSelected == 4 )
 				{
 					// Right hand side border  OR Top Right Corner 
+					Mouse . SetCursor ( Cursors . SizeWE );
 					if ( CornerDrag || MTop - FdTop <= FdBorderWidth || FdTop - MTop <= -FdBorderWidth )
 					{
 						//if ( MTop >= ValidTop && MTop <= ValidBottom)
+						Mouse . SetCursor ( Cursors . SizeAll );
 						if ( FdTop - MTop >= -FdBorderWidth )
 						{
 							// Top Right corner clicked	- working very well - resizes in BOTH directions
@@ -277,11 +284,13 @@ namespace MyDev . Models
 			}
 			else
 			{
-				var obj = MovingObject as FlowDoc;
+				//var obj = MovingObject as FlowDoc;
 				if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed && Flowdoc . BorderClicked == false )
 				{
 					// MOVING WINDOW around the Parent window (MDI ?)
 					// Get mouse position IN FlowDoc !!
+					Mouse . SetCursor ( Cursors . SizeAll );
+
 					double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - CpFirstXPos ;
 					double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - CpFirstYPos ;
 					double trueleft = left - CpFirstXPos;
@@ -345,6 +354,7 @@ namespace MyDev . Models
 				}
 			}
 		}
+		// HIT IN MVVMDATAGRID
 		public object Flowdoc_PreviewMouseLeftButtonDown ( object sender , FlowDoc Flowdoc , MouseButtonEventArgs e )
 		{
 			//In this event, we get current mouse position on the control to use it in the MouseMove event.
@@ -390,7 +400,8 @@ namespace MyDev . Models
 			Flowdoc . BorderSelected = -1;
 			CornerDrag = false;
 			TvMouseCaptured = false;
-			FdLeft = FdTop = th . Left = 0;
+			FdLeft = FdTop = th . Left = 0;   
+			
 			return MovingObject = null;
 		}
 
