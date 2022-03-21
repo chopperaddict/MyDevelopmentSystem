@@ -17,6 +17,7 @@ using System . Linq;
 using System . Runtime . CompilerServices;
 using System . Runtime . InteropServices . WindowsRuntime;
 using System . Runtime . Remoting . Channels;
+using System . Runtime . Remoting . Lifetime;
 using System . Runtime . Remoting . Metadata . W3cXsd2001;
 using System . Text;
 using System . Windows;
@@ -2302,8 +2303,19 @@ namespace MyDev . Views
 			List<string> list = new List<string>      ();
 			string output="";
 			SqlCommand = $"spGetTableColumns {dbNameLb . SelectedItem . ToString ( )}";
+			//			SqlCommand = $"spGetTableColumnWithSize";
 			Datagrids . CallStoredProcedure ( list , SqlCommand );
-			//This call returns us a DataTable
+			//List<int> VarCharLength = new List<int>();
+			//string Arguments = "";
+			////This call returns us a DataTable
+			//GenericDbHandlers . LoadDbAsGenericData (
+			//    ref list ,
+			//SqlCommand ,
+			//dbNameLb . SelectedItem . ToString ( ) ,
+			//"IAN1" ,
+			//    ref VarCharLength ,
+			//false );
+
 			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
 			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
 			list = Utils . GetTableColumnsList ( dt );
@@ -3120,6 +3132,18 @@ namespace MyDev . Views
 			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 , line3 );
 		}
 		#endregion Flowdoc support via library
+
+		private void Flowdoc_MouseEnter ( object sender , MouseEventArgs e )
+		{
+//			Mouse . SetCursor ( Cursors . Hand );
+			//CaptureMouse ( );
+		}
+
+		private void Flowdoc_MouseLeave ( object sender , MouseEventArgs e )
+		{
+//			Mouse . SetCursor ( Cursors . Arrow );
+//			ReleaseMouseCapture ( );
+		}
 	}
 }
 

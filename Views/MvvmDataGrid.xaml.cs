@@ -31,11 +31,13 @@ namespace MyDev . Views
 	{
 		// Variables  for the Classes in use
 //		public static MvvmGridModel MvvmGridmodel { get; set; }
-		private MvvmViewModel MvvM { get; set; }
+		public MvvmViewModel MvvM { get; set; }
 		public static MvvmDataGrid BankGridViewWindow { get; set; }
 
-		public  FlowdocLib fdl = new FlowdocLib();
-		public FlowDoc fdoc = new FlowDoc();
+		public  static FlowdocLib fdl = new FlowdocLib();
+		public  static FlowDoc fdoc = new FlowDoc();
+		public string CurrentDb = "BANKACCOUNT";
+		private bool IsBankActive { get; set; }
 		private object movingobject { get; set; }
 		public object MovingObject
 		{
@@ -56,27 +58,25 @@ namespace MyDev . Views
 
 		private void BankGV_Loaded ( object sender , RoutedEventArgs e )
 		{
+			IsBankActive = false;
 			MvvM = new MvvmViewModel ( this );
 			this . DataContext = MvvM;
-
-			//			MvvmGridmodel = MvvM . mvgm;
-			//this . DataContext = MvvmGridmodel;
-			MvvM . Flowdoc = Flowdoc;
+			MvvmViewModel . Flowdoc = Flowdoc;
 			canvas . Height = this . Height;
 			canvas . Width= this . Width;
-			MvvM . canvas = canvas;
+			MvvmViewModel . canvas = canvas;
 
 			// Sets it to x:Name "BankGV"
 			BankGridViewWindow = this;
-//			Utils . SetupWindowDrag ( this );
-			MvvM . MovingObject = MovingObject;
+			//			Utils . SetupWindowDrag ( this );
+			MvvmViewModel . MovingObject = MovingObject;
 			// FlowDoc support
 			Listviews lv = new Listviews();
 			Flowdoc . ExecuteFlowDocBorderMethod += lv.FlowDoc_ExecuteFlowDocBorderMethod;
 			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
 			this . SizeChanged += MvvmDataGrid_SizeChanged;
 			canvas . Visibility = Visibility . Visible;
-
+			LoadDataButton . UpdateLayout ( );
 		}
 
 		private void MvvmDataGrid_SizeChanged ( object sender , SizeChangedEventArgs e )
@@ -97,20 +97,34 @@ namespace MyDev . Views
 
 		}
 
-		private void GetColumnNamesBtn_Click ( object sender , RoutedEventArgs e )
-		{
-			List<string> list = new List<string>();
-			ObservableCollection<GenericClass> GenericClass = new ObservableCollection<GenericClass>(); 
-			Dictionary<string, string> dict = new Dictionary<string, string>();
-			// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
-			dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass,  ref list, "BankAccount" , "IAN1");
-			
-			SqlServerCommands . LoadActiveRowsOnlyInGrid ( dataGrid2 , GenericClass , DapperSupport . GetGenericColumnCount ( GenericClass ) );
-			if ( Flags . ReplaceFldNames )
-			{
-				GenericDbHandlers . ReplaceDataGridFldNames ( "BankAccount" , ref dataGrid2 );
-			}
-		}
+		//private void GetColumnNamesBtn_Click ( object sender , RoutedEventArgs e )
+		//{
+		//	int indx = 0;
+		//	List<string> list = new List<string>();
+		//	ObservableCollection<GenericClass> GenericClass = new ObservableCollection<GenericClass>(); 
+		//	Dictionary<string, string> dict = new Dictionary<string, string>();
+		//	// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
+		//	List<int> VarCharLength  = new List<int>();
+		//	if ( IsBankActive == true)
+		//		dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , "Customer" , "IAN1", ref VarCharLength );
+		//	else
+		//		dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass,  ref list,  "BankAccount", "IAN1", ref VarCharLength );
+
+		//	foreach ( var item in GenericClass )
+		//	{
+		//		item . field3 = VarCharLength [ indx++ ] . ToString ( );
+		//	}
+		//	SqlServerCommands . LoadActiveRowsOnlyInGrid ( dataGrid2 , GenericClass , DapperSupport . GetGenericColumnCount ( GenericClass ) );
+		//	//if ( Flags . ReplaceFldNames )
+		//	//{
+		//	//	if ( IsBankActive )
+		//	//	{
+		//	//		GenericDbHandlers . ReplaceDataGridFldNames ( "Customer" , ref dataGrid2 );
+		//	//	}
+		//	//	else
+		//	//		GenericDbHandlers . ReplaceDataGridFldNames ( "BankAccount" , ref dataGrid2 );
+		//	//}
+		//}
 		private void dataGrid_PreviewMouseRightButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			MvvM . ShowRecordData ( dataGrid);

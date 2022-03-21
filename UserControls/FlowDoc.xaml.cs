@@ -161,7 +161,7 @@ namespace MyDev . UserControls
 			var v2 = Convert . ToDouble ( flowdoc . GetValue ( WidthProperty ) );
 			flowdoc . SetValue ( HeightProperty , DocHeight );
 			flowdoc . SetValue ( WidthProperty , DocWidth );
-			Console . WriteLine ( $"{textRange . Text }\n" );
+//			Console . WriteLine ( $"{textRange . Text }\n" );
 			//Console . WriteLine ( $"Text Length in Flowdoc = {textRange . Text . Length }" );
 			if ( textRange . Text . Length < 100 )
 				flowdoc . SetValue ( HeightProperty , ( double ) 180 + retcount * Flags . FlowdocCrMultplier );
@@ -398,8 +398,9 @@ namespace MyDev . UserControls
 			Border bd = sender as Border;
 			if ( Utils . HitTestBorder ( bd, e ) )
 			{
+				string selections="";
 				// Over the Border, so let user resize contents
-				BorderClicked = true;
+				this.BorderClicked = true;
 
 				// Mouse Horizontal (X) position
 				double left = e . GetPosition ( (FdBorder  as FrameworkElement ) . Parent as FrameworkElement ) . X ;
@@ -417,34 +418,48 @@ namespace MyDev . UserControls
 				if ( MTop <= ValidTopT && MTop >=  0)
 				{
 					// Top
-					BorderSelected = 1;
-					if  ( this . ActualWidth - left < 10 )
-						BorderSelected = 4;
+					this . BorderSelected = 1;
+//					if  ( this . ActualWidth - left < 10 )
+//						this . BorderSelected = 4;
 					Mouse . SetCursor ( Cursors . SizeNS );
+					selections = $"{this.borderSelected}";
 
 				}
-				else if ( MBottom >= ValidTopB && MBottom <= ValidBottomB && MTop > height - 20 )
+				if ( MBottom >= ValidTopB && MBottom <= ValidBottomB && MTop > height - 20 )
 				{
 					// Bottom
 					Mouse . SetCursor ( Cursors . SizeNS );
 					BorderSelected = 2;
-					if ( this . ActualWidth - left < 10 )
-						BorderSelected = 4;
+//					if ( this . ActualWidth - left < 10 )
+//						this . BorderSelected = 4;
+					selections += $"{this . borderSelected}";
 				}
-				else if ( left < 10 )
+				if ( left < 10 )
 				{
 					// Left
 					Mouse . SetCursor ( Cursors . SizeWE );
-					BorderSelected = 3;
+					this.BorderSelected = 3;
+					selections += $"{this . borderSelected}";
 				}
-				else if ( this . ActualWidth - left < 10 )
+				if ( this . ActualWidth - left < 10 )
 				{
 					//Right
 					Mouse . SetCursor ( Cursors . SizeWE );
-					BorderSelected = 4;
+					this . BorderSelected = 4;
+					selections += $"{this . borderSelected}";
 				}
-//				ExecuteFlowDocBorderMethod ( this , EventArgs . Empty );
+				if ( selections . Contains ( "1" ) && selections . Contains ( "3" ) )
+					borderSelected = 5;      // TOP + LEFT
+				else if ( selections . Contains ( "2" ) && selections . Contains ( "3" ) )
+					borderSelected = 6;       // BOTTOM + LEFT
+				else if ( selections . Contains ( "1" ) && selections . Contains ( "4" ) )
+					borderSelected = 7;       // TOP + RIGHT
+				else if ( selections . Contains ( "2" ) && selections . Contains ( "4" ) )
+					borderSelected = 8;       // BOTTOM + RIGHT
 			}
+			else
+				Mouse . SetCursor ( Cursors . SizeAll );
+
 		}
 
 		private void KeepSize_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
@@ -464,7 +479,6 @@ namespace MyDev . UserControls
 
 		private void Border_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
-//			this . Visibility = Visibility . Hidden;
 			BorderClicked = false;
 		}
 
@@ -488,7 +502,6 @@ namespace MyDev . UserControls
 		{
 			this . Visibility = Visibility . Hidden;
 			BorderSelected = -1;
-
 		}
 
 		#region Dependency properties
@@ -538,7 +551,6 @@ namespace MyDev . UserControls
 			{
 				fdviewer . ReleaseMouseCapture ( );
 				flowdoc . ReleaseMouseCapture ( );
-				//				Console . WriteLine ( "Mouse RELEASED... flowdoc_PreviewKeyDown()" );
 			}
 		}
 		#endregion keyboard handlers
@@ -590,21 +602,10 @@ namespace MyDev . UserControls
 				if ( Flags . UseScrollView )
 				{
 					fdviewer . IsEnabled = true;
-					//	doc . IsEnabled = false;
-					//	if ( fdviewer . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
-					//	{
-					//		fdviewer . IsEnabled = true;
-					//		return;
-					//	}
 				}
 				else
 				{
 					doc . IsEnabled = true;
-					//if ( doc . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
-					//{
-					////	doc . IsEnabled = true;
-					//	//return;
-					//}
 				}
 			}
 			Button btn = sender as Button;
@@ -620,8 +621,6 @@ namespace MyDev . UserControls
 				MouseCaptured = fdviewer . CaptureMouse ( );
 			else
 				MouseCaptured = flowdoc . CaptureMouse ( );
-			//			Console . WriteLine ( "Mouse CAPTURED...flowdoc_PreviewMouseLeftButtonDown()" );
-
 			if ( Flags . UseScrollView )
 				fdviewer . IsEnabled = true;
 			else
@@ -632,17 +631,13 @@ namespace MyDev . UserControls
 		{
 			fdviewer . ReleaseMouseCapture ( );
 			flowdoc . ReleaseMouseCapture ( );
-			//			Console . WriteLine ( "Mouse RELEASED...(doc_PreviewMouseLeftButtonUp" );
 			BorderClicked = false;
-			//e . Handled = true;
 		}
 		private void scrollviewer_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			fdviewer . ReleaseMouseCapture ( );
 			flowdoc . ReleaseMouseCapture ( );
-			//Console . WriteLine ( "Mouse RELEASED...(scrollviewerdoc_PreviewMouseLeftButtonUp" );
 			BorderClicked = false;
-			//			e . Handled = true;
 		}
 
 		private void scrollviewer_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
@@ -679,9 +674,7 @@ namespace MyDev . UserControls
 		{
 			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
-			this . Visibility = Visibility . Hidden;
-			
-			
+			this . Visibility = Visibility . Hidden;	 
 		}
 
 		private void dummy_Click ( object sender , RoutedEventArgs e )
@@ -729,6 +722,15 @@ namespace MyDev . UserControls
 
 		#endregion External Hook
 
+		private void FdBorder_MouseEnter ( object sender , MouseEventArgs e )
+		{
+			Mouse . SetCursor ( Cursors.Hand);
+		}
+
+		private void FdBorder_MouseLeave ( object sender , MouseEventArgs e )
+		{
+			Mouse . SetCursor ( Cursors . Arrow );
+		}
 	}
 	public class FlowArgs : EventArgs
 	{

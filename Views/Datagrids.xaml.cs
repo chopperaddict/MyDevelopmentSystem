@@ -874,10 +874,11 @@ namespace MyDev . Views
 						fdl . ShowInfo ( Flowdoc , canvas , line1: $"The requested table [ {CurrentType} ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
 					}
 					GenericClass gc = new   GenericClass();
-					gc . field1 = $"Sorry, but no data was returned for the '{CurrentType}' Database Table  you requested...";
-					genaccts . Add ( gc );
-					SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
-					Grid1 . Columns [ 0 ] . Header = "Error Message";
+					//gc . field1 = $"Sorry, but no data was returned for the '{CurrentType}' Database Table  you requested...";
+					//genaccts . Add ( gc );
+					//SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+					GenericDbHandlers . SetNullRecords (genaccts, Grid1,CurrentType );
+//					Grid1 . Columns [ 0 ] . Header = "Error Message";
 					Grid1 . Refresh ( );
 					return;
 				}

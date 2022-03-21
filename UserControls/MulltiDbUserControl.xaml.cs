@@ -260,9 +260,13 @@ namespace MyDev . UserControls
 				if ( genaccts . Count == 0 )
 				{
 					//ShowInfo ( line1: $"The requested table [ {CurrentType} ] succeeded, but returned Zero rows of data." , clr1: "Green5" , header: "It is quite likely that the table is actually empty !" , clr4: "Cyan1" );
-					BankDataGrid . ItemsSource = null;
-					BankDataGrid . Refresh ( );
-					RecordsCount = BankDataGrid . Items . Count;
+					//GenericClass gc = new GenericClass();
+					//gc . field1 = "The database request succeeded but did not return any records for the selected table";
+					//genaccts . Add ( gc );
+					//SqlServerCommands . LoadActiveRowsOnlyInGrid ( BankDataGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+					GenericDbHandlers . SetNullRecords (genaccts, BankDataGrid , CurrentType);
+					//BankDataGrid . Columns [ 0 ] . Header = "Query result Information";
+					RecordsCount = BankDataGrid . Items . Count - 1;
 					return;
 				}
 				// Caution : This loads the data into the Datarid with only the selected rows

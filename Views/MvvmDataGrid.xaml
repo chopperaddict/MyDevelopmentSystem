@@ -227,14 +227,18 @@
 
 						<Button x:Name="LoadDataButton"
 							Command="{Binding LoadData}" 
+							CommandParameter="{Binding IsBankActive}"
 							Grid.Row="0" Grid.Column="0"
 							Width="130" Height="35" 
 							VerticalAlignment="Bottom"	 
 							HorizontalAlignment="Right" 
-							Content="{Binding LoadButtonText, FallbackValue='Load Ccustomers'}"			  
+							Content="{Binding this.LoadButtonText, FallbackValue='Load Ccustomers'}"			  
 							FontSize="12"
 							Style="{StaticResource StandardYtoRGradientButton}"
 							Margin="0,0,5,10"  >
+							<Button.DataContext>
+								<model:MvvmViewModel/>
+							</Button.DataContext>
 						</Button>
 						<TextBlock x:Name="ActypeFilterlabel"
 							     Text="Filter on Account Type (1-4)}"
@@ -285,19 +289,21 @@
 						<model:MvvmViewModel/>
 					</Button.DataContext>
 				</Button>
+					   <!--Click="GetColumnNamesBtn_Click"-->
 				<Button x:Name="GetFlNamesBtn"
-					   Click="GetColumnNamesBtn_Click"
-					  BorderBrush="White"
-					  BorderThickness="2"
-					   Grid.Row="2" Grid.Column="2" Height="35" 	  Width="92"
-					   HorizontalAlignment="Right"
-					   VerticalAlignment="Bottom" 
-					   Content="Get Columns" 
-					   Style="{StaticResource RedButton}"
-					  Background="Green"
-					   Foreground="White" 
-					   FontWeight="Normal"
-					   Margin="0,0,10,55">
+						Command="{Binding GetColumnNames}" 
+						CommandParameter="{Binding IsBankActive}"
+						BorderBrush="White"
+						BorderThickness="2"
+						Grid.Row="2" Grid.Column="2" Height="35" 	  Width="92"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom" 
+						Content="Get Columns" 
+						Style="{StaticResource RedButton}"
+						Background="Green"
+						Foreground="White" 
+						FontWeight="Normal"
+						Margin="0,0,10,55">
 					  <Button.DataContext>
 						<model:MvvmViewModel/>
 					</Button.DataContext>

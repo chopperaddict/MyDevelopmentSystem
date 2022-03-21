@@ -19,6 +19,7 @@ using System . Collections;
 using System . Linq . Expressions;
 using System . Windows . Documents;
 using System . Windows . Controls;
+using MyDev . Sql;
 
 namespace MyDev . Models
 {
@@ -27,7 +28,25 @@ namespace MyDev . Models
 		public static Dictionary<string, string> dict = new Dictionary<string, string>();
 		private static string ConnString { get; set; }
 
-		public static void CheckDbDomain ( string DbDomain = "IAN1" )
+		/// <summary>
+		/// Used when a query returns zero records to provide feedback in any datagrid
+		/// </summary>
+		/// <param name="Grid"></param>
+		public static void SetNullRecords ( ObservableCollection<GenericClass> genaccts , DataGrid Grid , string dbname )
+		{
+			GenericClass gc = new GenericClass();
+			gc . field1 = "     ";
+			genaccts . Add ( gc );
+			GenericClass gc2 = new GenericClass();
+			gc2 . field1 = $"The database Query was completed successfully";
+			genaccts . Add ( gc2 );
+			GenericClass gc3 = new GenericClass();
+			gc3 . field1 = $"but no records were returned for the Database Table  {dbname} ...";
+			genaccts . Add ( gc3 );
+			SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
+			Grid . Columns [ 0 ] . Header = "Query result Information";
+		}
+		public static void CheckDbDomain ( string DbDomain )
 		{
 			if ( Flags . ConnectionStringsDict == null || Flags . ConnectionStringsDict . Count == 0 )
 				Utils . LoadConnectionStrings ( );
@@ -36,14 +55,14 @@ namespace MyDev . Models
 			Flags . CurrentConnectionString = constring;
 		}
 
-		public static Dictionary<string , string> GetDbTableColumns ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list , string dbName , string DbDomain = "IAN1" )
+		public static Dictionary<string , string> GetDbTableColumns ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list , string dbName , string DbDomain , ref List<int> VarCharLength )
 		{
 			// Make sure we are accessing the correct Db Domain
 			CheckDbDomain ( DbDomain );
-			dict = GetSpArgs ( ref Gencollection , ref list , dbName , DbDomain );
+			dict = GetSpArgs ( ref Gencollection , ref list , dbName , DbDomain , ref VarCharLength );
 			return dict;
 		}
-		private static Dictionary<string , string> GetSpArgs ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list , string dbName , string DbDomain )
+		private static Dictionary<string , string> GetSpArgs ( ref ObservableCollection<GenericClass> Gencollection , ref List<string> list , string dbName , string DbDomain , ref List<int> VarCharLength )
 		{
 			string output = "";
 			string errormsg="";
@@ -52,11 +71,10 @@ namespace MyDev . Models
 			DataTable dt = new DataTable();
 			GenericClass genclass = new GenericClass();
 			Dictionary<string, string> dict = new Dictionary<string, string>();
-
 			try
 			{
-				Gencollection . Clear ( );
-				Gencollection = LoadDbAsGenericData ( ref Gencollection , ref list , "spGetTableColumns" , dbName , DbDomain );
+				// also get a List<int> of (nvarchar) string lengths
+				Gencollection = LoadDbAsGenericData ( ref list , "spGetTableColumnWithSize" , dbName , DbDomain , ref VarCharLength ,true);
 			}
 			catch ( Exception ex )
 			{
@@ -67,12 +85,14 @@ namespace MyDev . Models
 
 			dict . Clear ( );
 			list . Clear ( );
+			//			int charlenindex=0;
 			try
 			{
 				foreach ( var item in Gencollection )
 				{
 					GenericClass gc = new GenericClass ( );
 					gc = item as GenericClass;
+					//					gc . field3 = VarCharLength[charlenindex++] . ToString ( );
 					dict . Add ( gc . field1 , gc . field2 );
 					list . Add ( gc . field1 . ToString ( ) );
 				}
@@ -83,16 +103,35 @@ namespace MyDev . Models
 			}
 			return dict;
 		}
-		private static ObservableCollection<GenericClass> LoadDbAsGenericData ( ref ObservableCollection<GenericClass> GenClass , ref List<string> list , string SqlCommand , string Arguments , string DbDomain )
+		/// <summary>
+		/// Returns  a GENERIC collection, plus a List<string>
+		/// </summary>
+		/// <param name="GenClass"></param>
+		/// <param name="list"></param>
+		/// <param name="SqlCommand"></param>
+		/// <param name="Arguments"></param>
+		/// <param name="DbDomain"></param>
+		/// <returns></returns>
+		public static ObservableCollection<GenericClass> LoadDbAsGenericData (
+			ref List<string> list , 
+			string SqlCommand , 
+			string Arguments , 
+			string DbDomain , 
+			ref List<int> VarCharLength ,
+			bool GetLengths=false)
 		{
 			string result = "";
 			bool IsSuccess = false;
 			string arg1="", arg2="", arg3="", arg4="";
+			// provide a default connection string
 			string ConString="BankSysConnectionString";
 			Dictionary<string , object> dict = new Dictionary<string, object>();
-			ConString = Flags . CurrentConnectionString;
-			//if(DbDomain == "IAN1")
-			//	ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+			ObservableCollection<GenericClass> GenClass = new ObservableCollection<GenericClass>();
+			// Ensure we have the correct connection string for the current Db Doman
+			Utils . CheckResetDbConnection ( DbDomain , out string constr );
+			Flags . CurrentConnectionString = constr;
+			ConString = constr;
+
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
 			{
 				try
@@ -112,14 +151,6 @@ namespace MyDev . Models
 						Params . Add ( "Arg3" , arg3 , DbType . String , ParameterDirection . Input , arg3 . Length );
 					if ( arg4 != "" )
 						Params . Add ( "Arg4" , arg4 , DbType . String , ParameterDirection . Input , arg4 . Length );
-					// Call Dapper to get results using it's StoredProcedures method which returns
-					// a Dynamic IEnumerable that we then parse via a dictionary into collection of GenericClass  records
-					//		int colcount = 0, maxcols = 0;
-
-					//		{
-					//			// probably a stored procedure ?  							
-					//			bool IsSuccess=false;
-					//int fldcount = 0;
 
 					//***************************************************************************************************************//
 					// This returns the data from SP commands (only) in a GenericClass Structured format
@@ -141,7 +172,8 @@ namespace MyDev . Models
 								try
 								{
 									//	Create a dictionary for each row of data then add it to a GenericClass row then add row to Generics Db
-									gc = DapperSupport . ParseDapperRow ( item , dict , out colcount );
+									gc = DapperSupport . ParseDapperRow ( item , dict , out colcount , ref VarCharLength , GetLengths);
+									//VarcharList . Add ( VarCharLength );
 									dictcount = 1;
 									fldcount = dict . Count;
 									if ( fldcount == 0 )
@@ -214,25 +246,39 @@ namespace MyDev . Models
 					}
 				}
 				catch ( Exception ex )
-				{ }
+				{ Console . WriteLine ($"{ex.Message}"); }
 			}
 			return GenClass;
 		}
 		/// <summary>
+		/// CLEVER METHOD
 		/// This Method recieves a datagrid prefilled with GENERIC STYLE data (field1, field2, etc)
 		/// and then uses the spGetTableNames S.Proc toi get the real field names
 		/// and replaces the column headers with them instead, assuming they are retrieved successfully
 		/// </summary>
 		/// <param name="CurrentType"></param>
 		/// <param name="Grid1"></param>
-		public static void ReplaceDataGridFldNames ( string CurrentType, ref DataGrid Grid1, string Domain= "IAN1" )
+		public static void ReplaceDataGridFldNames ( string CurrentType , ref DataGrid Grid1 , string Domain = "IAN1" )
 		{
 			List<string> list = new List<string>();
 			ObservableCollection<GenericClass> GenericClass = new ObservableCollection<GenericClass>();
 			Dictionary<string, string> dict = new Dictionary<string, string>();
 			// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
-			dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , CurrentType, Domain);
+			List<int> VarCharLength  = new List<int>();
+			dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , CurrentType , Domain , ref VarCharLength );
+			// Add a new column for nvarchar widh
+			Grid1 . Columns . Add ( new DataGridTextColumn ( )
+			{
+				Header = "NVarChar Size" ,
+				Width = 80
+			} );
 			int index = 0;
+			// Add data  for field size
+			foreach ( var item in GenericClass )
+			{
+				item . field3 = VarCharLength [ index++ ] . ToString ( );
+			}
+			index = 0;
 			if ( list . Count > 0 )
 			{
 				// use the list to get the correct column header info

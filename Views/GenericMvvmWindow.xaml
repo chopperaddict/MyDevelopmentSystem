@@ -241,7 +241,7 @@
 				IsSynchronizedWithCurrentItem="True" 
 				SourceUpdated="Lbdata_SourceUpdated"
 				VerticalAlignment="Top">
-
+	
 				<!--<ListBoxItem x:Name="LbItem" >
 					<TextBlock Text="{Binding}"/>
 					<ListBoxItem.DataContext>
@@ -265,9 +265,13 @@
 
 		</Grid>
 
-
 		<Grid
 			 Grid.Row="2" Grid.Column="2" Margin="146,193,0,153" Grid.ColumnSpan="2">
+			
+			<Grid.DataContext>
+				<viewmodels:MvvmViewModel/>
+			</Grid.DataContext>
+
 
 			<Button  x:Name="CloseButton"
 				  Command="{Binding CloseWindow}" 
@@ -277,13 +281,10 @@
 				  Content="Close" 
 				  Background="Red" 
 				  Foreground="White" Margin="0,0,23,1">
-				<Button.DataContext>
-					<viewmodels:MvvmViewModel/>
-				</Button.DataContext>
-			</Button>
+				</Button>
 
 			<Button 
-				Command="{Binding debugger}" 
+				Command="{Binding Debugger}" 
 				Width="100"	 
 				Height="35"
 				HorizontalAlignment="Right" 
@@ -291,17 +292,14 @@
 				Background="LightGreen" 
 				VerticalAlignment="Top"	 
 				Foreground="Black" Margin="0,0,147,1">
-				<!--<Button.DataContext>
-					<view:MvvmViewModel/>
-				</Button.DataContext>-->
 			</Button>
 		</Grid>
 		<Grid x:Name="RefreshButtonGrid" Margin="121,142,141,203" Grid.Column="2" Grid.Row="2" >
-			<!--<Grid.DataContext>
-				<view:GenericMvvm/>
-			</Grid.DataContext>-->
+			<Grid.DataContext>
+				<viewmodels:MvvmViewModel/>
+			</Grid.DataContext>
 			<Button x:Name="RefrehButton"
-				Command="{Binding RefreshListbox}"
+				Click="RefreshListbox"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				Height="32" 

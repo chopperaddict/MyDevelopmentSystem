@@ -131,6 +131,8 @@
 				BorderBrush="{StaticResource Black4}"
 				PreviewMouseLeftButtonDown="Border_PreviewMouseLeftButtonDown"
 				PreviewMouseLeftButtonUp="Border_PreviewMouseLeftButtonUp"
+				   MouseEnter="FdBorder_MouseEnter"
+				   MouseLeave="FdBorder_MouseLeave"
 				BorderThickness="10 10 10 10">
 				<!--Width="{Binding Path=ActualWidth, ElementName=flowdoc}"-->
 

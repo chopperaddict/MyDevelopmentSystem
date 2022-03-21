@@ -254,7 +254,8 @@ namespace MyDev . UserControls
 				List<string> list = new List<string>();
 				ObservableCollection<GenericClass> gc = new   ObservableCollection<GenericClass> ();
 				// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
-				dict = GenericDbHandlers . GetDbTableColumns ( ref gc , ref list , "BankAccount" , "IAN1" );
+				List<int> VarCharLength  = new List<int>();
+				dict = GenericDbHandlers . GetDbTableColumns ( ref gc , ref list , "BankAccount" , "IAN1", ref VarCharLength );
 				//foreach ( var item in dict )
 				//{
 				//	gc.

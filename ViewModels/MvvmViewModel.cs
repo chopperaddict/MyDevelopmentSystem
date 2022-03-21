@@ -1,9 +1,12 @@
-﻿using MyDev . Models;
+﻿using MyDev . Dapper;
+using MyDev . Models;
+using MyDev . Sql;
 using MyDev . UserControls;
 using MyDev . Views;
 
 using System;
 using System . Collections . Generic;
+using System . Collections . ObjectModel;
 using System . Data . SqlClient;
 using System . Diagnostics;
 using System . Linq;
@@ -14,6 +17,7 @@ using System . Windows;
 using System . Windows . Controls;
 using System . Windows . Data;
 using System . Windows . Input;
+using System . Windows . Markup;
 using System . Xml . Linq;
 
 namespace MyDev . ViewModels
@@ -25,20 +29,23 @@ namespace MyDev . ViewModels
 	/// </summary>
 	public class MvvmViewModel : BaseViewModel
 	{
-		internal MvvmGenericModel mvvm { get; set; }
-		internal MvvmGridModel mvgm { get; set; }
-		public MvvmDataGrid ParentBGView { get; set; }
-		public FlowDoc Flowdoc { get; set; }
-		public FlowdocLib fdl { get; set; }
-		public Canvas canvas { get; set; }
+		internal static MvvmGenericModel mvvm { get; set; }
+		public static MvvmGridModel mvgm { get; set; }
+		public static MvvmDataGrid ParentBGView { get; set; }
+		public static FlowDoc Flowdoc { get; set; }
+		public static FlowdocLib fdl { get; set; }
+		public static Canvas canvas { get; set; }
 		public bool IsBankActive { get; set; } = true;
 
-		public ICommand debugger { get; set; }
+		public ICommand Debugger { get; set; }
 		public ICommand CloseWindow { get; set; }
 		public ICommand LoadData { get; set; }
+		public ICommand GetColumnNames { get; set; }
+
+
 
 		private  bool UseFlowdoc = true;
-		public object MovingObject { get; set; }
+		public static object MovingObject { get; set; }
 
 		#region Full Properties
 		private string fillterlabel;
@@ -84,8 +91,13 @@ namespace MyDev . ViewModels
 		#endregion Full Properties
 		public MvvmViewModel ( )
 		{
+			// Handle ICommands
+			Debugger = new RelayCommand ( ExecuteDebugger , CanExecuteDebugger );
+			LoadData = new RelayCommand ( ExecuteLoadData , CanExecuteLoadData );
 			CloseWindow = new RelayCommand ( ExecuteCloseWindow , CanExecuteCloseWindow );
-
+			GetColumnNames = new RelayCommand ( ExecuteGetColumnNames , CanExecuteGetColumnNames );
+//			RefreshListbox = new RelayCommand ( ExecuteRefreshListbox , CanRefreshListbox );
+			CloseWindow = new RelayCommand ( ExecuteCloseWindow , CanExecuteCloseWindow );
 		}
 		public MvvmViewModel ( object caller )
 		{
@@ -93,9 +105,6 @@ namespace MyDev . ViewModels
 			ParentBGView = caller as MvvmDataGrid;
 			mvgm = new MvvmGridModel ( this );
 
-			// Handle ICommands
-			debugger = new RelayCommand ( ExecuteDebugger , CanExecuteDebugger );
-			LoadData = new RelayCommand ( ExecuteLoadData , CanExecuteLoadData );
 			//Setup Edit label annd button text as it switches from Bank to Customer
 			FilterLabel = "Filter Bank A/c's Col : CustNo";
 			LoadButtonText = "Load Customer A/cs";
@@ -104,29 +113,76 @@ namespace MyDev . ViewModels
 			ParentBGView . filtertext . TextChanged += mvgm . filter_TextChanged;
 			ParentBGView . acfiltertext . TextChanged += mvgm . acfilter_TextChanged;
 
-			fdl = new FlowdocLib();
+			fdl = new FlowdocLib ( );
 		}
+
+
 		#region ICommand Methods 
 		// ICommand CanExecute's
 		private bool CanExecuteLoadData ( object arg )
 		{ return true; }
 		public bool CanExecuteDebugger ( object arg )
-		{
-			return true;
-		}
+		{return true;}
 		public bool CanExecuteCloseWindow ( object parameter )
 		{ return true; }
+		public  bool CanExecuteGetColumnNames ( object arg )
+		{return true;}
 
 		// IComand Handelrs
 		public void ExecuteDebugger ( object obj )
-		{ mvgm . ExecuteDebugger ( null ); }
+		{ //
+		  //mvgm . ExecuteDebugger ( null );
+		 }
+
+		public void ExecuteGetColumnNames ( object obj )
+		{
+			int indx = 0;
+			List<string> list = new List<string>();
+			ObservableCollection<GenericClass> GenericClass = new ObservableCollection<GenericClass>();
+			Dictionary<string, string> dict = new Dictionary<string, string>();
+			// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
+			List<int> VarCharLength  = new List<int>();
+			IsBankActive = ( bool ) obj;
+			if ( IsBankActive == false )
+				dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , "Customer" , "IAN1" , ref VarCharLength );
+			else
+				dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , "BankAccount" , "IAN1" , ref VarCharLength );
+			
+			indx = 0;
+			if ( VarCharLength . Count > 0 )
+			{
+				foreach ( var item in GenericClass )
+				{
+					item . field3 = VarCharLength [ indx++ ] . ToString ( );
+				}
+			}
+			if ( ParentBGView != null )
+			{
+				SqlServerCommands . LoadActiveRowsOnlyInGrid ( ParentBGView . dataGrid2 , GenericClass , DapperSupport . GetGenericColumnCount ( GenericClass ) );
+				indx = 0;
+				foreach ( var col in ParentBGView . dataGrid2 . Columns )
+				{
+					if ( indx == 0 )
+						col . Header = "Field Name";
+					else if ( indx == 1 )
+						col . Header = "SQL Field Type";
+					else if ( indx == 2 )
+					{
+						col . Header = "NVarChar Length";
+					}
+					indx++;
+				}
+			}
+		}
+
 		public void ExecuteCloseWindow ( object parameter )
 		{
 			//			Console . WriteLine ( "We have Hit the close ICommand ..." );
 			WindowCollection  v = Application .Current.Windows;
 			foreach ( Window item in v )
 			{
-				if ( item . ToString ( ) . Contains ( "MvvmDataGrid" ) )
+				if ( item . ToString ( ) . Contains ( "MvvmDataGrid" )
+					|| item . ToString ( ) . Contains ( "GenericMvvmWindow" ) )
 				{
 					MessageBoxResult res = MessageBox . Show ( "Close App down entirely ?" , "Application Closedown Options" , MessageBoxButton . YesNoCancel , MessageBoxImage. Question , MessageBoxResult . Yes );
 					if ( res == MessageBoxResult . Yes )
@@ -140,14 +196,14 @@ namespace MyDev . ViewModels
 			//Application . Current . Shutdown ( );
 		}
 
-		private void ExecuteLoadData ( object obj )
+		private void ExecuteLoadData ( object IsBankactive )
 		{
 			ParentBGView . filtertext . Text = "";
-			if ( IsBankActive == true )
+			if ( ( bool ) IsBankActive == true )
 			{
-				// Call MvvmGridModel to actually get the data from SQL Db
-				mvgm . LoadData ( false );
+				// Call MvvmGridModel to actually get the Customer data from SQL Db
 				IsBankActive = false;
+				mvgm . LoadData ( IsBankActive );
 				// Reset labels & button text in filter box
 				FilterLabel = "Filter Customer A/c's Col : CustNo";
 				LoadButtonText = "Load Bank A/cs";
@@ -155,33 +211,30 @@ namespace MyDev . ViewModels
 			}
 			else
 			{
-				// Call MvvmGridModel to actually get the data from SQL Db
-				mvgm . LoadData ( true );
+				// Call MvvmGridModel to actually get the Bank data from SQL Db
 				IsBankActive = true;
+				mvgm . LoadData ( IsBankActive );
 				FilterLabel = "Filter Bank A/c's Col : CustNo";
 				LoadButtonText = "Load Customer A/cs";
 				ActiveTable = "All Bank Accounts";
 			}
-			ShowInfo (Flowdoc, canvas, line1: $"The requ" , clr1: "Black0" ,
-				line2: $"The command line used was" , clr2: "Red2" ,
-				header: "Generic style data table" , clr4: "Red5" );
 		}
 		#endregion ICommand Methods EXECUTEDEBUGGER, EXECUTECLOSEWINDOW
 
-		public void ShowRecordData ( DataGrid dgrid)
+		public void ShowRecordData ( DataGrid dgrid )
 		{
 			if ( IsBankActive )
 			{
 				BankAccountViewModel bvm = dgrid.SelectedItem as   BankAccountViewModel;
 				string data = "Record Contents :-\n";
-				data += "Customer # :	" + bvm . CustNo+ "\n";
+				data += "Customer # :	" + bvm . CustNo + "\n";
 				data += "Bank A/C  # :	" + bvm . BankNo + "\n";
-				data += "A/c Type :	" + bvm . AcType+ "\n";
-				data +="Balance :	" +  bvm .Balance + "\n";
-				data +="Interest  rate :	" +  bvm .IntRate + "\n";
-				data +="Date opened :	" +  bvm .ODate + "\n";
-				data += "Date Closed:	" + bvm .CDate + "\n";
-				fdmsg ( "testing flowdoc from MvvmViewModel", data);
+				data += "A/c Type :	" + bvm . AcType + "\n";
+				data += "Balance :	" + bvm . Balance + "\n";
+				data += "Interest  rate :	" + bvm . IntRate + "\n";
+				data += "Date opened :	" + bvm . ODate + "\n";
+				data += "Date Closed:	" + bvm . CDate + "\n";
+				fdmsg ( "testing flowdoc from MvvmViewModel" , data );
 			}
 
 		}
@@ -193,11 +246,11 @@ namespace MyDev . ViewModels
 			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 , line3 );
 		}
 
-		private void ShowInfo (FlowDoc Flowdoc, Canvas canvas, string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
+		private void ShowInfo ( FlowDoc Flowdoc , Canvas canvas , string line1 = "" , string clr1 = "" , string line2 = "" , string clr2 = "" , string line3 = "" , string clr3 = "" , string header = "" , string clr4 = "" , bool beep = false )
 		{
 			if ( UseFlowdoc == false )
 				return;
-			ShowInfo (	Flowdoc ,canvas ,line1 ,clr1,line2,clr2,line3,clr3,header ,clr4,beep );
+			Flowdoc . ShowInfo ( Flowdoc , canvas , line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 , beep );
 
 		}
 	}

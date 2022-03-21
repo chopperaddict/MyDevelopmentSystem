@@ -199,7 +199,8 @@ namespace MyDev . Dapper
 										{
 											// we need to create a dictionary for each row of data then add it to a GenericClass row then add row to Generics Db
 											string buffer = "";
-											gc = ParseDapperRow ( item , dict , out colcount );
+											List< int> VarcharList = new List<int>();
+											gc = ParseDapperRow ( item , dict , out colcount , ref VarcharList );
 											dictcount = 1;
 											fldcount = dict . Count;
 											int index = 0;
@@ -214,7 +215,8 @@ namespace MyDev . Dapper
 														tmp = pair . Key . ToString ( ) + "=" + pair . Value . ToString ( );
 														buffer += tmp + ",";
 													}
-												} catch ( Exception ex )
+												}
+												catch ( Exception ex )
 												{
 													Console . WriteLine ( $"Dictionary ERROR : {ex . Message}" );
 													result = ex . Message;
@@ -224,7 +226,8 @@ namespace MyDev . Dapper
 											string s = buffer . Substring (0, buffer . Length - 1 );
 											buffer = s;
 											genericlist . Add ( buffer );
-										} catch ( Exception ex )
+										}
+										catch ( Exception ex )
 										{
 											result = $"SQLERROR : {ex . Message}";
 											errormsg = result;
@@ -234,7 +237,8 @@ namespace MyDev . Dapper
 										dict . Clear ( );
 										dictcount = 1;
 									}
-								} catch ( Exception ex )
+								}
+								catch ( Exception ex )
 								{
 									Console . WriteLine ( $"OUTER DICT/PROCEDURE ERROR : {ex . Message}" );
 									result = ex . Message;
@@ -270,7 +274,8 @@ namespace MyDev . Dapper
 										try
 										{
 											//	Create a dictionary for each row of data then add it to a GenericClass row then add row to Generics Db
-											gc = ParseDapperRow ( item , dict , out colcount );
+											List< int> VarcharList = new List<int>();
+											gc = ParseDapperRow ( item , dict , out colcount , ref VarcharList );
 											dictcount = 1;
 											fldcount = dict . Count;
 											if ( fldcount == 0 )
@@ -289,7 +294,8 @@ namespace MyDev . Dapper
 														tmp = pair . Key . ToString ( ) + "=" + pair . Value . ToString ( );
 														buffer += tmp + ",";
 													}
-												} catch ( Exception ex )
+												}
+												catch ( Exception ex )
 												{
 													Console . WriteLine ( $"Dictionary ERROR : {ex . Message}" );
 													result = ex . Message;
@@ -299,7 +305,8 @@ namespace MyDev . Dapper
 											string s = buffer . Substring (0, buffer . Length - 1 );
 											buffer = s;
 											genericlist . Add ( buffer );
-										} catch ( Exception ex )
+										}
+										catch ( Exception ex )
 										{
 											result = $"SQLERROR : {ex . Message}";
 											Console . WriteLine ( result );
@@ -311,7 +318,8 @@ namespace MyDev . Dapper
 										dict . Clear ( );
 										dictcount = 1;
 									}
-								} catch ( Exception ex )
+								}
+								catch ( Exception ex )
 								{
 									Console . WriteLine ( $"OUTER DICT/PROCEDURE ERROR : {ex . Message}" );
 									if ( ex . Message . Contains ( "not find stored procedure" ) )
@@ -347,13 +355,15 @@ namespace MyDev . Dapper
 								return fldcount;
 							//return 0;
 						}
-					} catch ( Exception ex )
+					}
+					catch ( Exception ex )
 					{
 						Console . WriteLine ( $"STORED PROCEDURE ERROR : {ex . Message}" );
 						result = ex . Message;
 						errormsg = $"SQLERROR : {result}";
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
 					result = ex . Message;
@@ -470,7 +480,8 @@ namespace MyDev . Dapper
 					SqlDataAdapter sda = new SqlDataAdapter ( cmd );
 					sda . Fill ( dt );
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Debug . WriteLine ( $"Failed to load Db - {ex . Message}, {ex . Data}" );
 				return null;
@@ -521,7 +532,8 @@ namespace MyDev . Dapper
 						tran . Commit ( );
 					}
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Error {ex . Message}, {ex . Data}" );
 				err = $"Error {ex . Message}";
@@ -579,7 +591,8 @@ namespace MyDev . Dapper
 						tran . Commit ( );
 					}
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Error {ex . Message}, {ex . Data}" );
 			}
@@ -615,7 +628,8 @@ namespace MyDev . Dapper
 									//else
 									//	err = "NOTFOUND";
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Error {ex . Message}, {ex . Data}" );
 				if ( ex . Message . Contains ( "There is already an object named" ) )
@@ -664,7 +678,8 @@ namespace MyDev . Dapper
 					//	newentry . Entry = item;
 					//	collection . Add ( newentry );
 					//}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error : {ex . Message}" );
 				}
@@ -773,11 +788,13 @@ namespace MyDev . Dapper
 						}
 
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-					} catch ( Exception ex )
+					}
+					catch ( Exception ex )
 					{
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
 				}
@@ -895,11 +912,13 @@ namespace MyDev . Dapper
 							bvmcollection . Add ( item );
 						}
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-					} catch ( Exception ex )
+					}
+					catch ( Exception ex )
 					{
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
 				}
@@ -1057,7 +1076,8 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
 					}
 					sqlCon . Close ( );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
@@ -1099,7 +1119,8 @@ namespace MyDev . Dapper
 									bvmcollection . Add ( item );
 								}
 								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-							} catch ( Exception ex )
+							}
+							catch ( Exception ex )
 							{
 								Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
 							}
@@ -1165,11 +1186,13 @@ namespace MyDev . Dapper
 							}
 							collection = bvmcollection;
 						}
-					} catch ( Exception ex )
+					}
+					catch ( Exception ex )
 					{
 						Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
 						return false;
-					} finally
+					}
+					finally
 					{
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
 					}
@@ -1312,7 +1335,8 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
 					}
 					sqlCon . Close ( );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
@@ -1364,7 +1388,8 @@ namespace MyDev . Dapper
 									bvmcollection . Add ( item );
 								}
 								Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-							} catch ( Exception ex )
+							}
+							catch ( Exception ex )
 							{
 								Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
 							}
@@ -1427,10 +1452,12 @@ namespace MyDev . Dapper
 							}
 							collection = bvmcollection;
 						}
-					} catch ( Exception ex )
+					}
+					catch ( Exception ex )
 					{
 						Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-					} finally
+					}
+					finally
 					{
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
 					}
@@ -1514,10 +1541,12 @@ namespace MyDev . Dapper
 							}
 						}
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-				} finally
+				}
+				finally
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {bvmcollection . Count} records successfuly" );
 				}
@@ -1595,10 +1624,12 @@ namespace MyDev . Dapper
 								BankDict . Add ( int . Parse ( item . BankNo ) , counter++ );
 						}
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER error in DAPPERSUPPPORT. LOADBANKDATAVIALIST: {ex . Message}, {ex . Data}" );
-				} finally
+				}
+				finally
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {BankCollection . Count} records successfuly" );
 				}
@@ -1777,7 +1808,8 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {cvmcollection . Count} records successfuly" );
 					}
 					sqlCon . Close ( );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
@@ -1818,7 +1850,8 @@ namespace MyDev . Dapper
 								cvmcollection . Add ( item );
 							}
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"CUSTOMER DB ERROR : {ex . Message}" );
 						}
@@ -1882,11 +1915,13 @@ namespace MyDev . Dapper
 								cvmcollection . Add ( item );
 							}
 
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
 							return false;
-						} finally
+						}
+						finally
 						{
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {cvmcollection . Count} records successfuly" );
 						}
@@ -2058,7 +2093,8 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {cvmcollection . Count} records successfuly" );
 					}
 					sqlCon . Close ( );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
 				}
@@ -2113,7 +2149,8 @@ namespace MyDev . Dapper
 								cvmcollection . Add ( item );
 							}
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"CUSTOMER DB ERROR : {ex . Message}" );
 						}
@@ -2179,10 +2216,12 @@ namespace MyDev . Dapper
 								cvmcollection . Add ( item );
 							}
 
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
-						} finally
+						}
+						finally
 						{
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {cvmcollection . Count} records successfuly" );
 						}
@@ -2267,11 +2306,13 @@ namespace MyDev . Dapper
 						collection = DbData;
 					}
 					//					Console . WriteLine ( $"SQL DAPPER has loaded : {cvmcollection . Count} Customer  Records" );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  error : {ex . Message}, {ex . Data}" );
 					return null;
-				} finally
+				}
+				finally
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad} loaded : {DbData . Count} records successfuly" );
 				}
@@ -2438,7 +2479,8 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
 					}
 					sqlCon . Close ( );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
 					return false;
@@ -2489,7 +2531,8 @@ namespace MyDev . Dapper
 								dvmcollection . Add ( item );
 							}
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"DETAILS DB ERROR : {ex . Message}" );
 						}
@@ -2567,10 +2610,12 @@ namespace MyDev . Dapper
 									dvmcollection . Add ( item );
 								}
 							}
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-						} finally
+						}
+						finally
 						{
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
 						}
@@ -2728,7 +2773,8 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
 					}
 					sqlCon . Close ( );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
@@ -2773,7 +2819,8 @@ namespace MyDev . Dapper
 								dvmcollection . Add ( item );
 							}
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {result . Count} records successfuly" );
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"DETAILS DB ERROR : {ex . Message}" );
 						}
@@ -2838,10 +2885,12 @@ namespace MyDev . Dapper
 							{
 								dvmcollection . Add ( item );
 							}
-						} catch ( Exception ex )
+						}
+						catch ( Exception ex )
 						{
 							Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-						} finally
+						}
+						finally
 						{
 							Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {dvmcollection . Count} records successfuly" );
 						}
@@ -2922,11 +2971,13 @@ namespace MyDev . Dapper
 						connection . Execute ( @SqlCommand , parameters );
 					}
 
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -2977,11 +3028,13 @@ namespace MyDev . Dapper
 						SqlCommand += " where Id =@Id";
 
 					connection . Execute ( @SqlCommand , parameters );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db record Updated using DAPPER successfuly" );
@@ -3045,11 +3098,13 @@ namespace MyDev . Dapper
 							SqlCommand += Conditions;
 						connection . Execute ( @SqlCommand , parameters );
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3091,11 +3146,13 @@ namespace MyDev . Dapper
 
 					// GO	AHEAD and INSERT new record into generic table 'GENERICxxxxx'
 					connection . Execute ( @SqlCommand );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}', {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3156,11 +3213,13 @@ namespace MyDev . Dapper
 							$"field11=@field11, field12=@field12, field13=@field13, field14=@field14, field15=@field15, field16=@field16, field17=@field17, field18=@field18, field19=@field19, field20=@field20  where field1=@field1";
 						connection . Execute ( @SqlCommand , parameters );
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3221,11 +3280,13 @@ namespace MyDev . Dapper
 					else
 						SqlCommand += " where Id =@Id";
 					connection . Execute ( @SqlCommand , parameters );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db record Updated using DAPPER successfuly" );
@@ -3291,11 +3352,13 @@ namespace MyDev . Dapper
 							SqlCommand += Conditions;
 						connection . Execute ( @SqlCommand , parameters );
 					}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db Updated using DAPPER successfuly" );
@@ -3357,11 +3420,13 @@ namespace MyDev . Dapper
 						SqlCommand += " where Id =@Id";
 
 					connection . Execute ( @SqlCommand , parameters );
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbName} Update error : {ex . Message}, {ex . Data}" );
 					result = false;
-				} finally
+				}
+				finally
 				{
 					if ( result )
 						Console . WriteLine ( $"SQL [{DbName . ToUpper ( )}] Db record updated using DAPPER successfuly" );
@@ -3792,7 +3857,8 @@ namespace MyDev . Dapper
 						collection . Add ( str );
 					}
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"GENERIC DB ERROR : {ex . Message}" );
 				return false;
@@ -3842,7 +3908,8 @@ namespace MyDev . Dapper
 							DbData . Add ( str );
 					}
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"GENERIC DB ERROR : {ex . Message}" );
 			}
@@ -3881,7 +3948,8 @@ namespace MyDev . Dapper
 					//var Data = db . Query<dynamic>( SqlCommand  ). ToList();
 					//					Console . WriteLine ( $"SQL DAPPER {Data . Count} records successfuly" );
 				}
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"GENERIC DB ERROR : {ex . Message}" );
 			}
@@ -3914,7 +3982,8 @@ namespace MyDev . Dapper
 					var  res = connection . QueryFirst<int> ( TestCommand );
 					if ( res > 0 )
 						return false;
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Database not found by test call to Db, proceeding with copy operation" );
 				}
@@ -3925,10 +3994,12 @@ namespace MyDev . Dapper
 
 					connection . Execute ( SqlCommand , CommandType . Text );
 
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER {NewDb} could NOT be created from {OriginalDb}, Error info : {ex . Message}, {ex . Data}" );
-				} finally
+				}
+				finally
 				{
 					Console . WriteLine ( $"SQL DAPPER {NewDb} has been created from {OriginalDb} successfully" );
 					result = true;
@@ -3977,7 +4048,8 @@ namespace MyDev . Dapper
 						Console . WriteLine ( $"SQL DAPPER BANKCOMBINED DB created successfuly" );
 						collection = bvmcollection;
 						return collection;
-					} catch ( Exception ex )
+					}
+					catch ( Exception ex )
 					{
 						Console . WriteLine ( $"BANK  DB ERROR : {ex . Message}" );
 					}
@@ -3986,7 +4058,8 @@ namespace MyDev . Dapper
 					//{
 					//	Console . WriteLine ("Flags.USEDAPPERWITHSTOREDPROCEDURE not set !!!!");
 					//}
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
 					Utils . trace ( "CreateBankCombinedAsync : " );
@@ -4136,10 +4209,12 @@ namespace MyDev . Dapper
 						bvmcollection . Add ( item );
 					}
 					collection = bvmcollection;
-				} catch ( Exception ex )
+				}
+				catch ( Exception ex )
 				{
 					Console . WriteLine ( $"SQL DAPPER error : {ex . Message}, {ex . Data}" );
-				} finally
+				}
+				finally
 				{
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
 				}
@@ -4193,7 +4268,8 @@ namespace MyDev . Dapper
 							{
 								double d = double . Parse ( tmp );
 								isnumeric = true;
-							} catch // let it drop thru
+							}
+							catch // let it drop thru
 							{ }
 
 							if ( tmp != "WHERE" && isnumeric == false )
@@ -4302,7 +4378,8 @@ namespace MyDev . Dapper
 				else if ( gc . field1 != null )
 				{ return 1; }
 				return 0;
-			} catch ( Exception ex )
+			}
+			catch ( Exception ex )
 			{
 				Console . WriteLine ( $"Column count error '{ex . Message}'" );
 			}
@@ -4374,7 +4451,7 @@ namespace MyDev . Dapper
 					break;
 			}
 		}
-		public static GenericClass ParseDapperRow ( dynamic buff , Dictionary<string , object> dict , out int colcount )
+		public static GenericClass ParseDapperRow ( dynamic buff , Dictionary<string , object> dict , out int colcount , ref List<int> varcharlen , bool GetLength=false)
 		{
 			string outstr="";
 			//			StringBuilder sb = new StringBuilder();
@@ -4385,11 +4462,20 @@ namespace MyDev . Dapper
 			{
 				try
 				{
-					if ( item . Key == "" || item . Value == null )
+					index+= 1;
+					if ( item . Key == "" || (item . Value == null && item . Key . Contains ( "character_maximum_length" )  == false))
 						break;
-					dict . Add ( item . Key , item . Value );
-					index++;
-				} catch ( Exception ex )
+					if (GetLength &&  item . Key . Contains ( "character_maximum_length" ) )
+					{
+						varcharlen . Add ( item.Value==null ? 0 : item.Value );
+					}
+					else
+						dict . Add ( item . Key , item . Value );
+
+					//var v = buff .ToString();
+					//varcharlen.Add(item.Key, buff [ 2 ]);
+				}
+				catch ( Exception ex )
 				{
 					MessageBox . Show ( $"ParseDapper error was : \n{ex . Message}\nKey={item . Key} Value={item . Value . ToString ( )}" );
 					break;

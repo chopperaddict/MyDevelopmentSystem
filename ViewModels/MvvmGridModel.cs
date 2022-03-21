@@ -61,7 +61,6 @@ namespace MyDev . ViewModels
 
 		#region  ICommand declarations
 		public ICommand debugger { get; set; }
-		//public ICommand CloseWindow { get; set; }
 
 		#endregion  ICommand declarations
 
@@ -71,8 +70,8 @@ namespace MyDev . ViewModels
 			Mouse . SetCursor ( Cursors . Wait );
 
 			mvvm = caller as MvvmViewModel;
-			ParentBGView = mvvm . ParentBGView;
-			IsBankActive = true;
+			ParentBGView = MvvmViewModel . ParentBGView;
+			IsBankActive = false;
 			// Hook into datagrid selection changes
 			ParentBGView . dataGrid . SelectionChanged += dataGrid_SelectionChanged;
 
@@ -167,7 +166,7 @@ namespace MyDev . ViewModels
 		//==============================//
 		// ICommand method  to Load Bank Data  using our Root level Classes (BankAccountViewModel & CustomerViewModel)
 		//==============================//
-		public void LoadData ( bool obj )
+		public string  LoadData ( bool obj )
 		{
 			Mouse . SetCursor ( Cursors . Wait );
 			IsBankActive =  obj;
@@ -192,6 +191,8 @@ namespace MyDev . ViewModels
 				GridLoading = false;
 				IsBankActive = true;
 				ParentBGView . RecordCount . Text = ParentBGView . dataGrid . Items . Count . ToString ( );
+				Mouse . SetCursor ( Cursors . Arrow );
+				return "BANKACCOUNT";
 			}
 			else
 			{
@@ -212,8 +213,9 @@ namespace MyDev . ViewModels
 				// NB These need to be called in this order to get the record to be displayed in the DataGrid
 				ParentBGView . dataGrid . ScrollIntoView ( ParentBGView . dataGrid . SelectedIndex );
 				ParentBGView . dataGrid . BringIntoView ( );
+				Mouse . SetCursor ( Cursors . Arrow );
+				return "CUSTOMER";
 			}
-			Mouse . SetCursor ( Cursors . Arrow );
 		}
 
 		#endregion IComand Exection Handlers

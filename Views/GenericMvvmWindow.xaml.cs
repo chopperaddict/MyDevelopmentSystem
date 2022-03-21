@@ -24,14 +24,15 @@ namespace MyDev . Views
 		// with seperate DataContextts that causes various problems
 		public  static  ObservableCollection<Person>  People;
 		public static PersonViewModel pvm;
+		public static MvvmViewModel mvvm;
 		public static Person person;
 		//public static MvvmGenericModel mgm;
 		public static ListBox lb;
 		public GenericMvvmWindow ( )
 		{
 			InitializeComponent ( );
-			this . DataContext = this;
-			RefreshListbox = new RelayCommand ( ExecuteRefreshListbox , CanRefreshListbox );
+			mvvm = new MvvmViewModel ( );
+			this . DataContext = mvvm;
 			Lbdata . SelectionChanged += Lbdata_SelectionChanged;
 			PersonsList . SelectionChanged += PersonsList_SelectionChanged;
 		}
@@ -46,19 +47,6 @@ namespace MyDev . Views
 			person = Resources [ "person" ] as Person;
 		}
 
-		#region ICommands	REFRESHLISTBOX
-		public ICommand RefreshListbox { get; set; }
-		private bool CanRefreshListbox ( object arg )
-		{					    
-			return true;
-		}
-		private void ExecuteRefreshListbox ( object obj )
-		{
-			Lbdata . Refresh ( );
-			Lbdata . SelectedIndex = 1;
-			Lbdata . SelectedItem = 1;
-		}
-		#endregion ICommands REFRESHLISTBOX
 
 	
 		public static ListBox GetGenericMvvm (  )
@@ -92,5 +80,21 @@ namespace MyDev . Views
 				}
 			}
 		}
+
+		private void RefreshListbox ( object sender , RoutedEventArgs e )
+		{
+			if ( Lbdata . SelectedIndex == 1 )
+			{
+				Lbdata . SelectedIndex = 0;
+				Lbdata . SelectedItem = 0;
+			}
+			else
+			{
+				Lbdata . SelectedIndex = 1;
+				Lbdata . SelectedItem = 1;
+			}
+		}
+
 	}
 }
+
