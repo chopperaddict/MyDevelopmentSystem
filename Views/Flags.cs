@@ -59,6 +59,7 @@ namespace MyDev . Views
 
 		//-------------------------------------------------------------------
 		// FlowDoc flags
+		public static bool UseFlowdoc{ get; set; }
 		public static bool UseScrollView { get; set; }
 		public static bool UseFlowScrollbar { get; set; }
 		public static double FlowdocCrMultplier { get; set; }

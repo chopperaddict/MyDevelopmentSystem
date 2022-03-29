@@ -9,7 +9,7 @@ namespace MyDev . Views
 			this . Members = new ObservableCollection<FamilyMember> ( );
 		}
 
-		public string Name { get; set; }
+//		public string Name { get; set; }
 
 		public ObservableCollection<FamilyMember> Members { get; set; }
 	}

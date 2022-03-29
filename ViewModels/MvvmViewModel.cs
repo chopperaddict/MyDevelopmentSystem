@@ -234,7 +234,7 @@ namespace MyDev . ViewModels
 				data += "Interest  rate :	" + bvm . IntRate + "\n";
 				data += "Date opened :	" + bvm . ODate + "\n";
 				data += "Date Closed:	" + bvm . CDate + "\n";
-				fdmsg ( "testing flowdoc from MvvmViewModel" , data );
+				fdmsg ( "testing Short form of flowdoc (fdl.FdMsg) from MvvmViewModel" , data );
 			}
 
 		}

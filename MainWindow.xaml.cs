@@ -230,12 +230,20 @@ namespace MyDev
 		{
 			InitializeComponent ( );
 			Utils . SetupWindowDrag ( this );
-			Flags . CurrentConnectionString =(string)Properties . Settings . Default [ "BankSysConnectionString" ];
+			Flags . CurrentConnectionString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+	//		Flags . UseFlowdoc = ( bool ) Properties . Settings . Default [ "UseFlowdoc" ];
+//			Flags . UseScrollView= ( bool ) Properties . Settings . Default [ "UseScrollViewer" ];
 			Flags . FlowdocCrMultplier = 3.0;
 			// Setup our treeview data source  as a publically accessible static pointer (Txplorer)
 			//TreeExplorer. Explorer = new ExplorerClass();
 			//Txplorer = TreeExplorer . Explorer;
-			
+			Flags . UseFlowdoc= Properties . Settings . Default . UseFlowDoc. ToUpper ( ) == "TRUE" ? true : false;
+			Properties . Settings . Default . Save ( );
+			Flags . UseScrollView = Properties . Settings . Default . UseScrollViewer . ToUpper ( ) == "TRUE" ? true : false;
+			Properties . Settings . Default . Save ( );
+			Flags . ReplaceFldNames = Properties . Settings . Default . ReplaceFldNames . ToUpper ( ) == "TRUE" ? true : false;
+			Properties . Settings . Default . Save ( );
+
 		}
 
 		private void button1_Click ( object sender , RoutedEventArgs e )
@@ -282,7 +290,8 @@ namespace MyDev
 
 		private void button8_Click ( object sender , RoutedEventArgs e )
 		{
-
+			ModernViews ga = new ModernViews ( );
+			ga . Show ( );
 		}
 
 		private void button9_Click ( object sender , RoutedEventArgs e )
@@ -319,5 +328,33 @@ namespace MyDev
 			else if ( e . Key == Key . Escape )
 				Application . Current . Shutdown ( );
 		}
-	}
+
+        private void button11_Click ( object sender, RoutedEventArgs e )
+        {
+			ExpanderTest et = new ExpanderTest ( );
+			et. Show ( );
+        }
+
+        private void button12_Click ( object sender, RoutedEventArgs e )
+        {
+			//SplitDatagrid sdg = new SplitDatagrid ( );
+			//sdg. Show ( );
+        }
+
+        private void button13_Click ( object sender, RoutedEventArgs e )
+        {
+			SplittersTest st = new SplittersTest ( );
+			st . Show ( );
+        }
+
+        private void button14_Click ( object sender, RoutedEventArgs e )
+        {
+
+        }
+
+        private void button15_Click ( object sender, RoutedEventArgs e )
+        {
+
+        }
+    }
 }

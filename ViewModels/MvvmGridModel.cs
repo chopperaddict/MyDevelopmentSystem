@@ -93,7 +93,7 @@ namespace MyDev . ViewModels
 		{ return true; }
 		public void ExecuteCloseWindow ( object arg )
 		{
-			Console . WriteLine ( "We have Hit the close ICommand in BankGridViewClass..." );
+			Console . WriteLine ( "We have Hit the close ICommand in MvvmGridModel..." );
 			WindowCollection  v = Application .Current.Windows;
 			foreach ( Window item in v )
 			{
@@ -120,6 +120,7 @@ namespace MyDev . ViewModels
 				return false;
 			else
 				return true;
+			
 			if ( IsBankActive == false )
 			{
 				ParentBGView . filtertext . IsEnabled = true;

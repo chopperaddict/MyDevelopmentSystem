@@ -153,15 +153,15 @@
 				Canvas.Left="45"
 				Canvas.Top="64"
 				Height="300"
-				LostFocus="Flowdoc_LostFocus"
 				Margin="0 0 0 0"
+				
+				LostFocus="Flowdoc_LostFocus"
 				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"	
 				MouseMove="Flowdoc_MouseMove"
-				MouseEnter="Flowdoc_MouseEnter"
-				MouseLeave="Flowdoc_MouseLeave"
+				PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"
+
 				Opacity="1"
 				Panel.ZIndex="2"
-				PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"
 				Visibility="Hidden"
 				Width="520" />
 

@@ -10,8 +10,8 @@ using System . Text;
 using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Controls;
-using System . Windows . Forms . VisualStyles;
 using System . Windows . Input;
+
 
 namespace MyDev . Models
 {
@@ -262,6 +262,8 @@ namespace MyDev . Models
 			Flowdoc . SetValue ( FlowDoc . WidthProperty , newWidth );
 		}
 
+		// This IS CALLED by ListViews...
+		// This IS CALLED by DataGrid...
 		public void Flowdoc_MouseMove ( FlowDoc Flowdoc , Canvas canvas , object MovingObject , MouseEventArgs e )
 		{
 			//borderSelected = 5;      // TOP + LEFT
@@ -279,7 +281,7 @@ namespace MyDev . Models
 					Mouse . SetCursor ( Cursors . Arrow );
 				//return;
 			}
-						// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
+			// We are Resizing the Flowdoc using the mouse on a corner of the border  (Border.Name=FdBorder)
 			if ( Flowdoc . BorderSelected == 5 )  // Top Left corner
 			{
 				if ( e . LeftButton == MouseButtonState . Pressed )
@@ -455,203 +457,16 @@ namespace MyDev . Models
 							return;
 						}
 					}
-					//else if ( CornerDrag || MTop - FdTop + FdHeight <= FdBorderWidth )
-					//{
-					//	if ( ( FdTop + FdHeight - MTop ) >= -FdBorderWidth )
-					//	{
-					//		if ( FdTop - MTop >= -FdBorderWidth )
-					//		{
-					//			// Bottom Right corner clicked
-					//			CornerDrag = true;
-					//			Canvas . SetTop ( Flowdoc , FdTop );
-					//			newHeight = FdHeight - YDiff;
-					//			if ( newHeight < 0 )
-					//				return;
-					//			XDiff = ( MLeft - FdWidth ) - FdLeft;
-					//			Flowdoc . Width += XDiff;
-					//			Flowdoc . Refresh ( );
-					//			return;
-					//		}
-					//	}
-					//}
-					//else
-					//{
-					//	// if we get here, we are only draggig the RIGHT Border of the window to change it's with
-					//	newWidth = MLeft - FdLeft;// - FdLeft;
-					//	Flowdoc . Width = newWidth;
-					//}
-				}
+					}
 				return;
 			}
-			//			else if ( FlowdocResizing || Flowdoc . BorderClicked && IsCornerDragging == false )
-			//else if ( Flowdoc . BorderClicked && IsCornerDragging == false )
-			//{
-			//	// Get current sizes and position of Flowdoc windowo intilize our calculations
-			//	if ( Flowdoc . BorderSelected < 5 )
-			//	{
-			//		if ( FdLeft == 0 )
-			//			FdLeft = Canvas . GetLeft ( Flowdoc );
-			//		if ( FdTop == 0 )
-			//			FdTop = Canvas . GetTop ( Flowdoc );
-			//		FdHeight = Flowdoc . ActualHeight;
-			//		FdWidth = Flowdoc . ActualWidth;
-			//		//Get mouse cursor position
-			//		Point pt = Mouse . GetPosition (canvas );
-			//		MLeft = pt . X;
-			//		MTop = pt . Y;
-			//		//				if ( th . Left == 0 )
-			//		th = Flowdoc . FdBorder . BorderThickness;
-			//		FdBorderWidth = th . Left * 2;
-			//		FdBottom = FdTop + FdHeight;
-			//		ValidTop = FdBottom - ( FdBorderWidth / 2 );
-			//		ValidBottom = FdBottom + ( FdBorderWidth / 2 );
-
-			//		if ( Flowdoc . BorderSelected == 1 )  // Top
-			//		{
-			//			// Top border - WORKING CORRECTLY
-			//			Mouse . SetCursor ( Cursors . SizeNS );
-			//			Canvas . SetTop ( Flowdoc , MTop );
-			//			YDiff = MTop - FdTop;
-			//			FdTop = MTop;
-
-			//			newHeight = FdHeight - YDiff;
-			//			if ( newHeight < 200 )
-			//				newHeight = 200;
-			//			Flowdoc . Height = newHeight;
-			//			return;
-			//		}
-			//		else if ( Flowdoc . BorderSelected == 2 )
-			//		{     // Bottom border
-			//			Mouse . SetCursor ( Cursors . SizeNS );
-			//			newHeight = MTop - FdTop;
-			//			Flowdoc . Height = newHeight;
-			//			return;
-			//		}
-			//		else if ( Flowdoc . BorderSelected == 3 )
-			//		{
-			//			// Left hand side border  - WORKING CORRECTLY
-			//			Mouse . SetCursor ( Cursors . SizeWE );
-			//			XDiff = MLeft - FdLeft;
-			//			newWidth = FdWidth - XDiff;
-			//			if ( newWidth < 350 )
-			//				newWidth = 350;
-			//			Flowdoc . Width = newWidth;
-			//			Canvas . SetLeft ( Flowdoc , MLeft );
-			//			FdLeft = MLeft;
-			//			return;
-			//		}
-			//		// Right  border or right lower corner
-			//		else if ( Flowdoc . BorderSelected == 4 )
-			//		{
-			//			// Right hand side border  OR Top Right Corner 
-			//			Mouse . SetCursor ( Cursors . SizeWE );
-			//			if ( CornerDrag || MTop - FdTop <= FdBorderWidth || FdTop - MTop <= -FdBorderWidth )
-			//			{
-			//				//if ( MTop >= ValidTop && MTop <= ValidBottom)
-			//				Mouse . SetCursor ( Cursors . SizeAll );
-			//				if ( FdTop - MTop >= -FdBorderWidth )
-			//				{
-			//					// Top Right corner clicked	- working very well - resizes in BOTH directions
-			//					CornerDrag = true;
-
-			//					YDiff = FdTop - MTop;
-			//					FdTop = MTop;
-			//					Canvas . SetTop ( Flowdoc , MTop );
-			//					// Handle Height
-			//					newHeight = FdHeight + YDiff;
-			//					if ( newHeight < 200 )
-			//						newHeight = 200;
-			//					Flowdoc . Height = FdHeight;
-			//					// handle width
-			//					newWidth = MLeft - FdLeft;
-			//					FdWidth = newWidth;
-			//					Flowdoc . Width = FdWidth;
-			//					Flowdoc . SetValue ( FlowDoc . HeightProperty , newHeight );
-			//					Flowdoc . SetValue ( FlowDoc . WidthProperty , newWidth );
-			//					return;
-			//				}
-			//				else if (
-			//					( ( FdTop + FdHeight - MTop >= FdBorderWidth )
-			//					|| ( FdTop + FdHeight - MTop <= FdBorderWidth ) )
-			//					&& ( MTop > FdBorderWidth + FdBorderWidth + 5 )
-			//					)
-			//				{
-			//					// Right Border or Lower Right corner
-			//					if ( MTop >= ValidTop - th . Left && MTop <= ValidBottom + th . Left )
-			//					{     // WORKING 23/2//2022
-			//						// Pointer is in lower right corner, so drag both ways
-			//						CornerDrag = true;
-			//						// Reset height.  Mouse is at bottom right, so pinpoint where iti s in real terms
-			//						double mouseposY =FdTop + FdHeight;
-			//						YDiff = MTop - FdTop - FdHeight;
-			//						newHeight = FdHeight + YDiff;// - FdLeft;
-			//						Flowdoc . Height = newHeight;
-			//						if ( newHeight < 0 )
-			//							return;
-			//						//Reset width - WORKING
-			//						newWidth = MLeft - FdLeft;
-			//						Flowdoc . Width = newWidth;
-			//						Flowdoc . SetValue ( FlowDoc . HeightProperty , newHeight );
-			//						Flowdoc . SetValue ( FlowDoc . WidthProperty , newWidth );
-			//						return;
-			//					}
-			//					else
-			//					{     // WORKING 23/2//2022
-			//						// Just dragging right border	    
-			//						newWidth = MLeft - FdLeft;
-			//						Flowdoc . Width = newWidth;
-			//						Flowdoc . SetValue ( FlowDoc . WidthProperty , newWidth );
-			//						CornerDrag = true;
-			//						return;
-			//					}
-			//				}
-			//				else
-			//				{
-			//					// just dragging right border WORKING CORRECTLY  for right border
-			//					newWidth = MLeft - FdLeft;
-			//					Flowdoc . Width = newWidth;
-			//					Flowdoc . SetValue ( FlowDoc . WidthProperty , newWidth );
-			//					CornerDrag = true;
-			//					return;
-			//				}
-			//			}
-			//			else if ( CornerDrag || MTop - FdTop + FdHeight <= FdBorderWidth )
-			//			{
-			//				if ( ( FdTop + FdHeight - MTop ) >= -FdBorderWidth )
-			//				{
-			//					if ( FdTop - MTop >= -FdBorderWidth )
-			//					{
-			//						// Bottom Right corner clicked
-			//						CornerDrag = true;
-			//						Canvas . SetTop ( Flowdoc , FdTop );
-			//						newHeight = FdHeight - YDiff;
-			//						if ( newHeight < 0 )
-			//							return;
-			//						XDiff = ( MLeft - FdWidth ) - FdLeft;
-			//						Flowdoc . Width += XDiff;
-			//						Flowdoc . Refresh ( );
-			//						return;
-			//					}
-			//				}
-			//			}
-			//			else
-			//			{
-			//				// if we get here, we are only draggig the RIGHT Border of the window to change it's with
-			//				newWidth = MLeft - FdLeft;// - FdLeft;
-			//				Flowdoc . Width = newWidth;
-			//			}
-			//		}
-			//	}
-			//	return;
-			//}
-			else
+				else
 			{
 				if ( MovingObject != null && e . LeftButton == MouseButtonState . Pressed && Flowdoc . BorderClicked == false )
 				{
 					// MOVING WINDOW around the Parent window (MDI ?)
 					// Get mouse position IN FlowDoc !!
 					//Mouse . SetCursor ( Cursors . SizeAll );
-
 					double left = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . X - CpFirstXPos ;
 					double top = e . GetPosition ( ( MovingObject as FrameworkElement ) . Parent as FrameworkElement ) . Y - CpFirstYPos ;
 					double trueleft = left - CpFirstXPos;
@@ -661,13 +476,10 @@ namespace MyDev . Models
 					if ( top >= 0 ) //&& top <= canvas . ActualHeight- Flowdoc. ActualHeight)
 						( MovingObject as FrameworkElement ) . SetValue ( Canvas . TopProperty , top );
 				}
-				//else if ( FlowdocResizing == false )
-				//{
-				//	int x = 0;
-				//}
 			}
 		}
 
+		// Called by Datagrids	&& Listviews
 		public void MaximizeFlowDoc ( FlowDoc Flowdoc , Canvas canvas , EventArgs e )
 		{
 			//Canvas CanVas = canvas;
@@ -679,7 +491,7 @@ namespace MyDev . Models
 			}
 			double height = canvas . Height;
 			double width = canvas . Width;
-			if ( Flowdoc . Height < canvas . Height && Flowdoc . Width < canvas . Width )
+			if ( Flowdoc . Height < canvas.Height && Flowdoc . Width < canvas . Width )
 			{
 				// it is in NORMAL mode right now
 				// Set flowdoc size into variables for later use
@@ -712,13 +524,18 @@ namespace MyDev . Models
 				{
 					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) FlowdocFloatingLeft );
 					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) FlowdocFloatingTop );
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . HeightProperty , ( double ) FlowdocFloatingHeight );
+					( Flowdoc as FrameworkElement ) . SetValue ( Canvas . WidthProperty , ( double ) FlowdocFloatingWidth);
 				}
 			}
 		}
 		// HIT IN MVVMDATAGRID
+
+		// Called by ListViews	&& Datagrids
 		public object Flowdoc_PreviewMouseLeftButtonDown ( object sender , FlowDoc Flowdoc , MouseButtonEventArgs e )
 		{
 			//In this event, we get current mouse position on the control to use it in the MouseMove event.
+			// This IS CALLED by ListViews
 			Border border = e . OriginalSource as Border;
 			if ( border != null )
 			{
@@ -753,6 +570,7 @@ namespace MyDev . Models
 			Flowdoc . BorderClicked = false;
 			return sender;
 		}
+		// Called by BOTH WINDOWS
 		public object Flowdoc_MouseLeftButtonUp ( object sender , FlowDoc Flowdoc , object MovingObject , MouseButtonEventArgs e )
 		{
 			// Window wide  !!

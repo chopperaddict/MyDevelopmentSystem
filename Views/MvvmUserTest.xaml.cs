@@ -146,31 +146,32 @@ namespace MyDev . Views
 			{
 				// Height is working 18/3/22
 				//Dummy
+				Thickness th = new Thickness();
 				( U1ctrl . Caption as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 10 );
 				( U1ctrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 35 );
 				( U1ctrl . UiButtons as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double ) 35 );
 				//( U1ctrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 10 );
-				U1ctrl . Height = height - 45;//+ 25;
-				U1ctrl . MainGrid . Height = height - 45;
+				U1ctrl . Height = height -50;//+ 25;
+				U1ctrl . MainGrid . Height = height - 65;
 				U1ctrl . uccanvas . Height = height - 5;
-				U1ctrl . listbox1 . Height = height - 55;
-				U1ctrl . UiButtons.Height = height - 55;
+				U1ctrl . listbox1 . Height = height - 75;
+				U1ctrl . UiButtons . Height = height - 55;
+				th = U1ctrl . Margin;
+				th . Top = 0;
+				U1ctrl . Margin= th;
+				// Reset Image Hieght as image  file size may be massive !!!
+				U1ctrl . image1 . Height = U1ctrl . listbox1 . Height - 10;
+				U1ctrl . image1.Margin = th;
+				(U1ctrl.image1 as FrameworkElement).SetValue(Canvas.TopProperty, (double)36);
 
+				//( U1ctrl . image1 as FrameworkElement ) . SetValue ( Canvas. TopProperty , ( double ) 0 );
 				// Std Viewer - WIDTH
-				U1ctrl . uccanvas . Width = width + 35;// - ButtonPanelLeftOffset;
+				U1ctrl. uccanvas . Width = width + 35;// - ButtonPanelLeftOffset;
 				U1ctrl . Width = width - 10;// + U1ctrl . UiButtons.Width;
 				U1ctrl . listbox1 . Width = U1ctrl . Width-485;
-				//U1ctrl . UiButtons . Width = U1ctrl . uccanvas.Width - U1ctrl . UiButtons . Width;
-
-				//U1ctrl . MainGrid . Width = this . canvas . Width;// - U1ctrl . UiButtons.Width;
-				//U1ctrl . listbox1 . Width = U1ctrl . uccanvas . Width - ButtonPanelLeftOffset;
-
-				//( U1ctrl . uccanvas as FrameworkElement ) . SetValue ( Canvas . TopProperty , ( double )45 );
-				//( U1ctrl . listbox1 as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );
-				//				U1ctrl . UiButtons . Width = 200;
-				//			    ( U1ctrl . UiButtons as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double )800);
-				//				( ButtonPanel as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) U1ctrl . MainGrid . Width );
-				//Console . WriteLine ( $"MG Cv.Width {U1ctrl . uccanvas . Width },  " );
+				U1ctrl . UiButtons . Margin = th;
+				// Reset Image Width as image  file size may be massive !!!
+				U1ctrl . image1 . Width = U1ctrl . listbox1 . Width;
 			}
 			// Handle the windows own buttons
 			ButtonPanel . VerticalAlignment = VerticalAlignment . Top;

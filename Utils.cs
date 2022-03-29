@@ -364,24 +364,35 @@ namespace MyDev
 			{
 				string output="";
 				var colcount = row.ItemArray.Length;
+				object  type = null;
 				switch ( colcount )
 				{
 					case 1:
+						 type = row.Field<object>(0);
 						output += row . Field<string> ( 0 );
 						break;
 					case 2:
 						output += row . Field<string> ( 0 ) + ", ";
+						 type = row.Field<object>(1);
 						output += row . Field<string> ( 1 ) + " ";
 						break;
 					case 3:
 						output += row . Field<string> ( 0 ) + ", ";
 						output += row . Field<string> ( 1 ) + ", ";
-						output += row . Field<string> ( 2 ) + "";
+						type = row . Field<object> ( 2 );
+						if ( type != null )
+						{
+							if ( type == typeof ( int ) )
+							{
+								output += row . Field<string> ( 2 ) . ToString ( ) + "";
+							}
+						}
 						break;
 					case 4:
 						output += row . Field<string> ( 0 ) + ", ";
 						output += row . Field<string> ( 1 ) + ", ";
 						output += row . Field<string> ( 2 ) + ", ";
+						type = row . Field<object> ( 3 );
 						output += row . Field<string> ( 3 ) + " ";
 						break;
 					case 5:
@@ -389,6 +400,7 @@ namespace MyDev
 						output += row . Field<string> ( 1 ) + ", ";
 						output += row . Field<string> ( 2 ) + ", ";
 						output += row . Field<string> ( 3 ) + ", ";
+						type = row . Field<object> ( 4 );
 						output += row . Field<string> ( 4 ) + "";
 						break;
 				}
@@ -401,11 +413,12 @@ namespace MyDev
 			List<string> list = new List<string>();
 			foreach ( DataRow row in dt . Rows )
 			{
-				list . Add ( row . Field<string> ( 0 ) );
+				var txt = row . Field<string> ( 0 );
+				list . Add ( txt );
 			}
 			return list;
 		}
-		public static List<int> GetDataDridRowsAsListOfInts ( DataTable dt )
+			public static List<int> GetDataDridRowsAsListOfInts ( DataTable dt )
 		{
 			List<int> list = new List<int>();
 			foreach ( DataRow row in dt . Rows )
@@ -447,6 +460,53 @@ namespace MyDev
 		}
 		#endregion datagrid row  to List methods
 
+		/// <summary>
+		/// Parse Db Column information to display in FlowDoc
+		/// </summary>
+		/// <param name="fldnameslist"></param>
+		/// <returns></returns>
+		public static  string ParseTableColumnData ( List<string> fldnameslist )
+		{
+			int indx = 0;
+			string entry = "", outp="";
+			int trimlen=3;
+			string output="";
+			foreach ( string row in fldnameslist )
+			{
+				if ( indx < 3 )
+				{
+					entry = row;
+					if ( indx == 0 )
+						output += entry . ToUpper ( ) + ",  ";
+					else if ( indx == 1 )
+						output += entry + ",  ";
+					else
+					{
+						if ( entry == "---" )
+						{
+							outp = output . Substring ( 0 , output . Length - trimlen );// += "\n";
+							output += "\n";
+							indx = 3;
+						}
+						else
+						{
+							//outp = output . Substring ( 0 , output . Length - trimlen );// += "\n";
+							output += entry + "\n";
+							indx = 3;
+						}
+					}
+					if ( indx < 3 )
+						indx++;
+					else
+						indx = 0;
+				}
+				else
+				{
+					indx = 0;
+				}
+			}
+			return output;
+		}
 		// Record the names of the method that called this one in an iterative tree.
 		public static string trace ( string prompt = "" )
 		{
@@ -1510,14 +1570,6 @@ namespace MyDev
 								break;
 							}
 							Console . WriteLine ( $"UI = {v . ToString ( )}" );
-							//							if ( v . ToString ( ) . Contains ( ".TextBox" ) )
-							//if ( v . ToString ( ) . Contains ( ".TextBox" ) )
-							//{
-							//	OBJ = prev as UIElement;
-							//	success = true;
-							//	break;
-							//}
-							//else
 							ui = v as UIElement;
 						} while ( true );
 						break;
@@ -2218,5 +2270,32 @@ namespace MyDev
 			}
 		}
 
+		public static void LoadBankDbGeneric ( BankCollection bvm , string caller = "" , bool Notify = false , int lowvalue = -1 , int highvalue = -1 , int maxrecords = -1 )
+		{
+			if ( maxrecords == -1 )
+			{
+				DataTable dt = new DataTable ( );
+//				bvm = BankCollection. LoadSelectedCollection ( bankCollection: bvm, max: -1, dtBank: dt, Notify: Notify );
+				BankCollection . LoadBank ( bvm , caller: "BankAccount" , ViewerType: 99 , NotifyAll: Notify );
+			}
+			else
+			{
+				DataTable dtBank = new DataTable ( );
+				dtBank = BankCollection. LoadSelectedBankData ( Min: lowvalue, Max: highvalue, Tot: maxrecords );
+				bvm = BankCollection. LoadSelectedCollection ( bankCollection: bvm, max: -1, dtBank: dtBank, Notify: Notify );
+			}
+
+		}
+		public static void TrackSplitterPosition ( TextBlock Textblock, double MaxWidth, DragDeltaEventArgs e )
+		{
+			Thickness th = new Thickness ( 0, 0, 0, 0 );
+			th = Textblock. Margin;
+			if ( th. Left < MaxWidth )
+			{
+				th. Left += e. HorizontalChange;
+				if ( th. Left > 10 )
+					Textblock. Margin = th;
+			}
+		}
 	}
 }

@@ -30,7 +30,7 @@ namespace MyDev . Views
 	{
 
 		#region OnPropertyChanged
-		new public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected void OnPropertyChanged ( string PropertyName )
 		{
@@ -185,8 +185,8 @@ namespace MyDev . Views
 			Listviews lv = new Listviews();
 
 			// FlowDoc support
-			Flowdoc . ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
 			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
+			Flowdoc . ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
 			this . SizeChanged += Datagrids_SizeChanged;
 
 			// set global flag so we can access it via this pointer
@@ -885,7 +885,10 @@ namespace MyDev . Views
 				// Caution : This loads the data into the Datarid with only the selected rows
 				// //visible in the grid so do NOT repopulate the grid after making this call
 				//				SqlServerCommands sqlc = new SqlServerCommands();
-
+				Grid1 . ItemsSource = null;
+				Grid1 . Items . Clear( );
+				Grid1 . Columns . Clear ( );
+				Grid1 . ItemsSource = genaccts;
 				SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
 				if ( Flags . ReplaceFldNames )
 				{
@@ -948,11 +951,21 @@ namespace MyDev . Views
 
 		#region Trigger methods  for Stored Procedures (string, Int, Double, Decimal) that return a List<xxxxx>
 		// These all return just a single column from any table by calling a Stored Procedure  in MSSQL Server
+		public static List<string> CallStoredProcedureWithSizes ( List<string> list , string sqlcommand )
+		{
+			//This call returns us a DataTable
+			DataTable dt = DataLoadControl . GetDataTable ( sqlcommand );
+			if ( dt != null )
+								list = GenericDbHandlers . GetDataDridRowsWithSizes ( dt );
+				//list = Utils . GetDataDridRowsAsListOfStrings ( dt );
+			return list;
+		}
 		public static List<string> CallStoredProcedure ( List<string> list , string sqlcommand )
 		{
 			//This call returns us a DataTable
 			DataTable dt = DataLoadControl . GetDataTable ( sqlcommand );
 			if ( dt != null )
+				//				list = GenericDbHandlers.GetDataDridRowsWithSizes ( dt );
 				list = Utils . GetDataDridRowsAsListOfStrings ( dt );
 			return list;
 		}
@@ -1201,6 +1214,40 @@ namespace MyDev . Views
 				Flags . ReplaceFldNames = true;
 			else
 				Flags . ReplaceFldNames = false;
+		}
+
+		private void ViewTableColumns ( object sender , RoutedEventArgs e )
+		{
+			bool flowdocswitch = false;
+			int count = 0;
+			List<string> list = new List<string>      ();
+			List<string> fldnameslist = new List<string>();
+			string output="";
+			SqlCommand = $"spGetTableColumnWithSize {dbName . SelectedItem . ToString ( )}";
+			//SqlCommand = SqlCommand = $"spGetTableColumns";
+			fldnameslist = Datagrids . CallStoredProcedureWithSizes ( list , SqlCommand );
+
+			output = Utils . ParseTableColumnData ( fldnameslist );
+
+			// Fiddle  to allow Flowdoc  to show Field info even though Flowdoc use is disabled
+			if ( UseFlowdoc == false )
+			{
+				flowdocswitch = true;
+				UseFlowdoc = true;
+			}
+			//Console . WriteLine ( $"loaded {count} records for table columns" );
+			if ( UseFlowdoc )
+				Flowdoc.ShowInfo ( Flowdoc , canvas , header: "Table Columns informaton accessed successfully" , clr4: "Red5" ,
+				line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
+				line2: $"the structure of the table [{dbName . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
+				line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
+				);
+			if ( flowdocswitch == true )
+			{
+				flowdocswitch = false;
+				UseFlowdoc = false;
+			}
+			
 		}
 	}
 }

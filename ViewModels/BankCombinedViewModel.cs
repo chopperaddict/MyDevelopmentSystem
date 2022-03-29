@@ -15,7 +15,7 @@ namespace MyDev . ViewModels
 
 		#region PropertyChanged
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		new public event PropertyChangedEventHandler PropertyChanged;
 
 		private void OnPropertyChanged ( string propertyName )
 		{

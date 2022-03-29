@@ -1,4 +1,6 @@
 ﻿using MyDev . Converts;
+using MyDev . Models;
+using MyDev . UserControls;
 
 using System;
 using System . Collections . Generic;
@@ -13,7 +15,6 @@ using System . Windows . Markup . Localizer;
 using System . Windows . Media;
 using System . Windows . Shapes;
 
-using static System . Net . WebRequestMethods;
 
 namespace MyDev . Views
 {
@@ -116,35 +117,32 @@ namespace MyDev . Views
 		TreeViewItem CurrentItem = new TreeViewItem();
 		DirectoryInfo DirInfo = new DirectoryInfo (@"C:\\" );
 		public static TreeViews treeViews { get; set; }
-		//		public static Directories  Directorys;
+		
 		#endregion Public dclarations
 
 		private static bool isresettingSelection { get; set; } = false;
-
+		private static FlowdocLib fdl;
 		#region startup
 		public TreeViews ( )
 		{
 			InitializeComponent ( );
 			this . DataContext = this;
 
-			Utils . SetupWindowDrag ( this );
+			// Cannot use  this with FlowDoc cos of dragging/Resizing
+			//Utils . SetupWindowDrag ( this );
 			treeViews = this;
-			//MenuItem root = new MenuItem("Parent0" );
-			//root . Title = "";
-			//MenuItem childItem1 = new MenuItem() { Title = "Child item #1" };
-			//childItem1 . Items . Add ( new MenuItem ( ) { Title = "Child item #1.1" } );
-			//childItem1 . Items . Add ( new MenuItem ( ) { Title = "Child item #1.2" } );
-			//root . Items . Add ( childItem1 );
-			//root . Items . Add ( new MenuItem ( ) { Title = "Child item #2" } );
-			//			treeView3 . Items . Add ( root );
 			listBox . Items . Clear ( );
 			treeView4 . Items . Clear ( );
+			fdl = new FlowdocLib ( );
+			FdMargin . Left = Flowdoc . Margin . Left;
+			FdMargin . Top= Flowdoc . Margin . Top;
 			//			Directorys = new Directories ( );
 		}
 		private void Window_Loaded ( object sender , RoutedEventArgs e )
 		{
 			CreateStaticData ( );
 			LoadDrives ( );
+			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
 		}
 		#endregion startup
 
@@ -332,7 +330,7 @@ namespace MyDev . Views
 				}
 			}
 		}
-			#endregion selection changing
+		#endregion selection changing
 		private void LoadDrives ( )
 		{
 			treeView4 . Items . Clear ( );
@@ -346,7 +344,7 @@ namespace MyDev . Views
 				// Add Dummy entry so we get an "Can be Opened" triangle icon
 				item . Items . Add ( "Loading" );
 				// Add Drive to Treeview
-				GetDirectories(drive, out List<string>directories );
+				GetDirectories ( drive , out List<string> directories );
 				if ( directories . Count > 0 )
 				{   // avoid empty CD drive etc
 					treeView4 . Items . Add ( item );
@@ -407,7 +405,8 @@ namespace MyDev . Views
 					parent = VisualTreeHelper . GetParent ( parent );
 				}
 				return parent as TreeViewItem;
-			} catch ( Exception e )
+			}
+			catch ( Exception e )
 			{
 				//could not find a parent of type TreeViewItem
 				Console . WriteLine ( e . Message );
@@ -462,7 +461,7 @@ namespace MyDev . Views
 			string str3 = "";
 			string immediateparent = "";
 			string path ="";
-		
+
 			if ( isresettingSelection == true )
 			{
 				isresettingSelection = false;
@@ -485,13 +484,13 @@ namespace MyDev . Views
 			//TreeViewItem4_Expanded  ( tvi , e );
 			//if ( tvi . IsExpanded )
 			//{
-				//tvi . IsSelected = true;
-				GetItemCounts ( selectedItem , out int Dircount , out int Filecount );
-				isresettingSelection = true;
-				CurrentFolder . Text = $"Current Folder Content(s) for : {selectedItem}";
-				//tvi . Items . Clear ( );
-				//tvi . Items . Add ( "Loading" );
-				//TreeViewItem4_Expanded ( tvi , null );
+			//tvi . IsSelected = true;
+			GetItemCounts ( selectedItem , out int Dircount , out int Filecount );
+			isresettingSelection = true;
+			CurrentFolder . Text = $"Current Folder Content(s) for : {selectedItem}";
+			//tvi . Items . Clear ( );
+			//tvi . Items . Add ( "Loading" );
+			//TreeViewItem4_Expanded ( tvi , null );
 			//}
 			//return;
 			isresettingSelection = true;
@@ -617,9 +616,9 @@ namespace MyDev . Views
 			CurrentFolder . Text = $"Current Folder Content(s) for : {Fullpath}";
 
 			Mouse . SetCursor ( Cursors . Arrow );
-//			isresettingSelection = true;
-//			item . IsSelected = true;
-//			isresettingSelection = false;
+			//			isresettingSelection = true;
+			//			item . IsSelected = true;
+			//			isresettingSelection = false;
 			return;
 
 			#endregion Expanding Get Folders
@@ -677,7 +676,7 @@ namespace MyDev . Views
 			#endregion Expanding Get Files	  (UNUSED)
 		}
 
-		private void SetCurrentSelectedItem(string path)
+		private void SetCurrentSelectedItem ( string path )
 		{
 			//foreach ( var dir in treeView4 . Items )
 			//{
@@ -695,7 +694,7 @@ namespace MyDev . Views
 		{
 			int dirs = 0;
 			int files = 0;
-			 GetDirectories ( path , out List<string> results );
+			GetDirectories ( path , out List<string> results );
 			Dircount = results . Count;
 			GetFiles ( path , out List<string> fileresults );
 
@@ -799,7 +798,8 @@ namespace MyDev . Views
 							directories . Add ( item );
 					}
 				}
-			} catch { }
+			}
+			catch { }
 			dirs = directories;
 		}
 		public static void GetFiles ( string path , out List<string> allfiles )
@@ -818,10 +818,103 @@ namespace MyDev . Views
 					}
 					//					files . AddRange ( file );
 				}
-			} catch { }
+			}
+			catch { }
 			allfiles = files;
 		}
 		#endregion Treeview support methods
 
+		private void treeView4_PreviewMouseRightButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			this . Flowdoc . Height = 200;
+
+			//treeView4.GetValue(H)
+			fdl . FdMsg (Flowdoc, canvas,  "Testing FdMsg in Treeview" , $"{treeView4 . DisplayMemberPath}" );
+		}
+
+		#region Flowdoc support via library
+		/// <summary>
+		/// These methods are needed to allow FLowdoc  to work via FlowDocLib
+		///  We also Need to declare an object :
+		///  object MovingObject ;
+		///  in the heade area just worksj
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// 
+		// Variables Required for FlowDoc
+		object MovingObject;
+		private static double fdTop=100;
+		private static double fdLeft=100;
+		private static Thickness FdMargin =new Thickness();
+
+		/*  
+		 *  Add these  to the FlowDoc in XAML
+  				PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"
+				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"
+				MouseMove= "Flowdoc_MouseMove"
+				LostFocus="Flowdoc_LostFocus"
+*/
+
+		// Add this startup :-			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
+		// & of course  on closing :-	Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
+
+
+		protected void MaximizeFlowDoc ( object sender , EventArgs e )
+		{
+			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
+			// or return to its original size and position courtesy of the Event declard in FlowDoc
+			//Need to ensure the wrapping canvas is sized to its containing element (Wiindow outer Grid in this case)
+			canvas . Height = Grid1 . ActualHeight;
+			canvas . Width= Grid1 . ActualWidth;
+			fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
+		}
+		// CALLED WHEN  LEFT BUTTON PRESSED
+		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+		{
+			//In this event, we get current mouse position on the control to use it in the MouseMove event.
+			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc , e );
+			// NB Flowdoc remebers its last position automatically
+		}
+		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			// Window wide  !!
+			// Called  when a Flowdoc MOVE has ended
+			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc , MovingObject , e );
+			ReleaseMouseCapture ( );
+		}
+		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
+		{
+			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
+			fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
+		}
+		// Shortened version proxy call		
+		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
+		{
+			Flowdoc . BorderClicked = false;
+		}
+		public void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
+		{
+			// EVENTHANDLER to Handle resizing
+			FlowDoc fd = sender as FlowDoc;
+			Point pt = Mouse . GetPosition (canvas );
+			double dLeft = pt.X;
+			double dTop= pt.Y;
+		}
+		public void fdmsg ( string line1 , string line2 = "" , string line3 = "" )
+		{
+			//We have to pass the Flowdoc.Name, and Canvas.Name as well as up   to 3 strings of message
+			//  you can  just provie one if required
+			// eg fdmsg("message text");
+			fdl . FdMsg ( Flowdoc , canvas , line1 , line2 , line3 );
+		}
+
+
+		#endregion Flowdoc support via library
+
+		private void TREEViews_Closing ( object sender , CancelEventArgs e )
+		{
+			Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
+		}
 	}
 }

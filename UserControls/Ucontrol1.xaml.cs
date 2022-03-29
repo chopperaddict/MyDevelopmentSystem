@@ -1,5 +1,7 @@
 ﻿using Microsoft . Win32;
 
+using MyDev.Views;
+
 using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
@@ -13,6 +15,7 @@ using System . Windows . Data;
 using System . Windows . Documents;
 using System . Windows . Input;
 using System . Windows . Media;
+using System . Windows . Media . Animation;
 using System . Windows . Media . Imaging;
 using System . Windows . Navigation;
 using System . Windows . Shapes;
@@ -25,10 +28,9 @@ namespace MyDev . UserControls
 	/// <summary>
 	/// Interaction logic for Ucontrol1.xaml
 	/// </summary>
-	public partial class Ucontrol1 :UserControl
+	public partial class Ucontrol1 : UserControl
 	{
 		ObservableCollection<string> Strings = new ObservableCollection<string>();
-
 		string[] strings={
 		"asdsafdafda",
 		"hjhkghkg",
@@ -39,33 +41,25 @@ namespace MyDev . UserControls
 			InitializeComponent ( );
 			this . SizeChanged += Ucontrol1_SizeChanged;
 			this . DataContext = this;
-			//listbox1 . Items . Clear ( );
-			//listbox1 . Items . Add ( strings [ 0 ]);
-			//listbox1 . Items . Add ( strings [ 1 ]);
-			//listbox1 . Items . Add ( strings [ 2 ]);
-			//listbox1 . ItemsSource = Strings;
 		}
 
 		private void Ucontrol1_SizeChanged ( object sender , SizeChangedEventArgs e )
 		{
-			//if( MainGrid . ActualHeight  > 0)
-			//	listbox1.Height = MainGrid.ActualHeight;
 		}
 
 		private void U1Ctrl_Loaded ( object sender , RoutedEventArgs e )
 		{
 			string str;
+			// This points to  Drive W !!!!!!!   Who knows what is going on ???
+			//			string file =$@"{Environment.SpecialFolder.MyDocuments}" + @"\library1 functions.txt";
+			string file =$@"C:\users\ianch\documents\library1 functions.txt";
 			string[] buffer;
 			//StringBuilder sb = new StringBuilder();
 			int indx=0, offset=0;
-			str = File . ReadAllText ( @"C:\\Users\ianch\Documents\library1 functions.txt");
-			
-			buffer = str . Split ( '\n' );
-			foreach ( var item in buffer)
-			{
-				if(item.Length > 0)
-					listbox1 . Items . Add ( item.Substring(0, item.Length-1) );
-			}
+			str = File . ReadAllText ( file );
+			LoadListboxWithText ( str );
+			str = $"Listbox Text file viewer - {file}";
+			Caption . Text = str;
 		}
 
 		private void Btn1_Click ( object sender , RoutedEventArgs e )
@@ -77,7 +71,128 @@ namespace MyDev . UserControls
 		{
 			listbox1 . Items . Clear ( );
 			U1Ctrl_Loaded ( sender , e );
+		}
 
+		private void Btn4_Click ( object sender , RoutedEventArgs e )
+		{
+			string  filetoopen="", tmp="";
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog . InitialDirectory = @"C:\users\ianch\Documents";
+			//openFileDialog . DefaultExt = ".txt";
+			openFileDialog . Filter = "Text files (*.txt)|*.txt" +
+				"| PNG (*.png)|*.png" +
+				"| GIF (*. gif)|*.gif "	 +
+				"| Bitmap ( *.bmp)|*.gif"  +
+				"| Icon (*.ico)|*.ico" +
+				"| JPEG (*.jpg)|*.jpg" +
+				"| All files (*.*)|*.*";
+			if ( openFileDialog . ShowDialog ( ) == true )
+			{
+				filetoopen = openFileDialog . FileName;
+				tmp = filetoopen . ToUpper ( );
+				if ( tmp . Contains ( ".BMP" )
+					|| tmp . Contains ( ".JPG" )
+					|| tmp . Contains ( ".GIF" )
+					|| tmp . Contains ( ".PNG" )
+					|| tmp . Contains ( ".ICO" ) )
+				{
+
+					Uri res= new Uri ( tmp , UriKind .RelativeOrAbsolute);
+					BitmapImage bmp = new BitmapImage (  res);
+					this.image1 . Source = bmp;
+					listbox1 . Visibility = Visibility . Hidden;
+					this.image1 . Visibility = Visibility . Visible;
+					(image1 as FrameworkElement).SetValue(Canvas.TopProperty, (double)36);
+					this.image1 . Height = listbox1 . Height ;
+					this.image1 . Width = listbox1 . Width;
+					this.image1 . UpdateLayout ( );
+				}
+				else
+				{
+					filetoopen = File . ReadAllText ( openFileDialog . FileName );
+					LoadListboxWithText ( filetoopen );
+					image1 . Visibility = Visibility . Hidden;
+					listbox1 . Visibility = Visibility . Visible;
+				}
+			}
+			string str = $"Listbox Text fle viewer - {openFileDialog . FileName }";
+			Caption . Text = str;
+		}
+
+		private void LoadListboxWithText ( string file )
+		{
+			string[] buffer;
+			string line1="",line2="", line3 ="", templine="";
+			char[] ch ={ ',','.'};
+			buffer = file . Split ( '\n' );
+			listbox1 . Items . Clear ( );
+			foreach ( var item in buffer )
+			{
+				if ( item . Length > 0 )
+				{
+					if ( item . Length > 150 )
+					{
+						templine = item;
+						while ( true )
+						{
+							int commapos = templine . IndexOfAny (ch );
+							if ( commapos > 0 )
+							{
+								line1 = templine . Substring ( 0 , commapos + 1 );
+								if ( line1 [ 0 ] == '\t' )
+								{
+									line1 = line1 . Substring ( 1 , line1 . Length - 2 );
+									listbox1 . Items . Add ( line1 );
+									line2 = templine . Substring ( commapos + 1 , ( templine . Length - ( line1 . Length + 2 ) ) );
+								}
+								else
+								{
+									listbox1 . Items . Add ( line1 );
+									line2 = templine . Substring ( commapos + 1 , templine . Length - ( line1 . Length ) );
+								}
+								commapos = line2 . IndexOfAny ( ch );
+								if ( commapos > 0 )
+								{
+									templine = line2;
+								}
+								else
+								{
+									listbox1 . Items . Add ( line2 );
+									break;
+								}
+							}
+							else if ( commapos == -1 )
+							{
+								break;
+							}
+							else
+							{
+								line1 = templine . Substring ( 0 , templine . Length / 2 );
+								listbox1 . Items . Add ( line1 );
+								line2 = templine . Substring ( line1 . Length , ( templine . Length - line1 . Length ) );
+								listbox1 . Items . Add ( line2 );
+
+							}
+						}
+					}
+					else
+						listbox1 . Items . Add ( item . Substring ( 0 , item . Length - 1 ) );
+				}
+			}
+		}
+
+		private void Btn5_Click ( object sender , RoutedEventArgs e )
+		{
+			if ( image1 . Visibility == Visibility . Visible )
+			{
+				listbox1 . Visibility = Visibility . Visible;
+				image1 . Visibility = Visibility . Hidden;
+			}
+			else
+			{
+				image1 . Visibility = Visibility . Visible;
+				listbox1 . Visibility = Visibility . Hidden;
+			}
 		}
 	}
 }

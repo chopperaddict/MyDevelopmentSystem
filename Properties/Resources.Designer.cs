@@ -59,14 +59,5 @@ namespace MyDev.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string BankGridViewClass {
-            get {
-                return ResourceManager.GetString("BankGridViewClass", resourceCulture);
-            }
-        }
     }
 }

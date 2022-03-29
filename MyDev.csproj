@@ -98,6 +98,7 @@
     <Compile Include="AttachedProperties\ListboxColorCtrlAP.cs" />
     <Compile Include="AttachedProperties\MenuAttachedProperties.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converts\GetCurrentReccount.cs" />
     <Compile Include="Models\FlowdocLib.cs" />
     <Compile Include="Models\GenericDbHandlers.cs" />
     <Compile Include="UserControls\ListBoxUserControl.xaml.cs">
@@ -109,10 +110,21 @@
     <Compile Include="UserControls\Ucontrol1.xaml.cs">
       <DependentUpon>Ucontrol1.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\DatagridDataSupplier.cs" />
+    <Compile Include="ViewModels\ListBoxDataSupplier.cs" />
+    <Compile Include="ViewModels\ListViewDataSupplier.cs" />
     <Compile Include="ViewModels\MvvmGridModel.cs" />
     <Compile Include="ViewModels\GenListboxClass.cs" />
     <Compile Include="ViewModels\MvvmGenericModel.cs" />
     <Compile Include="ViewModels\SqlAccess.cs" />
+    <Compile Include="ViewModels\ApplicationListItem.cs" />
+    <Compile Include="Views\ExpanderTest.xaml.cs">
+      <DependentUpon>ExpanderTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\ListItem.cs" />
+    <Compile Include="Views\ModernViews.xaml.cs">
+      <DependentUpon>ModernViews.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MvvmDataGrid.xaml.cs">
       <DependentUpon>MvvmDataGrid.xaml</DependentUpon>
     </Compile>
@@ -154,7 +166,6 @@
     <Compile Include="ViewModels\DirectoryStructure.cs" />
     <Compile Include="ViewModels\DirectoryStructureViewModel.cs" />
     <Compile Include="ViewModels\ExplorerClass.cs" />
-    <Compile Include="ViewModels\Icommand.cs" />
     <Compile Include="ViewModels\PersonViewModel.cs" />
     <Compile Include="ViewModels\Presenter.cs" />
     <Compile Include="ViewModels\PubAuthors.cs" />
@@ -233,6 +244,9 @@
       <DependentUpon>Setup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Sql\SqlBackgroundLoad.cs" />
+    <Compile Include="Views\SplittersTest.xaml.cs">
+      <DependentUpon>SplittersTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SupportMethods.cs" />
     <Compile Include="Views\SysConfig.xaml.cs">
       <DependentUpon>SysConfig.xaml</DependentUpon>
@@ -331,6 +345,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ExpanderTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ModernViews.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MvvmDataGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -384,6 +406,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Setup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SplittersTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -584,7 +610,9 @@
   <ItemGroup>
     <Resource Include="Icons\NaPali.bmp" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Flowdoc usage.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('packages\Fody.6.5.1\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -12,6 +12,7 @@ using System . ComponentModel;
 using System . Configuration;
 using System . Data;
 using System . Data . SqlClient;
+using System . Data . SqlTypes;
 using System . Diagnostics;
 using System . Linq;
 using System . Runtime . CompilerServices;
@@ -37,7 +38,7 @@ namespace MyDev . Views
 	public partial class Listviews : Window, INotifyPropertyChanged
 	{
 		#region OnPropertyChanged
-		new public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected void OnPropertyChanged ( string PropertyName )
 		{
@@ -152,7 +153,10 @@ namespace MyDev . Views
 		private bool ComboSelectionActive = false;
 		private static Stopwatch timer = new Stopwatch();
 		public Colorpicker ColorPickerObject = new Colorpicker();
-		//Datagrids dGrids = new Datagrids();
+
+		Colorpicker ColorpickerObject = new Colorpicker();
+		private double  TvFirstXPos;
+		private double TvFirstYPos ;
 
 		//Variables  for resizing FlowDoc
 		// Needed to be global to improve performance!
@@ -172,10 +176,6 @@ namespace MyDev . Views
 		//private double ValidTop = 0;
 		//private double ValidBottom =0;
 		//Thickness th = new Thickness(0,0,0,0);
-		Colorpicker ColorpickerObject = new Colorpicker();
-		private double  TvFirstXPos;
-		private double TvFirstYPos ;
-
 		#endregion private variables
 
 		#region Full Properties
@@ -300,7 +300,6 @@ namespace MyDev . Views
 			// Hook into our Flowdoc so we can resize it in  the canvas !!!
 			// Flowdoc has an Event declared (ExecuteFlowDocReSizeMethod ) that we are  hooking into
 			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
-			//			Flowdoc . ExecuteFlowDocResizeMethod += Flowdoc_ExecuteFlowDocResizeMethod;
 			Flowdoc . ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
 			Colorpicker . ExecuteSaveToClipboardMethod += Colorpicker_ExecuteSaveToClipboardMethod;
 
@@ -327,13 +326,6 @@ namespace MyDev . Views
 			canvas . Visibility = Visibility . Visible;
 			MouseoverSelectedForeground = Brushes . White;
 		}
-
-		//protected  void MaximizeFlowDoc ( object sender , EventArgs e )
-		//{
-		//	// Clever "Hook" method that Allows the flowdoc to be resized to fill window
-		//	// or return to its original size and position courtesy of the Event declard in FlowDoc
-		//	fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
-		//}
 
 		private void ListViewWindow_PreviewKeyDown ( object sender , KeyEventArgs e )
 		{
@@ -2301,30 +2293,14 @@ namespace MyDev . Views
 			bool flowdocswitch = false;
 			int count = 0;
 			List<string> list = new List<string>      ();
+			List<string> fldnameslist = new List<string>();
 			string output="";
-			SqlCommand = $"spGetTableColumns {dbNameLb . SelectedItem . ToString ( )}";
-			//			SqlCommand = $"spGetTableColumnWithSize";
-			Datagrids . CallStoredProcedure ( list , SqlCommand );
-			//List<int> VarCharLength = new List<int>();
-			//string Arguments = "";
-			////This call returns us a DataTable
-			//GenericDbHandlers . LoadDbAsGenericData (
-			//    ref list ,
-			//SqlCommand ,
-			//dbNameLb . SelectedItem . ToString ( ) ,
-			//"IAN1" ,
-			//    ref VarCharLength ,
-			//false );
+			SqlCommand = $"spGetTableColumnWithSize {dbNameLb . SelectedItem . ToString ( )}";
+			//SqlCommand = SqlCommand = $"spGetTableColumns";
+			fldnameslist = Datagrids . CallStoredProcedureWithSizes ( list , SqlCommand );
 
-			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
-			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
-			list = Utils . GetTableColumnsList ( dt );
-			foreach ( string row in list )
-			{
-				string entry = row.ToUpper();
-				output += row + "\n";
-				count++;
-			}
+			output = Utils . ParseTableColumnData ( fldnameslist );
+
 			// Fiddle  to allow Flowdoc  to show Field info even though Flowdoc use is disabled
 			if ( UseFlowdoc == false )
 			{
@@ -2350,19 +2326,12 @@ namespace MyDev . Views
 			int count = 0;
 			List<string> list = new List<string>      ();
 			string output="";
-			SqlCommand = $"spGetTableColumns {dbNameLv . SelectedItem . ToString ( )}";
-			Datagrids . CallStoredProcedure ( list , SqlCommand );
+			SqlCommand = $"spGetTableColumnWithSize {dbNameLv . SelectedItem . ToString ( )}";
+			list  = Datagrids . CallStoredProcedureWithSizes ( list , SqlCommand );
+			output = Utils.ParseTableColumnData ( list );
+
 			//This call returns us a DataTable
 			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
-			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
-			list = Utils . GetTableColumnsList ( dt );
-			foreach ( string row in list )
-			{
-				string entry = row.ToUpper();
-				output += row + "\n";
-				count++;
-			}
-			//Console . WriteLine ( $"loaded {count} records for table columns" );
 			// Fiddle  to allow Flowdoc  to show Field info even though Flowdoc use is disabled
 			if ( UseFlowdoc == false )
 			{
@@ -2382,7 +2351,7 @@ namespace MyDev . Views
 			}
 		}
 
-		// display relevant info when a different table is selected
+			// display relevant info when a different table is selected
 		private void HandleCaption ( string viewertype , int reccount )
 		{
 			FrameworkElement elemnt;
@@ -3119,7 +3088,6 @@ namespace MyDev . Views
 		public void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
 		{
 			// EVENTHANDLER to Handle resizing
-			FlowDoc fd = sender as FlowDoc;
 			Point pt = Mouse . GetPosition (canvas );
 			double dLeft = pt.X;
 			double dTop= pt.Y;
@@ -3133,17 +3101,6 @@ namespace MyDev . Views
 		}
 		#endregion Flowdoc support via library
 
-		private void Flowdoc_MouseEnter ( object sender , MouseEventArgs e )
-		{
-//			Mouse . SetCursor ( Cursors . Hand );
-			//CaptureMouse ( );
-		}
-
-		private void Flowdoc_MouseLeave ( object sender , MouseEventArgs e )
-		{
-//			Mouse . SetCursor ( Cursors . Arrow );
-//			ReleaseMouseCapture ( );
-		}
 	}
 }
 

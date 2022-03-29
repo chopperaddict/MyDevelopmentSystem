@@ -19,7 +19,7 @@ namespace MyDev . ViewModels
 	public class PubAuthors: INotifyPropertyChanged
 	{
 		#region OnPropertyChanged
-		new public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected void OnPropertyChanged ( string PropertyName )
 		{

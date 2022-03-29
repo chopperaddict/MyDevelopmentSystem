@@ -104,7 +104,7 @@ namespace MyDev . Models
 			return dict;
 		}
 		/// <summary>
-		/// Returns  a GENERIC collection, plus a List<string>
+		/// Returns  a GENERIC collection, plus a List<string> using an SP
 		/// </summary>
 		/// <param name="GenClass"></param>
 		/// <param name="list"></param>
@@ -267,11 +267,11 @@ namespace MyDev . Models
 			List<int> VarCharLength  = new List<int>();
 			dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , CurrentType , Domain , ref VarCharLength );
 			// Add a new column for nvarchar widh
-			Grid1 . Columns . Add ( new DataGridTextColumn ( )
-			{
-				Header = "NVarChar Size" ,
-				Width = 80
-			} );
+			//Grid1 . Columns . Add ( new DataGridTextColumn ( )
+			//{
+			//	Header = "NVarChar Size" ,
+			//	Width = 80
+			//} );
 			int index = 0;
 			// Add data  for field size
 			foreach ( var item in GenericClass )
@@ -285,10 +285,37 @@ namespace MyDev . Models
 				foreach ( var item in Grid1 . Columns )
 				{
 					DataGridColumn dgc = item;
-					dgc . Header = list [ index++ ];
+					if(index < list.Count)
+						dgc . Header = list [ index++ ];
 				}
 			}
 		}
+
+		public static List<string> GetDataDridRowsWithSizes ( DataTable dt )
+		{
+			List<string> list = new List<string>();
+			foreach ( DataRow row in dt . Rows )
+			{
+				var txt = row . Field<string> ( 0 );
+				list . Add ( txt );
+				txt = row . Field<string> ( 1 );
+				list . Add ( txt );
+				if ( row . Field<object> ( 2 ) != null )
+				{
+					txt = row . Field<object> ( 2 ) . ToString ( );
+					list . Add ( txt );
+				}
+				else
+					list . Add ( "---" );
+				//txt = row . Field<string> ( 1 );
+				//list . Add ( txt);
+				//object obj = row . Field<object>(0);
+				//if( obj == typeof ( Int16 ) || obj == typeof ( Int32 ) || obj == typeof ( int ) )
+				//	list . Add ( obj.ToString() );
+			}
+			return list;
+		}
+
 		#region Support methods
 		private static DataTable ProcessSqlCommand ( string SqlCommand )
 		{

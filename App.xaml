@@ -4,8 +4,12 @@
              xmlns:local="clr-namespace:MyDev"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-		<ResourceDictionary >
-			<ResourceDictionary.MergedDictionaries>
+		
+        <ResourceDictionary >
+        
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+			
+            <ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="\Dicts\ColorsDictionary.xaml" />
 				<ResourceDictionary Source="\Dicts\ButtonsMaster.xaml" />
 				<ResourceDictionary Source="\ViewModels\ListBoxViewStyles.xaml"/>
@@ -21,6 +25,7 @@
 				<!--<ResourceDictionary Source="\DataTemplates\NWDataTemplates.xaml"/>-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary >
-
-	</Application.Resources>
+ 
+        
+    </Application.Resources>
 </Application>

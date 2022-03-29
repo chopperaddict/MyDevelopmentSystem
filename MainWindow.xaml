@@ -6,50 +6,66 @@
         xmlns:local="clr-namespace:MyDev"
         mc:Ignorable="d"
 	  PreviewKeyDown="Window_PreviewKeyDown"
-        Title="MainWindow" Height="170" Width="630"
+        Title="MainWindow" Height="271" Width="630"
 	  WindowChrome.ResizeGripDirection="BottomRight"
 	  ResizeMode="CanResizeWithGrip"
 	  WindowStartupLocation="Manual">
-	<Window.Background>
-		<LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
-			<GradientStop Offset="0" Color="#FFAAAAAA" />
-			<GradientStop Offset="0.3" Color="#FF6B8E95" />
-			<GradientStop Offset="0.609" Color="#FF6B8E95" />
-			<GradientStop Offset="1" Color="#FF14A7C1" />
-			<!--<GradientStop Offset="0" Color="#FF193A44" />-->
-		</LinearGradientBrush>
-	</Window.Background>
+    <Window.Background>
+        <LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
+            <GradientStop Offset="0" Color="#FFAAAAAA" />
+            <GradientStop Offset="0.3" Color="#FF6B8E95" />
+            <GradientStop Offset="0.609" Color="#FF6B8E95" />
+            <GradientStop Offset="1" Color="#FF14A7C1" />
+            <!--<GradientStop Offset="0" Color="#FF193A44" />-->
+        </LinearGradientBrush>
+    </Window.Background>
 
-	<Grid Margin="0,0,-1,6">
-		<Button x:Name="button1" Content="Data Grid 1" HorizontalAlignment="Left" Margin="20,26,0,0" 
+    <Grid Margin="0,0,-1,6">
+        <Button x:Name="button1" Content="Data Grid 1" HorizontalAlignment="Left" Margin="20,26,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="100"  Click="button1_Click"
 			  Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button2" Content="List Box/View" HorizontalAlignment="Left" Margin="140,26,0,0" 
+        <Button x:Name="button2" Content="List Box/View" HorizontalAlignment="Left" Margin="140,26,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="102" Click="button2_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button3" Content="Tree View" HorizontalAlignment="Left" Margin="260,28,0,0" 
+        <Button x:Name="button3" Content="Tree View" HorizontalAlignment="Left" Margin="260,28,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="102" Click="button3_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button4" Content="ViewModel Tree" HorizontalAlignment="Left" Margin="380,26,0,0" 
+        <Button x:Name="button4" Content="ViewModel Tree" HorizontalAlignment="Left" Margin="380,26,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="100" Click="button4_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button5" Content="MVVM" HorizontalAlignment="Left" Margin="500,26,0,0" 
+        <Button x:Name="button5" Content="MVVM" HorizontalAlignment="Left" Margin="500,26,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="102" Click="button5_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}" />
-		<Button x:Name="button6" Content="data Grid" HorizontalAlignment="Left" Margin="20,84,0,0" 
+        <Button x:Name="button6" Content="data Grid" HorizontalAlignment="Left" Margin="18,81,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="100" Click="button6_Click"
 			  Foreground="{StaticResource ResourceKey=White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button7" Content="User Control" HorizontalAlignment="Left" Margin="140,84,0,0" 
+        <Button x:Name="button7" Content="User Control" HorizontalAlignment="Left" Margin="138,81,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="102" Click="button7_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button8" Content="Button" HorizontalAlignment="Left" Margin="260,86,0,0" 
+        <Button x:Name="button8" Content="Modern Look" HorizontalAlignment="Left" Margin="258,83,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="102" Click="button8_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button9" Content="Config" HorizontalAlignment="Left" Margin="380,84,0,0" 
+        <Button x:Name="button9" Content="Config" HorizontalAlignment="Left" Margin="378,81,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="100" Click="button9_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-		<Button x:Name="button10" Content="Close" HorizontalAlignment="Left" Margin="500,84,0,0" 
+        <Button x:Name="button10" Content="Close" HorizontalAlignment="Left" Margin="500,140,0,0" 
 			VerticalAlignment="Top" Height="40" Width="102" Click="button10_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource HorizontalGradientTemplateRed}" />
-	</Grid>
+
+        <Button x:Name="button11" Content="Expander Test" HorizontalAlignment="Left" Margin="16,139,0,0" 
+      VerticalAlignment="Top" Height="40" Width="100"  Click="button11_Click"
+      Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
+        <Button x:Name="button12" Content="Button" HorizontalAlignment="Left" Margin="136,139,0,0" 
+            VerticalAlignment="Top" Height="40" Width="102" Click="button12_Click"
+            Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
+        <Button x:Name="button13" Content="Splitter Test" HorizontalAlignment="Left" Margin="256,141,0,0" 
+            VerticalAlignment="Top" Height="40" Width="102" Click="button13_Click"
+            Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
+        <Button x:Name="button14" Content="Button" HorizontalAlignment="Left" Margin="376,139,0,0" 
+            VerticalAlignment="Top" Height="40" Width="100" Click="button14_Click"
+            Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
+        <Button x:Name="button15" Content="Button" HorizontalAlignment="Left" Margin="500,82,0,0" 
+            VerticalAlignment="Top" Height="40" Width="102" Click="button15_Click"
+            Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}" />
+    </Grid>
 </Window>

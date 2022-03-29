@@ -100,7 +100,8 @@ namespace MyDev . UserControls
 			else
 			{
 				fdviewer . Visibility = Visibility . Hidden;
-				doc . Visibility = Visibility . Visible;
+//				if(Flags.UseScrollView)
+					doc . Visibility = Visibility . Visible;
 				BorderSelected = -1;
 			}
 			KeepSizeIcon1 = "/Icons/down arroiw red.png";
@@ -557,6 +558,8 @@ namespace MyDev . UserControls
 
 		#region Mouse handlers
 		// ONLY Called when flowdoc Document  or Scrollviewer area  is clicked on
+		// NOT called by Listviews
+		// This  IS CALLED by DataGrid
 		private void flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
 			if ( Utils . HitTestScrollBar ( sender , e ) )
@@ -627,7 +630,10 @@ namespace MyDev . UserControls
 				doc . IsEnabled = true;
 			//e . Handled = true;
 		}
-		private void doc_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+
+		// This  IS CALLED by DataGrid
+		// This  IS CALLED by ListViews
+		private void flowdoc_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			fdviewer . ReleaseMouseCapture ( );
 			flowdoc . ReleaseMouseCapture ( );
@@ -722,11 +728,13 @@ namespace MyDev . UserControls
 
 		#endregion External Hook
 
+		// Called by ListViews	&& Datagrids
 		private void FdBorder_MouseEnter ( object sender , MouseEventArgs e )
 		{
 			Mouse . SetCursor ( Cursors.Hand);
 		}
 
+		// Called by ListViews	&& Datagrids
 		private void FdBorder_MouseLeave ( object sender , MouseEventArgs e )
 		{
 			Mouse . SetCursor ( Cursors . Arrow );

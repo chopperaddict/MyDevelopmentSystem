@@ -40,17 +40,19 @@ namespace MyDev . ViewModels
 		#region LoadBank()
 
 		// Redirector (wrapper method) that calls main method, but with far fewer parameters required
-		public static ObservableCollection<BankAccountViewModel> LoadBankCollection ( ObservableCollection<BankAccountViewModel> bcollection , bool NotifyAll = false )
+		public static ObservableCollection<BankAccountViewModel> LoadBankCollection ( ObservableCollection<BankAccountViewModel> bcollection , bool NotifyAll = false,  int max=-1 )
 		{
 			Notify = NotifyAll;
 			Caller = "";
+			if ( bcollection == null )
+				return null;
 			bcollection . Clear ( );
 			Bankinternalcollection . Clear ( );
 			dtBank . Clear ( );
 
 			try
 			{
-				dtBank = LoadBankData ( );
+				dtBank = LoadBankData (max );
 				LoadBankCollection ( );
 
 
@@ -157,15 +159,19 @@ namespace MyDev . ViewModels
 
 //						commandline = Utils . GetDataSortOrder ( commandline );
 					}
-					else if ( Flags . FilterCommand != "" )
+					else if ( Flags. FilterCommand != "" )
 					{
-						commandline = Flags . FilterCommand;
+						commandline = Flags. FilterCommand;
+					}
+					else if ( max != -1 )
+					{
+						commandline = $"Select Top ({max})  * from BankAccount order by Id";
 					}
 					else
 					{
 						// Create a valid Query Command string including any active sort ordering
 						commandline = "Select * from [BankAccount] order by ";
-//						commandline = Utils . GetDataSortOrder ( commandline );
+						commandline = Utils . GetDataSortOrder ( commandline );
 					}
 					SqlCommand cmd = new SqlCommand ( commandline, con );
 					SqlDataAdapter sda = new SqlDataAdapter ( cmd );
@@ -484,7 +490,7 @@ namespace MyDev . ViewModels
 		{
 			try
 			{
-				for ( int i = 0 ; i < dtBank . Rows . Count ; i++ )
+				for ( int i = 0 ; i < dtBank.Rows.Count ; i++ )
 				{
 					temp . Add ( new BankAccountViewModel
 					{

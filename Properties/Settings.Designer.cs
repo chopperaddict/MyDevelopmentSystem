@@ -101,5 +101,41 @@ namespace MyDev.Properties {
                 this["PubsConnectionString"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TRUE")]
+        public string UseScrollViewer {
+            get {
+                return ((string)(this["UseScrollViewer"]));
+            }
+            set {
+                this["UseScrollViewer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TRUE")]
+        public string ReplaceFldNames {
+            get {
+                return ((string)(this["ReplaceFldNames"]));
+            }
+            set {
+                this["ReplaceFldNames"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TRUE")]
+        public string UseFlowDoc {
+            get {
+                return ((string)(this["UseFlowDoc"]));
+            }
+            set {
+                this["UseFlowDoc"] = value;
+            }
+        }
     }
 }
