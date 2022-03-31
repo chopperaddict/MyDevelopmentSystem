@@ -53,6 +53,8 @@ namespace MyDev . Views
         private double MaxColWidth1 { get; set; }
         private double MinRowHeight1 { get; set; }
         private double MaxRowHeight { get; set; }
+        private bool FillListBox { get; set; }
+
         #endregion  Public variables
         public SplittersTest ( )
         {
@@ -78,22 +80,36 @@ namespace MyDev . Views
             if ( UseFlowdoc == false )
                 Flowdoc . Visibility = Visibility . Hidden;
             MaxColWidth1 = 340;
-            MinRowHeight1 = 55;
+            MinRowHeight1 = 255;
             MaxRowHeight = 275;
             imgup = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             vimgmove = new BitmapImage ( new Uri ( @"\icons\right arroiw red.png" , UriKind . Relative ) );
+            //            lsplitrow1 . Height = (GridLength)1;
+            FillListBox = true;
+            // This sets the relative height of a Grid's row heights - works  too
+            LeftPanelgrid . RowDefinitions [ 0 ] . Height = new GridLength ( 0.01 , GridUnitType . Star );
+            LeftPanelgrid . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType . Pixel );
+            LeftPanelgrid . RowDefinitions [ 2 ] . Height = new GridLength ( 20 , GridUnitType . Star );
 
+            Maingrid . ColumnDefinitions [ 0 ] . Width= new GridLength ( 0 , GridUnitType . Pixel );
+            Maingrid . ColumnDefinitions [ 1 ] . Width = new GridLength ( 30 , GridUnitType . Pixel );
+            Maingrid . ColumnDefinitions [ 2 ] . Width = new GridLength ( 1 , GridUnitType . Star );
+            Maingrid . ColumnDefinitions [ 3 ] . Width = new GridLength ( 10 , GridUnitType . Pixel );
         }
 
         #region DP.s
-
+        public string LeftSplitterText
+        {
+            get { return ( string ) GetValue ( LeftSplitterTextProperty ); }
+            set { SetValue ( LeftSplitterTextProperty , value ); }
+        }
+        public static readonly DependencyProperty LeftSplitterTextProperty =
+           DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Down to access secondary viewers " ) );
         public string ShowText
         {
             get { return ( string ) GetValue ( ShowTextProperty ); }
             set { SetValue ( ShowTextProperty , value ); }
         }
-
-        // Using a DependencyProperty as the backing store for ShowText.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ShowTextProperty =
             DependencyProperty . Register ( "ShowText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Show More Records" ) );
         public string ShowdragText
@@ -101,8 +117,6 @@ namespace MyDev . Views
             get { return ( string ) GetValue ( ShowdragTextProperty ); }
             set { SetValue ( ShowdragTextProperty , value ); }
         }
-
-        // Using a DependencyProperty as the backing store for ShowText.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ShowdragTextProperty =
             DependencyProperty . Register ( "ShowdragText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Up/Down here to  " ) );
         public BitmapImage imgup
@@ -110,7 +124,6 @@ namespace MyDev . Views
             get { return ( BitmapImage ) GetValue ( imgupProperty ); }
             set { SetValue ( imgupProperty , value ); }
         }
-        // Using a DependencyProperty as the backing store for image.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty imgupProperty =
             DependencyProperty . Register ( "imgup" , typeof ( BitmapImage ) ,
     typeof ( SplittersTest ) ,
@@ -120,7 +133,6 @@ namespace MyDev . Views
             get { return ( BitmapImage ) GetValue ( imgdnProperty ); }
             set { SetValue ( imgdnProperty , value ); }
         }
-        // Using a DependencyProperty as the backing store for imgdn.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty imgdnProperty =
             DependencyProperty . Register ( "imgdn" ,
                  typeof ( BitmapImage ) ,
@@ -131,18 +143,16 @@ namespace MyDev . Views
             get { return ( BitmapImage ) GetValue ( imgmvProperty ); }
             set { SetValue ( imgmvProperty , value ); }
         }
-        // Using a DependencyProperty as the backing store for imgdn.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty imgmvProperty =
-            DependencyProperty . Register ( "imgmv" ,
-                 typeof ( BitmapImage ) ,
-                   typeof ( SplittersTest ) ,
-                new PropertyMetadata ( null ) );
+             DependencyProperty . Register ( "imgmv" ,
+                  typeof ( BitmapImage ) ,
+                    typeof ( SplittersTest ) ,
+                 new PropertyMetadata ( null ) );
         public BitmapImage vimgleft
         {
             get { return ( BitmapImage ) GetValue ( vimgleftProperty ); }
             set { SetValue ( vimgleftProperty , value ); }
         }
-        // Using a DependencyProperty as the backing store for vimgleft.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty vimgleftProperty =
             DependencyProperty . Register ( "vimgleft" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
         public BitmapImage vimgright
@@ -150,15 +160,13 @@ namespace MyDev . Views
             get { return ( BitmapImage ) GetValue ( vimgrightProperty ); }
             set { SetValue ( vimgrightProperty , value ); }
         }
-        // Using a DependencyProperty as the backing store for vimgright.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty vimgrightProperty =
-            DependencyProperty . Register ( "vimgright" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
+           DependencyProperty . Register ( "vimgright" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
         public BitmapImage vimgmove
         {
             get { return ( BitmapImage ) GetValue ( vimgmoveProperty ); }
             set { SetValue ( vimgmoveProperty , value ); }
         }
-        // Using a DependencyProperty as the backing store for vimgmove.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty vimgmoveProperty =
             DependencyProperty . Register ( "vimgmove" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
         public int DbCount
@@ -166,6 +174,13 @@ namespace MyDev . Views
             get { return ( int ) GetValue ( DbCountProperty ); }
             set { SetValue ( DbCountProperty , value ); }
         }
+        public BitmapImage LhHsplitter
+        {
+            get { return ( BitmapImage ) GetValue ( LhHsplitterProperty ); }
+            set { SetValue ( LhHsplitterProperty , value ); }
+        }
+        public static readonly DependencyProperty LhHsplitterProperty =
+            DependencyProperty . Register ( "LhHsplitter" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
 
         // Using a DependencyProperty as the backing store for DbCount.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DbCountProperty =
@@ -973,7 +988,7 @@ namespace MyDev . Views
                     fdl . ShowInfo ( Flowdoc , canvas , header: "Unrecognised table accessed successfully" , clr4: "Red5" ,
                     line1: $"Request made was completed succesfully!" , clr1: "Red3" ,
                     line2: $"the table [{CurrentType}] that was queried returned a record count of {DbCount}.\nThe structure of this data is not recognised, so a generic structure has been used..." ,
-                    line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4");
+                    line3: $"{SqlCommand . ToUpper ( )}" , clr3: "Blue4" );
                 DataGrid1 . SelectedIndex = 0;
                 DataGrid1 . Focus ( );
                 ShowTableStructure ( );
@@ -1351,17 +1366,18 @@ namespace MyDev . Views
         }
         private void Splitter_DragCompleted ( object sender , System . Windows . Controls . Primitives . DragCompletedEventArgs e )
         {
-            if ( Row1 . ActualHeight <= MinRowHeight1 )
-            {
-                imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
-                ShowdragText = "Drag Up here to ";
-                ShowText = "show Data Access panel";
-            }
-            else if ( Row1 . ActualHeight >= MaxRowHeight )
+            if ( Row1 . ActualHeight >= MinRowHeight1 )
             {
                 imgup = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
-                ShowdragText = "Drag Down here to ";
-                ShowText = "Show more records";
+                ShowdragText = "Drag Down to ";
+                ShowText = "View more Data Grid records";
+            }
+            else if ( Row1 . ActualHeight <= 10 )
+            {
+                imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
+                ShowdragText = "Drag Up to ";
+                ShowText = "View Data Access panel";
+                //                ShowText = "Show more records";
             }
             else
             {
@@ -1414,15 +1430,50 @@ namespace MyDev . Views
             }
         }
         #endregion Vertical splitter resize handlers
+
+        private void LeftSplitter_DragCompleted ( object sender , DragCompletedEventArgs e )
+        {
+            if ( lsplitrow1 . ActualHeight >= Maingrid . ActualHeight - 100 )
+            {
+                LeftSplitterText = "Drag Up to access secondary viewers ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
+            }
+            else if ( lsplitrow1 . ActualHeight <= 11 )
+            {
+                LeftSplitterText = "Drag Down to access secondary viewers ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
+            }
+            else
+            {
+                LeftSplitterText = "Drag Up or Down to Switch between  views ";
+            }
+            //         LeftSplitterText = "Drag Up/Down to access secondary viewers ";
+        }
+
+        private void LeftSplitter_DragStarted ( object sender , DragStartedEventArgs e )
+        {
+            if ( lsplitrow1 . ActualHeight <= MinRowHeight1 )
+            {
+                LeftSplitterText = "Drag Up/Down to change view ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
+            }
+            else if ( lsplitrow1 . ActualHeight <= 10 )
+            {
+                LeftSplitterText = "Drag Down to access secondary viewers ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
+            }
+        }
+
         private void Window_PreviewMouseMove ( object sender , MouseEventArgs e )
         {
         }
 
         private void DataGrid1_PreviewMouseRightButtonDown ( object sender , MouseButtonEventArgs e )
         {
-            ShowTableStructure ( );
+         if(DataGrid1.SelectedIndex != -1)
+                ParseGridRowData ( );
         }
-        private  void ShowTableStructure ( )
+        private void ShowTableStructure ( )
         {
             string output = "";
             string [ ] lines;
@@ -1432,6 +1483,7 @@ namespace MyDev . Views
             if ( DataGrid1 . Items . Count == 0 )
                 return;
             List<string> list = new List<string> ( );
+            // Gets the Db Table structure, with narchar sizes
             list = DbRowToList ( DataGrid1 , out output );
             list . Clear ( );
             lines = output . Split ( ch );
@@ -1440,6 +1492,8 @@ namespace MyDev . Views
                 list . Add ( lines [ x ] );
             }
             listbox . ItemsSource = list;
+
+            //DataGrid1 . SelectedItem
 
         }
         //===============================================================================
@@ -1450,7 +1504,7 @@ namespace MyDev . Views
         /// <param name="dbType"></param>
         /// <param name="objRow"></param>
         /// <returns></returns>
-        private List<string> DbRowToList ( DataGrid dgrid  ,out string output)
+        private List<string> DbRowToList ( DataGrid dgrid , out string output )
         {
             output = "";
             bool flowdocswitch = false;
@@ -1463,139 +1517,275 @@ namespace MyDev . Views
             output = Utils . ParseTableColumnData ( fldnameslist );
             return fldnameslist;
         }
-        //    int count = 0, dbtype = -1;
-        //    string [ ] odat, cdat, revstr ;
-        //    string tablename = "";
-        //    List<string> list = new List<string> ( );
-        //    var genrow = dgrid . SelectedItem;
-        //    foreach ( var item in dgrid . Columns )
-        //    {
-        //        //switch ( count )
-        //        //{
-        //        //    case 0:
-        //        list . Add ( item . Header . ToString ( ) );
-        //        { 
-        //        //case 1:
-        //        //    list . Add ( genrow . field2 );
-        //        //    break;
-        //        //case 2:
-        //        //    list . Add ( genrow . field3 );
-        //        //    break;
-        //        //case 3:
-        //        //    list . Add ( genrow . field4 );
-        //        //    break;
-        //        //case 4:
-        //        //    list . Add ( genrow . field5 );
-        //        //    break;
-        //        //case 5:
-        //        //    list . Add ( genrow . field6 );
-        //        //    break;
-        //        //case 6:
-        //        //    list . Add ( genrow . field7 );
-        //        //    break;
-        //        //case 7:
-        //        //    list . Add ( genrow . field8 );
-        //        //    break;
-        //        //case 8:
-        //        //    list . Add ( genrow . field9 );
-        //        //    break;
-        //        //case 9:
-        //        //    list . Add ( genrow . field10 );
-        //        //    break;
-        //        //case 10:
-        //        //    list . Add ( genrow . field11 );
-        //        //    break;
-        //        //case 11:
-        //        //    list . Add ( genrow . field12 );
-        //        //    break;
-        //        //case 12:
-        //        //    list . Add ( genrow . field13 );
-        //        //    break;
-        //        //case 13:
-        //        //    list . Add ( genrow . field14 );
-        //        //    break;
-        //        //case 14:
-        //        //    list . Add ( genrow . field15 );
-        //        //    break;
-        //        //case 15:
-        //        //    list . Add ( genrow . field16 );
-        //        //    break;
-        //        //case 16:
-        //        //    list . Add ( genrow . field17 );
-        //        //    break;
-        //        //case 17:
-        //        //    list . Add ( genrow . field18 );
-        //        //    break;
-        //        //case 18:
-        //        //    list . Add ( genrow . field19 );
-        //        //    break;
-        //        //case 19:
-        //        //    list . Add ( genrow . field20 );
-        //        //    break;
-        //        }
-        //        count++;
-        //    }
-        //    tablename = dbName . SelectedItem . ToString ( );
 
-        //    object vn = new object ( );
-        //    vn = dgrid . SelectedItem as BankAccountViewModel;
-        //    if ( vn != null )
-        //    {
-        //        vn = dgrid . SelectedItem as CustomerViewModel;
-        //        dbtype = 0;
-        //    }
-        //    else if ( vn == null )
-        //    {
-        //        vn = dgrid . SelectedItem as CustomerViewModel;
-        //        dbtype = 1;
-        //    }
-        //    else if ( vn == null )
-        //    {
-        //        vn = dgrid . SelectedItem as GenericClass;
-        //        dbtype = 2;
-        //    }
-        //    else if ( vn == null )
-        //    {   // vn = dgrid . SelectedItem as CustomerViewModel;
-        //        // else if ( vn == null ) 
-        //        dbtype = 9;
-        //    }
-        //    if ( vn != null && dbtype >= 0 && dbtype  <= 2)
-        //    {
+        private void ParseGridRowData ( )
+        {
+            int dbtype = -1;
+            string record = "";
+            string tablename = dbName . SelectedItem . ToString ( );
 
-        //    }
-        //    return list;
-        //}
-        //if ( dbType == "BANKACCOUNT" )
-        //{
-        //    char [ ] ch = { ' ' };
-        //    char [ ] ch2 = { '/' };
-        //    s = $"{objRow [ "Odate" ] . ToString ( )}', '";
-        //    odat = s . Split ( ch );
-        //    string odate = odat [ 0 ];
-        //    // now reverse it  to YYYY/MM/DD format as this is what SQL understands
-        //    revstr = odate . Split ( ch2 );
-        //    odate = revstr [ 2 ] + "/" + revstr [ 1 ] + "/" + revstr [ 0 ];
-        //    // thats  the Open date handled - now do close data
-        //    s = $"{objRow [ "cDate" ] . ToString ( )}', '";
-        //    cdat = s . Split ( ch );   // split date on '/'
-        //    string cdate = cdat [ 0 ];
-        //    // now reverse it  to YYYY/MM/DD format as this is what SQL understands
-        //    revstr = cdate . Split ( ch2 );
-        //    cdate = revstr [ 2 ] + "/" + revstr [ 1 ] + "/" + revstr [ 0 ];
-        //    string acTypestr = objRow [ "AcType" ] . ToString ( ) . Trim ( );
+  
+            object vn = new object ( );
+            vn = DataGrid1 . SelectedItem as BankAccountViewModel;
+            if ( vn != null )
+            {
+                DbRecordInfo . ItemsSource = null;
+                DbRecordInfo . Items . Clear ( );
+                DbRecordInfo . ItemsSource = GetBankDataRecord ( vn as BankAccountViewModel );
+                //if ( DbRecordInfo . Items . Count > 0 )
+                //{
+                //    fdmsg ( $"The data for the selected record has been recovered and Can be viewed by sliding  the left side horizontal spliter downwards" );
+                //}
+            }
+            else
+            {
+                vn = DataGrid1 . SelectedItem as CustomerViewModel;
+                if ( vn != null )
+                {
+                    DbRecordInfo . ItemsSource = null;
+                    DbRecordInfo . Items . Clear ( );
+                    DbRecordInfo . ItemsSource = GetCustDataRecord ( vn as CustomerViewModel );
+                    //if ( DbRecordInfo . Items . Count > 0 )
+                    //{
+                    //    fdmsg ( $"The data for the selected record has been recovered and Can be viewed by sliding  the left side horizontal spliter downwards" );
+                    //}
+                }
+                else
+                {
+                    vn = DataGrid1 . SelectedItem as GenericClass;
+                    if ( vn != null )
+                    {
+                        GetGenericDataRecord ( vn as GenericClass );
+                    }
+                    else
+                    {
+ //                       List<string> list = new List<string> ( );
+//                        list = CreateTableStructure ( DataGrid1.SelectedItem.ToString());
+                        DbRecordInfo . ItemsSource = null;
+                        DbRecordInfo . Items . Clear ( );
+                        DbRecordInfo . ItemsSource = CreateTableStructure ( DataGrid1 . SelectedItem . ToString ( ) );
+                    }
+                    return;
+                }
+            }
+        }
+        private List<string>  CreateTableStructure ( string rowdata)
+        {
+            List<string> list = new List<string> ( );
+            string [ ] lines;
+            string [ ] entry;
+            string itm = "";
+            char ch = ',';
+            lines = rowdata . Split ( ch );
+            for( int  x = 0 ; x < lines.Length ; x++ )
+            {
+                entry = lines [ x ] . Split ( '=' );
+                if ( entry . Length == 1 )
+                    return null;
+                if(entry[1].Contains("}"))
+                    list . Add ( entry [ 1 ] .Substring(0, entry[1].Length-1));
+                else
+                    list . Add ( entry [ 1 ] );
+            }
+            return list;
+        }
+           private List<string> GetGenericDataRecord ( GenericClass bvm )
+        {
+            List<string> list = new List<string> ( );
+            string s = "";
+            list . Add ( bvm . field1 . ToString ( ) );
+            list . Add ( bvm . field2 . ToString ( ) );
+            list . Add ( bvm . field3 . ToString ( ) );
+            list . Add ( bvm . field4 . ToString ( ) );
+            list . Add ( bvm . field5 . ToString ( ) );
+            list . Add ( bvm . field6 . ToString ( ) );
+            list . Add ( bvm . field7 . ToString ( ) );
+            list . Add ( bvm . field8 . ToString ( ) );
+            list . Add ( bvm . field9 . ToString ( ) );
+            list . Add ( bvm . field10 . ToString ( ) );
+            list . Add ( bvm . field11 . ToString ( ) );
+            list . Add ( bvm . field12 . ToString ( ) );
+            list . Add ( bvm . field13 . ToString ( ) );
+            list . Add ( bvm . field14 . ToString ( ) );
+            list . Add ( bvm . field15 . ToString ( ) );
+            list . Add ( bvm . field16 . ToString ( ) );
+            list . Add ( bvm . field17 . ToString ( ) );
+            list . Add ( bvm . field18 . ToString ( ) );
+            list . Add ( bvm . field19 . ToString ( ) );
+            list . Add ( bvm . field20 . ToString ( ) );
+            return list;
+        }
 
-        //    //Creates the correct format for the CSV fle output, including adding single quotes to DATE fields
-        //    // Tested and working 7/6/21
-        //    tmp = $"{objRow [ "Id" ] . ToString ( )}, "
-        //        + $"{objRow [ "BankNo" ] . ToString ( )}, "
-        //        + $"{objRow [ "CustNo" ] . ToString ( )}, "
-        //        + $"{acTypestr}, "
-        //        + $"{objRow [ "Balance" ] . ToString ( )}, "
-        //        + $"{objRow [ "Intrate" ] . ToString ( )}, "
-        //        + $"'{odate}', '"
-        //        + $"{cdate}'\r\n";
-        //}
-        //return tmp;
-        //}
+        private List<string> GetCustDataRecord ( CustomerViewModel bvm )
+        {
+            List<string> list = new List<string> ( );
+            string s = "";
+            list . Add ( bvm . Id . ToString ( ) );
+            list . Add ( bvm . CustNo );
+            list . Add ( bvm . BankNo );
+            list . Add ( bvm . AcType . ToString ( ) );
+            list . Add ( bvm . FName );
+            list . Add ( bvm . LName );
+            list . Add ( bvm . Addr1 );
+            list . Add ( bvm . Addr2 );
+            list . Add ( bvm . Town );
+            list . Add ( bvm . County );
+            list . Add ( bvm . PCode );
+            list . Add ( bvm . Phone );
+            list . Add ( bvm . Mobile );
+            list . Add ( bvm . Dob . ToString ( ) ); ;
+            list . Add ( bvm . ODate . ToString ( ) );
+            list . Add ( bvm . CDate . ToString ( ) );
+            return list;
+        }
+        private List<string> GetBankDataRecord ( BankAccountViewModel bvm )
+        {
+            List<string> list = new List<string> ( );
+            string s = "";
+            list . Add ( bvm . Id . ToString ( ) );
+            list . Add ( bvm . CustNo );
+            list . Add ( bvm . BankNo );
+            list . Add ( bvm . AcType . ToString ( ) );
+            list . Add ( bvm . IntRate . ToString ( ) );
+            list . Add ( bvm . Balance . ToString ( ) );
+            list . Add ( bvm . ODate . ToString ( ) );
+            list . Add ( bvm . CDate . ToString ( ) );
+            return list;
+
+            {
+                //    char [ ] ch = { ' ' };
+                //    char [ ] ch2 = { '/' };
+                //    s = $"{objRow [ "Odate" ] . ToString ( )}', '";
+                //    odat = s . Split ( ch );
+                //    string odate = odat [ 0 ];
+                //    // now reverse it  to YYYY/MM/DD format as this is what SQL understands
+                //    revstr = odate . Split ( ch2 );
+                //    odate = revstr [ 2 ] + "/" + revstr [ 1 ] + "/" + revstr [ 0 ];
+                //    // thats  the Open date handled - now do close data
+                //    s = $"{objRow [ "cDate" ] . ToString ( )}', '";
+                //    cdat = s . Split ( ch );   // split date on '/'
+                //    string cdate = cdat [ 0 ];
+                //    // now reverse it  to YYYY/MM/DD format as this is what SQL understands
+                //    revstr = cdate . Split ( ch2 );
+                //    cdate = revstr [ 2 ] + "/" + revstr [ 1 ] + "/" + revstr [ 0 ];
+                //    string acTypestr = objRow [ "AcType" ] . ToString ( ) . Trim ( );
+
+                //    //Creates the correct format for the CSV fle output, including adding single quotes to DATE fields
+                //    // Tested and working 7/6/21
+                //    tmp = $"{objRow [ "Id" ] . ToString ( )}, "
+                //        + $"{objRow [ "BankNo" ] . ToString ( )}, "
+                //        + $"{objRow [ "CustNo" ] . ToString ( )}, "
+                //        + $"{acTypestr}, "
+                //        + $"{objRow [ "Balance" ] . ToString ( )}, "
+                //        + $"{objRow [ "Intrate" ] . ToString ( )}, "
+                //        + $"'{odate}', '"
+                //        + $"{cdate}'\r\n";
+            }
+            //return tmp;
+        }
+
+        private void DataGrid1_SelectionChanged ( object sender , SelectionChangedEventArgs e )
+        {
+            if ( DataGrid1 . SelectedIndex != -1 && FillListBox == true)
+                ParseGridRowData ( );
+        }
+
+        private void ShowRecordData_Click ( object sender , RoutedEventArgs e )
+        {
+            List<string> list = new List<string> ( );
+            if ( ShowRecordData . IsChecked == true )
+            {
+                FillListBox = true;
+                DbRecordInfo . ItemsSource = null;
+                DbRecordInfo . Items . Clear ( );
+                list . Add ( "Option is now Enabled ");
+                list . Add ( "Changes of selection in DataGrid" );
+                list . Add ( "will be show here..." );
+                DbRecordInfo . ItemsSource = list;
+            }
+            else
+            {
+                FillListBox = false;
+                DbRecordInfo . ItemsSource = null;
+                DbRecordInfo . Items . Clear ( );
+                list . Add ( "Option is currently disabled..." );
+                DbRecordInfo . ItemsSource = list;
+            }
+        }
     }
 }
+
+
+//     {
+//    int count = 0, dbtype = -1;
+//    string [ ] odat, cdat, revstr ;
+//    string tablename = "";
+//    List<string> list = new List<string> ( );
+//    var genrow = dgrid . SelectedItem;
+//    foreach ( var item in dgrid . Columns )
+//    {
+//        //switch ( count )
+//        //{
+//        //    case 0:
+//        list . Add ( item . Header . ToString ( ) );
+//        { 
+//        //case 1:
+//        //    list . Add ( genrow . field2 );
+//        //    break;
+//        //case 2:
+//        //    list . Add ( genrow . field3 );
+//        //    break;
+//        //case 3:
+//        //    list . Add ( genrow . field4 );
+//        //    break;
+//        //case 4:
+//        //    list . Add ( genrow . field5 );
+//        //    break;
+//        //case 5:
+//        //    list . Add ( genrow . field6 );
+//        //    break;
+//        //case 6:
+//        //    list . Add ( genrow . field7 );
+//        //    break;
+//        //case 7:
+//        //    list . Add ( genrow . field8 );
+//        //    break;
+//        //case 8:
+//        //    list . Add ( genrow . field9 );
+//        //    break;
+//        //case 9:
+//        //    list . Add ( genrow . field10 );
+//        //    break;
+//        //case 10:
+//        //    list . Add ( genrow . field11 );
+//        //    break;
+//        //case 11:
+//        //    list . Add ( genrow . field12 );
+//        //    break;
+//        //case 12:
+//        //    list . Add ( genrow . field13 );
+//        //    break;
+//        //case 13:
+//        //    list . Add ( genrow . field14 );
+//        //    break;
+//        //case 14:
+//        //    list . Add ( genrow . field15 );
+//        //    break;
+//        //case 15:
+//        //    list . Add ( genrow . field16 );
+//        //    break;
+//        //case 16:
+//        //    list . Add ( genrow . field17 );
+//        //    break;
+//        //case 17:
+//        //    list . Add ( genrow . field18 );
+//        //    break;
+//        //case 18:
+//        //    list . Add ( genrow . field19 );
+//        //    break;
+//        //case 19:
+//        //    list . Add ( genrow . field20 );
+//        //    break;
+//        }
+//        count++;
+//            }

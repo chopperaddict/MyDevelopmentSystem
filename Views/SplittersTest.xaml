@@ -258,7 +258,7 @@
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <!--<Setter Property="Background" Value="{StaticResource Red1}" />-->
-                        <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Yellow4}" />
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Yellow2}" />
                         <Setter Property="Foreground" Value="{StaticResource Black4}" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
@@ -358,79 +358,77 @@
 
     </Window.Resources>
     <Grid x:Name="Maingrid" 
-		MinHeight="600"
-		MinWidth="800"
-          Height="Auto"
-          Width="{Binding ActualWidth, ElementName=splttest}" Margin="0,0,0,0">
+            MinHeight="600"
+            MinWidth="800"
+            Height="Auto"
+            Width="{Binding ActualWidth, ElementName=splttest}" Margin="0,0,0,0">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="10" />
+            <RowDefinition Height="1" />
             <RowDefinition Height="*" MinHeight="30" />
             <RowDefinition Height="30" />
-            <RowDefinition x:Name="Row1" Height="*"  MinHeight="0" MaxHeight="260"/>
+            <RowDefinition x:Name="Row1" Height="*"  MinHeight="0" MaxHeight="270"/>
             <RowDefinition x:Name="BtnBarRow" Height="75" MinHeight="75" MaxHeight="75" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition  x:Name="Col0" Width="0" MaxWidth="340" MinWidth="0" />
+            <ColumnDefinition  x:Name="Col0" Width="350" MaxWidth="350" MinWidth="0" />
             <ColumnDefinition x:Name="Col1"  Width="30" />
             <ColumnDefinition  x:Name="Col2" Width="*" />
-            <ColumnDefinition  x:Name="Col3" Width="20" />
+            <ColumnDefinition  x:Name="Col3" Width="10" />
         </Grid.ColumnDefinitions>
 
         <!--#region Canvas / FlowDoc-->
         <Canvas x:Name="canvas" 
-			  Grid.Row="0"
-			  Grid.Column="0"
-			  Grid.RowSpan="5"
-			  Grid.ColumnSpan="4"
-			  Height="{Binding ActualHeight, ElementName=Maingrid}"
-			  Panel.ZIndex="3"
-			  Visibility="Hidden"
-			  Width="Auto">
+			      Grid.Row="0"
+			      Grid.Column="0"
+			      Grid.RowSpan="5"
+			      Grid.ColumnSpan="4"
+			      Height="{Binding ActualHeight, ElementName=Maingrid}"
+			      Panel.ZIndex="3"
+			      Visibility="Hidden"
+			      Width="Auto">
 
             <!--btnBkGround="{StaticResource Red5}"
-				btnForeGround="{StaticResource White0}"-->
+				    btnForeGround="{StaticResource White0}"-->
             <user:FlowDoc x:Name="Flowdoc"
-				backGround="{StaticResource Gray5}"
-				borderColor="{StaticResource Orange1}"
-				Canvas.Left="45"
-				Canvas.Top="64"
-				Height="300"
-				Margin="0 0 0 0"									  
-				LostFocus="Flowdoc_LostFocus"
-				MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"	
-				MouseMove="Flowdoc_MouseMove"
-				PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"				
-				Opacity="1"
-				Panel.ZIndex="8"
-				Visibility="Visible"
-				Width="520" />
+				    backGround="{StaticResource Gray5}"
+				    borderColor="{StaticResource Orange1}"
+				    Canvas.Left="45"
+				    Canvas.Top="64"
+				    Height="300"
+				    Margin="0 0 0 0"									  
+				    LostFocus="Flowdoc_LostFocus"
+				    MouseLeftButtonUp="Flowdoc_MouseLeftButtonUp"	
+				    MouseMove="Flowdoc_MouseMove"
+				    PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"				
+				    Opacity="1"
+				    Panel.ZIndex="8"
+				    Visibility="Visible"
+				    Width="520" />
         </Canvas>
         <!--#endregion Canvas / FlowDoc-->
 
-        <GridSplitter x:Name="vsplitter"
-								  Grid.Column="1" Grid.Row="1" Grid.RowSpan="4"
-								  Margin="0,0,0,0"
-													BorderBrush="{StaticResource Black0}"
-													BorderThickness="3"
-													Width="25"
-													DragStarted="VSplitter_DragStarted"  
-													DragCompleted="VSplitter_DragCompleted"
-													HorizontalAlignment="Left" 
-													Panel.ZIndex="2">
+        <GridSplitter x:Name="vsplitter"                         
+							      Grid.Column="1" Grid.Row="1" Grid.RowSpan="4"
+							      Margin="0,0,0,0"
+								    Width="25"
+								    DragStarted="VSplitter_DragStarted"  
+								    DragCompleted="VSplitter_DragCompleted"
+								    HorizontalAlignment="Left" 
+								    Panel.ZIndex="2">
             <GridSplitter.Template>
                 <ControlTemplate>
-                    <Grid Background="{StaticResource Cyan3}"
-															  Grid.Row="0" Width="25">
+                    <!--Background="{StaticResource Black3}"-->
+                    <Grid  Grid.Row="0" Width="25"  Background="Yellow">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="25" />
                             <!--<ColumnDefinition Width="15" />-->
                         </Grid.ColumnDefinitions>
                         <Image x:Name="vimgmv" Source="{Binding vimgmove}"  
-									Height="25" Width="25" HorizontalAlignment="Left"
-									Grid.ColumnSpan="2"
-									VerticalAlignment="Center" Margin="0 0 0 35" Panel.ZIndex="3">
+									                    Height="10" Width="10" 
+									                    Grid.ColumnSpan="2"
+									                    VerticalAlignment="Center" Margin="0 0 12 35" Panel.ZIndex="3">
                         </Image>
                     </Grid>
                 </ControlTemplate>
@@ -438,52 +436,50 @@
         </GridSplitter>
 
         <GridSplitter x:Name="horzplitter"
-					   ResizeDirection="Rows"         
-						  BorderBrush="{StaticResource Black0}"
-						BorderThickness="3"
-						Grid.Row="2"
-						Grid.Column="2"
-						Grid.ColumnSpan="1"
-						DragStarted="Splitter_DragStarted"  
-						DragCompleted="Splitter_DragCompleted"
- 						Panel.ZIndex="2"
-						VerticalAlignment="Stretch"
-					  HorizontalAlignment="Stretch">
+                        ResizeDirection="Rows"         
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        DragStarted="Splitter_DragStarted"  
+                        DragCompleted="Splitter_DragCompleted"
+                        Panel.ZIndex="2"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch">
             <GridSplitter.Template>
                 <ControlTemplate>
                     <Grid 
-						Background="{StaticResource Cyan3}">
+						            Background="{StaticResource Yellow0}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="left"
-								Grid.Row="0"  >
-                            <Image x:Name="Imgleft"  Source="\icons\left arroiw red.png"  Margin="0 0 0 0"
-										   Height="20" Width="20" HorizontalAlignment="Right"/>
+								            Grid.Row="0"  >
+                            <Image x:Name="Imgleft"  Source="\icons\left arroiw red.png"  Margin="20 0 0 0"
+										               Height="15" Width="15" HorizontalAlignment="Right"/>
                             <!--<TextBlock Text="         " 
-                                   Height="20" 
-                                   Padding="0 0 0 0" 
-                                   Foreground="White"
-									HorizontalAlignment="Right" Margin="0,0,15,0"/>-->
-                            <TextBlock Text=" [ Drag right to access Stored Procedures ]    " 
-                                   Height="20" 
-                                   Padding="0 0 0 0" 
-                                   Foreground="White"
-                                       FontSize="14"
-									HorizontalAlignment="Right" Margin="0,0,0,0"/>
+                                               Height="20" 
+                                               Padding="0 0 0 0" 
+                                               Foreground="White"
+									            HorizontalAlignment="Right" Margin="0,0,15,0"/>-->
+                            <TextBlock Text=" [ Drag to access more panels]    " 
+                                               Height="20" 
+                                               Padding="0 0 0 0" 
+                                               Foreground="Black"
+                                                   FontSize="14"
+									            HorizontalAlignment="Right" Margin="0,3,0,0"/>
                             <TextBlock Text="{Binding ShowdragText, FallbackValue=Drag down here}" 
-                                   Height="20" 
-                                   Padding="0 0 0 0" 
-                                   Foreground="White"
-									HorizontalAlignment="Right" Margin="30,0,0,0"/>
+                                               Height="20" 
+                                               Padding="0 0 0 0" 
+                                               Foreground="Black"
+									            HorizontalAlignment="Right" Margin="30,4,0,0"/>
                             <Image x:Name="ImgUp"  Source="{Binding imgup}"  Margin="0 0 0 0"
-										   Height="20" Width="20" HorizontalAlignment="Right"/>
+										               Height="15" Width="15" HorizontalAlignment="Right"/>
                             <TextBlock x:Name="showmore" Text="{Binding ShowText}" 
-                                   Height="20" 
-                                   Width="200" 
-                                   Margin="10 0 0 0"
-                                   Padding="0 0 0 0"  
-                                   Foreground="White"/>
+                                               Height="20" 
+                                               Width="200" 
+                                               Margin="10 3 0 5"
+                                               Padding="0 0 0 0"  
+                                               Foreground="Black"/>
                         </StackPanel>
                     </Grid>
                 </ControlTemplate>
@@ -492,204 +488,373 @@
 
         <!--#region leftsliderdata - about right so far-->
         <Grid x:Name="LeftPanelgrid" Grid.Row="1" Grid.Column="0" Grid.RowSpan="4"
-                  Background="LightSeaGreen" Margin="0,0,0,0">
+                      Background="LightSeaGreen" Margin="0,0,0,0"
+                  Visibility="Visible">
 
-            <!--#region checkboxes-->
-            <CheckBox x:Name="Showinfo"
-									   Panel.ZIndex="2"
-											  Click="ShowInfo_Click"
-											  Content="Display Flow Document for results"
-											  FontSize="16"
-											  Foreground="White"
-											  HorizontalAlignment="Left"
-											  Margin="20,17,0,0"
-											  VerticalAlignment="Top"
-											  Width="264" Height="20"  />
-            <CheckBox x:Name="PinFlow"
-										Background="Yellow"
-											Click="checkBox_Click"
-											Content="Pin Window top left"
-											FontSize="14"
-											Foreground="White"
-											Height="18"
-											HorizontalAlignment="Left"
-											IsChecked="False"
-											Margin="51,80,0,0"
-											Panel.ZIndex="2"
-											VerticalAlignment="Top"
-											Width="216" />
-            <CheckBox x:Name="UseScrollview"
-						Panel.ZIndex="1"
-						Click="scrollview_Click"
-						Content="Use ScrollViewer in FlowDoc"
-						FontSize="14"
-						Foreground="White"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Top"
-						Margin="51,49,0,0"
-						Width="208" Height="20" />
-            <CheckBox x:Name="UseTimer"
-									   Panel.ZIndex="1"        
-									  Click="Timer_Click"
-											  Content="Show Load  times"
-											FontSize="14"
-											  Foreground="White"
-											  HorizontalAlignment="Left"
-											  Margin="30,152,0,0"
-											  VerticalAlignment="Top"
-											  Width="176" Height="18" />
-            <CheckBox x:Name="LoadViaSqlCmd"
-											AllowDrop="True"
-									   Panel.ZIndex="1"
-											Click="Autoload_Click"
-											Content="Load using Command line"
-											FontSize="14"
-											Grid.Row="0"
-											  Foreground="White"
-											HorizontalAlignment="Left"
-											Margin="30,185,0,0"
-											VerticalAlignment="Top"
-											Width="208" Height="18"
-                                            Visibility="Hidden"/>
-            <CheckBox x:Name="BgWorker"
-											AllowDrop="True"
-									   Panel.ZIndex="1"
-											Click="BgWorker_Click"
-											Content="Use Background Worker Threads"
-											FontSize="14"
-											FontWeight="DemiBold"
-											Foreground="{StaticResource White0}"
-											HorizontalAlignment="Center"
-											VerticalAlignment="Top"
-											Width="248" Margin="0,190,0,0" Height="28"  />
-            <CheckBox x:Name="UseTrueColNames"
-												Click="UseColumnNames_Click"
-									   Panel.ZIndex="1"
-												Content="Use True Field names for Generic Tables"
-												FontSize="14"
-												  Foreground="{StaticResource White0}"
-												HorizontalAlignment="Left"
-												VerticalAlignment="Top"
-											  Margin="30,225,0,0"
-												IsChecked="true"
-												Width="276" Height="18"  />
-            <!--#endregion checkboxes-->
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="0*"  MinHeight="1" x:Name="lsplitrow1"/>
+                <RowDefinition  Height="20" MinHeight="20" />
+                <RowDefinition  Height="1*" MinHeight="60" x:Name="lsplitrow3"/>
+                <!--<RowDefinition  Height="0.01*"  MinHeight="1" x:Name="lsplitrow1"/>
+                        <RowDefinition  Height="20" MinHeight="20" />
+                        <RowDefinition  Height="20*" MinHeight="60" x:Name="lsplitrow3"/>-->
+            </Grid.RowDefinitions>
+            <!--inside LeftPanelgrid-->
+            <GridSplitter x:Name="lefthorzplitter"
+					        ResizeDirection="Rows"         
+						    BorderBrush="{StaticResource Black0}"
+						    BorderThickness="3"
+						    Grid.Row="1"
+                            Grid.RowSpan="1"
+						    Grid.Column="0"
+						    Grid.ColumnSpan="1"
+						    DragStarted="LeftSplitter_DragStarted"  
+						    DragCompleted="LeftSplitter_DragCompleted"
+ 						    Panel.ZIndex="9"
+						    VerticalAlignment="Stretch"
+					      HorizontalAlignment="Stretch">
+                <GridSplitter.Template>
+                    <ControlTemplate>
+                        <Grid  Height="20"
+						            Background="{StaticResource Yellow0}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="left"
+		        						    Grid.Row="0"  >
+                                <TextBlock x:Name="LsVertical"  Text="{Binding LeftSplitterText, FallbackValue=Drag this Up/down}" 
+                                           Height="20" 
+                                           Padding="0 0 0 0" 
+                                           Foreground="Black"
+                                           FontSize="14"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Right" 
+                                           Margin="0,0,0,6"/>
+                                <Image x:Name="lhImgUp"  Source="{Binding LhHsplitter}"  Margin="10 0 0 0"
+					    			Height="15" Width="15" />
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </GridSplitter.Template>
+            </GridSplitter>
 
+            <!--#endregion top left Options panel-->
+
+            <!--// HIDDEN CONTROL ON LEFT-->
+            <TextBlock 
+                    Grid.Row="0"
+                    VerticalAlignment="Top"
+                Height="20"
+                Margin="0 0 0 0"
+                Background="CadetBlue"
+                Foreground="White"
+                HorizontalAlignment="Center"
+                Text="Contents of  Currently Selected Record"
+/>
+            <ListBox   x:Name="DbRecordInfo" 
+                    Grid.Row="0"
+                    BorderBrush="White" 
+                    BorderThickness="2"  
+                    Background="{StaticResource Red7}"
+                    Foreground="White"
+                    FontWeight="DemiBold"
+                    HorizontalAlignment="Left"       
+                    VerticalAlignment="Top"
+                    Margin="10 20 0 0"
+                    MinHeight="240"
+                    MaxHeight="240"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                   ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    Width="320"
+                    Visibility="Visible">
+                <ListBoxItem>gfhgghd</ListBoxItem>
+                <ListBoxItem>rtyryu</ListBoxItem>
+                <ListBoxItem>n,bmyu658</ListBoxItem>
+            </ListBox>
+
+            <Button Margin="10,270,0,0" 
+                    Content="Reload"
+                    FontSize="20"
+                    Foreground="White"
+                    Width="150" Height="40"
+                    Grid.Row="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Template="{StaticResource GradientButtonTemplateBlue}"/>
+            <Button Margin="180,270,0,0" 
+                    Content="Clear"
+                    FontSize="20"
+                    Foreground="White"
+                    Width="150" Height="40"
+                    Grid.Row="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Template="{StaticResource GradientButtonTemplateBlue}"/>
+
+
+            <!--// HIDDEN CONTROL ON LEFT-->
+            <Border  x:Name="StsPanel" 
+                    Grid.Row="0"
+                    BorderBrush="White" 
+                    BorderThickness="2"  
+                    Background="{StaticResource Green2}"
+                    HorizontalAlignment="Left"       
+                    VerticalAlignment="Top" 
+                    Margin="10 320 0 0"
+                    MinHeight="240"
+                    MaxHeight="350"
+                    Width="320"
+                    Visibility="Visible"/>
+
+            <Button Margin="10,570,0,0" 
+                    Content="Clear"
+                    FontSize="20"
+                    Foreground="White"
+                    Width="150" Height="40"
+                    Grid.Row="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Template="{StaticResource GradientButtonTemplateBlue}"/>
+
+            <Button Margin="180,570,0,0" 
+                    Content="Clear"
+                    FontSize="20"
+                    Foreground="White"
+                    Width="150" Height="40"
+                    Grid.Row="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Template="{StaticResource GradientButtonTemplateBlue}"/>
+
+
+            <!--// TOP OPTIONS PANEL-->
             <GroupBox x:Name="groupBox" Header="Data Access Options" 
-                      Foreground="{StaticResource White0}" 
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Top"
-                      Margin="8,117,0,0"                      
-                      Background="{StaticResource Orange1}" 
-                      RenderTransformOrigin="0.0,0.0" 
-                      Height="151" 
-                      Width="321">
-            </GroupBox>
+                                      Foreground="{StaticResource White0}" 
+                                      Grid.Row="2"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Top"
+                                      Margin="8,15,0,0"                      
+                                      Background="{StaticResource Orange1}" 
+                                       Height="280"  MinHeight="150" MaxHeight="2807"
+                                      Width="321" Grid.RowSpan="2"
+                            Visibility="Visible">
 
-            <!--#region lower left Sp handling-->
-            <Border   Margin="8,0,0,10" 
-                      BorderBrush="White" 
-                      BorderThickness="2"  
-                      Background="{StaticResource Orange1}"
-                     HorizontalAlignment="Left"       
-                     VerticalAlignment="Bottom" 
-                      Height="272" 
-                      Width="320">
-                <Grid Margin="0,0,0,-146">
 
+                <Grid x:Name="DataAccessPanel" Grid.Row="1" VerticalAlignment="Top">
+                    <!--#region checkboxes-->
+
+                    <CheckBox x:Name="Showinfo"
+					                       Panel.ZIndex="2"
+						                    Click="ShowInfo_Click"
+						                    Content="Display Flow Document for results"
+						                    FontSize="16"
+						                    Foreground="White"
+						                    HorizontalAlignment="Left"
+						                    Margin="20,17,0,0"
+						                    VerticalAlignment="Top"
+						                    Width="264" Height="20"  />
+                    <CheckBox x:Name="PinFlow"
+    					                    Background="Yellow"
+                                          Grid.Row="1"
+						                    Click="checkBox_Click"
+						                    Content="Pin Window top left"
+						                    FontSize="14"
+						                    Foreground="White"
+						                    Height="18"
+						                    HorizontalAlignment="Left"
+						                    IsChecked="False"
+						                    Margin="51,80,0,0"
+						                    Panel.ZIndex="2"
+						                    VerticalAlignment="Top"
+						                    Width="216" />
+                    <CheckBox x:Name="UseScrollview"
+						                    Panel.ZIndex="1"
+                                          Grid.Row="1"
+						                    Click="scrollview_Click"
+						                    Content="Use ScrollViewer in FlowDoc"
+						                    FontSize="14"
+						                    Foreground="White"
+						                    HorizontalAlignment="Left"
+						                    VerticalAlignment="Top"
+						                    Margin="51,49,0,0"
+						                    Width="208" Height="20" />
+                    <CheckBox x:Name="UseTimer"
+                                            Panel.ZIndex="1"
+                                            Click="Timer_Click"
+                                            Content="Show Load  times"
+                                            FontSize="14"
+                                            Foreground="White"
+                                            HorizontalAlignment="Left"
+                                            Margin="20,111,0,0"
+                                            VerticalAlignment="Top"
+                                            Width="176" Height="18" />
+                    <CheckBox x:Name="LoadViaSqlCmd"
+                                            AllowDrop="True"
+                                            Grid.Row="1"
+                                            Panel.ZIndex="1"
+                                            Click="Autoload_Click"
+                                            Content="Load using Command line"
+                                            FontSize="14"
+                                            Foreground="White"
+                                            HorizontalAlignment="Left"
+                                            Margin="30,185,0,0"
+                                            VerticalAlignment="Top"
+                                            Width="208" Height="18"
+                                            Visibility="Hidden"/>
+                    <CheckBox x:Name="BgWorker"
+                                            AllowDrop="True"
+                                            Panel.ZIndex="1"
+                                            Click="BgWorker_Click"
+                                            Content="Use Background Worker Threads"
+                                            FontSize="14"
+                                            FontWeight="DemiBold"
+                                            Foreground="{StaticResource White0}"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            Width="248" Margin="20,146,0,0" Height="28"  />
+                    <CheckBox x:Name="UseTrueColNames"
+                                    Click="UseColumnNames_Click"
+                                    Panel.ZIndex="1"
+                                    Content="Use True Field names for Generic Tables"
+                                    FontSize="14"
+                                    Foreground="{StaticResource White0}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="20,185,0,0"
+                                    IsChecked="true"
+                                    Width="276" Height="18"  />
+
+                    <CheckBox x:Name="ShowRecordData"
+                                    Click="ShowRecordData_Click"
+                                    Panel.ZIndex="1"
+                                    Content="Show Record data in ListBox"
+                                    FontSize="14"
+                                    Foreground="{StaticResource White0}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="20,225,0,0"
+                                    IsChecked="true"
+                                    Width="276" Height="18"  />
+                    <!--#endregion checkboxes-->
+
+                </Grid
+                            >
+            </GroupBox >
+            
+                <!--#region lower left Sp handling Panel-->
+            <!--// This slides u/down with Horizonal splitter-->
+            <Border  x:Name="StoredProcsPanel" 
+                                          Grid.Row="2"
+                                          BorderBrush="White" 
+                                          BorderThickness="2"  
+                                          Background="{StaticResource Orange2}"
+                                         HorizontalAlignment="Left"       
+                                         VerticalAlignment="Top" 
+                                          Margin="10 320 0 0"
+                                          Height="270"  
+                                             MinHeight="270"
+                                     Visibility="Visible"
+                                          Width="320">
+
+                <Grid x:Name="SpContainer" Margin="0,0,0,0"
+                                      Grid.Row="1">
+                    <!--region sp controls-->
                     <Button x:Name="Exec_sp"
-												  AllowDrop="True"
-												  Click="ExecuteSP"
-												  Content="Execute SP Script"
-												  Foreground="{StaticResource ResourceKey=White0}"
-												  Height="58"
-												  HorizontalAlignment="Left"
-												  Margin="4,194,0,0"
-												  TabIndex="6"
-												  Template="{StaticResource GradientButtonTemplateBlue}"
-												  VerticalAlignment="Top"
-												  Width="302" RenderTransformOrigin="1.62,-0.223" />
+												              AllowDrop="True"
+												              Click="ExecuteSP"
+												              Content="Execute SP Script"
+												              Foreground="{StaticResource ResourceKey=White0}"
+												              Height="58"
+												              HorizontalAlignment="Left"
+												              Margin="4,194,0,0"
+												              TabIndex="6"
+												              Template="{StaticResource GradientButtonTemplateBlue}"
+												              VerticalAlignment="Top"
+												              Width="302" RenderTransformOrigin="1.62,-0.223" />
                     <Button x:Name="LoadCurrent_Copy"
-											  AllowDrop="True"
-											  Click="ShowSPScript"
-											  Content="Show full SP Script"
-											  Foreground="{StaticResource ResourceKey=White0}"
-											  Grid.Column="0"
-											  Height="41"
-											  HorizontalAlignment="Left"
-											  Margin="161,142,0,0"
-											  TabIndex="6"
-											  Template="{StaticResource GradientButtonTemplateBlue}"
-											  VerticalAlignment="Top"
-											  Width="144" />
+											              AllowDrop="True"
+											              Click="ShowSPScript"
+											              Content="Show full SP Script"
+											              Foreground="{StaticResource ResourceKey=White0}"
+											              Grid.Column="0"
+											              Height="41"
+											              HorizontalAlignment="Left"
+											              Margin="161,142,0,0"
+											              TabIndex="6"
+											              Template="{StaticResource GradientButtonTemplateBlue}"
+											              VerticalAlignment="Top"
+											              Width="144" />
                     <TextBlock
-											  FontSize="14"
-											  Background="Transparent"
-											  FocusVisualStyle="{x:Null}"
-											  FontWeight="DemiBold"
-											  Foreground="{StaticResource White0}"
-											  Grid.Column="0"
-											  Height="27"
-											  HorizontalAlignment="Left"
-											  Text="All Stored Procedures :"
-											  VerticalAlignment="Top"
-											  Width="148" Margin="19,17,0,0" RenderTransformOrigin="0.625,2.701" />
+											              FontSize="14"
+											              Background="Transparent"
+											              FocusVisualStyle="{x:Null}"
+											              FontWeight="DemiBold"
+											              Foreground="{StaticResource White0}"
+											              Grid.Column="0"
+											              Height="27"
+											              HorizontalAlignment="Left"
+											              Text="All Stored Procedures :"
+											              VerticalAlignment="Top"
+											              Width="148" Margin="19,17,0,0" RenderTransformOrigin="0.625,2.701" />
                     <ComboBox  x:Name="Storedprocs"
-											AllowDrop="True"
-											FontSize="13"
-											FontWeight="Regular"
-											Foreground="{StaticResource Blue3}"
-											Height="30"
-											Margin="0,49,0,0"
-											MaxDropDownHeight="257"
-											HorizontalAlignment="Center"
-											HorizontalContentAlignment="Left"
-											MouseRightButtonUp="Storedprocs_MouseRightButtonUp"
-											Padding="5 3 0 0"
-											TabIndex="5"
-											ToolTip="Right Click to Execute the currently selected Stored Procedure...."
-											VerticalAlignment="Top"
-											Width="304" />
+											            AllowDrop="True"
+											            FontSize="13"
+											            FontWeight="Regular"
+											            Foreground="{StaticResource Blue3}"
+											            Height="30"
+											            Margin="0,49,0,0"
+											            MaxDropDownHeight="257"
+											            HorizontalAlignment="Center"
+											            HorizontalContentAlignment="Left"
+											            MouseRightButtonUp="Storedprocs_MouseRightButtonUp"
+											            Padding="5 3 0 0"
+											            TabIndex="5"
+											            ToolTip="Right Click to Execute the currently selected Stored Procedure...."
+											            VerticalAlignment="Top"
+											            Width="304" />
 
                     <Button x:Name="LoadCurrent"
-   											AllowDrop="True"
-											Click="ShowSPArgs"
-											Content="Show SP Arguments"
-											Foreground="{StaticResource ResourceKey=White0}"
-											Grid.Column="0"
-											Height="41"
-											HorizontalAlignment="Left"
-											Margin="7,141,0,0"
-											TabIndex="6"
-											Template="{StaticResource GradientButtonTemplateBlue}"
-											VerticalAlignment="Top"
-											Width="142" />
+   											            AllowDrop="True"
+											            Click="ShowSPArgs"
+											            Content="Show SP Arguments"
+											            Foreground="{StaticResource ResourceKey=White0}"
+											            Grid.Column="0"
+											            Height="41"
+											            HorizontalAlignment="Left"
+											            Margin="7,141,0,0"
+											            TabIndex="6"
+											            Template="{StaticResource GradientButtonTemplateBlue}"
+											            VerticalAlignment="Top"
+											            Width="142" />
                     <TextBox  x:Name="SpArgs"
 
-									  Background="{StaticResource Gray2}"
-									  CaretBrush="{StaticResource Red3}"
-									  FontSize="16"
-									  Foreground="{StaticResource White3}"
-									  GotFocus="Args_GotFocus"
-									  Height="30"
-									  HorizontalAlignment="Center"
-									  HorizontalContentAlignment="Left"
-										LostFocus="SpArgs_LostFocus"
-										Padding="5 3 0 0"
-									  TabIndex="2"
-										Text="Enter Arguments  for current S.P"
-									  VerticalAlignment="Top"
-									  Width="304" Margin="0,94,0,0" />
+									              Background="{StaticResource Gray2}"
+									              CaretBrush="{StaticResource Red3}"
+									              FontSize="16"
+									              Foreground="{StaticResource White3}"
+									              GotFocus="Args_GotFocus"
+									              Height="30"
+									              HorizontalAlignment="Center"
+									              HorizontalContentAlignment="Left"
+										            LostFocus="SpArgs_LostFocus"
+										            Padding="5 3 0 0"
+									              TabIndex="2"
+										            Text="Enter Arguments  for current S.P"
+									              VerticalAlignment="Top"
+									              Width="304" Margin="0,94,0,0" />
+                    <!--endregion sp controls-->
                 </Grid>
             </Border>
-            <!--#endregion lower left Sp handling-->
 
         </Grid>
-        <!--#endregion leftsliderdata-->
+        <!--#endregion lower left Sp handling-->
+        
+            <!--#endregion leftsliderdata-->
 
 
         <!--#region // Top right DataGrid-->
-        <DataGrid x:Name="DataGrid1" 
+ 
+            <DataGrid x:Name="DataGrid1" 
 					Background="BlueViolet"
 					Grid.Column="2" 
 					Grid.Row="1" 
@@ -697,37 +862,41 @@
 					CellStyle="{StaticResource BankAccountGridStyle}"	
                   PreviewMouseRightButtonDown="DataGrid1_PreviewMouseRightButtonDown"
                     VerticalAlignment="Stretch"
+                  SelectionChanged="DataGrid1_SelectionChanged"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-					Grid.ColumnSpan="1" Margin="0,0,5,0"/>
-        <!--#endregion // Top right DataGrid-->
+					Grid.ColumnSpan="1" Margin="0,0 0,0"/>
 
-        <!--#region lower right data panels-->
+            <!--#endregion // Top right DataGrid-->
+
+        <!--RIGHT  SIDE PANELS-->
+        <!--#region lower right data panels to handle Db selection/Loading-->
         <!--This is nested inside "outergrid"-->
-        <Grid x:Name="dataselection" 
+        <Grid x:Name="SPselection" 
 				Background="Cyan"
 				Grid.Row="2"
 				Grid.Column="2"
 				Grid.ColumnSpan="1"
-				MinHeight="290"
 				Panel.ZIndex="1"
 				VerticalAlignment="Top"
 				Height="284" Margin="0,30,0,0" Grid.RowSpan="3">
+            <!--MinHeight="210"-->
 
-            <Grid Width="290" MinWidth="290" 
+            <Grid x:Name="Innerleftgrid" Width="290" MinWidth="290" 
                      HorizontalAlignment="Left"
                      Background="{StaticResource Black4}"
                      Panel.ZIndex="2">
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25" />
-                        <RowDefinition Height="*" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="Structure of currently selected table"
                            Background="{StaticResource Black4}"
                            Foreground="{StaticResource Yellow1}"
                            FontSize="16"
                            Width="490" MinWidth="290" 
+                           Margin="0 0 0 0"
                            HorizontalAlignment="Center"
                            TextAlignment="Center"/>
                 <ListBox x:Name="listbox"  Grid.Row="1"
@@ -817,7 +986,7 @@
 						TabIndex="2"
 						VerticalAlignment="Top"
 						Width="196" Margin="0,66,30,0" />
-                 <TextBlock
+            <TextBlock
     						FocusVisualStyle="{x:Null}"
 							FontSize="14"
 							FontWeight="DemiBold"
@@ -831,7 +1000,7 @@
 	    					Text="Sort table by Clause :"
 							VerticalAlignment="Top"
 							Width="135" Grid.ColumnSpan="2" />
-                <TextBox  x:Name="orderby"
+            <TextBox  x:Name="orderby"
 							AllowDrop="True"
 							Background="{StaticResource Gray2}"
 							CaretBrush="{StaticResource Green5}"
@@ -848,7 +1017,7 @@
 							TabIndex="3"
 							VerticalAlignment="Top"
 							Width="196" />
-                    <ComboBox  x:Name="dbName"
+            <ComboBox  x:Name="dbName"
 								AllowDrop="True"
 								FontSize="13"
 								FontWeight="DemiBold"
@@ -868,7 +1037,7 @@
 								ToolTip="Right Click to refresh list of Tables... "
 								VerticalAlignment="Top"
 								Width="196" />
-                        <Button x:Name="ViewColumns"
+            <Button x:Name="ViewColumns"
 									AllowDrop="True"
 									Click="ViewTableColumns"
 									Content="View Columns"
@@ -881,7 +1050,7 @@
 									VerticalAlignment="Top"
                                 Visibility="Hidden"
 									Width="110" TabIndex="8" />
-                        <Button x:Name="ReloadDb"
+            <Button x:Name="ReloadDb"
 									AllowDrop="True"
 									Click="ReloadDatagrids"
 									Content="Reload Selected Db"
@@ -893,7 +1062,7 @@
 									Template="{StaticResource GradientButtonTemplateBlue}"
 									VerticalAlignment="Top"
 									Width="130" TabIndex="7" />
-                        <Button x:Name="ReloadAllRecs"
+            <Button x:Name="ReloadAllRecs"
 									AllowDrop="True"
 									Click="ReloadAll"
 									Content="Reload All records"
@@ -913,13 +1082,13 @@
         <!--#region Main bottom Buttons bar-->
 
         <Grid x:Name="ButtonsGrid"
-						Background="{StaticResource Yellow2}" 
+						Background="{StaticResource Cyan3}"
 						Margin="0,5,0,0" 
 						Height="60"
 						MinHeight="60" MaxHeight="65" 
 						Grid.Row="4" 
-						Grid.Column="2"  
-						Grid.ColumnSpan="1"
+						Grid.Column="0"  
+						Grid.ColumnSpan="3"
 						VerticalAlignment="Bottom"              
 						Panel.ZIndex="2">
             <!--#region -->
@@ -931,7 +1100,7 @@
 									  FontWeight="Normal"
 									  Height="30"
 									  HorizontalAlignment="Left"
-									  Margin="30,15,0,0"
+									  Margin="380,15,0,0"
 									  Padding="0 0 0 0"
 									  TextAlignment="Right"
 									  TextWrapping="NoWrap"

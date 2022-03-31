@@ -336,7 +336,7 @@ namespace MyDev . UserControls
 		private void LoadAllDbNames ( )
 		{
 			int bankindex = 0, count=0;
-			List<string> list = new List<string>      ();
+			List<string> list = new List<string>();
 
 			DbMain . Items . Clear ( );
 			SqlCommand = "spGetAllDatabaseNames";
@@ -344,6 +344,8 @@ namespace MyDev . UserControls
 			//This call returns us a DataTable
 			DataTable dt = DataLoadControl . GetDataTable ( SqlCommand );
 			// This how to access  Row data from  a grid the easiest way.... parsed into a List <xxxxx>
+			if ( dt . Rows . Count == 0 )
+				return;
 			list = Utils . GetDataDridRowsAsListOfStrings ( dt );
 			foreach ( string row in list )
 			{
