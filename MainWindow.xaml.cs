@@ -354,7 +354,8 @@ namespace MyDev
 
         private void button15_Click ( object sender, RoutedEventArgs e )
         {
-
+			SplitterTemplate st = new SplitterTemplate ( );
+				st . Show ( );
         }
     }
 }

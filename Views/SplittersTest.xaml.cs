@@ -20,6 +20,7 @@ using MyDev . SQL;
 using MyDev . UserControls;
 using MyDev . ViewModels;
 using System . Linq;
+using System . Net . NetworkInformation;
 
 namespace MyDev . Views
 {
@@ -84,6 +85,7 @@ namespace MyDev . Views
             MaxRowHeight = 275;
             imgup = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             vimgmove = new BitmapImage ( new Uri ( @"\icons\right arroiw red.png" , UriKind . Relative ) );
+            LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             //            lsplitrow1 . Height = (GridLength)1;
             FillListBox = true;
             // This sets the relative height of a Grid's row heights - works  too
@@ -104,7 +106,7 @@ namespace MyDev . Views
             set { SetValue ( LeftSplitterTextProperty , value ); }
         }
         public static readonly DependencyProperty LeftSplitterTextProperty =
-           DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Down to access secondary viewers " ) );
+           DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Down  " ) );
         public string ShowText
         {
             get { return ( string ) GetValue ( ShowTextProperty ); }
@@ -118,7 +120,7 @@ namespace MyDev . Views
             set { SetValue ( ShowdragTextProperty , value ); }
         }
         public static readonly DependencyProperty ShowdragTextProperty =
-            DependencyProperty . Register ( "ShowdragText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Up/Down here to  " ) );
+            DependencyProperty . Register ( "ShowdragText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Up/Down to  " ) );
         public BitmapImage imgup
         {
             get { return ( BitmapImage ) GetValue ( imgupProperty ); }
@@ -1021,6 +1023,9 @@ namespace MyDev . Views
             // how to Sort Combo/Listbox contents
             dbName . Items . SortDescriptions . Add ( new SortDescription ( "" , ListSortDirection . Ascending ) );
             dbName . SelectedIndex = bankindex;
+            TablesPanel . ItemsSource = null;
+            TablesPanel . Items . Clear ( );
+            TablesPanel . ItemsSource = list;
         }
 
         // load a list of all SP's
@@ -1347,7 +1352,8 @@ namespace MyDev . Views
         {
             if ( Row1 . ActualHeight >= MaxRowHeight )
             {
-                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
+                imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
+//                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
                 ShowdragText = "Drag Down here to ";
                 ShowText = "Show more records";
                 //                RotateTransform rotateTransform1 = new RotateTransform ( 90 , -15 , 15 );
@@ -1359,8 +1365,9 @@ namespace MyDev . Views
             }
             else
             {
-                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-                ShowText = "Adjust View";
+                imgup = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
+//                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
+//                ShowText = "Adjust View";
                 //ShowText = "   show Data Access panel";
             }
         }
@@ -1377,11 +1384,11 @@ namespace MyDev . Views
                 imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
                 ShowdragText = "Drag Up to ";
                 ShowText = "View Data Access panel";
-                //                ShowText = "Show more records";
             }
             else
             {
-                imgmv = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
+                imgup = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
+                //                imgmv = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
                 ShowdragText = "Drag Up/Down to ";
                 ShowText = "Adjust View";
             }
@@ -1391,29 +1398,23 @@ namespace MyDev . Views
         #region Vertical splitter resize handlers
         private void VSplitter_DragStarted ( object sender , DragStartedEventArgs e )
         {
-            vimgmove = null;
-            //           vimgmove = new BitmapImage ( new Uri ( @"\icons\blank doc.png" , UriKind . Relative ) );
+            //vimgmove = null;
             if ( Col0 . ActualWidth >= MaxColWidth1 )
             {
-                vimgmove = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-                vimgmove . Rotation = Rotation . Rotate180;
+                vimgmove = new BitmapImage ( new Uri ( @"\icons\left arroiw red.png" , UriKind . Relative ) );
             }
             else if ( Col0 . ActualWidth <= 11 )
             {
-                //                vimgmove = new BitmapImage ( new Uri ( @"\icons\right arroiw red.png" , UriKind . Relative ) );
-                vimgmove = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-                vimgmove . Rotation = Rotation . Rotate180;
+                vimgmove = new BitmapImage ( new Uri ( @"\icons\right arroiw red.png" , UriKind . Relative ) );
             }
             else
             {
-                vimgmove = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-                vimgmove . Rotation = Rotation . Rotate180;
-
+                vimgmove = new BitmapImage ( new Uri ( @"\icons\Lrg ltrt arrow red copy.png" , UriKind . Relative ) );
             }
         }
         private void VSplitter_DragCompleted ( object sender , DragCompletedEventArgs e )
         {
-            vimgmove = new BitmapImage ( new Uri ( @"\icons\left arroiw red.png" , UriKind . Relative ) );
+//            vimgmove = new BitmapImage ( new Uri ( @"\icons\left arroiw red.png" , UriKind . Relative ) );
 
             if ( Col0 . ActualWidth >= MaxColWidth1 )
             {
@@ -1425,8 +1426,8 @@ namespace MyDev . Views
             }
             else
             {
-                vimgmove = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-                vimgmove . Rotation = Rotation . Rotate180;
+                vimgmove = new BitmapImage ( new Uri ( @"\icons\Lrg ltrt arrow red copy.png" , UriKind . Relative ) );
+                //vimgmove . Rotation = Rotation . Rotate180;
             }
         }
         #endregion Vertical splitter resize handlers
@@ -1435,17 +1436,18 @@ namespace MyDev . Views
         {
             if ( lsplitrow1 . ActualHeight >= Maingrid . ActualHeight - 100 )
             {
-                LeftSplitterText = "Drag Up to access secondary viewers ";
+                LeftSplitterText = "Drag Up  ";
                 LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
             }
             else if ( lsplitrow1 . ActualHeight <= 11 )
             {
-                LeftSplitterText = "Drag Down to access secondary viewers ";
+                LeftSplitterText = "Drag Down  ";
                 LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             }
             else
             {
-                LeftSplitterText = "Drag Up or Down to Switch between  views ";
+                LeftSplitterText = "Drag Up or Down  ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
             }
             //         LeftSplitterText = "Drag Up/Down to access secondary viewers ";
         }
@@ -1454,14 +1456,22 @@ namespace MyDev . Views
         {
             if ( lsplitrow1 . ActualHeight <= MinRowHeight1 )
             {
-                LeftSplitterText = "Drag Up/Down to change view ";
-                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
+                LeftSplitterText = "Drag Up or Down  ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
+//                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red copy.png" , UriKind . Relative ) );
+  //              LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
             }
             else if ( lsplitrow1 . ActualHeight <= 10 )
             {
-                LeftSplitterText = "Drag Down to access secondary viewers ";
+                LeftSplitterText = "Drag Down ";
                 LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             }
+            else 
+            {
+                LeftSplitterText = "Drag Up or Down  ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
+            }
+            
         }
 
         private void Window_PreviewMouseMove ( object sender , MouseEventArgs e )

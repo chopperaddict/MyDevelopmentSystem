@@ -247,6 +247,9 @@
     <Compile Include="Views\SplittersTest.xaml.cs">
       <DependentUpon>SplittersTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SplitterTemplate.xaml.cs">
+      <DependentUpon>SplitterTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SupportMethods.cs" />
     <Compile Include="Views\SysConfig.xaml.cs">
       <DependentUpon>SysConfig.xaml</DependentUpon>
@@ -410,6 +413,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SplittersTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SplitterTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -612,6 +619,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Flowdoc usage.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\updown arrow red copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Lrg updown arrow red copy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\Lrg ltrt arrow red copy.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('packages\Fody.6.5.1\build\Fody.targets')" />
