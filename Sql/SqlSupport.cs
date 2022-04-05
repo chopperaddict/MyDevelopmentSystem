@@ -1209,7 +1209,7 @@ namespace MyDev . SQL
 				MessageBox . Show ( $"SQL ERROR 1125 - {ex . Message}" );
 				return null;
 			}
-			return null;
+//			return null;
 		}
 
 		private static object LoadListData ( object grid , ObservableCollection<GenericClass> genericcollection , int total )

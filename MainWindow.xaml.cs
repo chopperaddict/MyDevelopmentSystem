@@ -337,25 +337,24 @@ namespace MyDev
 
         private void button12_Click ( object sender, RoutedEventArgs e )
         {
-			//SplitDatagrid sdg = new SplitDatagrid ( );
-			//sdg. Show ( );
+			SplitViewer sv = new SplitViewer ( );
+			sv. Show ( );
         }
 
         private void button13_Click ( object sender, RoutedEventArgs e )
         {
-			SplittersTest st = new SplittersTest ( );
+			FourwaySplitViewer st = new FourwaySplitViewer( );
 			st . Show ( );
         }
 
         private void button14_Click ( object sender, RoutedEventArgs e )
         {
+            SplitterTemplate st = new SplitterTemplate ( );
+            st . Show ( );
+		}
 
-        }
-
-        private void button15_Click ( object sender, RoutedEventArgs e )
+		private void button15_Click ( object sender, RoutedEventArgs e )
         {
-			SplitterTemplate st = new SplitterTemplate ( );
-				st . Show ( );
         }
     }
 }

@@ -86,6 +86,7 @@ namespace MyDev . Models
 		public Thickness th = new Thickness(0,0,0,0);
 		public  double CpFirstXPos=0;
 		public  double CpFirstYPos=0;
+		public static bool IsScrollbarActive = false;
 
 		#endregion Flowdoc Variables
 
@@ -271,6 +272,13 @@ namespace MyDev . Models
 			//borderSelected = 7;       // TOP + RIGHT
 			//borderSelected = 8;       // BOTTOM + RIGHT
 			bool IsCornerDragging = false;
+
+			if ( IsScrollbarActive)
+			{
+				var v = e . OriginalSource.ToString();
+				Flowdoc . ReleaseMouseCapture ( );
+				return;
+			}
 
 			Border border = e . OriginalSource as Border;
 			if ( border == null )
@@ -536,6 +544,47 @@ namespace MyDev . Models
 		{
 			//In this event, we get current mouse position on the control to use it in the MouseMove event.
 			// This IS CALLED by ListViews
+
+			if ( Utils . HitTestScrollBar ( sender , e ) )
+			{
+				IsScrollbarActive = true;
+				//return null;
+				//// Over the Scrollbar so let user scroll contents
+				//if ( e . OriginalSource . ToString ( ) . Contains ( ".Run" ) )
+				//{
+				//	if ( Flags . UseScrollView )
+				////		fdviewer . IsEnabled = true;
+				////	else
+				////		doc . IsEnabled = true;
+				////}
+				////else
+				//{
+				////	if ( Flags . UseScrollView )
+				////	{
+				////		// We get here when clicking on scrollbar
+				////		fdviewer . IsEnabled = false;
+				////		if ( fdviewer . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
+				////		{
+				////			fdviewer . IsEnabled = true;
+				////			fdviewer . ReleaseMouseCapture ( );
+				////			flowDoc . ReleaseMouseCapture ( );
+				////			return;
+				////		}
+				////	}
+				////	else
+				////	{
+				////		doc . IsEnabled = false;
+				////		if ( doc . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
+				////		{
+				////			doc . IsEnabled = true;
+				////			fdviewer . ReleaseMouseCapture ( );
+				////			flowDoc . ReleaseMouseCapture ( );
+				////			return;
+				////		}
+				//	}
+				//}
+			}
+
 			Border border = e . OriginalSource as Border;
 			if ( border != null )
 			{
@@ -584,6 +633,7 @@ namespace MyDev . Models
 			Mouse . SetCursor ( Cursors . Arrow );
 			//			Flowdoc.ReleaseMouseCapture ( );
 			Flowdoc . Focus ( );
+			IsScrollbarActive = false;
 
 
 			return MovingObject = null;

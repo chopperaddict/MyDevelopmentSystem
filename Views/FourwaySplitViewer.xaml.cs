@@ -24,7 +24,7 @@ using System . Net . NetworkInformation;
 
 namespace MyDev . Views
 {
-    public partial class SplittersTest : Window
+    public partial class FourwaySplitViewer : Window
     {
         #region  Public variables
         // Set  up our data collections
@@ -57,7 +57,7 @@ namespace MyDev . Views
         private bool FillListBox { get; set; }
 
         #endregion  Public variables
-        public SplittersTest ( )
+        public FourwaySplitViewer ( )
         {
             InitializeComponent ( );
             this . DataContext = this;
@@ -106,21 +106,21 @@ namespace MyDev . Views
             set { SetValue ( LeftSplitterTextProperty , value ); }
         }
         public static readonly DependencyProperty LeftSplitterTextProperty =
-           DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Down  " ) );
+           DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( "Drag Down  " ) );
         public string ShowText
         {
             get { return ( string ) GetValue ( ShowTextProperty ); }
             set { SetValue ( ShowTextProperty , value ); }
         }
         public static readonly DependencyProperty ShowTextProperty =
-            DependencyProperty . Register ( "ShowText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Show More Records" ) );
+            DependencyProperty . Register ( "ShowText" , typeof ( string ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( "Show More Records" ) );
         public string ShowdragText
         {
             get { return ( string ) GetValue ( ShowdragTextProperty ); }
             set { SetValue ( ShowdragTextProperty , value ); }
         }
         public static readonly DependencyProperty ShowdragTextProperty =
-            DependencyProperty . Register ( "ShowdragText" , typeof ( string ) , typeof ( SplittersTest ) , new PropertyMetadata ( "Drag Up/Down to  " ) );
+            DependencyProperty . Register ( "ShowdragText" , typeof ( string ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( "Drag Up/Down to  " ) );
         public BitmapImage imgup
         {
             get { return ( BitmapImage ) GetValue ( imgupProperty ); }
@@ -128,7 +128,7 @@ namespace MyDev . Views
         }
         public static readonly DependencyProperty imgupProperty =
             DependencyProperty . Register ( "imgup" , typeof ( BitmapImage ) ,
-    typeof ( SplittersTest ) ,
+    typeof ( FourwaySplitViewer ) ,
                  new PropertyMetadata ( null ) );
         public BitmapImage imgdn
         {
@@ -138,7 +138,7 @@ namespace MyDev . Views
         public static readonly DependencyProperty imgdnProperty =
             DependencyProperty . Register ( "imgdn" ,
                  typeof ( BitmapImage ) ,
-                   typeof ( SplittersTest ) ,
+                   typeof ( FourwaySplitViewer ) ,
                 new PropertyMetadata ( null ) );
         public BitmapImage imgmv
         {
@@ -148,7 +148,7 @@ namespace MyDev . Views
         public static readonly DependencyProperty imgmvProperty =
              DependencyProperty . Register ( "imgmv" ,
                   typeof ( BitmapImage ) ,
-                    typeof ( SplittersTest ) ,
+                    typeof ( FourwaySplitViewer ) ,
                  new PropertyMetadata ( null ) );
         public BitmapImage vimgleft
         {
@@ -156,21 +156,21 @@ namespace MyDev . Views
             set { SetValue ( vimgleftProperty , value ); }
         }
         public static readonly DependencyProperty vimgleftProperty =
-            DependencyProperty . Register ( "vimgleft" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
+            DependencyProperty . Register ( "vimgleft" , typeof ( BitmapImage ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( null ) );
         public BitmapImage vimgright
         {
             get { return ( BitmapImage ) GetValue ( vimgrightProperty ); }
             set { SetValue ( vimgrightProperty , value ); }
         }
         public static readonly DependencyProperty vimgrightProperty =
-           DependencyProperty . Register ( "vimgright" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
+           DependencyProperty . Register ( "vimgright" , typeof ( BitmapImage ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( null ) );
         public BitmapImage vimgmove
         {
             get { return ( BitmapImage ) GetValue ( vimgmoveProperty ); }
             set { SetValue ( vimgmoveProperty , value ); }
         }
         public static readonly DependencyProperty vimgmoveProperty =
-            DependencyProperty . Register ( "vimgmove" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
+            DependencyProperty . Register ( "vimgmove" , typeof ( BitmapImage ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( null ) );
         public int DbCount
         {
             get { return ( int ) GetValue ( DbCountProperty ); }
@@ -182,11 +182,11 @@ namespace MyDev . Views
             set { SetValue ( LhHsplitterProperty , value ); }
         }
         public static readonly DependencyProperty LhHsplitterProperty =
-            DependencyProperty . Register ( "LhHsplitter" , typeof ( BitmapImage ) , typeof ( SplittersTest ) , new PropertyMetadata ( null ) );
+            DependencyProperty . Register ( "LhHsplitter" , typeof ( BitmapImage ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( null ) );
 
         // Using a DependencyProperty as the backing store for DbCount.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DbCountProperty =
-            DependencyProperty . Register ( "DbCount" , typeof ( int ) , typeof ( SplittersTest ) , new PropertyMetadata ( 0 ) );
+            DependencyProperty . Register ( "DbCount" , typeof ( int ) , typeof ( FourwaySplitViewer ) , new PropertyMetadata ( 0 ) );
         #endregion DP.s
 
 
@@ -1346,7 +1346,7 @@ namespace MyDev . Views
 
         #region Horizontal splitter resize handlers
         /// <summary>
-        /// Interaction logic for SplittersTest.xaml
+        /// Interaction logic for FourwaySplitViewer.xaml
         /// </summary>
         private void Splitter_DragStarted ( object sender , System . Windows . Controls . Primitives . DragStartedEventArgs e )
         {
@@ -1432,6 +1432,26 @@ namespace MyDev . Views
         }
         #endregion Vertical splitter resize handlers
 
+          private void LeftSplitter_DragStarted ( object sender , DragStartedEventArgs e )
+        {
+            if ( lsplitrow1 . ActualHeight <= MinRowHeight1 )
+            {
+                LeftSplitterText = "Drag Up or Down  ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
+//                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red copy.png" , UriKind . Relative ) );
+  //              LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
+            }
+            else if ( lsplitrow1 . ActualHeight <= 10 )
+            {
+                LeftSplitterText = "Drag Down ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
+            }
+            else 
+            {
+                LeftSplitterText = "Drag Up or Down  ";
+                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
+            }
+        }
         private void LeftSplitter_DragCompleted ( object sender , DragCompletedEventArgs e )
         {
             if ( lsplitrow1 . ActualHeight >= Maingrid . ActualHeight - 100 )
@@ -1452,27 +1472,6 @@ namespace MyDev . Views
             //         LeftSplitterText = "Drag Up/Down to access secondary viewers ";
         }
 
-        private void LeftSplitter_DragStarted ( object sender , DragStartedEventArgs e )
-        {
-            if ( lsplitrow1 . ActualHeight <= MinRowHeight1 )
-            {
-                LeftSplitterText = "Drag Up or Down  ";
-                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
-//                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red copy.png" , UriKind . Relative ) );
-  //              LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
-            }
-            else if ( lsplitrow1 . ActualHeight <= 10 )
-            {
-                LeftSplitterText = "Drag Down ";
-                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
-            }
-            else 
-            {
-                LeftSplitterText = "Drag Up or Down  ";
-                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
-            }
-            
-        }
 
         private void Window_PreviewMouseMove ( object sender , MouseEventArgs e )
         {

@@ -1,4 +1,4 @@
-﻿<Window x:Class="MyDev.Views.SplittersTest"
+﻿<Window x:Class="MyDev.Views.FourwaySplitViewer"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -388,7 +388,7 @@
 			      Visibility="Hidden"
 			      Width="Auto">
 
-              <user:FlowDoc x:Name="Flowdoc"
+            <user:FlowDoc x:Name="Flowdoc"
 				    backGround="{StaticResource Gray5}"
 				    borderColor="{StaticResource Orange1}"
 				    Canvas.Left="45"
@@ -455,7 +455,7 @@
 								            Grid.Row="0"  >
                             <Image x:Name="Imgleft"  Source="\icons\left arroiw red.png"  Margin="40 0 0 0"
 										               Height="20" Width="20" HorizontalAlignment="Right"/>
-                             <TextBlock Text=" [ Drag to access more panels]    " 
+                            <TextBlock Text=" [ Drag to access more panels]    " 
                                                Height="20" 
                                                Padding="0 0 0 0" 
                                                Foreground="Black"
@@ -494,8 +494,8 @@
                 <RowDefinition  Height="300*"  MinHeight="1" x:Name="lsplitrow1"/>
                 <RowDefinition  Height="20" MinHeight="20" />
                 <RowDefinition  Height="1*" MinHeight="60" x:Name="lsplitrow3"/>
-              </Grid.RowDefinitions>
- 
+            </Grid.RowDefinitions>
+
             <!--Horizontal GridSpitter in left panel.  it lives inside Left slider Panel grid 'LeftPanelgrid'-->
             <GridSplitter x:Name="lefthorzplitter"
 					        ResizeDirection="Rows"         
@@ -644,7 +644,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Template="{StaticResource GradientButtonTemplateBlue}"/>-->
-            
+
             <!--#endregion background controls-->
 
 
@@ -761,8 +761,8 @@
                 </Grid
                             >
             </GroupBox >
-            
-                <!--#region lower left Sp handling Panel-->
+
+            <!--#region lower left Sp handling Panel-->
             <!--// This slides u/down with Horizonal splitter-->
             <Border  x:Name="StoredProcsPanel" 
                                           Grid.Row="2"
@@ -771,7 +771,7 @@
                                           Background="{StaticResource Orange2}"
                                          HorizontalAlignment="Left"       
                                          VerticalAlignment="Top" 
-                                          Margin="10 320 0 0"
+                                          Margin="10 20 0 0"
                                           Height="270"  
                                              MinHeight="270"
                                      Visibility="Visible"
@@ -869,14 +869,14 @@
 
         </Grid>
         <!--#endregion lower left Sp handling-->
-        
-            <!--#endregion leftsliderdata-->
+
+        <!--#endregion leftsliderdata-->
 
 
         <!--#region //  right DataGrid-->
- 
-            <!--// DataGrid in TOP RIGHT PANE-->
-            <DataGrid x:Name="DataGrid1" 
+
+        <!--// DataGrid in TOP RIGHT PANE-->
+        <DataGrid x:Name="DataGrid1" 
 					Background="BlueViolet"
 					Grid.Column="2" 
 					Grid.Row="1" 
@@ -889,7 +889,7 @@
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
 					Grid.ColumnSpan="1" Margin="0,0 0,0"/>
 
-            <!--#endregion // Top right DataGrid-->
+        <!--#endregion // Top right DataGrid-->
 
         <!--LOWER RIGHT  SIDE PANEL OUTER Grid-->
         <!--This is nested inside "outergrid"-->
@@ -901,13 +901,17 @@
 				Panel.ZIndex="1"
 				VerticalAlignment="Top"
 				Height="284" Margin="0,30,0,0" Grid.RowSpan="3">
- 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="257*"/>
+                <ColumnDefinition Width="353*"/>
+            </Grid.ColumnDefinitions>
+
             <!--LOWER RIGHT  SIDE PANEL INNER Grid-->
             <!--#region lower right data panels content to handle Db selection/Loading-->
             <Grid x:Name="Innerleftgrid" Width="290" MinWidth="290" 
                      HorizontalAlignment="Left"
                      Background="{StaticResource Black4}"
-                     Panel.ZIndex="2">
+                     Panel.ZIndex="2" Grid.ColumnSpan="2">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
@@ -929,38 +933,36 @@
                      FontSize="16"
                      Foreground="{StaticResource Yellow3}"
                      Margin="0,0,0,0"/>
-            </Grid>  
-                    <!--// Controls in Lower Right panel inside 'innerleftgrid'-->
-                    <!--#region Data selection controls-->
-                    <TextBlock
+            </Grid>
+            <!--// Controls in Lower Right panel inside 'innerleftgrid'-->
+            <!--#region Data selection controls-->
+            <TextBlock
 					        FontSize="14"
 					        Background="Transparent"
 					        FocusVisualStyle="{x:Null}"
 					        FontWeight="DemiBold"
 					        Foreground="{StaticResource Black0}"
-					        Grid.Row="3"
-					        Grid.Column="1"
 					        Height="23"
 					        HorizontalAlignment="Right"
 					        Margin="0,170,235,0"
     				        Text="Select Db Table to load :"
 					        VerticalAlignment="Top"
-					        Width="157" />
-                    <TextBlock
+					        Width="157" Grid.ColumnSpan="2" />
+            <TextBlock
 					        FontSize="14"
 					        FontWeight="DemiBold"
 					        Background="Transparent"
 					        FocusVisualStyle="{x:Null}"
 					        Foreground="{StaticResource Black0}"
 					        Grid.Row="0"
-					        Grid.Column="3"
+					        Grid.Column="1"
 					        Height="20"
-					        HorizontalAlignment="Right"
-					        Margin="0,18,90,0"
+					        HorizontalAlignment="Center"
+					        Margin="0,18,0,0"
 					        Text="Restrict records loaded to :"
 					        VerticalAlignment="Top"
 					        Width="173" />
-                    <TextBox  x:Name="RecCount"
+            <TextBox  x:Name="RecCount"
 					            AllowDrop="True"
 					            Background="{StaticResource Blue0}"
 					            CaretBrush="{StaticResource White0}"
@@ -978,14 +980,13 @@
 						        Text="*"
 					            VerticalAlignment="Top"
 					            Width="38" />
-                    <TextBlock
+            <TextBlock
     				            FocusVisualStyle="{x:Null}"
 					            FontSize="14"
 					            FontWeight="DemiBold"
 					            Background="Transparent"
 					            Foreground="{StaticResource Black0}"
 					            Grid.Row="0"
-					            Grid.Column="2"
 					            Grid.ColumnSpan="2"
 					            Height="22"
 					            HorizontalAlignment="Right"
@@ -993,7 +994,7 @@
 					            Text="Limit records total condition :"
 					            VerticalAlignment="Top"
 					            Width="191" />
-                    <TextBox  x:Name="Conditions"
+            <TextBox  x:Name="Conditions"
 						        AllowDrop="True"
 						        Background="{StaticResource Gray2}"
 						        CaretBrush="{StaticResource Green5}"
@@ -1002,28 +1003,27 @@
 						        GotFocus="tb_GotFocus"
 						        LostFocus="Conditions_LostFocus"
 						        Grid.Row="0"
-						        Grid.Column="3"
+						        Grid.Column="1"
 						        Height="30"
 						        HorizontalAlignment="Right"
 						        HorizontalContentAlignment="Center"
 						        TabIndex="2"
 						        VerticalAlignment="Top"
 						        Width="196" Margin="0,66,30,0" />
-                    <TextBlock
+            <TextBlock
     						        FocusVisualStyle="{x:Null}"
 							        FontSize="14"
 							        FontWeight="DemiBold"
 							        Background="Transparent"
 							        Foreground="{StaticResource Black0}"
 							        Grid.Row="0"
-							        Grid.Column="2"
 							        Height="21"
 							        HorizontalAlignment="Right"
 							        Margin="0,110 240 0"
 	    					        Text="Sort table by Clause :"
 							        VerticalAlignment="Top"
 							        Width="135" Grid.ColumnSpan="2" />
-                    <TextBox  x:Name="orderby"
+            <TextBox  x:Name="orderby"
 							        AllowDrop="True"
 							        Background="{StaticResource Gray2}"
 							        CaretBrush="{StaticResource Green5}"
@@ -1032,7 +1032,7 @@
 							        GotFocus="tb_GotFocus"
 							        LostFocus="orderby_LostFocus"
 							        Grid.Row="0"
-							        Grid.Column="3"
+							        Grid.Column="1"
 							        Height="30"
 							        HorizontalAlignment="Right"
 							        HorizontalContentAlignment="Center"
@@ -1040,7 +1040,7 @@
 							        TabIndex="3"
 							        VerticalAlignment="Top"
 							        Width="196" />
-                    <ComboBox  x:Name="dbName"
+            <ComboBox  x:Name="dbName"
 								        AllowDrop="True"
 								        FontSize="13"
 								        FontWeight="DemiBold"
@@ -1060,7 +1060,7 @@
 								        ToolTip="Right Click to refresh list of Tables... "
 								        VerticalAlignment="Top"
 								        Width="196" />
-                    <Button x:Name="ViewColumns"
+            <Button x:Name="ViewColumns"
 									        AllowDrop="True"
 									        Click="ViewTableColumns"
 									        Content="View Columns"
@@ -1072,8 +1072,8 @@
 									        Template="{StaticResource GradientButtonTemplateBlue}"
 									        VerticalAlignment="Top"
                                         Visibility="Hidden"
-									        Width="110" TabIndex="8" />
-                    <Button x:Name="ReloadDb"
+									        Width="110" TabIndex="8" Grid.ColumnSpan="2" />
+            <Button x:Name="ReloadDb"
 									        AllowDrop="True"
 									        Click="ReloadDatagrids"
 									        Content="Reload Selected Db"
@@ -1084,8 +1084,8 @@
 									        Margin="0,218,160,0"
 									        Template="{StaticResource GradientButtonTemplateBlue}"
 									        VerticalAlignment="Top"
-									        Width="130" TabIndex="7" />
-                    <Button x:Name="ReloadAllRecs"
+									        Width="130" TabIndex="7" Grid.Column="1" />
+            <Button x:Name="ReloadAllRecs"
 									        AllowDrop="True"
 									        Click="ReloadAll"
 									        Content="Reload All records"
@@ -1096,13 +1096,13 @@
 									        Margin="0,218,20,0"
 									        Template="{StaticResource GradientButtonTemplateBlue}"
 									        VerticalAlignment="Top"
-									        Width="130" TabIndex="8" />
-                    <!--#endregion Data selection controls-->
-           </Grid>
+									        Width="130" TabIndex="8" Grid.Column="1" />
+            <!--#endregion Data selection controls-->
+        </Grid>
         <!--#endregion lowerright pabel-->
 
-            <!--// Bottom button bar-->
-            <!--#region Main bottom Buttons bar-->
+        <!--// Bottom button bar-->
+        <!--#region Main bottom Buttons bar-->
 
         <Grid x:Name="ButtonsGrid"
 						Background="{StaticResource Cyan3}"
@@ -1178,8 +1178,8 @@
         </Grid>
 
         <!--#endregion Buttons bar-->
-        
-            <!--#endregion //  right Grid-->
+
+        <!--#endregion //  right Grid-->
 
     </Grid>
 </Window>

@@ -382,7 +382,7 @@ namespace MyDev
 						type = row . Field<object> ( 2 );
 						if ( type != null )
 						{
-							if ( type == typeof ( int ) )
+							if ((Type) type == typeof ( int ) )
 							{
 								output += row . Field<string> ( 2 ) . ToString ( ) + "";
 							}
@@ -1773,7 +1773,7 @@ namespace MyDev
 				Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
 				return false;
 			}
-			return true;
+	//		return true;
 		}
 
 		public static bool HitTestHeaderBar ( object sender , MouseButtonEventArgs e )

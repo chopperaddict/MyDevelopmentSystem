@@ -209,7 +209,7 @@
 							 Grid.Row="1"
 							 Grid.Column="1"
 							 Grid.ColumnSpan="2"
-							 Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=75}"
+							 Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=115}"
 							 HorizontalAlignment="Right"
 							 HorizontalScrollBarVisibility="Auto"
       						IsEnabled="true"
@@ -219,7 +219,7 @@
 							 Padding="15 10 15 0"
       						PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
 							 PreviewMouseLeftButtonUp="flowdoc_PreviewMouseLeftButtonUp"
-							 VerticalScrollBarVisibility="Hidden"
+							 VerticalScrollBarVisibility="Visible"
 							Visibility="Hidden"
 							  Width="{Binding Path=ActualWidth, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=25}"/>
 					<!--PreviewMouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
@@ -232,7 +232,7 @@
 						FontSize="11"
 						Grid.Row="1"
 						Grid.Column="1"
-						Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=85}"
+						Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=105}"
 						HorizontalAlignment="Left"
 						IsHitTestVisible="True"
 						IsEnabled="true"
@@ -241,7 +241,7 @@
 						Margin="2,4,0,13"
 						PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
 						PreviewMouseLeftButtonUp="scrollviewer_PreviewMouseLeftButtonUp"
-						VerticalScrollBarVisibility="Hidden"
+						VerticalScrollBarVisibility="Visible"
 						Visibility="Visible"
 						Width="{Binding Path=ActualWidth, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=30}"
 						Grid.ColumnSpan="2" />

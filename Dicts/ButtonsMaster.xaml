@@ -385,8 +385,8 @@
 				<Setter Property="Background" TargetName="border">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-							<GradientStop Color="#FF595013" Offset="0.514"/>
-							<GradientStop Color="#FF7d7015" Offset="0.753"/>
+                            <GradientStop Color="#FF858700" Offset="0.514"/>
+                            <GradientStop Color="#FFC3A500" Offset="0.753"/>
 							<GradientStop Color="#FFF5d816" Offset="1"/>
 						</LinearGradientBrush>
 					</Setter.Value>
@@ -480,7 +480,7 @@
 						ContentTemplate="{TemplateBinding ContentTemplate}" 
 						Content="{TemplateBinding Content}" 
 						ContentStringFormat="{TemplateBinding ContentStringFormat}" 
-						Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+						Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"                               
 						Margin="{TemplateBinding Padding}" 
 						RecognizesAccessKey="True" 
 						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
@@ -506,14 +506,21 @@
 			<Trigger Property="Button.IsMouseOver" Value="false">
 				<!--MouseOver handling-->
 				<Setter Property="FontWeight"  Value="Bold"/>
-				<Setter Property="Control.Foreground"  TargetName="border" Value="{StaticResource Black0}">
-				</Setter>
+                <Setter Property="Control.Foreground"  TargetName="border">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#FF005700" Offset="0.314"/>
+                            <!--<GradientStop Color="#FF007E00" Offset="0.553"/>-->
+                            <GradientStop Color="#FF00FF00" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                  </Setter>
 				<Setter Property="Background" TargetName="border">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
 							<GradientStop Color="#FF005E00" Offset="0.314"/>
 							<!--<GradientStop Color="#FF007E00" Offset="0.553"/>-->
-							<GradientStop Color="#FF00FF00" Offset="1"/>
+							<GradientStop Color="{StaticResource ClrWhite0}" Offset="1"/>
 						</LinearGradientBrush>
 					</Setter.Value>
 				</Setter>
@@ -522,7 +529,14 @@
 				<!--MouseOver handling-->
 				<Setter Property="FontWeight"  Value="Bold"/>
 				<!--<Setter Property="Control.Foreground"  TargetName="border">-->
-					<Setter Property="Control.Foreground"  TargetName="border" Value="{StaticResource Red4}">
+                <Setter Property="Control.Foreground"  TargetName="border">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+                            <GradientStop Color="{StaticResource ClrRed7}" Offset="0.314"/>
+                            <!--<GradientStop Color="#FF007E00" Offset="0.553"/>-->
+                            <GradientStop Color="{StaticResource ClrWhite0}" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
 				</Setter>
 				<Setter Property="Background" TargetName="border">
 					<Setter.Value>

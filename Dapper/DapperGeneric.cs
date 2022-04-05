@@ -43,25 +43,25 @@ namespace MyDev . Dapper
 			int ArgType = 0;
 
 
-			switch ( collection )
-			{
-				//case ObservableCollection<GenericClass>:
-				//	objG = collection as ObservableCollection<GenericClass>;
-				//	ArgType = 1;
-				//	break;
-				//case GenericClass:
-				//	objGclass = collection as GenericClass;
-				//	ArgType = 2;
-				//	break;
-				//case List<string>:
-				//	objL = collection as List<string>;
-				//	ArgType = 3;
-				//	break;
-				//case ObservableCollection<BankAccountViewModel>:
-				//	objB = collection as ObservableCollection<BankAccountViewModel>;
-				//	ArgType = 4;
-				//	break;
-			}
+			//switch ( collection )
+			//{
+			//	//case ObservableCollection<GenericClass>:
+			//	//	objG = collection as ObservableCollection<GenericClass>;
+			//	//	ArgType = 1;
+			//	//	break;
+			//	//case GenericClass:
+			//	//	objGclass = collection as GenericClass;
+			//	//	ArgType = 2;
+			//	//	break;
+			//	//case List<string>:
+			//	//	objL = collection as List<string>;
+			//	//	ArgType = 3;
+			//	//	break;
+			//	//case ObservableCollection<BankAccountViewModel>:
+			//	//	objB = collection as ObservableCollection<BankAccountViewModel>;
+			//	//	ArgType = 4;
+			//	//	break;
+			//}
 
 			Console . WriteLine ( $"objG.Count = { objG . Count ( )}" );
 			//====================================
@@ -913,25 +913,25 @@ namespace MyDev . Dapper
 			var obiG = GetInstance<ObservableCollection<GenericClass>> ( );
 
 			// find out what we have got, & then we MUST process it inside the case structure
-			switch ( arg )
-			{
-				//case ObservableCollection<GenericClass>:
-				//	objG = arg as ObservableCollection<GenericClass>;
-				//	ArgTpe = 1;
-				//	break;
-				//case GenericClass:
-				//	objGclass = arg as GenericClass;
-				//	ArgTpe = 2;
-				//	break;
-				//case List<string>:
-				//	objL = arg as List<string>;
-				//	ArgTpe = 3;
-				//	break;
-				//case ObservableCollection<BankAccountViewModel>:
-				//	objB = arg as ObservableCollection<BankAccountViewModel>;
-				//	ArgTpe = 4;
-				//	break;
-			}
+			//switch ( arg )
+			//{
+			//	//case ObservableCollection<GenericClass>:
+			//	//	objG = arg as ObservableCollection<GenericClass>;
+			//	//	ArgTpe = 1;
+			//	//	break;
+			//	//case GenericClass:
+			//	//	objGclass = arg as GenericClass;
+			//	//	ArgTpe = 2;
+			//	//	break;
+			//	//case List<string>:
+			//	//	objL = arg as List<string>;
+			//	//	ArgTpe = 3;
+			//	//	break;
+			//	//case ObservableCollection<BankAccountViewModel>:
+			//	//	objB = arg as ObservableCollection<BankAccountViewModel>;
+			//	//	ArgTpe = 4;
+			//	//	break;
+			//}
 			return true;
 		}
 		public static GenericClass ParseDapperRowGen ( dynamic buff ,
