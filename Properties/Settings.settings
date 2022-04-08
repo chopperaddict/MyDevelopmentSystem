@@ -29,5 +29,8 @@
     <Setting Name="UseFlowDoc" Type="System.String" Scope="User">
       <Value Profile="(Default)">TRUE</Value>
     </Setting>
+    <Setting Name="UseMagnify" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

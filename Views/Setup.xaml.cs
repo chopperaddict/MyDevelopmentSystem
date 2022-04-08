@@ -53,5 +53,12 @@ namespace MyDev . Views
 		{
 			// save settings
 		}
+
+        private void UseMagnify_Click ( object sender , RoutedEventArgs e )
+        {
+			Flags . UseMagnify = (bool)UseMagnify . IsChecked;
+			Properties . Settings . Default . UseMagnify = Flags . UseMagnify;
+			Properties . Settings . Default . Save ( );
+		}
 	}
 }

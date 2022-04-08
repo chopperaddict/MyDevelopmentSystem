@@ -137,5 +137,17 @@ namespace MyDev.Properties {
                 this["UseFlowDoc"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseMagnify {
+            get {
+                return ((bool)(this["UseMagnify"]));
+            }
+            set {
+                this["UseMagnify"] = value;
+            }
+        }
     }
 }

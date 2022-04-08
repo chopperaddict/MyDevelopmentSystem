@@ -139,6 +139,7 @@
 							    PreviewMouseRightButtonDown="dataGrid_PreviewMouseRightButtonDown"
 								Background="{StaticResource Cyan3}"
 								Foreground="{StaticResource Black0}" 
+                                  Style="{StaticResource DatagridMagnifyAnimation}"
 								Margin="0,30,-4,-61"   >
 						</DataGrid>
 						<!--#endregion Main DataGrid-->
@@ -155,6 +156,7 @@
 						BorderBrush="{StaticResource Red2}" BorderThickness="4"
 						CellStyle="{StaticResource MAINCustomerGridStyle}"				    
 						Background="{StaticResource Yellow1}"
+                         Style="{StaticResource DatagridMagnifyAnimation}"
 						Foreground="{StaticResource Black0}" Margin="0,78,-4,14"   >
 					</DataGrid>
 					<!--#endregion Main DataGrid-->

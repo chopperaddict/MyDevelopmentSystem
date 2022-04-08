@@ -86,7 +86,7 @@ namespace MyDev . Models
 		public Thickness th = new Thickness(0,0,0,0);
 		public  double CpFirstXPos=0;
 		public  double CpFirstYPos=0;
-		public static bool IsScrollbarActive = false;
+		public static bool IsScrollbarActive { get; set; }
 
 		#endregion Flowdoc Variables
 
@@ -634,8 +634,6 @@ namespace MyDev . Models
 			//			Flowdoc.ReleaseMouseCapture ( );
 			Flowdoc . Focus ( );
 			IsScrollbarActive = false;
-
-
 			return MovingObject = null;
 		}
 

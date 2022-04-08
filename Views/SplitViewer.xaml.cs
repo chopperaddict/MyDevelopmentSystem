@@ -88,7 +88,7 @@ namespace MyDev . Views
         #endregion Flowdoc file wide variables
 
         #endregion All Template setup stuff
-
+        private Storyboard myStoryboard;
         #region Startup
         public SplitViewer ( )
         {
@@ -108,9 +108,11 @@ namespace MyDev . Views
             vimgmove = new BitmapImage ( new Uri ( @"\icons\Lrg ltrt arrow red copy.png" , UriKind . Relative ) );
             LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             // This sets the relative height of t Grid'Left hand side row heights - works  too
-            //LeftPanelgrid . RowDefinitions [ 0 ] . Height = new GridLength ( 20 , GridUnitType . Star );
-            //LeftPanelgrid . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType . Pixel );
-            //LeftPanelgrid . RowDefinitions [ 2 ] . Height = new GridLength ( 20 , GridUnitType . Star );
+            TopWrapper . RowDefinitions [ 0 ] . Height = new GridLength ( 20 , GridUnitType . Pixel );
+            TopWrapper . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType . Pixel );
+            TopWrapper . RowDefinitions [ 2 ] . Height = new GridLength ( 1 , GridUnitType .Star  );
+            //lowerleftpanel . RowDefinitions [ 0 ] . Height = new GridLength ( 420 , GridUnitType . Pixel );
+            //TopWrapper . RowDefinitions [ 2 ] . Height = new GridLength ( 20 , GridUnitType . Star );
 
             //LeftSideContainer . RowDefinitions [ 0 ] . Height = new GridLength ( 0.00 , GridUnitType . Pixel );
             //LeftSideContainer . RowDefinitions [ 1 ] . Height = new GridLength ( 0 , GridUnitType . Star );
@@ -141,23 +143,37 @@ namespace MyDev . Views
             SqlCommand = DefaultSqlCommand;
             LoadData ( DataGrid1 );
             LoadData ( DataGrid2 );
-            //if ( bankaccts != null )
-            //{
-            //    DataGrid1 . ItemsSource = bankaccts;
-            //   DataGrid2 . ItemsSource = bankaccts;
-            //}
 
-            //LeftSideContainer . RowDefinitions [ 0 ] . Height = new GridLength ( 1 , GridUnitType . Star );
-            //LeftSideContainer . RowDefinitions [ 1 ] . Height = new GridLength ( 65 , GridUnitType . Pixel );
+            myStoryboard = new Storyboard ( );
+            //           Rectangle . Loaded += Rectangle_Loaded;
+            //DoubleAnimation myDoubleAnimation = new DoubleAnimation ( );
+            //myDoubleAnimation . From = 1.0;
+            //myDoubleAnimation . To = 0.0;
+            //myDoubleAnimation . Duration = new Duration ( TimeSpan . FromSeconds ( 2 ) );
+            //myDoubleAnimation . AutoReverse = true;
+            ////myDoubleAnimation . RepeatBehavior = RepeatBehavior . Forever;
 
-            //LeftSideContainer . ColumnDefinitions [ 0 ] . Width = new GridLength ( 4 , GridUnitType . Star );
-            //LeftSideContainer . ColumnDefinitions [ 1 ] . Width = new GridLength ( 20 , GridUnitType . Pixel );
-            //LeftSideContainer . ColumnDefinitions [ 2 ] . Width= new GridLength ( 480 , GridUnitType . Pixel );
+            // myStoryboard . Children . Add ( myDoubleAnimation );
+            //Storyboard . SetTargetName ( myDoubleAnimation , Testbtn . Name );
+            //Storyboard . SetTargetProperty ( myDoubleAnimation , new PropertyPath ( Rectangle . OpacityProperty ) );
 
-            //RightInsidegrid . RowDefinitions [ 0 ] . Height = new GridLength ( 0.01 , GridUnitType . Star );
-            //RightInsidegrid . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType . Pixel);
-            //RightInsidegrid . RowDefinitions [ 2 ] . Height = new GridLength ( 1 , GridUnitType . Star );
+            // Move slider fully down to bottom
+            RightInsidegridUpper . RowDefinitions [ 0 ] . Height = new GridLength ( 1 , GridUnitType . Star );
+            RightInsidegridUpper . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType .Pixel);
+            RightInsidegridUpper . RowDefinitions [ 2 ] . Height = new GridLength ( 1 , GridUnitType . Pixel);
+
+           }
+
+        private void Rectangle_Loaded ( object sender , RoutedEventArgs e )
+        {
+            myStoryboard . Begin ( this );
         }
+
+        private void Animate_Click ( object sender , RoutedEventArgs e )
+        {
+            myStoryboard . Begin ( this );
+        }
+
         #endregion Startup
 
         #region Data Loading
@@ -595,7 +611,8 @@ namespace MyDev . Views
             Thickness th2 = new Thickness ( 0 , 0 , 0 , 0 );
             th2 . Top = LeftTopSplitterOffset;
             lowerleftpanel . Margin = th2;
-
+            canvas . Height= this . ActualHeight;
+            canvas . Width = this . ActualWidth;
             //Thickness th = new Thickness ( 0 , 0 , 0 , 0 );
             //th = vsplitterbar . Margin;
             //th . Left = lowerleftpanel . ActualWidth - 120;
@@ -780,28 +797,8 @@ namespace MyDev . Views
            line2: $"the structure of the table [{dbName . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
            line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
            );
-        }
-
-   
-        private void LeftHorzintalSplitter_LayoutUpdated ( object sender , EventArgs e )
-        {
-            //upperleftpanel . UpdateLayout ( );
-            //lowerleftpanel . UpdateLayout ( );
-
-        }
-
-        private void upperleftpanel_LayoutUpdated ( object sender , EventArgs e )
-        {
-            //upperleftpanel . UpdateLayout( );
-            //lowerleftpanel . UpdateLayout( );
-        }
-
-        private void TopWrapper_LayoutUpdated ( object sender , EventArgs e )
-        {
-            //upperleftpanel . UpdateLayout ( );
-            //lowerleftpanel . UpdateLayout ( );
-        }
-
+        }   
+  
         private void ShowTableStructure2_Click ( object sender , RoutedEventArgs e )
         {
             // Show table fields with nvarchar sizes in FlowDoc
@@ -817,6 +814,48 @@ namespace MyDev . Views
             line2: $"the structure of the table [{dbName2 . SelectedItem . ToString ( ) }] is listed below : \n{output}" ,
             line3: $"Results created by Stored Procedure : \n({SqlCommand . ToUpper ( )})" , clr3: "Blue4"
             );
+        }
+
+        private void ShowTableStructure_MouseEnter ( object sender , MouseEventArgs e )
+        {
+            //SolidColorBrush brush = new SolidColorBrush ( Colors . Red );
+            //ShowTableStructure . Background = brush;
+
+            //ColorAnimation animation = new ColorAnimation (  Colors . Blue , Colors . Red,
+            //               new Duration ( TimeSpan . FromSeconds ( 1 ) ) );
+
+            //animation . AutoReverse = false;
+            //animation . FillBehavior = FillBehavior . Stop;
+            //brush . BeginAnimation ( SolidColorBrush . ColorProperty , animation );
+        }
+
+        private void ShowTableStructure_MouseLeave ( object sender , MouseEventArgs e )
+        {
+            //SolidColorBrush brush = new SolidColorBrush ( Colors . Red );
+            //ShowTableStructure . Background = brush;
+
+            //ColorAnimation animation = new ColorAnimation ( Colors . Blue , Colors . Red ,
+            //               new Duration ( TimeSpan . FromSeconds ( 1 ) ) );
+
+            //animation . AutoReverse = false;
+            //animation . FillBehavior = FillBehavior . Stop;
+            //brush . BeginAnimation ( SolidColorBrush . ColorProperty , animation );
+//            brush . StopStoryBoard ( );
+        }
+
+        private void Image_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            List<object> list = new List<object> ( );
+            list . Add ( DataGrid1 );
+            list . Add ( DataGrid2 );
+            //list . Add ( listbox );
+            //list . Add ( DbRecordInfo );
+            //list . Add ( TablesPanel );
+            if ( DataGrid1. Style == null )
+                Utils . Magnify ( list , true );
+            else
+                Utils . Magnify ( list , false );
+
         }
     }
 }

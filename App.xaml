@@ -21,8 +21,9 @@
 				<ResourceDictionary Source="\DataTemplates\GenericDataTemplates.xaml"/>
 				<ResourceDictionary Source="\DataTemplates\NWDataTemplates.xaml"/>
 				<ResourceDictionary Source="\DataTemplates\PublishersTemplates.xaml"/>
-				<ResourceDictionary Source="\Dicts\ComboBoxStyles.xaml"/>
-				<!--<ResourceDictionary Source="\DataTemplates\NWDataTemplates.xaml"/>-->
+                <ResourceDictionary Source="\Dicts\ComboBoxStyles.xaml"/>
+                <ResourceDictionary Source="\Dicts\Storyboards.xaml"/>
+                <!--<ResourceDictionary Source="\DataTemplates\NWDataTemplates.xaml"/>-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary >
  

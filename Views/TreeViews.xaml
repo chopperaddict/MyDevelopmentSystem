@@ -435,7 +435,8 @@
 			<ListBox x:Name="listBox" 
 					     Grid.Row="1"
 					Margin="0,5,12,0" 
-					Background="{StaticResource White4}"
+					IsSynchronizedWithCurrentItem="True"
+                    Background="{StaticResource White4}"
 				/>
 			<!--MinHeight="235"-->
 		</Grid>

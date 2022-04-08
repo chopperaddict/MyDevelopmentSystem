@@ -462,7 +462,7 @@
 				<TextBlock 					
 					Height="30"
 					Margin="0,0,0,0"
-					Text="xxxxxxxxxxxxxxxx" Foreground="{StaticResource Black0}"/>
+					Text="Use Magnify System" Foreground="{StaticResource Black0}"/>
 				<TextBlock 					
 					Height="30"
 					Margin="0,0,0,0"
@@ -512,6 +512,7 @@
 					Height="30"					
 					Margin="0,10,0,0"
 					SelectedIndex="0"					   
+              Style="{StaticResource ComboBoxMagnifyAnimation}"
 					HorizontalAlignment="Left"
 					Width="160">
 					<!--Style="{StaticResource ComboStyle1}"-->
@@ -543,22 +544,8 @@
 				</ComboBox>
 				<!--===============================================-->
 
-				<TextBox 
-					Height="30"
-					Margin="0,10,0,0"
-					Style="{StaticResource TextBox1}"
-					Text="000000000000" 
-					HorizontalAlignment="Left"
-					VerticalContentAlignment="Center"
-					Width="160"/>
-				<TextBox 
-					Height="30"
-					Margin="0,10,0,0"
-					Style="{StaticResource TextBox1}"
-					Text="111111111111111 " 
-					HorizontalAlignment="Left"
-					Width="160"/>
-				<TextBox 
+	           <CheckBox x:Name="UseMagnify" Margin="0 10 0 0" Click="UseMagnify_Click"/>
+                <TextBox 
 					Height="30"
 					Margin="0,10,0,0"
 					Style="{StaticResource TextBox1}"

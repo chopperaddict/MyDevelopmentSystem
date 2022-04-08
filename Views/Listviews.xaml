@@ -21,133 +21,238 @@
 	  ResizeMode="CanResizeWithGrip"
 	  WindowStartupLocation="Manual">
 
-	<Window.Resources>
-		<conv:ReduceByParamValue x:Key="resetTextWidth" />
-		<conv:UniversalValueConverter x:Key="UniversalConvert" />
+    <Window.Resources>
+        <conv:ReduceByParamValue x:Key="resetTextWidth" />
+        <conv:UniversalValueConverter x:Key="UniversalConvert" />
 
-		<!--<model:SqlDatabases x:Key="DbNames"/>-->
-		<model:SqlDatabases x:Key="DbNames"/>
-		<!--<model:Database x:Key="DbNames"/>-->
-		<!--<DataTemplate DataType="{x:Type model:SqlTable}">-->
-		<DataTemplate x:Key="Level2">
-			<TextBlock Text="{Binding Path=Tablename}" />
-		</DataTemplate>
+        <!--<Style x:Name="teststyle" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Margin="5" Name="grid">
+                            <Ellipse Stroke="DarkBlue" StrokeThickness="2" Visibility="Visible">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush Center="0.3,0.2" RadiusX="0.5" RadiusY="0.5">
+                                        <GradientStop Color="Azure" Offset="0.1" />
+                                        <GradientStop Color="CornflowerBlue" Offset="1.1" />
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <ContentPresenter Name="content" Margin="10"
+											HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-		<!--<HierarchicalDataTemplate  DataType="{x:Type model:Database}" >-->
-		<HierarchicalDataTemplate  x:Key="Level1" 
+        <DataTemplate x:Key="MyDataTemplate">
+            <TextBlock Name="textBlock" FontSize="14" Foreground="Blue">
+                <TextBlock.Text>
+                    <Binding XPath="Title"/>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>-->
+
+        <!--//Normal  direction V left to right from specified start point-->
+        <!--Right side is steeper than left-->
+        <PathGeometry x:Key="AnimationPath"
+        Figures="m 300,-200
+                       l  500,200
+                         l 100. -400 
+                      "/>
+        <!--//Normal  direction V left to right from specified start point--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 300,-200
+                       l  500,200
+                         l 100. -400 
+                      "/>-->
+
+        <!--//Reverse direction normal V left from specified start point--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 700,-200
+                       l -400,200
+                         l -200. -400 
+                      "/>-->
+
+        <!--//Vertical straight up linethen right horizontal line from specified start point--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 200,-200
+                       v -300
+                       h 700 "/>-->
+
+        <!--//Vertical straight down line--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 0,-200
+                       V 0,800 "/>-->
+
+        <!--//Vertical straight down line--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 0,-200
+                       300,800 "/>-->
+        <!--//Quadratic U upward arc --><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 0,-200
+                      Q  300,200 
+						300,-200 "/>-->
+
+        <!--//Shallow upward arc of  150 degrees to right--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 0,-200
+                      A  300,800 150 0 1 
+                      200,-200 "/>-->
+
+        <!--//Shallow upward line to right--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 0,-200
+                      C
+                      200,-200 
+						300,-250
+						400,-300"/>-->
+
+        <!--// Shallow Alpha curve up - righ Inverted U-->
+        <!--<PathGeometry x:Key="AnimationPath"
+		      Figures="M -100,50 
+                      C 
+						200,-200 
+                      300,-100 
+                      400,50"
+                      />-->
+
+       <!--//Inverted V curve - up then down--><!--
+        <PathGeometry x:Key="AnimationPath"
+        Figures="M 0,-200
+                      C 
+						50,-250
+						100,-300
+						150,-450 
+						200,-350
+						250,-250 
+						350,0"/>-->
+
+        <!--<model:SqlDatabases x:Key="DbNames"/>-->
+        <model:SqlDatabases x:Key="DbNames"/>
+        <!--<model:Database x:Key="DbNames"/>-->
+        <!--<DataTemplate DataType="{x:Type model:SqlTable}">-->
+        <DataTemplate x:Key="Level2">
+            <TextBlock Text="{Binding Path=Tablename}" />
+        </DataTemplate>
+
+        <!--<HierarchicalDataTemplate  DataType="{x:Type model:Database}" >-->
+        <HierarchicalDataTemplate  x:Key="Level1" 
 						   ItemsSource="{Binding DbNames}"
 						   ItemTemplate="{StaticResource Level2}">
-			<TextBlock Text="{Binding Path=Databasename}" />
-		</HierarchicalDataTemplate>
+            <TextBlock Text="{Binding Path=Databasename}" />
+        </HierarchicalDataTemplate>
 
 
-		<Style x:Key="DataGridStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
-			<Style.Triggers>
-				<!--// Window IS FOCUSED-->
+        <Style x:Key="DataGridStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+            <Style.Triggers>
+                <!--// Window IS FOCUSED-->
 
-				<!--#region Triggers-->
+                <!--#region Triggers-->
 
-				<!--NOT SELECTED,  MOUSEOVER / FALSE-->
-				<!--1, False, False -->
-				<MultiDataTrigger>
-					<MultiDataTrigger.Conditions>
-						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="False" />
-						<!--<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}, Path=IsKeyboardFocusWithin}" Value="False" />-->
-						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="False" />
-					</MultiDataTrigger.Conditions>
-					<MultiDataTrigger.Setters>
-						<Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Cyan3}" />
-						<Setter Property="Foreground" Value="{StaticResource Black2}" />
-					</MultiDataTrigger.Setters>
-				</MultiDataTrigger>
+                <!--NOT SELECTED,  MOUSEOVER / FALSE-->
+                <!--1, False, False -->
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="False" />
+                        <!--<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}, Path=IsKeyboardFocusWithin}" Value="False" />-->
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Cyan3}" />
+                        <Setter Property="Foreground" Value="{StaticResource Black2}" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
 
-				<!--NOT SELECTED,  MOUSEOVER / TRUE-->
-				<!--1, False, True -->
-				<MultiDataTrigger>
-					<MultiDataTrigger.Conditions>
-						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="False" />
-						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
-					</MultiDataTrigger.Conditions>
-					<MultiDataTrigger.Setters>
-						<Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue3}" />
-						<Setter Property="Foreground" Value="{StaticResource White0}" />
-					</MultiDataTrigger.Setters>
-				</MultiDataTrigger>
-				<!-- SELECTED,  MOUSEOVER / TRUE-->
-				<!--1, True, True -->
-				<MultiDataTrigger>
-					<MultiDataTrigger.Conditions>
-						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="True" />
-						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
-					</MultiDataTrigger.Conditions>
-					<MultiDataTrigger.Setters>
-						<Setter Property="Background" Value="{StaticResource Red0}" />
-						<Setter Property="Foreground" Value="{StaticResource White0}" />
-						<Setter Property="FontWeight" Value="DemiBold" />
-					</MultiDataTrigger.Setters>
-				</MultiDataTrigger>
+                <!--NOT SELECTED,  MOUSEOVER / TRUE-->
+                <!--1, False, True -->
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="False" />
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue3}" />
+                        <Setter Property="Foreground" Value="{StaticResource White0}" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+                <!-- SELECTED,  MOUSEOVER / TRUE-->
+                <!--1, True, True -->
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="True" />
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Background" Value="{StaticResource Red0}" />
+                        <Setter Property="Foreground" Value="{StaticResource White0}" />
+                        <Setter Property="FontWeight" Value="DemiBold" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
 
-				<!--#### ACTYPE = 1 ####-->
-				<!-- SELECTED,  MOUSEOVER / FALSE-->
-				<!--1, True, False -->
-				<MultiDataTrigger>
-					<MultiDataTrigger.Conditions>
-						<Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="true" />
-						<Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="False" />
-					</MultiDataTrigger.Conditions>
-					<MultiDataTrigger.Setters>
-						<Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue0}" />
-						<Setter Property="Foreground" Value="{StaticResource White0}" />
-						<Setter Property="FontWeight" Value="Bold" />
-					</MultiDataTrigger.Setters>
-				</MultiDataTrigger>
+                <!--#### ACTYPE = 1 ####-->
+                <!-- SELECTED,  MOUSEOVER / FALSE-->
+                <!--1, True, False -->
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}" Value="true" />
+                        <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue0}" />
+                        <Setter Property="Foreground" Value="{StaticResource White0}" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
 
-				<!--#endregion Triggers-->
-			</Style.Triggers>
-		</Style>
-	</Window.Resources>
+                <!--#endregion Triggers-->
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
-	<Window.Background>
-		<LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
-			<GradientStop Offset="0" Color="#FFFFAA5D" />
-			<GradientStop Offset="0.3" Color="#FFCDAA36" />
-			<GradientStop Offset="0.609" Color="#FFFFD598" />
-			<GradientStop Offset="1" Color="#FFFFFAE7" />
-			<!--<GradientStop Offset="0" Color="#FF193A44" />-->
-		</LinearGradientBrush>
-	</Window.Background>
+    <Window.Background>
+        <LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
+            <GradientStop Offset="0" Color="#FFFFAA5D" />
+            <GradientStop Offset="0.3" Color="#FFCDAA36" />
+            <GradientStop Offset="0.609" Color="#FFFFD598" />
+            <GradientStop Offset="1" Color="#FFFFFAE7" />
+            <!--<GradientStop Offset="0" Color="#FF193A44" />-->
+        </LinearGradientBrush>
+    </Window.Background>
 
-	<Grid x:Name="MainGrid">
-		
+    <Grid x:Name="MainGrid">
 
-		<Grid.RowDefinitions>
-			<RowDefinition  Height="35" />
-			<RowDefinition  x:Name="row0" Height="1.5*" />
-			<RowDefinition  x:Name="row1" Height="2*" />
-			<RowDefinition   Height="0.8*" />
-			<RowDefinition   Height="65" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition  Width="10" />
-			<ColumnDefinition x:Name="col1" Width="*" />
-			<ColumnDefinition x:Name="col2" Width="10" />
-			<ColumnDefinition  Width="*" />
-			<ColumnDefinition  Width="10" />
-		</Grid.ColumnDefinitions>
 
-		<!--#region Flowdoc/PickColors/Treeviews-->
+        <Grid.RowDefinitions>
+            <RowDefinition  Height="35" />
+            <RowDefinition  x:Name="row0" Height="1.5*" />
+            <RowDefinition  x:Name="row1" Height="2*" />
+            <RowDefinition   Height="0.8*" />
+            <RowDefinition   Height="65" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="10" />
+            <ColumnDefinition x:Name="col1" Width="*" />
+            <ColumnDefinition x:Name="col2" Width="10" />
+            <ColumnDefinition  Width="*" />
+            <ColumnDefinition  Width="10" />
+        </Grid.ColumnDefinitions>
 
-		<Canvas x:Name="canvas" 
+        <!--#region Flowdoc/PickColors/Treeviews-->
+
+        <Canvas x:Name="canvas" 
 			  Grid.Row="0"
 			  Grid.Column="0"
 			  Grid.RowSpan="5"
 			  Grid.ColumnSpan="5"
 			  Height="{Binding ActualHeight, ElementName=MainGrid}"
-			  Panel.ZIndex="3"
+			  Panel.ZIndex="22"
 			  Visibility="Hidden"
 			  Width="{Binding ActualWidth, ElementName=MainGrid}">
 
-			<user:FlowDoc x:Name="Flowdoc"
+            <user:FlowDoc x:Name="Flowdoc"
 				backGround="{StaticResource Gray5}"
 				borderColor="{StaticResource Orange1}"
 				Canvas.Left="45"
@@ -161,11 +266,11 @@
 				PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"
 
 				Opacity="1"
-				Panel.ZIndex="2"
+				Panel.ZIndex="22"
 				Visibility="Hidden"
 				Width="520" />
 
-			<user:Colorpicker  x:Name="PickColors"
+            <user:Colorpicker  x:Name="PickColors"
 				Canvas.Left="331"
 				Canvas.Top="356"
 				Visibility="Hidden"
@@ -174,10 +279,10 @@
 				Panel.ZIndex="4"
 				PreviewMouseLeftButtonDown="PickColors_PreviewMouseLeftButtonDown" />
 
-			<!--#region TreeViews-->
+            <!--#region TreeViews-->
 
-			<!--// Controlling Border for all TreeView stuff-->
-			<Border x:Name ="TreeviewBorder" 
+            <!--// Controlling Border for all TreeView stuff-->
+            <Border x:Name ="TreeviewBorder" 
 				  Background="{StaticResource Red5}"
 				  Width="357" 
 				  Height="400" 
@@ -190,20 +295,20 @@
 				  PreviewMouseLeftButtonUp="TreeviewBorder_PreviewMouseLeftButtonUp"
 				  Visibility="Visible">
 
-				<Grid>
-					<!--// *** THESE WORK !!! *** //-->
-					<Grid.RowDefinitions>
-						<RowDefinition Height="35" />
-						<RowDefinition Height="*" />
-					</Grid.RowDefinitions>
+                <Grid>
+                    <!--// *** THESE WORK !!! *** //-->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-					<!--#region Db Tables Tree view-->
-					<WrapPanel x:Name="TablesWrappanel"
+                    <!--#region Db Tables Tree view-->
+                    <WrapPanel x:Name="TablesWrappanel"
 						Grid.Row="0"  
 						Orientation="Horizontal"
 						Visibility="Visible">
 
-						<Label  x:Name="TablesLabel"
+                        <Label  x:Name="TablesLabel"
 								Background="{StaticResource Red3}"
 								Content="All Db Tables"
 								FontWeight="DemiBold"
@@ -217,15 +322,15 @@
 								Visibility="Visible"
 								Width="315"/>
 
-						<Image  Source="/icons/Whitecross.png" 
+                        <Image  Source="/icons/Whitecross.png" 
 							  Height="20"
 							  Margin="0 2 0 0"
 							  PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown"
 							  HorizontalAlignment="Right"
 							  Visibility="Visible"/>
-					</WrapPanel>
+                    </WrapPanel>
 
-					<TreeView x:Name="DbTablesTree"  
+                    <TreeView x:Name="DbTablesTree"  
 							Grid.Row="1"
 							HorizontalAlignment="Left" 
 							Width="{Binding Path=Width, ElementName=TreeviewBorder}" 
@@ -233,9 +338,9 @@
 							SelectedItemChanged="DbTablesTree_SelectedItemChanged"
 						    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							Visibility="Hidden">
-						<TreeView.ItemTemplate>
-							<HierarchicalDataTemplate DataType="{x:Type model:Database}" ItemsSource="{Binding Path=Tables}" >
-								<TextBlock 
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type model:Database}" ItemsSource="{Binding Path=Tables}" >
+                                <TextBlock 
 									     Text="{Binding Databasename}" 
 									     VerticalAlignment="Center" 
 									     Margin="5"
@@ -246,9 +351,9 @@
 										PreviewMouseLeftButtonUp="TextBlock_PreviewMouseLeftButtonUp"
 									
 										Width="{Binding Path=Width, ElementName=DbTablesTree}"></TextBlock>
-								<HierarchicalDataTemplate.ItemTemplate>
-									<DataTemplate DataType="{x:Type model:SqlTable}">
-										<TextBlock 
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type model:SqlTable}">
+                                        <TextBlock 
 											FontSize="14"
 											Foreground="{StaticResource Black3}"
 											Height="20"												
@@ -257,22 +362,22 @@
 											Text="{Binding Tablename}" 
 											VerticalAlignment="Center" 
 											Width="{Binding Path=Width, ElementName=DbTablesTree}"></TextBlock>
-									</DataTemplate>
-								</HierarchicalDataTemplate.ItemTemplate>
-							</HierarchicalDataTemplate>
-						</TreeView.ItemTemplate>
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
 
-					</TreeView>
+                    </TreeView>
 
-					<!--#endregion Db Tables Tree view-->
+                    <!--#endregion Db Tables Tree view-->
 
-					<!--#region SP Tree view-->
+                    <!--#region SP Tree view-->
 
-					<WrapPanel  x:Name="SpWrappanel"
+                    <WrapPanel  x:Name="SpWrappanel"
 						Grid.Row="0"  Orientation="Horizontal"
 						     Visibility="Visible">
 
-						<Label  x:Name="SpLabel"
+                        <Label  x:Name="SpLabel"
 								Background="{StaticResource Red3}"
 								Content="Stored Procedures"
 								Foreground="{StaticResource White0}"
@@ -284,15 +389,15 @@
 								Visibility="Visible"
 								Width="316"/>
 
-						<Image  Source="/icons/Whitecross.png" 
+                        <Image  Source="/icons/Whitecross.png" 
 							  Height="20"
 							  PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown"
 							  HorizontalAlignment="Right"
 							  Margin="0 2 0 0"
 							  Visibility="Visible"/>
-					</WrapPanel>
+                    </WrapPanel>
 
-					<TreeView x:Name="DbProcsTree"  
+                    <TreeView x:Name="DbProcsTree"  
 							Background="{StaticResource Orange7}"
 							Expander.Expanded="DbProcsTree_Expanded"
 						    Expander.Collapsed="DbProcsTree_Collapsed"
@@ -304,24 +409,24 @@
 							Visibility="Visible"
 							Width="355">
 
-						<TreeView.Resources>
-						</TreeView.Resources>
+                        <TreeView.Resources>
+                        </TreeView.Resources>
 
-						<!--<Style TargetType="{x:Type TreeViewItem}">
+                        <!--<Style TargetType="{x:Type TreeViewItem}">
 							<Setter Property="IsExpanded" Value="{Binding Path=IsNodeExpanded, ElementName=Listviews}"/>
 						</Style>-->
-						<TreeView.ItemContainerStyle>
-							<Style TargetType="TreeViewItem">
-								<Setter Property="IsSelected" Value="{Binding IsSelected}" />
-								<Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
-								<!--<Setter Property="Height" Value="16" />-->
-							</Style>
-						</TreeView.ItemContainerStyle>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                                <!--<Setter Property="Height" Value="16" />-->
+                            </Style>
+                        </TreeView.ItemContainerStyle>
 
-						<TreeView.ItemTemplate >
-							<HierarchicalDataTemplate DataType="{x:Type model:Database}" ItemsSource="{Binding Path=Procedures}" >
-								<!--<Expander Header="{Binding Databasename}" IsExpanded="True">-->
-								<TextBlock 
+                        <TreeView.ItemTemplate >
+                            <HierarchicalDataTemplate DataType="{x:Type model:Database}" ItemsSource="{Binding Path=Procedures}" >
+                                <!--<Expander Header="{Binding Databasename}" IsExpanded="True">-->
+                                <TextBlock 
 									     Text="{Binding Databasename}" 
 									     VerticalAlignment="Center" 
 									     Margin="5"
@@ -330,10 +435,10 @@
 									     Foreground="{StaticResource Black0}"
 										Height="15"
 										Width="{Binding Path=Width, ElementName=DbTablesTree}"></TextBlock>
-								<!--</Expander>-->
-								<HierarchicalDataTemplate.ItemTemplate>
-									<DataTemplate DataType="{x:Type model:SqlProcedures}">
-										<TextBlock 
+                                <!--</Expander>-->
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type model:SqlProcedures}">
+                                        <TextBlock 
 											FontSize="11"
 											Foreground="{StaticResource Black3}"
 											Height="14"
@@ -342,20 +447,20 @@
 											Text="{Binding Procname}" 
 											VerticalAlignment="Center" 
 											Width="{Binding Path=Width, ElementName=DbProcsTree}">
-										</TextBlock>
-									</DataTemplate>
-								</HierarchicalDataTemplate.ItemTemplate>
-							</HierarchicalDataTemplate>
-						</TreeView.ItemTemplate>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
 
-					</TreeView>
+                    </TreeView>
 
-					<!--#endregion SP Tree view-->
+                    <!--#endregion SP Tree view-->
 
-				</Grid>
-			</Border>
+                </Grid>
+            </Border>
 
-			<Border x:Name ="SpTreeviewBorder" 
+            <Border x:Name ="SpTreeviewBorder" 
 				  Background="{StaticResource Red5}"
 				  Width="357" 
 				  Height="400" 
@@ -368,21 +473,21 @@
 				  PreviewMouseLeftButtonUp="TreeviewBorder_PreviewMouseLeftButtonUp"
 				  Visibility="Hidden">
 
-				<Grid>
-					<!--// *** THESE WORK !!! *** //-->
-					<Grid.RowDefinitions>
-						<RowDefinition Height="35" />
-						<RowDefinition Height="*" />
-					</Grid.RowDefinitions>
+                <Grid>
+                    <!--// *** THESE WORK !!! *** //-->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-	
-					<!--#region SP Tree view-->
 
-					<WrapPanel  x:Name="Sp2Wrappanel"
+                    <!--#region SP Tree view-->
+
+                    <WrapPanel  x:Name="Sp2Wrappanel"
 						Grid.Row="0"  Orientation="Horizontal"
 						     Visibility="Visible">
 
-						<Label  x:Name="Sp2Label"
+                        <Label  x:Name="Sp2Label"
 								Background="{StaticResource Red3}"
 								Content="Stored Procedures"
 								Foreground="{StaticResource White0}"
@@ -394,15 +499,15 @@
 								Visibility="Visible"
 								Width="316"/>
 
-						<Image  Source="/icons/Whitecross.png" 
+                        <Image  Source="/icons/Whitecross.png" 
 							  Height="20"
 							  PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown"
 							  HorizontalAlignment="Right"
 							  Margin="0 2 0 0"
 							  Visibility="Visible"/>
-					</WrapPanel>
+                    </WrapPanel>
 
-					<TreeView x:Name="Db2ProcsTree"  
+                    <TreeView x:Name="Db2ProcsTree"  
 							Background="{StaticResource Orange7}"
 							Expander.Expanded="DbProcsTree_Expanded"
 						    Expander.Collapsed="DbProcsTree_Collapsed"
@@ -414,24 +519,24 @@
 							Visibility="Visible"
 							Width="355">
 
-						<TreeView.Resources>
-						</TreeView.Resources>
+                        <TreeView.Resources>
+                        </TreeView.Resources>
 
-						<!--<Style TargetType="{x:Type TreeViewItem}">
+                        <!--<Style TargetType="{x:Type TreeViewItem}">
 							<Setter Property="IsExpanded" Value="{Binding Path=IsNodeExpanded, ElementName=Listviews}"/>
 						</Style>-->
-						<TreeView.ItemContainerStyle>
-							<Style TargetType="TreeViewItem">
-								<Setter Property="IsSelected" Value="{Binding IsSelected}" />
-								<Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
-								<!--<Setter Property="Height" Value="16" />-->
-							</Style>
-						</TreeView.ItemContainerStyle>
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                                <!--<Setter Property="Height" Value="16" />-->
+                            </Style>
+                        </TreeView.ItemContainerStyle>
 
-						<TreeView.ItemTemplate >
-							<HierarchicalDataTemplate DataType="{x:Type model:Database}" ItemsSource="{Binding Path=Procedures}" >
-								<!--<Expander Header="{Binding Databasename}" IsExpanded="True">-->
-								<TextBlock 
+                        <TreeView.ItemTemplate >
+                            <HierarchicalDataTemplate DataType="{x:Type model:Database}" ItemsSource="{Binding Path=Procedures}" >
+                                <!--<Expander Header="{Binding Databasename}" IsExpanded="True">-->
+                                <TextBlock 
 									     Text="{Binding Databasename}" 
 									     VerticalAlignment="Center" 
 									     Margin="5"
@@ -440,10 +545,10 @@
 									     Foreground="{StaticResource Black0}"
 										Height="15"
 										Width="{Binding Path=Width, ElementName=DbTablesTree}"></TextBlock>
-								<!--</Expander>-->
-								<HierarchicalDataTemplate.ItemTemplate>
-									<DataTemplate DataType="{x:Type model:SqlProcedures}">
-										<TextBlock 
+                                <!--</Expander>-->
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type model:SqlProcedures}">
+                                        <TextBlock 
 											FontSize="11"
 											Foreground="{StaticResource Black3}"
 											Height="14"
@@ -452,54 +557,59 @@
 											Text="{Binding Procname}" 
 											VerticalAlignment="Center" 
 											Width="{Binding Path=Width, ElementName=DbProcsTree}">
-										</TextBlock>
-									</DataTemplate>
-								</HierarchicalDataTemplate.ItemTemplate>
-							</HierarchicalDataTemplate>
-						</TreeView.ItemTemplate>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
 
-					</TreeView>
+                    </TreeView>
 
-					<!--#endregion SP Tree view-->
+                    <!--#endregion SP Tree view-->
 
-				</Grid>
-			</Border>
-			<!--#endregion TreeViews-->
+                </Grid>
+            </Border>
+            <!--#endregion TreeViews-->
 
-		</Canvas>
+        </Canvas>
 
-		<!--#endregion Flowdoc/PickColors/Treeviews-->
+        <!--#endregion Flowdoc/PickColors/Treeviews-->
 
-		<!--#region DataGrid-->
-		<DataGrid x:Name="dGrid"
+        <!--#region DataGrid-->
+        <DataGrid x:Name="dGrid"
 			CellStyle="{StaticResource DataGridStyle}"
 			Grid.Column="1"
-			Grid.Row="1"
+			Grid.Row="1"                  
+            Style="{StaticResource DatagridMagnifyAnimation}"
 			Grid.ColumnSpan="3"/>
 
-		<!--#endregion DataGrid-->
+        <!--#endregion DataGrid-->
 
-		<!--#region List Box/views-->
+        <!--#region List Box/views-->
 
-		<ListBox x:Name="listBox"
+                 <!--ItemTemplate="{StaticResource MyDataTemplate}"-->
+        <ListBox x:Name="listBox"
 				Background="Transparent"
+				ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
+                ItemTemplate="{DynamicResource BankDataTemplate1}"
 				FontSize="12"
 				Grid.Column="1"
 				Grid.Row="2"
 				Height="{Binding row1.Height}"
 				HorizontalAlignment="Stretch"
-				ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
-				ItemTemplate="{DynamicResource BankDataTemplate1}"
+				IsSynchronizedWithCurrentItem="True"
 				Margin="0,30,0,0"
 				ScrollViewer.HorizontalScrollBarVisibility="Auto"
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				VerticalAlignment="Top"
 				VerticalContentAlignment="Stretch" />
+                 <!--Style="{StaticResource ListBoxMagnifyAnimation}"-->
 
-		<!--FontSize="{Binding Fontsize, ElementName=Listviews}"-->
-		<ListView x:Name="listView"
+        <!--FontSize="{Binding Fontsize, ElementName=Listviews}"-->
+        <ListView x:Name="listView"
 				Background="Beige"
 				FocusVisualStyle="{x:Null}"
+				ItemContainerStyle="{StaticResource lvItemStyle1}"
 				Grid.Column="3"
 				Grid.ColumnSpan="1"
 				Grid.Row="2"
@@ -508,17 +618,17 @@
 				ScrollViewer.HorizontalScrollBarVisibility="Auto"
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				Margin="0 30 0 0"
-				ItemContainerStyle="{StaticResource lvItemStyle1}"
 				ItemTemplate="{DynamicResource BankDataTemplate1}"
+                 Style="{StaticResource ListViewMagnifyAnimation}"
 				VerticalAlignment="Top"
 			    VerticalContentAlignment="Stretch">
-			<!--<ListViewItem Height="{Binding Path=ItemsHeight}" />-->
-		</ListView>
+            <!--<ListViewItem Height="{Binding Path=ItemsHeight}" />-->
+        </ListView>
 
-		<!--#endregion List Box/views-->
+        <!--#endregion List Box/views-->
 
-		<!--#region TextBoxes / Blocks-->
-		<TextBox x:Name="dGridHeader"
+        <!--#region TextBoxes / Blocks-->
+        <TextBox x:Name="dGridHeader"
 			Background="{StaticResource Blue0}"
 			FontSize="16"
 			FontWeight="DemiBold"
@@ -534,7 +644,7 @@
 			Text="List Box Display"
 			VerticalAlignment="Top" />
 
-		<TextBox x:Name="lbHeader"
+        <TextBox x:Name="lbHeader"
 			Background="{StaticResource Blue0}"
 			FontSize="16"
 			FontWeight="DemiBold"
@@ -548,7 +658,7 @@
 			Padding="0 0 0 0"
 			Text="List Box Display"
 			VerticalAlignment="Top" />
-		<TextBox x:Name="lvHeader"
+        <TextBox x:Name="lvHeader"
 			Background="{StaticResource Blue0}"
 			FontSize="16"
 			FontWeight="DemiBold"
@@ -562,7 +672,7 @@
 			Padding="0 0 0 0"
 			Text="List View Display"
 			VerticalAlignment="Top" />
-		<TextBox x:Name="tbCountlb"
+        <TextBox x:Name="tbCountlb"
 			  AllowDrop="True"
 			  Background="{StaticResource Red5}"
 			   BorderBrush="{StaticResource White0}"
@@ -583,7 +693,7 @@
 			  TextWrapping="NoWrap"
 			  VerticalAlignment="Top"
 			  Width="53" />
-		<TextBox x:Name="tbCountlv"
+        <TextBox x:Name="tbCountlv"
 			  AllowDrop="True"
 			  Background="{StaticResource Red5}"
 			   BorderBrush="{StaticResource White0}"
@@ -604,7 +714,7 @@
 			  TextWrapping="NoWrap"
 			  VerticalAlignment="Top"
 			  Width="53" />
-		<TextBox x:Name="LoadTime"
+        <TextBox x:Name="LoadTime"
 			  Background="{StaticResource Blue1}"
 			  FocusVisualStyle="{x:Null}"
 			  Foreground="{StaticResource White0}"
@@ -620,7 +730,7 @@
 			  TextWrapping="NoWrap"
 			  VerticalAlignment="Top"
 			  Width="82" />
-		<TextBlock
+        <TextBlock
 			  FontSize="14"
 			  Background="Transparent"
 			  FocusVisualStyle="{x:Null}"
@@ -634,7 +744,7 @@
 			  Text="Select Db Table to load :"
 			  VerticalAlignment="Top"
 			  Width="158" />
-		<TextBlock
+        <TextBlock
 			  Background="Transparent"
 			  FocusVisualStyle="{x:Null}"
 			  FontSize="14"
@@ -648,7 +758,7 @@
 			  Text="Data Templates :"
 			  VerticalAlignment="Top"
 			  Width="113" />
-		<TextBlock
+        <TextBlock
 			  FontSize="14"
 			  Background="Transparent"
 			  FocusVisualStyle="{x:Null}"
@@ -662,7 +772,7 @@
 			  Text="Data Templates :"
 			  VerticalAlignment="Top"
 			  Width="115" />
-		<TextBlock
+        <TextBlock
 			  FontSize="14"
 			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
@@ -675,7 +785,7 @@
 			  Text="Font Size:"
 			  VerticalAlignment="Center"
 			  Width="67" />
-		<TextBlock
+        <TextBlock
 				FontSize="14"
 				Background="Transparent"
 				FocusVisualStyle="{x:Null}"
@@ -689,7 +799,7 @@
 				Text="Row Height :"
 				VerticalAlignment="Top"
 				Width="84" />
-		<TextBlock
+        <TextBlock
 			FontSize="14"
 			Background="Transparent"
 			FocusVisualStyle="{x:Null}"
@@ -704,12 +814,13 @@
 			Text="Current Database :"
 			VerticalAlignment="Bottom"
 			Width="124" />
-		<TextBlock
+			  <!--FocusVisualStyle="{x:Null}"-->
+        <TextBlock
 			  FontSize="14"
 			  Background="Transparent"
-			  FocusVisualStyle="{x:Null}"
 			  FontWeight="DemiBold"
 			  Foreground="{StaticResource Black0}"
+               PreviewMouseLeftButtonDown="DataTemplateFindElement"
 			  Grid.Row="3"
 			  Grid.Column="1"
 			  Height="23"
@@ -717,13 +828,22 @@
 			  Margin="0,46,230,0"
 			  Text="Select Db Table to load :"
 			  VerticalAlignment="Top"
-			  Width="158" />
+			  Width="158" >
+   
+        </TextBlock>
 
-		<!--#endregion TextBoxes / Blocks-->
+        <Image x:Name="magnifyimage"
+            Source="\Icons\small Magnify.png" 
+               Panel.ZIndex="2" 
+               ToolTip="Click to toggle DataGrid Magnification System"
+               Margin="508,10,55,20" Height="35" Width="35" Grid.Column="1" Grid.Row="4" >
+        </Image>
 
-		<!--#region Combos-->
+        <!--#endregion TextBoxes / Blocks-->
 
-		<ComboBox  x:Name="DataTemplatesLb"
+        <!--#region Combos-->
+
+        <ComboBox  x:Name="DataTemplatesLb"
 			  AllowDrop="True"
 			  FontSize="13"
 			  FontWeight="DemiBold"
@@ -741,19 +861,20 @@
 			  Padding="5 3 0 0"
 			  SelectionChanged="LBDataTemplate_SelectionChanged"
 			  TabIndex="4"
+              Style="{StaticResource ComboBoxMagnifyAnimation}"
 			  Text="Db Name..."
 			  VerticalAlignment="Top"
 			  Width="231">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Style="{StaticResource ComboBoxTextBlockStyle1}"
 								Content="{Binding}"
 								Width="{Binding ActualWidth, ElementName=dbNameLv}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
-		<ComboBox  x:Name="DataTemplatesLv"
+        <ComboBox  x:Name="DataTemplatesLv"
 			  AllowDrop="True"
 			  FontSize="13"
 			  FontWeight="DemiBold"
@@ -770,20 +891,21 @@
 			  MaxDropDownHeight="257"
 			  Padding="5 3 0 0"
 			  SelectionChanged="LVDataTemplate_SelectionChanged"
+              Style="{StaticResource ComboBoxMagnifyAnimation}"
 			  TabIndex="4"
 			  Text="Db Name..."
 			  VerticalAlignment="Top"
 			  Width="231">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Style="{StaticResource ComboBoxTextBlockStyle1}"
 								Content="{Binding}"
 								Width="{Binding ActualWidth, ElementName=dbNameLv}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
-		<ComboBox  x:Name="DbMain"
+        <ComboBox  x:Name="DbMain"
 				AllowDrop="True"
 				FontSize="14"
 				FontWeight="DemiBold"
@@ -798,6 +920,7 @@
 				HorizontalContentAlignment="Center"
 				Margin="3,18,0,0"
 				MaxDropDownHeight="257"
+              Style="{StaticResource ComboBoxMagnifyAnimation}"
 				Padding="0 3 0 0"
 			     PreviewMouseRightButtonUp="DbMain_PreviewMouseRightButtonUp"
 				SelectionChanged="dbMain_SelectionChanged"
@@ -805,21 +928,21 @@
 				Text="Db Name..."
 				VerticalAlignment="Top"
 				Width="227">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Style="{StaticResource ComboBoxTextBlockStyle1}"
 								Content="{Binding}"
 								Width="{Binding ActualWidth, ElementName=dbNameLv}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
-		<ComboBox  x:Name="fontSize"
+        <ComboBox  x:Name="fontSize"
 			  AllowDrop="True"
 			  FontSize="16"
 			  FontWeight="Regular"
-			att:MenuAttachedProperties.NormalBackground="{StaticResource Gray5}"
-			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
+			att:MenuAttachedProperties.NormalBackground="{StaticResource Black0}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
 			  Grid.Row="4"
@@ -829,27 +952,28 @@
 			  HorizontalContentAlignment="Left"
 			     Margin="180 0 0 0"
 			  MaxDropDownHeight="250"
+              Style="{StaticResource ComboBoxMagnifyAnimation}"
 			  Padding="10 3 0 0"
 			  SelectedIndex="2"
 			  SelectionChanged="fontsize_SelectionChanged"
 			   Text="Db Name..."
 			  VerticalAlignment="Center"
 			  Width="50">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Style="{StaticResource ComboBoxTextBlockStyle1}"
 							Content="{Binding}"
 							Width="{Binding ActualWidth, ElementName=fontSize}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
-		<ComboBox  x:Name="rowheight"
+        <ComboBox  x:Name="rowheight"
 			  AllowDrop="True"
 			  FontSize="16"
 			  FontWeight="Regular"
-			att:MenuAttachedProperties.NormalBackground="{StaticResource Gray5}"
-			att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
+		att:MenuAttachedProperties.NormalBackground="{StaticResource Black0}"
+			att:MenuAttachedProperties.NormalForeground="{StaticResource White0}"
 			att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
 			att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
 			  Grid.Row="4"
@@ -859,6 +983,7 @@
 			  HorizontalContentAlignment="Left"
 			  Margin="345,0,0,0"
 			  MaxDropDownHeight="250"
+              Style="{StaticResource ComboBoxMagnifyAnimation}"
 
 			  Padding="10 3 0 0"
 			  SelectedIndex="8"
@@ -866,15 +991,15 @@
 			  Text="Db Name..."
 			  VerticalAlignment="Center"
 			  Width="50">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Style="{StaticResource ComboBoxTextBlockStyle1}"
 							Content="{Binding}"
 							Width="{Binding ActualWidth, ElementName=rowheight}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
-		<ComboBox x:Name="dbNameLv"
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ComboBox x:Name="dbNameLv"
 			  AllowDrop="True"
 			  FontSize="14"
 			  FontWeight="DemiBold"
@@ -892,20 +1017,21 @@
 			  Padding="5 3 0 0"
 			  PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
 			  SelectionChanged="dbNameLv_SelectionChanged"
+              Style="{StaticResource ComboBoxMagnifyAnimation}"
 			  TabIndex="4"
 			  Text="Db Name..."
 			  ToolTip="Right Click to refresh list of Tables... "
 			  VerticalAlignment="Top"
 			  Width="231">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Style="{StaticResource ComboBoxTextBlockStyle1}"
 								Content="{Binding}"
 								Width="{Binding ActualWidth, ElementName=dbNameLv}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
-		<ComboBox  x:Name="dbNameLb"
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ComboBox  x:Name="dbNameLb"
 			  AllowDrop="True"
 			  FontSize="14"
 			  FontWeight="DemiBold"
@@ -921,27 +1047,28 @@
 			  Margin="0,46,0,0"
 			  MaxDropDownHeight="257"
 			  Padding="5 3 0 0"
-			  PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
+		              Style="{StaticResource ComboBoxMagnifyAnimation}"
+	  PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
 			  SelectionChanged="dbNameLb_SelectionChanged"
 			  TabIndex="4"
 			  Text="Db Name..."
 			  ToolTip="Right Click to refresh list of Tables... "
 			  VerticalAlignment="Top"
 			  Width="231">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<Label Style="{StaticResource ComboBoxTextBlockStyle1}"
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Style="{StaticResource ComboBoxTextBlockStyle1}"
 								Content="{Binding}"
 								Width="{Binding ActualWidth, ElementName=dbNameLv}" />
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
-		<!--#endregion Combos-->
+        <!--#endregion Combos-->
 
-		<!--#region Buttons-->
+        <!--#region Buttons-->
 
-		<Button x:Name="AllCloseBtn"
+        <Button x:Name="AllCloseBtn"
 			  AllowDrop="True"
 			  Click="App_Close"
 			  Content="Close App"
@@ -951,10 +1078,11 @@
 			  Height="40"
 			  HorizontalAlignment="Right"
 			  Margin="0,10,0,0"
+              Style="{StaticResource ButtonExpandAnimation}"
 			  Template="{StaticResource HorizontalGradientTemplateGreen}"
 			  VerticalAlignment="Top"
 			  Width="110" TabIndex="9" />
-		<Button x:Name="Close_Copy"
+        <Button x:Name="Close_Copy"
 			  AllowDrop="True"
 			  Click="Close_Btn"
 			  Content="Close"
@@ -964,10 +1092,11 @@
 			  Height="40"
 			  HorizontalAlignment="Right"
 			  Margin="0,9,127,0"
+              Style="{StaticResource ButtonExpandAnimation}"
 			  Template="{StaticResource HorizontalGradientTemplateGreen}"
 			  VerticalAlignment="Top"
 			  Width="110" TabIndex="9" />
-		<Button x:Name="ReloadAllRecs"
+        <Button x:Name="ReloadAllRecs"
 			  AllowDrop="True"
 			  Click="ReloadListbox"
 			  Content="Reload List Box"
@@ -977,10 +1106,11 @@
 			  Height="40"
 			  HorizontalAlignment="Right"
 			  Margin="0,80,0,0"
+              Style="{StaticResource ButtonExpandAnimation}"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Top"
 			  Width="110" TabIndex="8" />
-		<Button x:Name="ReloadAllRecs_Copy"
+        <Button x:Name="ReloadAllRecs_Copy"
 			  AllowDrop="True"
 			  Click="ReloadListview"
 			  Content="Reload List View"
@@ -990,23 +1120,26 @@
 			  Height="40"
 			  HorizontalAlignment="Right"
 			  Margin="0,80,0,0"
+              Style="{StaticResource ButtonExpandAnimation}"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Top"
 			  Width="110" TabIndex="8" />
-		<Button x:Name="ViewColumnsLv_Copy"
+        <Button x:Name="ViewColumnsLv_Copy"
 			  AllowDrop="True"
 			  Click="ViewTableColumnsLv"
 			  Content="View Columns"
 			  Foreground="{StaticResource ResourceKey=White0}"
 			  Grid.Row="3"
 			  Grid.Column="3"
-			  Height="40"
 			  HorizontalAlignment="Right"
+                Height="40"
 			  Margin="0,80,120,0"
-			  Template="{StaticResource GradientButtonTemplateBlue}"
-			  VerticalAlignment="Top"
-			  Width="110" TabIndex="8" />
-		<Button x:Name="ViewColumnsLb"
+   			  VerticalAlignment="Top"
+			  Width="110" TabIndex="8" 
+              Style="{StaticResource ButtonExpandAnimation}"
+             Template="{StaticResource GradientButtonTemplateBlue}"/>
+        <!--Style="{Binding BtnStyle}"-->
+        <Button x:Name="ViewColumnsLb"
 			  AllowDrop="True"
 			  Click="ViewTableColumnsLb"
 			  Content="View Columns"
@@ -1017,10 +1150,13 @@
 			  HorizontalAlignment="Right"
 			  Margin="0 80 120 0"
 			  Template="{StaticResource GradientButtonTemplateBlue}"
+                Style="{StaticResource ButtonExpandAnimation}"
 			  VerticalAlignment="Top"
-			  Width="110" TabIndex="8" />
-		<!--// Unused Buttons-->
-		<Button x:Name="clrviewer"
+			  Width="110" TabIndex="8">
+        </Button>
+
+        <!--// Unused Buttons-->
+        <Button x:Name="clrviewer"
 			  AllowDrop="True"
 			  Click="LoadColorpicker"
 			  Content="Colors Selector"
@@ -1031,32 +1167,13 @@
 			  HorizontalAlignment="Left"
 			  Margin="80,5,0,0"
 			  Template="{StaticResource HorizontalGradientTemplateYellow}"
+              Style="{StaticResource ButtonExpandAnimation}"
 			  VerticalAlignment="Top"
-			  Width="110" TabIndex="8" RenderTransformOrigin="0.5,0.5">
-			<Button.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform />
-					<SkewTransform AngleX="0" />
-					<RotateTransform />
-					<TranslateTransform X="0" />
-				</TransformGroup>
-			</Button.RenderTransform>
-		</Button>
-		<!--<Button x:Name="LbTemplate"
-			  AllowDrop="True"
-			  Click="SwitchLVTemplate"
-			  Content="Update List View"
-			  Foreground="{StaticResource ResourceKey=White0}"
-			  Grid.Row="2"
-			  Grid.Column="3"
-			  Height="40"
-			  HorizontalAlignment="Left"
-			  Margin="48,0,0,44"
-			  Template="{StaticResource GradientButtonTemplateBlue}"
-			  VerticalAlignment="Bottom"
-			  Width="110" TabIndex="8"  />-->
-
-		<Button x:Name="TreeviewBtn"
+			  Width="110" TabIndex="8">
+                <!--MouseEnter="DataTemplateFindElement"-->
+        </Button>
+        
+        <Button x:Name="TreeviewBtn"
 			  AllowDrop="True"
 			  Click="LoadTreeView"
 			  Content="Tables Treeview"
@@ -1064,11 +1181,14 @@
 			  Grid.Row="3"
 			  Grid.Column="3"
 			  HorizontalAlignment="Left"
-			  Margin="80,41,0,62"
+                Grid.RowSpan="1"
+			  Margin="80,0,0,20"
+              Style="{StaticResource ButtonExpandAnimation}"
 			  Template="{StaticResource HorizontalGradientTemplateYellow}"
-			  Width="110" TabIndex="8" RenderTransformOrigin="0.5,0.5"/>
+			  Height="30" 
+              Width="110" TabIndex="8" />
 
-		<Button x:Name="SpBtn"
+        <Button x:Name="SpBtn"
 			  AllowDrop="True"
 			  Click="LoadSpView"
 			  Content="S.Procs. Treeview"
@@ -1076,17 +1196,57 @@
 			  Grid.Row="3"
 			  Grid.Column="3"
 			  Height="30"
+			  Width="110" 
 			  HorizontalAlignment="Left"
 			  Margin="79,77,0,0"
+              Style="{StaticResource ButtonExpandAnimation}"
 			  Template="{StaticResource HorizontalGradientTemplateYellow}"
 			  VerticalAlignment="Top"
-			  Width="110" TabIndex="8" RenderTransformOrigin="0.5,0.5">
-		</Button>
+                TabIndex="8" RenderTransformOrigin="0.5,0.5">
+        </Button>
 
-		<!--#endregion Buttons-->
+        <!--// Hidden - Example of moving along paths-->
+        <Rectangle x:Name="MyRectangle"
+                   Height="20" Width="50"
+                   Fill="{StaticResource Red5}" 
+                   Margin="90,12,308,101" 
+                   Grid.Column="1"
+                   Grid.Row="3"
+					Visibility="Hidden">
+            <Rectangle.RenderTransform>
+                <TranslateTransform x:Name="AnimatedTranslateTransform"  />
+            </Rectangle.RenderTransform>
 
-		<!--#region Checkboxes-->
-		<CheckBox x:Name="ParkDoc"
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="Path.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+
+                             <!--Animates the rectangle horizotally along the path.--> 
+                            <DoubleAnimationUsingPath
+									Storyboard.TargetName="AnimatedTranslateTransform"
+									Storyboard.TargetProperty="X"
+									PathGeometry="{StaticResource AnimationPath}"
+									Source="X" 
+									Duration="0:0:5"  />
+
+                             <!--Animates the rectangle vertically along the path.--> 
+                            <DoubleAnimationUsingPath
+									Storyboard.TargetName="AnimatedTranslateTransform"
+									Storyboard.TargetProperty="Y"
+									PathGeometry="{StaticResource AnimationPath}"
+									Source="Y" 
+									Duration="0:0:5"  />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+
+        <!--#endregion Buttons-->
+
+        <!--#region Checkboxes-->
+        <CheckBox x:Name="ParkDoc"
 					Click="Park_Click"
 					Content="Display at Top Left Corner"
 					FontSize="11"
@@ -1098,7 +1258,7 @@
 					Margin="0,45,0,0"
 					VerticalAlignment="Top"
 					Width="202" Height="57" Grid.RowSpan="2" />
-		<CheckBox x:Name="Showinfo"
+        <CheckBox x:Name="Showinfo"
 					Click="ShowInfo_Click"
 					Content="Display Flow Document for results"
 					FontSize="11"
@@ -1110,7 +1270,7 @@
 					Margin="0,75,0,0"
 					VerticalAlignment="Top"
 					Width="206" Height="18" />
-		<CheckBox x:Name="UseScrollview"
+        <CheckBox x:Name="UseScrollview"
 					Click="scrollview_Click"
 					Content="Use Scroll Viewer in Flow Document"
 					FontSize="11"
@@ -1123,24 +1283,25 @@
 					Margin="0,105,0,0"
 					VerticalAlignment="Top"
 					Width="206" />
-		<!--</Grid>-->
-		<!--</Border>-->
-		<!--#endregion Checkboxes-->
+        <!--</Grid>-->
+        <!--</Border>-->
+        <!--#endregion Checkboxes-->
 
-		<!--#region images-->
-		<Image x:Name="Arrow2" Source="/Icons/left arroiw red.png"
-			 Grid.Row="3" Grid.Column="1"
-			 Height="20"    Width="20"
-			 Margin="175,0,415,138"
-			 VerticalAlignment="Bottom">
-			<Image.RenderTransform>
-				<TransformGroup>
-					<RotateTransform Angle="90.656" />
-					<TranslateTransform X="-5.732" Y="-13.922" />
-				</TransformGroup>
-			</Image.RenderTransform>
-		</Image>
+        <!--#region images-->
+        <Image x:Name="Arrow2" Source="/Icons/left arroiw red.png"
+			 Grid.Row="3"
+			 Height="20"
+               Width="20"
+			 Margin="306,0,272,10"
+			 VerticalAlignment="Bottom" Grid.Column="1">
+            <Image.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="90.656" />
+                    <TranslateTransform X="-5.732" Y="-13.922" />
+                </TransformGroup>
+            </Image.RenderTransform>
+        </Image>
 
-		<!--#endregion images-->
-	</Grid>
+        <!--#endregion images-->
+    </Grid>
 </Window>

@@ -198,7 +198,10 @@
 				<Label Foreground="Yellow" Margin="5,5,5,0">Text To Convert</Label>
 				<TextBox Text="{Binding SomeText}" Margin="5"/>
 				<Label Foreground="Yellow" Margin="5,5,5,0">History</Label>
-				<ListBox x:Name ="GenericListbox" ItemsSource="{Binding History}" Height="66" Margin="5"/>
+				<ListBox x:Name ="GenericListbox" ItemsSource="{Binding History}" 
+                         Height="66" 
+                         IsSynchronizedWithCurrentItem="True"
+                    Margin="5"/>
 				<Button Command="{Binding ConvertTextCommand}" Margin="5" Height="20">Convert</Button>
 			</StackPanel>
 		</Grid>
@@ -233,7 +236,7 @@
 				Margin="5,3,8,0" 
 				BorderThickness="2" 
    				ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
-				BorderBrush="Red" 
+	                  BorderBrush="Red" 
 				   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
 				   ScrollViewer.VerticalScrollBarVisibility="Auto"
 				SelectedIndex="0" 

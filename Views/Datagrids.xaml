@@ -364,11 +364,14 @@
 
         <DataGrid x:Name="Grid1"
 			AllowDrop="True"
+                  BorderThickness="5"
+                  BorderBrush="{StaticResource Green5}"
 			    AlternatingRowBackground="{StaticResource Cyan0}"
 			Grid.Column="1"
 			Grid.ColumnSpan="3"
 			Grid.Row="1"
 			CellStyle="{StaticResource BankAccountGridStyle}"
+                  Style="{StaticResource DatagridMagnifyAnimation}"
 			    Visibility="Visible"
 			Grid.RowSpan="1" />
         <!--#endregion main datagrid-->
@@ -537,7 +540,8 @@
 			Margin="0,173,0,0"
 			MaxDropDownHeight="257"
 			Padding="5 3 0 0"
-			PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
+			Style="{StaticResource ComboBoxMagnifyAnimation}"
+            PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
 			SelectionChanged="dbName_SelectionChanged"
 			TabIndex="4"
 		     Text="Db Name..."
@@ -558,7 +562,8 @@
 			MaxDropDownHeight="257"
 			HorizontalAlignment="Left"
 			HorizontalContentAlignment="Left"
-			MouseRightButtonUp="Storedprocs_MouseRightButtonUp"
+			Style="{StaticResource ComboBoxMagnifyAnimation}"
+                   MouseRightButtonUp="Storedprocs_MouseRightButtonUp"
 			Padding="5 3 0 0"
 			TabIndex="5"
 			ToolTip="Right Click to Execute the currently selected Stored Procedure...."
@@ -841,6 +846,12 @@
 			  Template="{StaticResource GradientButtonTemplateBlue}"
 			  VerticalAlignment="Top"
 			  Width="110" Grid.ColumnSpan="2" />
+
+        <Image Source="\Icons\small Magnify.png" 
+                               Panel.ZIndex="2" 
+                               PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown" 
+                               ToolTip="Click to toggle DataGrid Magnification System" Margin="126,20,38,149" Height="35" Width="35" Grid.Column="2" Grid.Row="3"/>
+
         <CheckBox x:Name="UseTrueColNames"
 			Click="UseColumnNames_Click"
 			Content="Use Original Field names for Generic Tables"

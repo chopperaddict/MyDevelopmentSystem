@@ -87,6 +87,17 @@
                   Click="chkbox2_Click"
 			   Content="Use Smart Column Naming for 'Generic' Table Columns"
 			   />
+        <CheckBox x:Name="chkbox4"
+			    IsChecked="True"
+			    Checked="chkbox4_Checked"	  			    
+			    Grid.Row="5"
+			    Grid.Column="1"
+			    Foreground="White"
+			    FontSize="16"
+			    Margin="0 8 0 0"
+                  Click="chkbox4_Click"
+			   Content="Use Smart Maginification System"
+			   />
         <TextBlock Text="General Options"
 			     HorizontalAlignment="Stretch"
 			     TextAlignment="Center"

@@ -209,19 +209,22 @@
 							 Grid.Row="1"
 							 Grid.Column="1"
 							 Grid.ColumnSpan="2"
-							 Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=115}"
+							 Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=120}"
 							 HorizontalAlignment="Right"
 							 HorizontalScrollBarVisibility="Auto"
       						IsEnabled="true"
-							 IsHitTestVisible="True"
+							 IsHitTestVisible="true"
 							 IsReadOnly="True"
 							 Margin="0 3 0 0"
 							 Padding="15 10 15 0"
+							Panel.ZIndex="25"
       						PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
 							 PreviewMouseLeftButtonUp="flowdoc_PreviewMouseLeftButtonUp"
-							 VerticalScrollBarVisibility="Visible"
+                             ScrollViewer.CanContentScroll="True"
+                             ScrollViewer.VerticalScrollBarVisibility="Visible"
 							Visibility="Hidden"
 							  Width="{Binding Path=ActualWidth, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=25}"/>
+							 <!--VerticalScrollBarVisibility="Visible"-->
 					<!--PreviewMouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
 					<!--MouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
 
@@ -232,9 +235,10 @@
 						FontSize="11"
 						Grid.Row="1"
 						Grid.Column="1"
-						Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=105}"
+						 Grid.ColumnSpan="2"
+						Height="{Binding Path=Height, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=100}"
 						HorizontalAlignment="Left"
-						IsHitTestVisible="True"
+						IsHitTestVisible="true"
 						IsEnabled="true"
 						IsSelectionEnabled="false"
 						Panel.ZIndex="4"
@@ -242,14 +246,16 @@
 						PreviewMouseLeftButtonDown="flowdoc_PreviewMouseLeftButtonDown"
 						PreviewMouseLeftButtonUp="scrollviewer_PreviewMouseLeftButtonUp"
 						VerticalScrollBarVisibility="Visible"
-						Visibility="Visible"
+						ScrollViewer.CanContentScroll="True"
+                        ScrollViewer.HorizontalScrollBarVisibility="Visible"
+						Visibility="Hidden"
 						Width="{Binding Path=ActualWidth, ElementName=flowdoc, Converter={StaticResource resetTextWidth},ConverterParameter=30}"
-						Grid.ColumnSpan="2" />
+						 />
 
 					<Button   x:Name="CloseBtn"
 						Background="{Binding btnBkGround}"
 						Foreground="{Binding btnForeGround}"
-    						Grid.Row="2"
+    					Grid.Row="2"
 						Grid.Column="2"
 						Grid.ColumnSpan="1"
 						HorizontalAlignment="Right"

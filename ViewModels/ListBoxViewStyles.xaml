@@ -86,7 +86,7 @@
 		</Setter>
 	</Style>
 
-	<Style x:Key="_ListBoxItemStyle1" TargetType="ListBoxItem">
+    <Style x:Key="_ListBoxItemStyle1" TargetType="ListBoxItem" >
 		<Setter Property="FontWeight" Value="Normal" />
 		<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 		<Setter Property="Width" Value="{Binding Path=Width}" />

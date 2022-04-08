@@ -35,7 +35,7 @@
 				<!--Handles Click event-->
 				<Setter Property="Button.Background" TargetName="border" Value="{StaticResource Green3}"/>
 				<Setter Property="Button.Foreground" TargetName="border" Value="{StaticResource Red0}"/>
-				<Setter Property="Button.BorderBrush" TargetName="border" Value="Red"/>
+				<!--<Setter Property="Button.BorderBrush" TargetName="border" Value="Red"/>-->
 			</Trigger>
 
 			<Trigger Property="IsEnabled" Value="False">
@@ -49,7 +49,7 @@
 			<Trigger Property="Button.IsMouseOver" Value="false">
 				<!--Handles Click event-->
 				<Setter Property="Button.Background" TargetName="border" Value="{StaticResource HeaderBrushBlue}"/>
-				<Setter Property="Button.BorderBrush" TargetName="border" Value="Red"/>
+				<!--<Setter Property="Button.BorderBrush" TargetName="border" Value="Red"/>-->
 			</Trigger>
 
 			<!--// MouseOver settings-->
@@ -57,7 +57,7 @@
 				<!--MouseOver handling-->
 				<Setter Property="Button.FontWeight" Value="Bold"/>
 				<Setter Property="Button.Background" TargetName="border" Value="{StaticResource HeaderBorderBrushBlue}"/> 
-				<Setter Property="Button.BorderBrush" TargetName="border" Value="Red"/>
+				<!--<Setter Property="Button.BorderBrush" TargetName="border" Value="Red"/>-->
 				<!--<Setter Property="Button.Background" TargetName="border">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="1,0" EndPoint="0,1" >
@@ -84,7 +84,7 @@
 		<!-- NB - it is the Border that controls the buttons default colors
 			which lets us set Back/Foreground and border colors in the button itself
 			but still have mouseover etc working correctly, but still have our text "Content" display-->
-		<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
+        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
 				   BorderThickness="{TemplateBinding BorderThickness}" 
 				   Background="{TemplateBinding Background}" 
 				   CornerRadius="15"
@@ -101,27 +101,41 @@
 		</Border>
 		<ControlTemplate.Triggers>
 			<!--This handles the button being set as IsDefault=true-->
-			<Trigger Property="Button.Tag" Value="True">
+            
+			<Trigger Property="Button.Tag" Value="False">
 				<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
 				<Setter Property="Background" TargetName="border" Value="Green"/>
 				<Setter Property="BorderBrush" TargetName="border" Value="Black"/>
 			</Trigger>
 
-			<Trigger Property="IsMouseOver" Value="True">
-				<!--MouseOver handling-->
-				<Setter Property="FontWeight"  Value="Bold"/>
-				<Setter Property="Foreground"  Value="White"/>
-				<Setter Property="Background" TargetName="border">
-					<Setter.Value>
-						<LinearGradientBrush StartPoint="1,0" EndPoint="0,1" >
-							<GradientStop Color="red" Offset="0"/>
-							<GradientStop Color="DarkOrange" Offset="1"/>
-						</LinearGradientBrush>
-					</Setter.Value>
-				</Setter>
-			</Trigger>
+            <Trigger Property="IsMouseOver" Value="False">
+                <!--MouseOver handling-->
+                <Setter Property="FontWeight"  Value="Bold"/>
+                <Setter Property="Foreground"  Value="White"/>
+                <Setter Property="Background" TargetName="border">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="1,0" EndPoint="0,1" >
+                            <GradientStop Color="Blue" Offset="0"/>
+                            <GradientStop Color="Cyan" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
 
-			<Trigger Property="IsPressed" Value="True">
+            <Trigger Property="IsMouseOver" Value="True">
+                <!--MouseOver handling-->
+                <Setter Property="FontWeight"  Value="Bold"/>
+                <Setter Property="Foreground"  Value="White"/>
+                <Setter Property="Background" TargetName="border">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="1,0" EndPoint="0,1" >
+                            <GradientStop Color="red" Offset="0"/>
+                            <GradientStop Color="Yellow" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
 				<!--Handles Click event-->
 				<Setter Property="Background"  TargetName="border" Value="Gray"/>
 				<Setter Property="BorderBrush" TargetName="border" Value="White"/>
@@ -385,7 +399,7 @@
 				<Setter Property="Background" TargetName="border">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                            <GradientStop Color="#FF858700" Offset="0.514"/>
+                            <GradientStop Color="#FF684900" Offset="0.514"/>
                             <GradientStop Color="#FFC3A500" Offset="0.753"/>
 							<GradientStop Color="#FFF5d816" Offset="1"/>
 						</LinearGradientBrush>
@@ -401,8 +415,8 @@
 				<Setter Property="Control.Foreground"  TargetName="border">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-							<GradientStop Color="#FF000000" Offset="0.414"/>
-							<GradientStop Color="#FF7d7015" Offset="0.553"/>
+                            <GradientStop Color="#FF684900" Offset="0.414"/>
+                            <GradientStop Color="#FFC4A600" Offset="0.553"/>
 							<GradientStop Color="#FFFFFF21" Offset="1"/>
 						</LinearGradientBrush>
 					</Setter.Value>
@@ -411,8 +425,8 @@
 					<Setter.Value>
 						<!--<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">-->
 						<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
-							<GradientStop Color="#FF000000" Offset="0.314"/>
-							<GradientStop Color="#FF7d7015" Offset="0.553"/>
+                            <GradientStop Color="#FF684900" Offset="0.314"/>
+                            <GradientStop Color="#FFC4A600" Offset="0.553"/>
 							<GradientStop Color="#F5d816" Offset="1"/>
 						</LinearGradientBrush>
 					</Setter.Value>
@@ -425,8 +439,8 @@
 				<Setter Property="Control.Foreground"  TargetName="border">
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
-							<GradientStop Color="#FF000000" Offset="0.414"/>
-							<GradientStop Color="#FF7d7015" Offset="0.553"/>
+                            <GradientStop Color="#FF684900" Offset="0.414"/>
+                            <GradientStop Color="#FFC4A600" Offset="0.553"/>
 							<GradientStop Color="#FFFFFF21" Offset="1"/>
 						</LinearGradientBrush>
 					</Setter.Value>
@@ -435,7 +449,7 @@
 					<Setter.Value>
 						<!--<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">-->
 						<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-							<GradientStop Color="#FF595013" Offset="0.314"/>
+                            <GradientStop Color="#FF684900" Offset="0.314"/>
 							<GradientStop Color="#FF7d7015" Offset="0.553"/>
 							<GradientStop Color="#F5d816" Offset="1"/>
 						</LinearGradientBrush>
@@ -519,7 +533,6 @@
 					<Setter.Value>
 						<LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
 							<GradientStop Color="#FF005E00" Offset="0.314"/>
-							<!--<GradientStop Color="#FF007E00" Offset="0.553"/>-->
 							<GradientStop Color="{StaticResource ClrWhite0}" Offset="1"/>
 						</LinearGradientBrush>
 					</Setter.Value>

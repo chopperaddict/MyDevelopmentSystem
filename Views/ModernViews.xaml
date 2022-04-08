@@ -561,6 +561,7 @@
                             CanUserAddRows="False"
 							VerticalContentAlignment="Stretch"
                    			CellStyle="{StaticResource BankAccountGridStyle}"
+                            Style="{StaticResource DatagridMagnifyAnimation}"
                             Visibility="Hidden"/>
 
             <ListBox Name="lbox1"
@@ -572,6 +573,8 @@
 							Foreground="{StaticResource Black0}"
 							Height="Auto"
 							Margin="10,0,0,30"
+                            IsSynchronizedWithCurrentItem="True"
+                    Style="{StaticResource ListBoxMagnifyAnimation}"
 							VerticalContentAlignment="Stretch" 
 							Visibility="Hidden">
 

@@ -21,6 +21,7 @@ using MyDev . UserControls;
 using MyDev . ViewModels;
 using System . Linq;
 using System . Net . NetworkInformation;
+using Microsoft . Xaml . Behaviors . Core;
 
 namespace MyDev . Views
 {
@@ -88,15 +89,34 @@ namespace MyDev . Views
             LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             //            lsplitrow1 . Height = (GridLength)1;
             FillListBox = true;
-            // This sets the relative height of a Grid's row heights - works  too
-            LeftPanelgrid . RowDefinitions [ 0 ] . Height = new GridLength ( 0.01 , GridUnitType . Star );
-            LeftPanelgrid . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType . Pixel );
-            LeftPanelgrid . RowDefinitions [ 2 ] . Height = new GridLength ( 20 , GridUnitType . Star );
+            // Toggle magnify if set to disable
+            List<object> list = new List<object> ( );
+            if ( Flags . UseMagnify == false )
+            {
+                list . Add ( DataGrid1 );
+                list . Add ( listbox );
+                list . Add ( DbRecordInfo );
+                list . Add ( TablesPanel );
+                    Utils . Magnify ( list , false );
+             }
+            else
+            {
+                list . Add ( DataGrid1 );
+                list . Add ( listbox );
+                list . Add ( DbRecordInfo );
+                list . Add ( TablesPanel );
+                Utils . Magnify ( list , true );
+            }
 
-            Maingrid . ColumnDefinitions [ 0 ] . Width= new GridLength ( 0 , GridUnitType . Pixel );
-            Maingrid . ColumnDefinitions [ 1 ] . Width = new GridLength ( 30 , GridUnitType . Pixel );
-            Maingrid . ColumnDefinitions [ 2 ] . Width = new GridLength ( 1 , GridUnitType . Star );
-            Maingrid . ColumnDefinitions [ 3 ] . Width = new GridLength ( 10 , GridUnitType . Pixel );
+            // This sets the relative height of a Grid's row heights - works  too
+            //LeftPanelgrid . RowDefinitions [ 0 ] . Height = new GridLength ( 0.01 , GridUnitType . Star );
+            //LeftPanelgrid . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType . Pixel );
+            //LeftPanelgrid . RowDefinitions [ 2 ] . Height = new GridLength ( 20 , GridUnitType . Star );
+
+            //Maingrid . ColumnDefinitions [ 0 ] . Width= new GridLength ( 0 , GridUnitType . Pixel );
+            //Maingrid . ColumnDefinitions [ 1 ] . Width = new GridLength ( 30 , GridUnitType . Pixel );
+            //Maingrid . ColumnDefinitions [ 2 ] . Width = new GridLength ( 1 , GridUnitType . Star );
+            //Maingrid . ColumnDefinitions [ 3 ] . Width = new GridLength ( 10 , GridUnitType . Pixel );
         }
 
         #region DP.s
@@ -420,6 +440,12 @@ namespace MyDev . Views
             // Load Db based on Parameters entered by user
             var result = int . TryParse ( RecCount . Text , out max );
             SqlCommand = GetSqlCommand ( max , dbName . SelectedIndex , "" , "" );
+            string conds = Conditions . Text;
+            if ( conds . Length > 0 )
+                SqlCommand += $" where {conds} ";
+            string ord = orderby . Text;
+            if ( ord . Length > 0 )
+                SqlCommand += $" Order by {ord}";
             bankaccts = new ObservableCollection<BankAccountViewModel> ( );
             DataGrid1 . ItemsSource = null;
             ShowTableStructure ( );
@@ -1346,51 +1372,64 @@ namespace MyDev . Views
 
         #region Horizontal splitter resize handlers
         /// <summary>
-        /// Interaction logic for FourwaySplitViewer.xaml
+        /// Right side horizontal slitter
         /// </summary>
         private void Splitter_DragStarted ( object sender , System . Windows . Controls . Primitives . DragStartedEventArgs e )
         {
-            if ( Row1 . ActualHeight >= MaxRowHeight )
+            if ( Row0 . ActualHeight <= 3 )
             {
-                imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
-//                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-                ShowdragText = "Drag Down here to ";
-                ShowText = "Show more records";
+                imgup = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
+                //                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
+                ShowdragText = "Drag";
+                ShowText = "Show upper DataGrid";
                 //                RotateTransform rotateTransform1 = new RotateTransform ( 90 , -15 , 15 );
             }
-            else if ( Row1 . ActualHeight <= 11 )
+            else if ( Row1 . ActualHeight <= 21 )
             {
                 imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
-                ShowText = "Show more records";
+                ShowdragText = "Drag";
+                ShowText = "Show lower panel";
             }
             else
             {
                 imgup = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
-//                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-//                ShowText = "Adjust View";
+                ShowdragText = "Drag";
+                ShowText = "Adjust view proportions";
+                //                imgup = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
+                //                ShowText = "Adjust View";
                 //ShowText = "   show Data Access panel";
             }
         }
         private void Splitter_DragCompleted ( object sender , System . Windows . Controls . Primitives . DragCompletedEventArgs e )
         {
-            if ( Row1 . ActualHeight >= MinRowHeight1 )
+            if ( Row0 . ActualHeight <= 3 )
             {
                 imgup = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
-                ShowdragText = "Drag Down to ";
-                ShowText = "View more Data Grid records";
+                ShowdragText = "Drag";
+                ShowText = "to view Db Tables DataGrid";
+                double SplitterOffset = ( this . ActualHeight - DataGrid1 . ActualHeight ) - 140;
+                SPselection . Height = SplitterOffset > 0 ? SplitterOffset : 0;
+                listbox . Height = SPselection . Height;
             }
-            else if ( Row1 . ActualHeight <= 10 )
+            else if ( Row1 . ActualHeight <= 21 )
             {
                 imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
-                ShowdragText = "Drag Up to ";
-                ShowText = "View Data Access panel";
+                ShowdragText = "Drag";
+                ShowText = "to view Data Access panel";
+                double SplitterOffset = ( this . ActualHeight - DataGrid1 . ActualHeight ) - 140;
+                SPselection . Height = SplitterOffset > 0 ? SplitterOffset : 0;
+                listbox . Height = SPselection . Height;
             }
             else
             {
                 imgup = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
                 //                imgmv = new BitmapImage ( new Uri ( @"\icons\sync.ico" , UriKind . Relative ) );
-                ShowdragText = "Drag Up/Down to ";
-                ShowText = "Adjust View";
+                ShowdragText = "Drag";
+                ShowText = "Adjust view proportions";
+                double SplitterOffset = ( this . ActualHeight - DataGrid1 . ActualHeight ) - 140;
+                SPselection . Height = SplitterOffset > 0 ? SplitterOffset : 0;
+                Console . WriteLine ( $"{SplitterOffset}, {SPselection . Height }" );
+                listbox . Height = SPselection . Height;
             }
         }
         #endregion Horizontal splitter resize handlers
@@ -1414,7 +1453,7 @@ namespace MyDev . Views
         }
         private void VSplitter_DragCompleted ( object sender , DragCompletedEventArgs e )
         {
-//            vimgmove = new BitmapImage ( new Uri ( @"\icons\left arroiw red.png" , UriKind . Relative ) );
+            //            vimgmove = new BitmapImage ( new Uri ( @"\icons\left arroiw red.png" , UriKind . Relative ) );
 
             if ( Col0 . ActualWidth >= MaxColWidth1 )
             {
@@ -1432,21 +1471,21 @@ namespace MyDev . Views
         }
         #endregion Vertical splitter resize handlers
 
-          private void LeftSplitter_DragStarted ( object sender , DragStartedEventArgs e )
+        private void LeftSplitter_DragStarted ( object sender , DragStartedEventArgs e )
         {
             if ( lsplitrow1 . ActualHeight <= MinRowHeight1 )
             {
                 LeftSplitterText = "Drag Up or Down  ";
                 LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
-//                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red copy.png" , UriKind . Relative ) );
-  //              LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
+                //                LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red copy.png" , UriKind . Relative ) );
+                //              LhHsplitter = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
             }
             else if ( lsplitrow1 . ActualHeight <= 10 )
             {
                 LeftSplitterText = "Drag Down ";
                 LhHsplitter = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
             }
-            else 
+            else
             {
                 LeftSplitterText = "Drag Up or Down  ";
                 LhHsplitter = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
@@ -1479,7 +1518,7 @@ namespace MyDev . Views
 
         private void DataGrid1_PreviewMouseRightButtonDown ( object sender , MouseButtonEventArgs e )
         {
-         if(DataGrid1.SelectedIndex != -1)
+            if ( DataGrid1 . SelectedIndex != -1 )
                 ParseGridRowData ( );
         }
         private void ShowTableStructure ( )
@@ -1533,7 +1572,7 @@ namespace MyDev . Views
             string record = "";
             string tablename = dbName . SelectedItem . ToString ( );
 
-  
+
             object vn = new object ( );
             vn = DataGrid1 . SelectedItem as BankAccountViewModel;
             if ( vn != null )
@@ -1568,8 +1607,8 @@ namespace MyDev . Views
                     }
                     else
                     {
- //                       List<string> list = new List<string> ( );
-//                        list = CreateTableStructure ( DataGrid1.SelectedItem.ToString());
+                        //                       List<string> list = new List<string> ( );
+                        //                        list = CreateTableStructure ( DataGrid1.SelectedItem.ToString());
                         DbRecordInfo . ItemsSource = null;
                         DbRecordInfo . Items . Clear ( );
                         DbRecordInfo . ItemsSource = CreateTableStructure ( DataGrid1 . SelectedItem . ToString ( ) );
@@ -1578,7 +1617,7 @@ namespace MyDev . Views
                 }
             }
         }
-        private List<string>  CreateTableStructure ( string rowdata)
+        private List<string> CreateTableStructure ( string rowdata )
         {
             List<string> list = new List<string> ( );
             string [ ] lines;
@@ -1586,19 +1625,19 @@ namespace MyDev . Views
             string itm = "";
             char ch = ',';
             lines = rowdata . Split ( ch );
-            for( int  x = 0 ; x < lines.Length ; x++ )
+            for ( int x = 0 ; x < lines . Length ; x++ )
             {
                 entry = lines [ x ] . Split ( '=' );
                 if ( entry . Length == 1 )
                     return null;
-                if(entry[1].Contains("}"))
-                    list . Add ( entry [ 1 ] .Substring(0, entry[1].Length-1));
+                if ( entry [ 1 ] . Contains ( "}" ) )
+                    list . Add ( entry [ 1 ] . Substring ( 0 , entry [ 1 ] . Length - 1 ) );
                 else
                     list . Add ( entry [ 1 ] );
             }
             return list;
         }
-           private List<string> GetGenericDataRecord ( GenericClass bvm )
+        private List<string> GetGenericDataRecord ( GenericClass bvm )
         {
             List<string> list = new List<string> ( );
             string s = "";
@@ -1695,7 +1734,7 @@ namespace MyDev . Views
 
         private void DataGrid1_SelectionChanged ( object sender , SelectionChangedEventArgs e )
         {
-            if ( DataGrid1 . SelectedIndex != -1 && FillListBox == true)
+            if ( DataGrid1 . SelectedIndex != -1 && FillListBox == true )
                 ParseGridRowData ( );
         }
 
@@ -1707,7 +1746,7 @@ namespace MyDev . Views
                 FillListBox = true;
                 DbRecordInfo . ItemsSource = null;
                 DbRecordInfo . Items . Clear ( );
-                list . Add ( "Option is now Enabled ");
+                list . Add ( "Option is now Enabled " );
                 list . Add ( "Changes of selection in DataGrid" );
                 list . Add ( "will be show here..." );
                 DbRecordInfo . ItemsSource = list;
@@ -1721,80 +1760,19 @@ namespace MyDev . Views
                 DbRecordInfo . ItemsSource = list;
             }
         }
+
+  
+        private void Image_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            List<object> list = new List<object> ( );
+            list . Add ( DataGrid1 );
+            list . Add ( listbox );
+            list . Add ( DbRecordInfo );
+            list . Add ( TablesPanel );
+            if ( listbox . Style == null )
+            Utils . Magnify (list, true );
+            else
+                Utils . Magnify ( list , false);
+        }
     }
 }
-
-
-//     {
-//    int count = 0, dbtype = -1;
-//    string [ ] odat, cdat, revstr ;
-//    string tablename = "";
-//    List<string> list = new List<string> ( );
-//    var genrow = dgrid . SelectedItem;
-//    foreach ( var item in dgrid . Columns )
-//    {
-//        //switch ( count )
-//        //{
-//        //    case 0:
-//        list . Add ( item . Header . ToString ( ) );
-//        { 
-//        //case 1:
-//        //    list . Add ( genrow . field2 );
-//        //    break;
-//        //case 2:
-//        //    list . Add ( genrow . field3 );
-//        //    break;
-//        //case 3:
-//        //    list . Add ( genrow . field4 );
-//        //    break;
-//        //case 4:
-//        //    list . Add ( genrow . field5 );
-//        //    break;
-//        //case 5:
-//        //    list . Add ( genrow . field6 );
-//        //    break;
-//        //case 6:
-//        //    list . Add ( genrow . field7 );
-//        //    break;
-//        //case 7:
-//        //    list . Add ( genrow . field8 );
-//        //    break;
-//        //case 8:
-//        //    list . Add ( genrow . field9 );
-//        //    break;
-//        //case 9:
-//        //    list . Add ( genrow . field10 );
-//        //    break;
-//        //case 10:
-//        //    list . Add ( genrow . field11 );
-//        //    break;
-//        //case 11:
-//        //    list . Add ( genrow . field12 );
-//        //    break;
-//        //case 12:
-//        //    list . Add ( genrow . field13 );
-//        //    break;
-//        //case 13:
-//        //    list . Add ( genrow . field14 );
-//        //    break;
-//        //case 14:
-//        //    list . Add ( genrow . field15 );
-//        //    break;
-//        //case 15:
-//        //    list . Add ( genrow . field16 );
-//        //    break;
-//        //case 16:
-//        //    list . Add ( genrow . field17 );
-//        //    break;
-//        //case 17:
-//        //    list . Add ( genrow . field18 );
-//        //    break;
-//        //case 18:
-//        //    list . Add ( genrow . field19 );
-//        //    break;
-//        //case 19:
-//        //    list . Add ( genrow . field20 );
-//        //    break;
-//        }
-//        count++;
-//            }

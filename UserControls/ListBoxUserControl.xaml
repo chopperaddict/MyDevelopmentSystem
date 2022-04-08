@@ -164,7 +164,8 @@
 				    Grid.RowSpan="4"
 					Background="{StaticResource Cyan0}"
 					ItemTemplate="{StaticResource BankDataTemplate1}"
-				    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+				    IsSynchronizedWithCurrentItem="True"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
 					Margin="0 0 0 0">
 				<ListBox.DataContext>
 					<viewmodels:GenericClass/>
@@ -268,7 +269,8 @@
 								Margin="5,0,0,15"
 								MaxDropDownHeight="257"
 								Padding="0 3 0 0"
-							     PreviewMouseRightButtonUp="DbMain_PreviewMouseRightButtonUp"
+							    Style="{StaticResource ComboBoxMagnifyAnimation}"
+                           PreviewMouseRightButtonUp="DbMain_PreviewMouseRightButtonUp"
 								SelectionChanged="DbMain_SelectionChanged"
 								TabIndex="4"
 								Text="Db Name..."
@@ -292,6 +294,7 @@
 					     Grid.Row="4"
 							Height="210" Width="227" Margin="5 0 0 0"
 							ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
+							IsSynchronizedWithCurrentItem="True"
 							ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 							ScrollViewer.VerticalScrollBarVisibility="Auto"
 							VerticalAlignment="Top"	 

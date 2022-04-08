@@ -28,6 +28,8 @@ namespace MyDev . Views
 			chkbox1. IsChecked = Flags. UseFlowdoc;
 			chkbox2 . IsChecked = Flags . ReplaceFldNames;
 			chkbox3 . IsChecked = Flags . UseScrollView;
+			Flags . UseMagnify = Properties . Settings . Default . UseMagnify ;
+			chkbox4 . IsChecked = Flags . UseMagnify;
 		}
 		private void Setup()
 		{
@@ -80,10 +82,22 @@ namespace MyDev . Views
 			Flags . UseScrollView = ( bool ) chkbox3 . IsChecked;
 			Properties . Settings . Default . Save ( );
 			Properties . Settings . Default . ReplaceFldNames = chkbox2 . IsChecked == true ? "TRUE" : "FALSE";
-			Flags . ReplaceFldNames = (bool)chkbox2 . IsChecked;
+			Flags . ReplaceFldNames = ( bool ) chkbox2 . IsChecked;
 			Properties . Settings . Default . Save ( );
+			Properties . Settings . Default . UseMagnify = ( bool ) chkbox4 . IsChecked;
+			Properties . Settings . Default . Save ( );
+			Flags . UseMagnify = (bool)chkbox4 . IsChecked;
 			this . Close ( );
 		}
 
-	}
+        private void chkbox4_Checked ( object sender , RoutedEventArgs e )
+        {
+			Flags . UseMagnify = (bool)chkbox4 . IsChecked;
+        }
+
+        private void chkbox4_Click ( object sender , RoutedEventArgs e )
+        {
+
+        }
+    }
 }

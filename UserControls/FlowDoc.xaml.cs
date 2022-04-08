@@ -231,20 +231,23 @@ namespace MyDev . UserControls
 					if ( Flags . UseScrollView )
 					{
 						fdviewer . VerticalScrollBarVisibility = ScrollBarVisibility . Visible;
-						fdviewer . IsEnabled = true;
+						// Not needed !! 8/4/22 - effect V.Scrollbar badly
+						//fdviewer . IsEnabled = true;
 					}
 					else
 					{
 						doc . VerticalScrollBarVisibility = ScrollBarVisibility . Visible;
-						doc . IsEnabled = true;
+						// Not needed !! 8/4/22 - effect V.Scrollbar badly
+						//doc . IsEnabled = true;
 					}
 				}
 				else
 				{
-					if ( Flags . UseScrollView )
-						fdviewer . IsEnabled = false;
-					else
-						doc . IsEnabled = false;
+					// Not needed !! 8/4/22 - effect V.Scrollbar badly
+					//if ( Flags . UseScrollView )
+					//	fdviewer . IsEnabled = false;
+					//else
+					//	doc . IsEnabled = false;
 				}
 				this . Visibility = Visibility . Visible;
 				this . BringIntoView ( );
@@ -391,7 +394,7 @@ namespace MyDev . UserControls
 		}
 		private void doc_GotFocus ( object sender , RoutedEventArgs e )
 		{
-			e . Handled = true;
+			//e . Handled = true;
 		}
 		private void Border_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
@@ -567,10 +570,11 @@ namespace MyDev . UserControls
 				// Over the Scrollbar so let user scroll contents
 				if ( e . OriginalSource . ToString ( ) . Contains ( ".Run" ) )
 				{
-					if ( Flags . UseScrollView )
-						fdviewer . IsEnabled = true;
-					else
-						doc . IsEnabled = true;
+					// Not needed !! 8/4/22 - effect V.Scrollbar badly
+					//if ( Flags . UseScrollView )
+					//	fdviewer . IsEnabled = true;
+					//else
+					//	doc . IsEnabled = true;
 				}
 				else
 				{
@@ -588,10 +592,12 @@ namespace MyDev . UserControls
 					}
 					else
 					{
-						doc . IsEnabled = false;
+						// Not needed !! 8/4/22 - effect V.Scrollbar badly
+						//doc . IsEnabled = false;
 						if ( doc . VerticalScrollBarVisibility == ScrollBarVisibility . Visible )
 						{
-							doc . IsEnabled = true;
+							// Not needed !! 8/4/22 - effect V.Scrollbar badly
+							//doc . IsEnabled = true;
 							fdviewer . ReleaseMouseCapture ( );
 							flowdoc . ReleaseMouseCapture ( );
 							return;
@@ -601,15 +607,16 @@ namespace MyDev . UserControls
 			}
 			else
 			{
+				// Not needed !! 8/4/22 - effect V.Scrollbar badly
 				// NOT over scrollbar, so only allow drag
-				if ( Flags . UseScrollView )
-				{
-					fdviewer . IsEnabled = true;
-				}
-				else
-				{
-					doc . IsEnabled = true;
-				}
+				//if ( Flags . UseScrollView )
+				//{
+				//	fdviewer . IsEnabled = true;
+				//}
+				//else
+				//{
+				//	doc . IsEnabled = true;
+				//}
 			}
 			Button btn = sender as Button;
 			string str = e.OriginalSource .ToString().ToUpper();
@@ -624,10 +631,11 @@ namespace MyDev . UserControls
 				MouseCaptured = fdviewer . CaptureMouse ( );
 			else
 				MouseCaptured = flowdoc . CaptureMouse ( );
-			if ( Flags . UseScrollView )
-				fdviewer . IsEnabled = true;
-			else
-				doc . IsEnabled = true;
+			// Not needed !! 8/4/22 - effect V.Scrollbar badly
+			//if ( Flags . UseScrollView )
+			//	fdviewer . IsEnabled = true;
+			//else
+			//	doc . IsEnabled = true;
 			//e . Handled = true;
 		}
 

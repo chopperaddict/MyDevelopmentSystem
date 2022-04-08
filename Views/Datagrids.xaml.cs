@@ -1249,5 +1249,15 @@ namespace MyDev . Views
 			}
 			
 		}
-	}
+
+        private void Image_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+			List<object> list = new List<object> ( );
+			list . Add ( Grid1 );
+			if ( Grid1 . Style == null )
+				Utils . Magnify ( list , true );
+			else
+				Utils . Magnify ( list , false );
+		}
+    }
 }

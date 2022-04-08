@@ -243,7 +243,8 @@ namespace MyDev
 			Properties . Settings . Default . Save ( );
 			Flags . ReplaceFldNames = Properties . Settings . Default . ReplaceFldNames . ToUpper ( ) == "TRUE" ? true : false;
 			Properties . Settings . Default . Save ( );
-
+			Flags . UseMagnify = Properties . Settings . Default . UseMagnify;
+			Properties . Settings . Default . Save ( );
 		}
 
 		private void button1_Click ( object sender , RoutedEventArgs e )

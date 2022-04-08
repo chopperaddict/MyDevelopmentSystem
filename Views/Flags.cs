@@ -24,11 +24,11 @@ namespace MyDev . Views
 {
 	public static class Flags
 	{
-		public static Dictionary <string, string> ConnectionStringsDict = new Dictionary<string, string>();
+		public static Dictionary<string , string> ConnectionStringsDict = new Dictionary<string , string> ( );
 
-		public static bool USESDAPPERSTDPROCEDURES=false;
-		public static bool USEADOWITHSTOREDPROCEDURES=true;
-		public static bool USEDAPPERWITHSTOREDPROCEDURE=false;
+		public static bool USESDAPPERSTDPROCEDURES = false;
+		public static bool USEADOWITHSTOREDPROCEDURES = true;
+		public static bool USEDAPPERWITHSTOREDPROCEDURE = false;
 		public static bool GETMULTIACCOUNTS = false;
 		public static bool USECOPYDATA = false;
 		public static string COPYBANKDATANAME = "NewBank";
@@ -56,6 +56,8 @@ namespace MyDev . Views
 		public static object DbData = null;
 		public static string DbSaveJsonPath = "";
 		public static string CurrentConnectionString { get; set; }
+
+		public static bool UseMagnify  { get; set; }
 
 		//-------------------------------------------------------------------
 		// FlowDoc flags
