@@ -35,7 +35,7 @@ namespace MyDev . ViewModels
 		public static FlowDoc Flowdoc { get; set; }
 		public static FlowdocLib fdl { get; set; }
 		public static Canvas canvas { get; set; }
-		public bool IsBankActive { get; set; } = true;
+		public static bool IsBankActive { get; set; } = true;
 
 		public ICommand Debugger { get; set; }
 		public ICommand CloseWindow { get; set; }
@@ -98,7 +98,24 @@ namespace MyDev . ViewModels
 			GetColumnNames = new RelayCommand ( ExecuteGetColumnNames , CanExecuteGetColumnNames );
 //			RefreshListbox = new RelayCommand ( ExecuteRefreshListbox , CanRefreshListbox );
 			CloseWindow = new RelayCommand ( ExecuteCloseWindow , CanExecuteCloseWindow );
+			LoadButtonText = "Load Customer Data";
+
 		}
+        #region FlowDoc methods
+        // Allows this class to control maximizing FlowDoc window
+        public event EventHandler ExecuteFlowDocMaxmizeMethod;
+		protected virtual void OnExecuteMethod ( )
+		{
+			if ( ExecuteFlowDocMaxmizeMethod != null )
+				ExecuteFlowDocMaxmizeMethod ( this , EventArgs . Empty );
+		}
+		private void Image_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		{
+			//allows remote window to maximize /resize  this control ?
+			OnExecuteMethod ( );
+		}
+		#endregion FlowDoc methods
+
 		public MvvmViewModel ( object caller )
 		{
 			// Get pointers  to  View and Model Class
@@ -116,8 +133,7 @@ namespace MyDev . ViewModels
 			fdl = new FlowdocLib ( );
 		}
 
-
-		#region ICommand Methods 
+ 		#region ICommand Methods 
 		// ICommand CanExecute's
 		private bool CanExecuteLoadData ( object arg )
 		{ return true; }
@@ -142,7 +158,7 @@ namespace MyDev . ViewModels
 			Dictionary<string, string> dict = new Dictionary<string, string>();
 			// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
 			List<int> VarCharLength  = new List<int>();
-			IsBankActive = ( bool ) obj;
+//			IsBankActive = ( bool ) obj;
 			if ( IsBankActive == false )
 				dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , "Customer" , "IAN1" , ref VarCharLength );
 			else
@@ -172,6 +188,17 @@ namespace MyDev . ViewModels
 					}
 					indx++;
 				}
+			}
+			if ( VarCharLength . Count > 0 )
+			{
+				string output = "";
+				indx = 0;
+				foreach ( var item in GenericClass )
+				{
+					item . field3 = VarCharLength [ indx++ ] . ToString ( );
+					output += item . field1 . ToString ( ) + ", " + item . field2 . ToString ( ) + ", " + item . field3 + "\n";
+				}
+				fdmsg ( output,"","");
 			}
 		}
 
@@ -208,6 +235,7 @@ namespace MyDev . ViewModels
 				FilterLabel = "Filter Customer A/c's Col : CustNo";
 				LoadButtonText = "Load Bank A/cs";
 				ActiveTable = "All Customer Details";
+				IsBankActive = false;
 			}
 			else
 			{
@@ -217,9 +245,10 @@ namespace MyDev . ViewModels
 				FilterLabel = "Filter Bank A/c's Col : CustNo";
 				LoadButtonText = "Load Customer A/cs";
 				ActiveTable = "All Bank Accounts";
+				IsBankActive = true;
 			}
 		}
-		#endregion ICommand Methods EXECUTEDEBUGGER, EXECUTECLOSEWINDOW
+		#endregion ICommand Methods CANEXECUTExxxxx, EXECUTExxxxxx
 
 		public void ShowRecordData ( DataGrid dgrid )
 		{
@@ -236,6 +265,10 @@ namespace MyDev . ViewModels
 				data += "Date Closed:	" + bvm . CDate + "\n";
 				fdmsg ( "testing Short form of flowdoc (fdl.FdMsg) from MvvmViewModel" , data );
 			}
+            else
+            {
+
+            }
 
 		}
 		public void fdmsg ( string line1 , string line2 = "" , string line3 = "" )

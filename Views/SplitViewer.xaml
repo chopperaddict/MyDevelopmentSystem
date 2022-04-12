@@ -541,7 +541,7 @@
             <!--#region grid setup-->
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="slidedownPanel" Height="*" />
-                <RowDefinition Height="20" />
+                <RowDefinition Height="25" />
                 <RowDefinition x:Name="slideupPanel" Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -592,7 +592,7 @@
 
 
                     <WrapPanel Orientation="Horizontal"
-                                    Grid.Row="0" 
+                                    Grid.Row="1" 
                                     Grid.Column="0" 
                                     Grid.ColumnSpan="3"
                                     Grid.RowSpan="3"
@@ -623,11 +623,11 @@
                               FontSize="12"
                             MinWidth="350"
                             HorizontalAlignment="Stretch"
+                              PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown"
                             VerticalAlignment="Top"
                             Panel.ZIndex="0"                              
                             Margin="10 55 10 10"
-                              Style="{StaticResource DatagridMagnifyAnimation}"
-                            Visibility="Visible"/>
+                             Visibility="Visible"/>
 
                 </Grid>
                 <!--end of lowerleftpanel-->
@@ -635,7 +635,7 @@
 
             <!--LEFT SIDE  HORIZONTAL SPLITTER-->
             <GridSplitter x:Name="LeftHorzintalSplitter"
-                                Height="20"
+                                Height="25"
 			                    Grid.Row="1"
                                 Grid.RowSpan="1"
 			                    Grid.Column="0"
@@ -646,34 +646,39 @@
 			                    HorizontalAlignment="Stretch" Margin="0,0,0,0">
                 <GridSplitter.Template>
                     <ControlTemplate>
-                        <Grid  Height="20"
-				                    Background="{StaticResource Orange2}">
+                        <Grid  Height="25"
+				                    Background="{StaticResource White1}">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
+                                <RowDefinition Height="25" />
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-		        		                    Panel.ZIndex="3" Grid.Row="0"  >
 
-                                <TextBlock x:Name="LsVertical"  Text="{Binding LeftSplitterText, FallbackValue=Drag Up/down}" 
-                                                Height="20" 
-                                                Padding="0 0 0 0" 
-                                                Foreground="Black"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Right" 
-                                                Margin="0,0,0,6"/>
-                                <Image x:Name="lhImgUp"  Source="{Binding LhHsplitter}"  Margin="5 0 0 0"
-					    	                    Height="20" Width="20" />
+                            <Border Background="Transparent" BorderBrush="Red" BorderThickness="3" Height="24">
+                                <StackPanel Orientation="Horizontal"                                         
+                                            Height="24"
+                                            HorizontalAlignment="Center"
+		        		                        Panel.ZIndex="3" Grid.Row="0"  >
 
-                                <TextBlock x:Name="LsVerticalright"  Text="{Binding ShowText, FallbackValue=Change view}"  
-                                                Height="20" 
-                                                Padding="5 0 0 0" 
-                                                Foreground="Black"
-                                                FontSize="14"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Right" 
-                                                Margin="0,0,0,6"/>
-                            </StackPanel>
+                                    <TextBlock x:Name="LsVertical"  Text="{Binding LeftSplitterText, FallbackValue=Drag Up/down}" 
+                                                    Height="20" 
+                                                    Padding="0 0 0 0" 
+                                                    Foreground="Black"
+                                                    FontSize="14"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Right" 
+                                                    Margin="0,0,0,6"/>
+                                    <Image x:Name="lhImgUp"  Source="{Binding LhHsplitter}"  Margin="5 0 0 0"
+					    	                        Height="20" Width="20" />
+
+                                    <TextBlock x:Name="LsVerticalright"  Text="{Binding ShowText, FallbackValue=Change view}"  
+                                                    Height="20" 
+                                                    Padding="5 0 0 0" 
+                                                    Foreground="Black"
+                                                    FontSize="14"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Right" 
+                                                    Margin="0,0,0,6"/>
+                                </StackPanel>
+                            </Border>
                         </Grid>
                     </ControlTemplate>
                 </GridSplitter.Template>
@@ -713,7 +718,7 @@
                                     VerticalAlignment="Top" 
                                     SelectionChanged="dbName_SelectionChanged"/>
                     <TextBlock Text=" Current Db Table" Margin="15,7 20 0" Foreground="White" FontWeight="DemiBold"/>
-  
+
                 </WrapPanel>
                 <!--POSITIONING CORRECT-->
                 <DataGrid x:Name="DataGrid1"
@@ -723,7 +728,6 @@
                                     Grid.Column="0"
                                     Grid.ColumnSpan="1"
                                     HorizontalAlignment="Stretch"
-                                  Style="{StaticResource DatagridMagnifyAnimation}"
                                     AutoGenerateColumns="True"
                                     VerticalAlignment="Top"
                                     Margin="10, 55,10 10"                       
@@ -746,9 +750,9 @@
                         Panel.ZIndex="7">
 
             <Grid.RowDefinitions>
-                <RowDefinition  x:Name="Middlerow1" Height="*"  />
-                <RowDefinition  x:Name="split" Height="20" />
-                <RowDefinition  x:Name="Middlerow2" Height="*" />
+                <RowDefinition  x:Name="Middlerow1" Height="*" MinHeight="55" />
+                <RowDefinition  x:Name="split" Height="27" />
+                <RowDefinition  x:Name="Middlerow2" Height="*"/>
             </Grid.RowDefinitions>
 
             <!--// Top Right blue pane-->
@@ -766,16 +770,16 @@
                     <!--#region grid setup-->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20"  />
+                        <RowDefinition Height="35"  />
                         <RowDefinition Height="20"  />
-                        <RowDefinition Height="20"  />
-                        <RowDefinition Height="20"  />
+                        <RowDefinition Height="25"  />
+                        <RowDefinition Height="55" />
                         <RowDefinition Height="55" />
                         <RowDefinition Height="20" />
+                        <RowDefinition Height="65" />
                         <RowDefinition Height="55" />
                         <RowDefinition Height="55" />
-                        <RowDefinition Height="55" />
-                        <RowDefinition Height="55" />
-                        <RowDefinition Height="55" />
+                        <RowDefinition Height="65" />
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -784,9 +788,40 @@
                     </Grid.ColumnDefinitions>
                     <!--#endregion grid setup-->
 
-                    <TextBlock Grid.Row="0" 
-                               Grid.Column="0"
-                               Grid.ColumnSpan="2" 
+                           <TextBlock Text="Global Options" 
+                                    Grid.Row="0" 
+                                    Grid.Column="0" 
+                               Background="{StaticResource Blue3}"
+                               Foreground="White" 
+                               TextAlignment="Center"
+   
+                               Width="{Binding ActualWidth,ElementName=GreenBorder}"
+                                  Grid.ColumnSpan="3" Margin="-50,0 0 0" FontWeight="DemiBold"/>
+
+                    <Border 
+                            Grid.Row="1" 
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2" BorderBrush="Red" BorderThickness="2" Background="{StaticResource Gray5}">
+                        <CheckBox x:Name="UseScrollviewer"
+                                BorderBrush="Red" BorderThickness="2" Background="Transparent"
+                                Click="UseScrollviewer_Click"
+                                FontSize="14" 
+                                Grid.Row="1"
+                                Grid.Column="0" 
+                                Margin="10,8,0,0" Grid.ColumnSpan="2">
+                                <CheckBox.Content>
+                                    <TextBlock x:Name="ScrollText"
+                                        Text="Use Scrollviewer in Table Structure Viewer"
+                                        TextWrapping="Wrap" Width="602" Height="52"/>
+                                </CheckBox.Content>
+                        </CheckBox>
+                    </Border>
+                    
+                    <Border 
+                            Grid.Row="2" 
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2" BorderBrush="Red" BorderThickness="2">
+                        <TextBlock 
                                Text="Upper Data Grid" 
                                HorizontalAlignment="Stretch"
                                Background="{StaticResource Cyan0}"
@@ -794,8 +829,9 @@
                                TextAlignment="Center"
                                Width="{Binding ActualWidth,ElementName=GreenBorder}"
                                Margin="-50,0,0,0"/>
-                    <TextBlock Grid.Row="2" Text="Column #:" Foreground="Black" Margin="20 0 0 0"/>
-                    <TextBox x:Name="Filtercolumn" Grid.Row="2" 
+                    </Border>
+                    <TextBlock Grid.Row="3" FontSize="14" Text="Column #:" Foreground="Black" Margin="20 0 0 0"/>
+                    <TextBox x:Name="Filtercolumn" Grid.Row="3" 
                              Grid.Column="1" 
                              Text="" 
                               Padding="0 -4 0 0"
@@ -807,8 +843,8 @@
                              ToolTip="Enter the numeric value of the column you want to search for matching data in."
                              Width="25"/>
 
-                    <TextBlock Grid.Row="3" Text="Filter on :" Foreground="Black" Margin="20 0 0 0"/>
-                    <TextBox  x:Name="Filtertext" Grid.Row="3" 
+                    <TextBlock Grid.Row="4"  FontSize="14" Text="Filter on :" Foreground="Black" Margin="20 0 0 0"/>
+                    <TextBox  x:Name="Filtertext" Grid.Row="4" 
                              Grid.Column="1" 
                              Text="" 
                               Padding="0 -4 0 0"
@@ -828,7 +864,7 @@
                             BorderThickness="4"
                             BorderBrush="Transparent"
                             Foreground="White"
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.RowSpan="1"
                             Grid.Column="1"
                              Template="{StaticResource HorizontalGradientTemplateGreen}"
@@ -864,7 +900,7 @@
                     <!--Style="{StaticResource ButtonBackgroundAnimation}"-->
                     <!--Template="{StaticResource HorizontalGradientTemplateGreen}"-->
 
-                    <TextBlock Grid.Row="5" 
+                    <TextBlock Grid.Row="6" 
                                Grid.ColumnSpan="2"
                                Text="------------------------------------------------------------------------------------------:" 
                                Foreground="White" Margin="0 0 0 0"/>
@@ -877,10 +913,11 @@
                         Click="ShowTableStructure_Click"
                         Background="Black"
                         Foreground="White"
-                        Grid.Row="6"
+                        Grid.Row="7"
                         Grid.Column="1"
                             Style="{StaticResource ButtonGrowBorderAnimation}"
                         HorizontalAlignment="Center"
+                            Template="{StaticResource HorizontalGradientTemplateGreen}"
                         VerticalAlignment="Center"
                            Width="120" 
                         Height="45">
@@ -892,7 +929,7 @@
                            Content="animate"
                              Foreground="White"
                             Click="Animate_Click"
-                            Grid.Row="7"
+                            Grid.Row="8"
                             Grid.RowSpan="1"
                             Grid.Column="1"
                             Template="{StaticResource HorizontalGradientTemplateGreen}"
@@ -903,20 +940,18 @@
                             Height="45"
                             Style="{StaticResource ButtonGrowBorderAnimation}">
                     </Button>
-                    <!--<Border Grid.Row="9" 
-                        Background="Blue"
-                        Grid.Column="1" 
-                        Width="150" 
-                        Height="35"
-                        Style="{StaticResource BlinkWhenMouseOver}"
->
-                </Border>-->
-                </Grid>
+                    <TextBlock Grid.Row="9"
+                               Grid.ColumnSpan="2"
+                               Text="------------------------------------------------------------------------------------------:" 
+                               Foreground="White" Margin="0 0 0 0"/>
+
+            </Grid>
 
             </Border>
 
             <GridSplitter x:Name="RightHorizontalSplitter"
-                        ResizeDirection="Rows"         
+                        ResizeDirection="Rows"   
+                          Height="25"
                         Grid.Row="1"
                         Grid.ColumnSpan="1"
                         DragStarted="RtSplitter_DragStarted"  
@@ -925,26 +960,29 @@
                         HorizontalAlignment="Stretch" Margin="0,0,0,0" >
                 <GridSplitter.Template>
                     <ControlTemplate>
-                        <Grid 
-						      Background="{StaticResource Orange4}">
+                        <Grid  Background="{StaticResource White2}">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
+                                <RowDefinition Height="25" />
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="0"  >
-                                <TextBlock Text="{Binding ShowdragText, FallbackValue=Drag}" 
-                                                Height="20" 
-                                                Padding="0 0 4 0" 
+
+                            <Border Background="Transparent" BorderBrush="Red" BorderThickness="3" Grid.Row="0" Height="25">
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"  Height="23" >
+                                    <TextBlock Text="{Binding ShowdragText, FallbackValue=Drag}" 
+                                                Height="23" 
+                                                Padding="2 0 2 0" 
                                                 FontSize="14"
                                                 Foreground="Black"
-                                                HorizontalAlignment="Right" Margin="30,0,0,0"/>
-                                <Image x:Name="ImgUp"  Source="{Binding imgup}"  Margin="0 0 0 0" Height="20" Width="20" HorizontalAlignment="Left"/>
-                                <TextBlock x:Name="showmore" Text="{Binding ShowText}" 
-                                                Height="20" 
+                                                HorizontalAlignment="Right" Margin="30,-3,0,0"/>
+                                    <Image x:Name="ImgUp"  Source="{Binding imgup}"  Margin="0 0 0 0" Height="20" Width="20" HorizontalAlignment="Left"/>
+                                    <TextBlock x:Name="showmore" Text="{Binding ShowText}" 
+                                                Height="23" 
                                                 Width="200" 
                                                 Margin="0 0 0 0"
                                                 Padding="0 0 4 0"  
                                                 Foreground="Black"/>
-                            </StackPanel>
+                                </StackPanel>
+                            </Border>
                         </Grid>
                     </ControlTemplate>
                 </GridSplitter.Template>
@@ -976,16 +1014,20 @@
                         <ColumnDefinition Width="250"    />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" 
-                               Grid.Column="0"
-                               Grid.ColumnSpan="2" 
+                    <Border 
+                            Grid.Row="0" 
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2" BorderBrush="Red" BorderThickness="2">
+                        <TextBlock 
                                Text="Lower Data Grid" 
                                HorizontalAlignment="Center"
-                               Background="{StaticResource Green8}"
+                               Background="{StaticResource Cyan0}"
                                Foreground="Black" 
                                TextAlignment="Center"
                                Width="{Binding ActualWidth,ElementName=GreenBorder}"
                                Margin="-50,0,0,0"/>
+                    </Border>
+                    
                     <TextBlock Grid.Row="2" Text="Column #:" Foreground="White" Margin="20,0,0,0"/>
                     <TextBox x:Name="Filtercolumn2" Grid.Row="2" 
                              Grid.Column="1" 
@@ -1062,17 +1104,29 @@
                                 HorizontalAlignment="Stretch"
 						        Grid.Column="0"  
 						        Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="627*"/>
+                <ColumnDefinition Width="373*"/>
+            </Grid.ColumnDefinitions>
 
             <TextBlock x:Name="infopanel" Width="600" 
                        HorizontalAlignment="Left"
-                       Margin="20 0 0 0"
+                       Margin="20,20,0,20"
                        Padding="0 3 0 0"
                        TextAlignment="Center"
                        Height="25" Foreground="White" Background="Black"/>
             <Image Source="\Icons\small Magnify.png" 
                                Panel.ZIndex="2" 
                                PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown" 
-                               ToolTip="Click to toggle DataGrid Magnification System" Margin="318,-5,0,0" Height="35" Width="35"/>
+                               ToolTip="Click to toggle DataGrid Magnification System" Margin="15,12,324,17" Height="35" Width="35" Grid.Column="1"/>
+            <TextBlock x:Name="Magnifyrate" 
+                   Text="+4"
+                   Margin="62,17,274,23" 
+                       Padding="0 1 0 0"
+                   TextAlignment="Center"  
+                   Background="Black" 
+                   Foreground="White" 
+                   FontSize="16" Grid.Column="1"/>
 
             <!--#region Button panel-->
             <Button x:Name="Close_Copy"
@@ -1082,12 +1136,12 @@
                     Foreground="{StaticResource ResourceKey=White0}"
                     Height="40"
                     HorizontalAlignment="Right"
-                    Margin="0,9,132,0"
+                    Margin="0,9,130,0"
                     Template="{StaticResource HorizontalGradientTemplateYellow}"
                      Style="{StaticResource ButtonGrowBorderAnimation}"
                     VerticalAlignment="Top"
                     Width="108" 
-                    TabIndex="9"  />
+                    TabIndex="9" Grid.Column="1"  />
             <Button x:Name="AllCloseBtn"
                     AllowDrop="True"
                     Click="App_Close"
@@ -1100,12 +1154,12 @@
                      Style="{StaticResource ButtonGrowBorderAnimation}"
                     VerticalAlignment="Top"
                     Width="110" 
-                    TabIndex="10" />
+                    TabIndex="10" Grid.Column="1" />
 
             <!--#endregion  Button panel-->
 
         </Grid>
-          <!--#endregion Buttons bar-->
+        <!--#endregion Buttons bar-->
 
     </Grid>
 

@@ -61,48 +61,56 @@
                        l  500,200
                          l 100. -400 
                       "/>
-        <!--//Normal  direction V left to right from specified start point--><!--
+        <!--//Normal  direction V left to right from specified start point-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 300,-200
                        l  500,200
                          l 100. -400 
                       "/>-->
 
-        <!--//Reverse direction normal V left from specified start point--><!--
+        <!--//Reverse direction normal V left from specified start point-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 700,-200
                        l -400,200
                          l -200. -400 
                       "/>-->
 
-        <!--//Vertical straight up linethen right horizontal line from specified start point--><!--
+        <!--//Vertical straight up linethen right horizontal line from specified start point-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 200,-200
                        v -300
                        h 700 "/>-->
 
-        <!--//Vertical straight down line--><!--
+        <!--//Vertical straight down line-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 0,-200
                        V 0,800 "/>-->
 
-        <!--//Vertical straight down line--><!--
+        <!--//Vertical straight down line-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 0,-200
                        300,800 "/>-->
-        <!--//Quadratic U upward arc --><!--
+        <!--//Quadratic U upward arc -->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 0,-200
                       Q  300,200 
 						300,-200 "/>-->
 
-        <!--//Shallow upward arc of  150 degrees to right--><!--
+        <!--//Shallow upward arc of  150 degrees to right-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 0,-200
                       A  300,800 150 0 1 
                       200,-200 "/>-->
 
-        <!--//Shallow upward line to right--><!--
+        <!--//Shallow upward line to right-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 0,-200
                       C
@@ -119,7 +127,8 @@
                       400,50"
                       />-->
 
-       <!--//Inverted V curve - up then down--><!--
+        <!--//Inverted V curve - up then down-->
+        <!--
         <PathGeometry x:Key="AnimationPath"
         Figures="M 0,-200
                       C 
@@ -580,14 +589,14 @@
 			CellStyle="{StaticResource DataGridStyle}"
 			Grid.Column="1"
 			Grid.Row="1"                  
-            Style="{StaticResource DatagridMagnifyAnimation}"
+            Style="{StaticResource DatagridMagnifyAnimation4}"
 			Grid.ColumnSpan="3"/>
 
         <!--#endregion DataGrid-->
 
         <!--#region List Box/views-->
 
-                 <!--ItemTemplate="{StaticResource MyDataTemplate}"-->
+        <!--ItemTemplate="{StaticResource MyDataTemplate}"-->
         <ListBox x:Name="listBox"
 				Background="Transparent"
 				ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"
@@ -603,7 +612,7 @@
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				VerticalAlignment="Top"
 				VerticalContentAlignment="Stretch" />
-                 <!--Style="{StaticResource ListBoxMagnifyAnimation}"-->
+        <!--Style="{StaticResource ListBoxMagnifyAnimation}"-->
 
         <!--FontSize="{Binding Fontsize, ElementName=Listviews}"-->
         <ListView x:Name="listView"
@@ -814,7 +823,7 @@
 			Text="Current Database :"
 			VerticalAlignment="Bottom"
 			Width="124" />
-			  <!--FocusVisualStyle="{x:Null}"-->
+        <!--FocusVisualStyle="{x:Null}"-->
         <TextBlock
 			  FontSize="14"
 			  Background="Transparent"
@@ -829,16 +838,26 @@
 			  Text="Select Db Table to load :"
 			  VerticalAlignment="Top"
 			  Width="158" >
-   
+
         </TextBlock>
 
         <Image x:Name="magnifyimage"
             Source="\Icons\small Magnify.png" 
                Panel.ZIndex="2" 
                ToolTip="Click to toggle DataGrid Magnification System"
-               Margin="508,10,55,20" Height="35" Width="35" Grid.Column="1" Grid.Row="4" >
+               PreviewMouseLeftButtonDown="magnifyimage_PreviewMouseLeftButtonDown"
+               Margin="484,10,79,20" Height="35" Width="35" Grid.Column="1" Grid.Row="4" >
         </Image>
 
+        <TextBlock x:Name="Magnifyrate" 
+                   Text="+4"
+                   Margin="531,16,31,24" 
+                   Grid.Column="1" 
+                   TextAlignment="Center"
+                   Grid.Row=" 4"  
+                   Background="Black" 
+                   Foreground="White" 
+                   FontSize="16"/>
         <!--#endregion TextBoxes / Blocks-->
 
         <!--#region Combos-->
@@ -1170,9 +1189,9 @@
               Style="{StaticResource ButtonExpandAnimation}"
 			  VerticalAlignment="Top"
 			  Width="110" TabIndex="8">
-                <!--MouseEnter="DataTemplateFindElement"-->
+            <!--MouseEnter="DataTemplateFindElement"-->
         </Button>
-        
+
         <Button x:Name="TreeviewBtn"
 			  AllowDrop="True"
 			  Click="LoadTreeView"
@@ -1222,7 +1241,7 @@
                     <BeginStoryboard>
                         <Storyboard RepeatBehavior="Forever">
 
-                             <!--Animates the rectangle horizotally along the path.--> 
+                            <!--Animates the rectangle horizotally along the path.-->
                             <DoubleAnimationUsingPath
 									Storyboard.TargetName="AnimatedTranslateTransform"
 									Storyboard.TargetProperty="X"
@@ -1230,7 +1249,7 @@
 									Source="X" 
 									Duration="0:0:5"  />
 
-                             <!--Animates the rectangle vertically along the path.--> 
+                            <!--Animates the rectangle vertically along the path.-->
                             <DoubleAnimationUsingPath
 									Storyboard.TargetName="AnimatedTranslateTransform"
 									Storyboard.TargetProperty="Y"

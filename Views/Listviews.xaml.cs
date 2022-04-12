@@ -36,6 +36,7 @@ using static System . Net . WebRequestMethods;
 using System . Windows . Media . Animation;
 using System . Windows . Shapes;
 
+
 namespace MyDev . Views
 {
     public partial class Listviews : Window, INotifyPropertyChanged
@@ -256,8 +257,19 @@ namespace MyDev . Views
             TreeviewBorder . Visibility = Visibility . Hidden;
             IsExpanded . SetIsExpand ( this , false );
 
-            //		MyRectangle . Loaded += Rectangle_Loaded;
-
+            // Handle the magnify sytem to handle global flag
+            Flags . UseMagnify = ( bool ) Properties . Settings . Default [ "UseMagnify" ];
+            if ( Flags . UseMagnify == false )
+            {
+                dGrid . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation0" );
+                Magnifyrate . Text = "0";
+            }
+            else
+            {
+                dGrid . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation4" );
+                Magnifyrate . Text = "+4";
+            }
+            Flags . UseScrollView = false;
         }
 
         private void Rectangle_Loaded ( object sender , RoutedEventArgs e )
@@ -3172,7 +3184,7 @@ namespace MyDev . Views
             // Note that the ListBox must have
             // IsSynchronizedWithCurrentItem set to True for this to work
             var myListBoxItem =
-            ( ListBoxItem ) ( listBox. ItemContainerGenerator . ContainerFromItem ( listBox . Items . CurrentItem ) );
+            ( ListBoxItem ) ( listBox . ItemContainerGenerator . ContainerFromItem ( listBox . Items . CurrentItem ) );
 
             // Getting the ContentPresenter of myListBoxItem- WORKS!
             var myContentPresenter = FindVisualChild<ContentPresenter> ( myListBoxItem );
@@ -3180,7 +3192,7 @@ namespace MyDev . Views
             // Finding textBlock from the DataTemplate that is set on that ContentPresenter- WORKS!
             var myDataTemplate = myContentPresenter . ContentTemplate;
             //- returns NULL
-              var myTextBlock = ( TextBlock ) myDataTemplate . FindName ( "textBlock" , myContentPresenter );
+            var myTextBlock = ( TextBlock ) myDataTemplate . FindName ( "textBlock" , myContentPresenter );
 
 
             // Do something with the DataTemplate-generated Border control - WORKS!
@@ -3203,6 +3215,11 @@ namespace MyDev . Views
             return null;
         }
 
+        private void magnifyimage_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            // Rotates DataGrid row magnification down from 4 > 1 and then straight back < to 4 again
+            Utils . SwitchMagnifyStyle ( dGrid , ref Magnifyrate );
+        }
     }
 }
 

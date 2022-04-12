@@ -315,7 +315,7 @@ namespace MyDev . Models
 			if ( border != null )
 			{
 				string res = e . LeftButton == MouseButtonState . Pressed ? "Yes" : "No";
-				Console . WriteLine ( $"In Mousemove, Button pressed = {res}" );
+//				Console . WriteLine ( $"In Mousemove, Button pressed = {res}" );
 				if ( e . LeftButton == MouseButtonState . Pressed )
 				{
 					IsCornerDragging = true;
@@ -497,18 +497,24 @@ namespace MyDev . Models
 			{
 				return;
 			}
-			double height = canvas . Height;
-			double width = canvas . Width;
-			if ( Flowdoc . Height < canvas.Height && Flowdoc . Width < canvas . Width )
+			double height = canvas . ActualHeight;
+			double width = canvas . ActualWidth;
+			if ( (Flowdoc . Height < canvas.ActualHeight && Flowdoc . ActualWidth < canvas . ActualWidth ))
 			{
 				// it is in NORMAL mode right now
 				// Set flowdoc size into variables for later use
 				FlowdocFloatingTop = Convert . ToDouble ( Flowdoc . GetValue ( Canvas . TopProperty ) );
 				FlowdocFloatingLeft = Convert . ToDouble ( Flowdoc . GetValue ( Canvas . LeftProperty ) );
+				//if ( Flowdoc . Height == 0)
+    //            {
+				//	Flowdoc . Height = Convert . ToDouble ( Flowdoc . GetValue ( Canvas . BottomProperty ) ) - FlowdocFloatingTop;
+				//	Flowdoc . Width = Convert . ToDouble ( Flowdoc . GetValue ( Canvas . RightProperty ) ) - FlowdocFloatingLeft;
+
+				//}
 				FlowdocFloatingHeight = Flowdoc . ActualHeight;
 				FlowdocFloatingWidth = Flowdoc . ActualWidth;
 				flowdocHeight = Flowdoc . Height;
-				flowdocWidth = Flowdoc . Width;
+				flowdocWidth = Flowdoc . ActualWidth;
 				flowdocTop = Convert . ToDouble ( Flowdoc . GetValue ( Canvas . LeftProperty ) );
 				flowdocLeft = Convert . ToDouble ( Flowdoc . GetValue ( Canvas . TopProperty ) );
 				( Flowdoc as FrameworkElement ) . SetValue ( Canvas . LeftProperty , ( double ) 0 );

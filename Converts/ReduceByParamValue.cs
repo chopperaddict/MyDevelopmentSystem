@@ -40,6 +40,7 @@ namespace MyDev . Converts
 				{
 					currentvalue = d + param;
 				}
+                Console . WriteLine ($"value={value}, Cv= {currentvalue}");
 				return currentvalue;
 			}
 			else

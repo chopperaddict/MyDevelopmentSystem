@@ -19,8 +19,8 @@
     <!--//These next two lines (included above) are needed for the Listbox with Expanders-->
     <!--xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:data="clr-namespace:System.Windows.Data;assembly=PresentationFramework"-->
-    
-    
+
+
     <!--<Window.DataContext>
         <local:GroupedAccounts/>        
     </Window.DataContext>-->
@@ -455,7 +455,9 @@
                     Height="30"
                     Content="Loading....."
                     FontWeight="Bold"
+                    Panel.ZIndex="12"
                     Margin="10 0 200 0"/>
+
         <!--#endregion Top labels-->
 
         <!--#region Textboxes-->
@@ -545,7 +547,8 @@
             Grid.Row="2" Margin="0,0,0,0" Grid.RowSpan="3"
               VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="527*"/>
+                <ColumnDefinition Width="173*"/>
                 <ColumnDefinition Width="200"/>
                 <!--<ColumnDefinition Width="10"/>-->
             </Grid.ColumnDefinitions>
@@ -561,8 +564,8 @@
                             CanUserAddRows="False"
 							VerticalContentAlignment="Stretch"
                    			CellStyle="{StaticResource BankAccountGridStyle}"
-                            Style="{StaticResource DatagridMagnifyAnimation}"
-                            Visibility="Hidden"/>
+                            Style="{StaticResource DatagridMagnifyAnimation4}"
+                            Visibility="Hidden" Grid.ColumnSpan="2"/>
 
             <ListBox Name="lbox1"
 	                        Grid.Row="0"
@@ -576,7 +579,7 @@
                             IsSynchronizedWithCurrentItem="True"
                     Style="{StaticResource ListBoxMagnifyAnimation}"
 							VerticalContentAlignment="Stretch" 
-							Visibility="Hidden">
+							Visibility="Hidden" Grid.ColumnSpan="2">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -593,13 +596,13 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <ListView x:Name="lview3" Visibility="Hidden">
+            <ListView x:Name="lview3" Visibility="Hidden" Grid.ColumnSpan="2">
             </ListView>
 
             <ItemsControl x:Name="ItemsList"
                           Background="Yellow"
                           Visibility="Visible"
-                ItemsSource="{Binding lvview}">
+                ItemsSource="{Binding lvview}" Grid.ColumnSpan="2">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -614,22 +617,22 @@
                                                     <RowDefinition Height="40" />
                                                     <RowDefinition Height="*" />
                                                 </Grid.RowDefinitions>
- 
+
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="300" />
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
- 
+
                                                     <TextBlock
                                                         VerticalAlignment="Center" Text="{Binding Name}" />
- 
+
                                                     <Grid Column="1">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="*" />
                                                             <ColumnDefinition Width="*" />
                                                         </Grid.ColumnDefinitions>
- 
+
                                                         <Button
                                                             Visibility="{Binding UpdateButtonVisibility, Converter={StaticResource BoolToVisibilityConverter}}"
                                                             Name="Update"
@@ -637,7 +640,7 @@
                                                             Height="30"
                                                             HorizontalAlignment="Right"
                                                             Content="{Binding UpdateButtonText}" />
- 
+
                                                         <Button
                                                             Name="OpenInstallPauseResume"
                                                             Grid.Column="1"
@@ -647,7 +650,7 @@
                                                             Content="{Binding OpenButtonText}" />
                                                     </Grid>
                                                 </Grid>
- 
+
                                                 <Grid Grid.Row="1">
                                                     <ProgressBar Background="Yellow"
                                                         Visibility="{Binding ProgressVisibility, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -665,20 +668,20 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                        </Expander>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-    </ItemsControl>
-            
-            
-            
-            
-            
+                            </Expander>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+
+
+
+
             <!--<ListBox x:Name="lview3" Visibility="Visible">-->
 
-                <!--<CollectionViewSource x:Key="cvsActors" Source="{Binding ActorList}" >-->
-                    <!--<ListBox.Resources>
+            <!--<CollectionViewSource x:Key="cvsActors" Source="{Binding ActorList}" >-->
+            <!--<ListBox.Resources>
                          <CollectionViewSource x:Key="accounttypes" Source="{Binding data:lvview}">
                                 <CollectionViewSource.SortDescriptions>
                                     <scm:SortDescription PropertyName="AcType"/>
@@ -688,29 +691,38 @@
                                 </CollectionViewSource.GroupDescriptions>
                             </CollectionViewSource>
                     </ListBox.Resources>-->
-                <!--/// Expander line only-->
+            <!--/// Expander line only-->
 
-                <!--<ListBox.GroupStyle>
-                    --><!--//Not sure how this works really !!--><!--
+            <!--<ListBox.GroupStyle>
+                    -->
+            <!--//Not sure how this works really !!-->
+            <!--
 
                     <GroupStyle>
-                           --><!--/// Expander line only--><!--
+                           -->
+            <!--/// Expander line only-->
+            <!--
 
                         <GroupStyle.ContainerStyle>
-                                --><!--All binding names are defaulted by xaml itself - we just use them as is
-                            Value="{StaticResource GroupItemTemplate}"/>--><!--
+                                -->
+            <!--All binding names are defaulted by xaml itself - we just use them as is
+                            Value="{StaticResource GroupItemTemplate}"/>-->
+            <!--
 
                             <Style TargetType="{x:Type GroupItem}" >
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate>
 
-                                            --><!--This lets us set  the default expand state for the the Expander groups--><!--
+                                            -->
+            <!--This lets us set  the default expand state for the the Expander groups-->
+            <!--
 
                                             <Expander IsExpanded="true" Header="{Binding AcType}">
-                                                --><!--Now we format the Group header line itself-->
+                                                -->
+            <!--Now we format the Group header line itself-->
 
-                                                <!--<Expander.Header >
+            <!--<Expander.Header >
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock Text=" Bank A/c's by Account Type  : ( "
 																		FontSize="14"
@@ -718,9 +730,11 @@
 																		FontStyle="Italic"
 																		VerticalAlignment="Bottom" />
 
-                                                        --><!--// NB THIS BINDING MUST BE Name, IT IS AN INTERNAL VARIABLE AND MUST BE 
+                                                        -->
+            <!--// NB THIS BINDING MUST BE Name, IT IS AN INTERNAL VARIABLE AND MUST BE 
 																// used as is >
-                                                                // In  rthis case, it  displays the AcType of each group (1-4)--><!--
+                                                                // In  rthis case, it  displays the AcType of each group (1-4)-->
+            <!--
 
                                                         <TextBlock Text="{Binding Name}"
 																		FontWeight="Bold"
@@ -733,7 +747,8 @@
 																		FontStyle="Italic"
 																		VerticalAlignment="Bottom" />
                                                     </StackPanel>
-                                                </Expander.Header>--><!--                                                    
+                                                </Expander.Header>-->
+            <!--                                                    
                                                 <ItemsPresenter/>
                                             </Expander>
                                         </ControlTemplate>
@@ -757,9 +772,11 @@
 													FontStyle="Italic"
 													VerticalAlignment="Bottom" />
 
-                                        --><!--// NB THIS BINDING MUST BE Name, IT IS AN INTERNAL VARIABLE AND MUST BE 
+                                        -->
+            <!--// NB THIS BINDING MUST BE Name, IT IS AN INTERNAL VARIABLE AND MUST BE 
 											// used as is >
-                                            // In  rthis case, it  displays the AcType of each group (1-4)--><!--
+                                            // In  rthis case, it  displays the AcType of each group (1-4)-->
+            <!--
 
                                         <TextBlock Text="{Binding Name}"
 															FontWeight="Bold"
@@ -783,14 +800,14 @@
 
 
             <Border x:Name="_border"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     Padding="1" 
                     BorderThickness="0"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
                     Height="{Binding ActualHeight, ElementName=maingrid}"    
                     Width="200"
-                    BorderBrush="{StaticResource Red5}" Margin="0,0,0,0">
+                    BorderBrush="{StaticResource Red5}">
 
                 <StackPanel 
                         Orientation="Vertical"
@@ -818,7 +835,7 @@
                             Height="45"
                            HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center"
-                            Content="Load ListBox"
+                            Content="Load/Reload ListBox"
                             PreviewMouseLeftButtonDown="LoadListbox"
                            MouseEnter="MouseOverGreen"
                            MouseLeave="MouseLeaveGreen"
@@ -829,7 +846,7 @@
                             Height="45"
                            HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center"
-                            Content="Load ListView"
+                            Content="Load/Reload ListView"
                             PreviewMouseLeftButtonDown="LoadListview"
                            MouseEnter="MouseOverGreen"
                            MouseLeave="MouseLeaveGreen"
@@ -837,7 +854,7 @@
 
                     <Label x:Name="Button2" 
                             Height="45"
-                            Content="Load DataGrid"
+                            Content="Load/Reload DataGrid"
                             HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center"
                            PreviewMouseLeftButtonDown="LoadDatagrid"
@@ -847,7 +864,7 @@
                     <!--// Toggle view-->
                     <Label x:Name="Button4" 
                             Height="45"
-                            Content="Toggle View"
+                            Content="Toggle between Views"
                            HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center"
                            MouseEnter="MouseOverOrange"
@@ -882,6 +899,24 @@
                            MouseLeave="MouseLeaveRed"
                             Background="Red"
                             Foreground="White"/>
+                    
+                    <WrapPanel Orientation="Horizontal" Margin="70 0 0 0">
+                        
+                    <Image Source="\Icons\small Magnify.png" 
+                           PreviewMouseLeftButtonDown="Image_PreviewMouseLeftButtonDown" 
+                            Panel.ZIndex="12"
+                           ToolTip="Click to toggle Data Magnify System" Height="35" Width="35"/>
+                    <TextBlock x:Name="Magnifyrate" 
+                               Margin="10 0 0 0"
+                            Text="+4" 
+                            TextAlignment="Center"  
+                            Background="Black" 
+                            Foreground="White" 
+                           Panel.ZIndex="12"
+                            FontSize="16" 
+                           Height="30" 
+                           Width="30"/>
+                    </WrapPanel>
                 </StackPanel>
 
             </Border>

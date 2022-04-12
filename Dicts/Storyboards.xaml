@@ -71,10 +71,128 @@
 
 
     <!--#region magnify-->
-    
+  
+    <!--// WORKING !!-->
+    <!--no change to fontsize -->
+    <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation0">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="DataGrid.MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="12" To="12" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="DataGrid.MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="12" To="12" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    <!--ncrease fontsize by  1 point-->
+    <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation1">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="DataGrid.MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="12" To="13" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="DataGrid.MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="13" To="12" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
     <!--// WORKING !!-->
     <!--ncrease fontsize by  2 points-->
-    <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation">
+    <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation2">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="DataGrid.MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="12" To="14" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="DataGrid.MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="14" To="12" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--ncrease fontsize by  4 points-->
+    <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation3">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="DataGrid.MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="12" To="15" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="DataGrid.MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="15" To="12" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                        </Storyboard>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation4">
         <Style.Triggers>
             <EventTrigger RoutedEvent="DataGrid.MouseEnter">
                 <BeginStoryboard>
@@ -102,7 +220,7 @@
             </EventTrigger>
         </Style.Triggers>
     </Style>
-
+    
     <Style TargetType="ListBox" x:Key="ListBoxMagnifyAnimation">
         <Style.Triggers>
             <EventTrigger RoutedEvent="ListBox.MouseEnter">

@@ -12,110 +12,143 @@ using System . Runtime . Remoting . Messaging;
 
 namespace MyDev . Views
 {
-	public class XLazyLoadingTreeview
+	public class LazyLoadingTreeview
 	{
-		//public static TreeView Treeview { get; set; }
-		//public static TreeViews TVs { get; set; }
+        public static TreeView Treeview { get; set; }
+        public static TreeViews TVs { get; set; }
 
-		//public static List<string> LbStrings = new List<string>();
-		//public static ExplorerClass Texplorer;
+        public static List<string> LbStrings = new List<string> ( );
+        public static ExplorerClass Texplorer;
 
-		//public XLazyLoadingTreeview ( )
-		//{
-		//	Texplorer = new ExplorerClass();
-		//	Texplorer . FullPath = @"C:\\";
-		//}
-		//public static void LazyLoadTreeview ( TreeView tv , TreeViews tvs )
-		//{
-		//	DriveInfo[] drives = DriveInfo.GetDrives();
-		//	Treeview = tv;
-		//	TVs = tvs;
-		//	foreach ( DriveInfo driveInfo in drives )
-		//		tv . Items . Add ( CreateTreeItem ( driveInfo ) );
-		//}
-		//public static void TreeViewItem4_Expanded  ( object sender , RoutedEventArgs e )
-		//{
-		//	string fullpath = "";
-		//	// This is what we are updating in our TreeView
-		//	TreeViewItem item = e.Source as TreeViewItem;
+        public LazyLoadingTreeview ( )
+        {
+            Texplorer = new ExplorerClass ( );
+            Texplorer . FullPath = @"C:\\";
+        }
+        public static void LazyLoadTreeview ( TreeView tv , TreeViews tvs , ref List<string> errors)
+        {
+            DriveInfo [ ] drives = DriveInfo . GetDrives ( );
+            Treeview = tv;
+            //TVs = tvs;
+            foreach ( DriveInfo driveInfo in drives )
+            {
+                if ( driveInfo . IsReady == true )
+                {
+                    tv . Tag = driveInfo;
+                    tv . Items . Add ( CreateTreeItem ( driveInfo ) );
+                    errors?.Add ( $"Drive [{driveInfo . Name} loaded, Drive type = {driveInfo . DriveType}, Volume={driveInfo.VolumeLabel}" );
+                }
+                else
+                {
+                    Console . WriteLine ( $"Drive [{driveInfo . Name} not loaded !, Drive type = {driveInfo . DriveType}" );
+                    errors? . Add ( $"Drive [{driveInfo . Name} not loaded !, Drive type = {driveInfo . DriveType}" );
+                }
+                var index = tv . Items . Count;
+            }
+            Texplorer = new ExplorerClass ( );
+        }
+        public static void TreeViewItem4_Expanded ( object sender , RoutedEventArgs e , TreeViewItem CurrentTreeItem)
+        {
+            string fullpath = "";
+            TreeViewItem tv = null;
+            // This is what we are updating in our TreeView
+            TreeViewItem item = e ?. Source as TreeViewItem;
+            if ( item == null && CurrentTreeItem == null )
+                return;
+            else
+            {
+                if ( item != null )
+                    tv = e . Source as TreeViewItem;
+                else
+                {
+                    item = CurrentTreeItem;
+                    tv = CurrentTreeItem;
+                }
+            }
+           Texplorer = new ExplorerClass ( );
 
-		//	TreeViewItem tv = e.Source as TreeViewItem;
-		//	Texplorer = new ExplorerClass ( );
+            string newpath = tv . Header . ToString ( );
+           
+            //All seems to be working using the di.FullName path ???
+            if ( newpath . Contains ( "\\" ) == false )
+            {
+                var v = tv . Parent as TreeViewItem;
+                if ( v . Header . ToString ( ) . Contains ( "\\" ) == false )
+                    newpath = v . Header . ToString ( ) + "\\" + tv . Header . ToString ( );
+                else
+                    newpath = v . Header . ToString ( ) + tv . Header . ToString ( );
+            }
 
-		//	string newpath = tv . Header . ToString ( );
-		//	DirectoryInfo di = new DirectoryInfo(newpath);
-		//	DriveInfo dinfo = new DriveInfo(newpath);
-		//	List<string > _drives = new List<string>();
-		//	var drives = Texplorer . GetDrives ( newpath);
+            DirectoryInfo di = new DirectoryInfo ( newpath );
+            DriveInfo dinfo = new DriveInfo ( di.FullName );
+            List<string> _drives = new List<string> ( );
+            var drives = Texplorer . GetDrives ( di.FullName );
+            LbStrings . Clear ( );
+            if ( ( item . Items . Count == 1 ) && ( item . Items [ 0 ] is string ) )
+            {
+                item . Items . Clear ( );
+                try
+                {
+                    var dirs = new List<DirectoryInfo> ( );
+                    dirs = Texplorer . GetDirectories ( );
+                    foreach ( var dir in dirs )
+                    {
+                        FileAttributes fa = dir . Attributes;
+                        string s = fa . ToString ( );
+                        if (
+                            ( s . ToUpper ( ) . Contains ( "BOOTMGR" )
+                            || s . ToUpper ( ) . Contains ( "BOOTNXT" )
+                            || s . ToUpper ( ) . Contains ( "BOOTSECT" ) ) == false )
+                        {
+                            item . Items . Add ( CreateTreeItem ( dir . Name ) );
+                            LbStrings . Add ( dir . Name );
+                        }
+                    }
+                }
+                catch { }
+            }
 
-		//	string currentdrive = Texplorer.Name;
+            // Now use my Files Class to get the list of any lowest level files  & add to treeview 
+            // by adding each one to the TreeViewItem collection "item"
+            // if tey are not Special files or they are marked as Hidden
+            List<FileInfo> AllFiles = Texplorer . GetFiles ( );
+            foreach ( var str in AllFiles )
+            {
+                FileAttributes fa = str . Attributes;
+                string s = fa . ToString ( );
+                if ( s . Contains ( "Hidden" ) == false )
+                {
+                    if (
+                        ( s . ToUpper ( ) . Contains ( "BOOTMGR" )
+                        || s . ToUpper ( ) . Contains ( "BOOTNXT" )
+                        || s . ToUpper ( ) . Contains ( "BOOTSECT" ) ) == false )
+                    {
+                        Console . WriteLine ( $"{str}" );
+                        item . Items . Add ( CreateTreeFile ( str ) );
+                        LbStrings . Add ( str . ToString ( ) );
+                    }
+                }
+            }
+        }
 
-		//	Console . WriteLine ( $"Count={item . Items . Count}, Content='{item . Items [ 0 ]}'" );
-		//	LbStrings . Clear ( );
-		//	if ( ( item . Items . Count == 1 ) && ( item . Items [ 0 ] is string ) )
-		//	{
-		//		item . Items . Clear ( );
-		//		try
-		//		{
-		//			var dirs =new List<DirectoryInfo>();
-		//			dirs = Texplorer . GetDirectories (  );
-		//			foreach ( var dir in dirs )
-		//			{
-		//				FileAttributes fa = dir.Attributes;
-		//				string s = fa.ToString();
-		//				if (
-		//					( s . ToUpper ( ) . Contains ( "BOOTMGR" )
-		//					|| s . ToUpper ( ) . Contains ( "BOOTNXT" )
-		//					|| s . ToUpper ( ) . Contains ( "BOOTSECT" ) ) == false )
-		//				{
-		//					item . Items . Add ( CreateTreeItem ( dir . Name ) );
-		//					LbStrings . Add ( dir . Name );
-		//				}
-		//			}
-		//		} catch { }
-		//	}
-
-		//	// Now use my Files Class to get the list of any lowest level files  & add to treeview 
-		//	// by adding each one to the TreeViewItem collection "item"
-		//	// if tey are not Special files or they are marked as Hidden
-		//	List<FileInfo>  AllFiles = Texplorer. GetFiles ( );
-		//	foreach ( var str in AllFiles )
-		//	{
-		//		FileAttributes fa = str.Attributes;
-		//		string s = fa.ToString();
-		//		if ( s . Contains ( "Hidden" ) == false )
-		//		{
-		//			if (
-		//				( s . ToUpper ( ) . Contains ( "BOOTMGR" )
-		//				|| s . ToUpper ( ) . Contains ( "BOOTNXT" )
-		//				|| s . ToUpper ( ) . Contains ( "BOOTSECT" ) ) == false )
-		//			{
-		//				Console . WriteLine ($"{str}");
-		//				item . Items . Add ( CreateTreeFile ( str ) );
-		//				LbStrings . Add ( str . ToString ( ) );
-		//			}
-		//		}
-		//	}
-		//}
-
-		//private static TreeViewItem CreateTreeItem ( object o )
-		//{
-		//	string str = o.ToString();
-		//	TreeViewItem item = new TreeViewItem();
-		//	item . Header = o . ToString ( );
-		//	item . Tag = o;
-		//	item . Items . Add ( "Loading..." );
-		//	return item;
-		//}
-		//private static TreeViewItem CreateTreeFile ( object o )
-		//{
-		//	string str = o.ToString();
-		//	TreeViewItem item = new TreeViewItem();
-		//	item . Header = o . ToString ( );
-		//	item . Tag = o;
-		//	//			item . Items . Add ( o);
-		//	return item;
-		//}
-	}
+        private static TreeViewItem CreateTreeItem ( object o )
+        {
+            string str = o . ToString ( );
+            TreeViewItem item = new TreeViewItem ( );
+            item . Header = o . ToString ( );
+            item . Tag = o;
+            item . Items . Add ( "Loading..." );
+            return item;
+        }
+        private static TreeViewItem CreateTreeFile ( object o )
+        {
+            string str = o . ToString ( );
+            TreeViewItem item = new TreeViewItem ( );
+            item . Header = o . ToString ( );
+            item . Tag = o;
+            //			item . Items . Add ( o);
+            return item;
+        }
+    }
 }
 

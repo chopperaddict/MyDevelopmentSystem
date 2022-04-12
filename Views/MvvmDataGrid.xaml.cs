@@ -76,6 +76,7 @@ namespace MyDev . Views
 			Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
 			this . SizeChanged += MvvmDataGrid_SizeChanged;
 			canvas . Visibility = Visibility . Visible;
+			MvvM.LoadButtonText = "Load Bank A/cs";
 			LoadDataButton . UpdateLayout ( );
 		}
 
@@ -149,7 +150,7 @@ namespace MyDev . Views
 		{
 			//In this event, we get current mouse position on the control to use it in the MouseMove event.
 			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc , e );
-			Console . WriteLine ($"MvvmDataGrid Btn down {MovingObject}");
+			//Console . WriteLine ($"MvvmDataGrid Btn down {MovingObject}");
 		}
 		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
 		{
@@ -205,6 +206,13 @@ namespace MyDev . Views
 		{
 			var ee = sender;
 			DoDragMove (sender );
+		}
+
+        private void magnifyimage_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+			// Rotates DataGrid row magnification down from 4 > 1 and then straight back < to 4 again
+			Utils . SwitchMagnifyStyle ( dataGrid , ref Magnifyrate );
+
 		}
 	}
 }

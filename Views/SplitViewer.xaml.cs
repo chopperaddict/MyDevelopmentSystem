@@ -98,6 +98,7 @@ namespace MyDev . Views
             MaxColWidth1 = 340;
             MinRowHeight1 = 255;
             MaxRowHeight = 275;
+            //Middlerow1 . Height = (double)1*;
         }
         private void Window_Loaded ( object sender , RoutedEventArgs e )
         {
@@ -162,7 +163,22 @@ namespace MyDev . Views
             RightInsidegridUpper . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType .Pixel);
             RightInsidegridUpper . RowDefinitions [ 2 ] . Height = new GridLength ( 1 , GridUnitType . Pixel);
 
-           }
+            // Handle the magnify sytem to handle global flag
+            Flags . UseMagnify = ( bool ) Properties . Settings . Default [ "UseMagnify" ];
+            if ( Flags . UseMagnify == false )
+            {
+                DataGrid1 . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation0" );
+                DataGrid2 . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation0" );
+                Magnifyrate . Text = "0";
+            }
+            else
+            {
+                DataGrid1 . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation4" );
+                DataGrid2 . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation0" );
+                Magnifyrate . Text = "+4";
+            }
+            Flags . UseScrollView = false;
+        }
 
         private void Rectangle_Loaded ( object sender , RoutedEventArgs e )
         {
@@ -845,17 +861,19 @@ namespace MyDev . Views
 
         private void Image_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
-            List<object> list = new List<object> ( );
-            list . Add ( DataGrid1 );
-            list . Add ( DataGrid2 );
-            //list . Add ( listbox );
-            //list . Add ( DbRecordInfo );
-            //list . Add ( TablesPanel );
-            if ( DataGrid1. Style == null )
-                Utils . Magnify ( list , true );
-            else
-                Utils . Magnify ( list , false );
+            string rate = Magnifyrate . Text;
+            Utils . SwitchMagnifyStyle ( DataGrid1 , ref Magnifyrate );
+            Magnifyrate . Text = rate;
+            Utils . SwitchMagnifyStyle ( DataGrid2 , ref Magnifyrate );
+        }
 
+        private void UseScrollviewer_Click ( object sender , RoutedEventArgs e )
+        {
+                Flags . UseScrollView = (bool)UseScrollviewer . IsChecked;
+            if( Flags . UseScrollView )
+                ScrollText . Text = "Uncheck to use RichTextBox in Table structure Viewer";
+            else
+                ScrollText . Text = "Check to use ScrollViewer in Table structure Viewer";
         }
     }
 }

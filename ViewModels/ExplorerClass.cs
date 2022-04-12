@@ -20,10 +20,6 @@ namespace MyDev . ViewModels
 		private List<DirectoryInfo> _directories;
 		private List<FileInfo> _files;
 		private List<string> _drives;
-		//		private List<ExplorerClass> _Folders;
-
-		//		private static ExplorerClass Explorerclass;
-
 		public ExplorerClass ( ) { }
 		public static ExplorerClass Instance
 		{
@@ -46,8 +42,8 @@ namespace MyDev . ViewModels
 
 		public string Name
 		{
-			get { return _directory . Name; }
-			set { }
+			get { return _directory? . Name; }
+			set {  }
 		}
 		public string FullPath
 		{
@@ -57,12 +53,10 @@ namespace MyDev . ViewModels
 			}
 			set
 			{
-				//if(_directory.FullName != path)
 				if ( Directory . Exists ( value ))
 				{
 					_directory = new DirectoryInfo ( value );
 					CurrentDrive = value . ToString ( );
-					//var dirs = this. GetDirectories ( _directory.FullName.ToString ( ) );
 				}
 				else
 				{
@@ -86,8 +80,6 @@ namespace MyDev . ViewModels
 		{
 			get
 			{
-				//if ( _directories == null )
-				//{
 				_directories = new List<DirectoryInfo> ( );
 				if ( _directory == null )
 					_directory = new DirectoryInfo (@"C:\\" );
@@ -98,7 +90,6 @@ namespace MyDev . ViewModels
 					_directories . Add ( newFolder );
 
 				}
-				//}
 				return _directories;
 			}
 		}
@@ -126,22 +117,25 @@ namespace MyDev . ViewModels
 		{
 			get
 			{
-				//if ( _files == null )
-				//{
-				_files = new List<FileInfo> ( );
-				FileInfo[] fi = this._directory.GetFiles();
-				for ( int i = 0 ; i < fi . Length ; i++ )
+				try
 				{
+					_files = new List<FileInfo> ( );
+					FileInfo [ ] fi = this . _directory? . GetFiles ( );
+					for ( int i = 0 ; i < fi ?. Length ; i++ )
+					{
 
-					FileAttributes fa = fi[i].Attributes;
-					string s = fa.ToString();
-					if (
-							( s . Contains ( "Hidden" )
-							|| s . ToUpper ( ) . Contains ( "BOOTMGR" )
-							|| s . ToUpper ( ) . Contains ( "BOOTNXT" )
-							|| s . ToUpper ( ) . Contains ( "BOOTSECT" ) ) == false )
-						_files . Add ( fi [ i ] );
+						FileAttributes fa = fi [ i ] . Attributes;
+						string s = fa . ToString ( );
+						if (
+								( s . Contains ( "Hidden" )
+								|| s . ToUpper ( ) . Contains ( "BOOTMGR" )
+								|| s . ToUpper ( ) . Contains ( "BOOTNXT" )
+								|| s . ToUpper ( ) . Contains ( "BOOTSECT" ) ) == false )
+							_files . Add ( fi [ i ] );
+					}
 				}
+				catch (Exception ex)
+				{; }
 				//}
 				return _files;
 			}
@@ -159,6 +153,7 @@ namespace MyDev . ViewModels
 			//Name = newpath;
 			return Directories;
 		}
+
 		//public List<Folder> GetFolders ( )
 		//{
 		//	return Folders;

@@ -21,7 +21,8 @@ namespace MyDev . Converts
 		{
 			if ( value == null )
 				return value;
-			var path = (string)value;
+			string valstr = value . ToString ( );
+			var path = valstr;
 			if ( path == null )
 				return null;
 			//			var name = TreeViews.GetFileFolderName(path);

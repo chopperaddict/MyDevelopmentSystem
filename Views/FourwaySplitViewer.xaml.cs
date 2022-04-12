@@ -107,7 +107,19 @@ namespace MyDev . Views
                 list . Add ( TablesPanel );
                 Utils . Magnify ( list , true );
             }
-
+            // Handle the magnify sytem to handle global flag
+            Flags . UseMagnify = ( bool ) Properties . Settings . Default [ "UseMagnify" ];
+            if ( Flags . UseMagnify == false )
+            {
+                DataGrid1 . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation0" );
+                Magnifyrate . Text = "0";
+            }
+            else
+            {
+                DataGrid1 . Style = ( Style ) FindResource ( "DatagridMagnifyAnimation4" );
+                Magnifyrate . Text = "+4";
+            }
+            ShowFlowdoc . IsChecked = UseFlowdoc = true;
             // This sets the relative height of a Grid's row heights - works  too
             //LeftPanelgrid . RowDefinitions [ 0 ] . Height = new GridLength ( 0.01 , GridUnitType . Star );
             //LeftPanelgrid . RowDefinitions [ 1 ] . Height = new GridLength ( 20 , GridUnitType . Pixel );
@@ -307,7 +319,7 @@ namespace MyDev . Views
 
             //         Listviews lv = new Listviews ( );
             //			Flowdoc . ExecuteFlowDocResizeMethod -= lv . Flowdoc_ExecuteFlowDocResizeMethod;
-            Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
+          Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
             //           Flowdoc. ExecuteFlowDocBorderMethod -= lv. FlowDoc_ExecuteFlowDocBorderMethod;
         }
         private void App_Close ( object sender , RoutedEventArgs e )
@@ -1283,12 +1295,27 @@ namespace MyDev . Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+       #region FlowDoc methods
+        // Allows this class to control maximizing FlowDoc window
+        public event EventHandler ExecuteFlowDocMaxmizeMethod;
+        protected virtual void OnExecuteMethod ( )
+        {
+            if ( ExecuteFlowDocMaxmizeMethod != null )
+                ExecuteFlowDocMaxmizeMethod ( this , EventArgs . Empty );
+        }
+        private void Image_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+        {
+            //allows remote window to maximize /resize  this control ?
+            OnExecuteMethod ( );
+        }
+        #endregion FlowDoc methods
 
         protected void MaximizeFlowDoc ( object sender , EventArgs e )
         {
             // Clever "Hook" method that Allows the flowdoc to be resized to fill window
             // or return to its original size and position courtesy of the Event declard in FlowDoc
-            fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
+            OnExecuteMethod ( );
+           fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
         }
         private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
         {
@@ -1764,15 +1791,21 @@ namespace MyDev . Views
   
         private void Image_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
-            List<object> list = new List<object> ( );
-            list . Add ( DataGrid1 );
-            list . Add ( listbox );
-            list . Add ( DbRecordInfo );
-            list . Add ( TablesPanel );
-            if ( listbox . Style == null )
-            Utils . Magnify (list, true );
-            else
-                Utils . Magnify ( list , false);
+            //List<object> list = new List<object> ( );
+            //list . Add ( DataGrid1 );
+            //list . Add ( listbox );
+            //list . Add ( DbRecordInfo );
+            //list . Add ( TablesPanel );
+            //if ( listbox . Style == null )
+            //Utils . Magnify (list, true );
+            //else
+            //    Utils . Magnify ( list , false);
+            Utils . SwitchMagnifyStyle ( DataGrid1 , ref Magnifyrate );
+        }
+
+        private void Showfd_Click ( object sender , RoutedEventArgs e )
+        {
+            UseFlowdoc = ( bool ) ShowFlowdoc . IsChecked;
         }
     }
 }

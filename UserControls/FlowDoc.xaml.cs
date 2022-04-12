@@ -80,11 +80,12 @@ namespace MyDev . UserControls
 
 		public FlowDoc ( )
 		{
-			InitializeComponent ( );
 			this . DataContext = this;
+			InitializeComponent ( );
 		}
 		private void flowdoc_Loaded ( object sender , RoutedEventArgs e )
 		{
+			Fontsize = this.Fontsize;
 			DocHeight = this . ActualHeight;
 			if ( DocHeight == 0 )
 				DocHeight = 250;
@@ -129,7 +130,7 @@ namespace MyDev . UserControls
 			FlowDocument myFlowDocument = new FlowDocument();
 			FlowDocument myFlowDocument2= new FlowDocument();
 
-
+			flowdoc . FontSize = this . Fontsize;
 			if ( Flags . UseScrollView )
 			{
 				fdviewer . Visibility = Visibility . Visible;
@@ -153,7 +154,6 @@ namespace MyDev . UserControls
 				if ( textRange . Text [ x ] == '\n' )
 					retcount++;
 			}
-
 			if ( flowdoc . Width == 0 )
 				flowdoc . Width = 520;
 			if ( flowdoc . Height == 0 )
@@ -187,28 +187,28 @@ namespace MyDev . UserControls
 			}
 			else if ( textRange . Text . Length < 600 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 450 + retcount * Flags . FlowdocCrMultplier );
+				flowdoc . SetValue ( HeightProperty , ( double ) 380 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 30 );
 			}
 			else if ( textRange . Text . Length < 700 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * Flags . FlowdocCrMultplier );
+				flowdoc . SetValue ( HeightProperty , ( double ) 400 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 40 );
 			}
 			else if ( textRange . Text . Length < 800 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 600 + retcount * Flags . FlowdocCrMultplier );
+				flowdoc . SetValue ( HeightProperty , ( double ) 450 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 50 );
 			}
 			else if ( textRange . Text . Length < 900 )
 			{
-				flowdoc . SetValue ( HeightProperty , ( double ) 700 + retcount * Flags . FlowdocCrMultplier );
+				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 60 );
 			}
 			else
 			{
 				Flags . UseFlowScrollbar = true;
-				flowdoc . SetValue ( HeightProperty , ( double ) 500 + retcount * Flags . FlowdocCrMultplier );
+				flowdoc . SetValue ( HeightProperty , ( double ) 550 + retcount * Flags . FlowdocCrMultplier );
 				flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width + 100 );
 			}
 			flowdoc . Height = Convert . ToDouble ( flowdoc . GetValue ( HeightProperty ) );
@@ -351,7 +351,8 @@ namespace MyDev . UserControls
 			{
 				//NORMAL
 				Paragraph para1= new Paragraph();
-				para1 . FontSize = 12;
+				// This is  the only paragraph that uses the user defined Font Size....
+				para1 . FontSize = this.Fontsize;
 				para1 . FontFamily = new FontFamily ( "Arial" );
 				if ( clr1 != "" )
 					para1 . Foreground = FindResource ( clr1 . Trim ( ) ) as SolidColorBrush;
@@ -366,7 +367,8 @@ namespace MyDev . UserControls
 				// BOLD
 				Paragraph para2= new Paragraph();
 				para2 . FontFamily = new FontFamily ( "Arial" );
-				para2 . FontSize = 14;
+//				para2 . FontSize = 14;
+				para2 . FontSize = this . Fontsize;
 				if ( clr2 != "" )
 					para2 . Foreground = FindResource ( clr2 . Trim ( ) ) as SolidColorBrush;
 				else
@@ -540,10 +542,18 @@ namespace MyDev . UserControls
 		}
 		public static readonly DependencyProperty btnForeGroundProperty=
 			DependencyProperty.Register("btnForeGround", typeof(Brush), typeof(FlowDoc), new PropertyMetadata(Brushes.White));
-		#endregion Dependency properties
+        public double Fontsize
+        {
+            get { return ( double ) GetValue ( FontsizeProperty ); }
+            set { SetValue ( FontsizeProperty , value ); }
+        }
+        public static readonly DependencyProperty FontsizeProperty =
+            DependencyProperty . Register ( "Fontsize" , typeof ( double ) , typeof ( FlowDoc) , new PropertyMetadata ( (double)12 ) );
 
-		#region keyboard handlers
-		private void flowdoc_PreviewKeyDown ( object sender , KeyEventArgs e )
+        #endregion Dependency properties
+
+        #region keyboard handlers
+        private void flowdoc_PreviewKeyDown ( object sender , KeyEventArgs e )
 		{
 			if ( e . Key == Key . Escape )
 			{

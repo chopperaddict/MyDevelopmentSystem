@@ -120,6 +120,7 @@
     <Compile Include="ViewModels\MvvmGenericModel.cs" />
     <Compile Include="ViewModels\SqlAccess.cs" />
     <Compile Include="ViewModels\ApplicationListItem.cs" />
+    <Compile Include="Converts\EqualityConverter.cs" />
     <Compile Include="Views\ExpanderTest.xaml.cs">
       <DependentUpon>ExpanderTest.xaml</DependentUpon>
     </Compile>

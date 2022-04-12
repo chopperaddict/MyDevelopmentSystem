@@ -25,7 +25,7 @@
 			<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}"
 				   BorderThickness="{TemplateBinding BorderThickness}"
 				   Background="{Binding btnBkGround}"
-				   CornerRadius="10"
+				   CornerRadius="10"                                  
 				   SnapsToDevicePixels="True">
 				<ContentPresenter x:Name="contentPresenter"
 						ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -42,9 +42,8 @@
 				<!--This handles the button being set as IsDefault=true-->
 				<Trigger Property="FrameworkElement.Tag" Value="True">
 					<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-					<!--<Setter Property="Background" TargetName="border">
-						<Setter.Value>
-							-->
+                    <!--<Setter.Value>-->
+							
 					<!--<LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
 								<GradientStop Color="#FFFFFFFF" Offset="0.514" />
 								<GradientStop Color="#FF999999" Offset="0.753" />
@@ -199,11 +198,14 @@
 									Width="15" />
 							</WrapPanel>
 						</Border>
-					</Canvas>
+                        <!--<Canvas.DataContext>
+                            <local:FlowDoc/>
+                        </Canvas.DataContext>-->
+                    </Canvas>
 
 					<RichTextBox x:Name="doc"
 							Focusable="true"
-							 FontSize="14"
+							 FontSize="{Binding Fontsize}"
 							 Foreground="{StaticResource Black5}"
 							 GotFocus="doc_GotFocus"
 							 Grid.Row="1"
@@ -228,11 +230,12 @@
 					<!--PreviewMouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
 					<!--MouseLeftButtonDown="doc_PreviewMouseLeftButtonDown"-->
 
+                                              <!--FontSize="11"-->
 					<FlowDocumentScrollViewer x:Name="fdviewer"
 						ContextMenu="{StaticResource DummyContextmenu}"
 						Focusable="true"
 						FontFamily="Arial"
-						FontSize="11"
+						FontSize="{Binding Fontsize}"
 						Grid.Row="1"
 						Grid.Column="1"
 						 Grid.ColumnSpan="2"
