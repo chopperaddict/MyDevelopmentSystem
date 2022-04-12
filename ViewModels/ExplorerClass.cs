@@ -84,6 +84,7 @@ namespace MyDev . ViewModels
 				if ( _directory == null )
 					_directory = new DirectoryInfo (@"C:\\" );
 				DirectoryInfo[] di = _directory.GetDirectories();
+				// Load  all folders in drive
 				for ( int i = 0 ; i < di . Length ; i++ )
 				{
 					DirectoryInfo newFolder = di[i];

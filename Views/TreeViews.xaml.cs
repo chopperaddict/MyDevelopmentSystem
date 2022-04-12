@@ -183,7 +183,7 @@ namespace MyDev . Views
             Grid1 . RowDefinitions [ 3 ] . Height = new GridLength ( 155 , GridUnitType . Pixel );
             LsplitterImage = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
             VsplitterImage = new BitmapImage ( new Uri ( @"\icons\Lrg ltrt arrow red copy.png" , UriKind . Relative ) );
-            ShowDriveInfo ( sender , e );
+           ShowDriveInfo ( sender , e );
             //fdl . FdMsg ( Flowdoc , canvas , "Full Drive Information :-" , output , "" );
         }
         #endregion startup        
@@ -273,9 +273,6 @@ namespace MyDev . Views
 
         private void treeViewModel_Expanded ( object sender , RoutedEventArgs e )
         {
-
-            //	if ()
-            //var indx = treeViewModel . SelectedValue;
             var sel = treeViewModel . SelectedItem as TreeViewItem;
             if ( sel == null )
             {
@@ -726,6 +723,10 @@ namespace MyDev . Views
 
         private void treeViewModel_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
+            if ( Utils . HitTestScrollBar ( sender , e ) )
+            {
+                return;
+            }
             if ( treeViewModel . Items . CurrentItem == null )
                 CurrentTreeItem = treeViewModel . Items . GetItemAt ( 0 ) as TreeViewItem;
             else
@@ -734,7 +735,7 @@ namespace MyDev . Views
             var indx = treeViewModel . Items . IndexOf ( CurrentTreeItem );
             var v = ( TreeViewItem ) treeViewModel . ItemContainerGenerator . ContainerFromItem ( e . OriginalSource ) as TreeViewItem;
             var v2 = ( TreeViewItem ) treeViewModel . ItemContainerGenerator . ContainerFromItem ( CurrentTreeItem ) as TreeViewItem;
-            Console . WriteLine ( $"index={indx},OriginalSource={e . OriginalSource}, CurrentTreeItem={CurrentTreeItem}" );
+            Console . WriteLine ( $"Left Button Down returns ? index={indx},OriginalSource={e . OriginalSource}, CurrentTreeItem={CurrentTreeItem}" );
             LazyLoadingTreeview . TreeViewItem4_Expanded ( sender , null , CurrentTreeItem );
             //if(v == null)
             //{
@@ -859,7 +860,9 @@ namespace MyDev . Views
         #region Expand // Collapse
         private void ExpandAll3 ( TreeViewItem items , bool expand )
         {
-            TreeViewItem topfolder = items . Tag as TreeViewItem;
+            if ( items == null)
+                return;
+            TreeViewItem topfolder = items? . Tag as TreeViewItem;
             items . IsExpanded = expand;
             //            if ( !expand )
             //            {

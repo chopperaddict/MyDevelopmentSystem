@@ -15,7 +15,7 @@
 	  Closing="TREEViews_Closing"
 	  Name="TREEViews"
   	  ResizeMode="CanResizeWithGrip"
-        Title="Tree Views" Height="627" Width="784"
+        Title="Mullti Tree Views wiith Grid Spliiters" Height="450" Width="784"
 	  MinHeight="450" MinWidth="780">
     <Window.Background>
         <LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
@@ -385,7 +385,7 @@
 			Panel.ZIndex="0"
 			Margin="0,0,0,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="5" />
+            <RowDefinition Height="0" />
             <RowDefinition x:Name="orow1" Height="3*"/>
             <RowDefinition  x:Name="orow2" Height="2.3*" />
             <RowDefinition  x:Name="orow3" Height="145" />
@@ -467,7 +467,15 @@
                                 <RowDefinition Height="25" />
                             </Grid.RowDefinitions>
 
-                            <Border Background="Black" BorderBrush="Red" BorderThickness="3" Height="24">
+                            <Border  BorderBrush="White" BorderThickness="1" Height="24">
+                                <Border.Background>
+                                    <LinearGradientBrush  StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop Offset="0" Color="Purple" />
+                                        <GradientStop Offset="0.5" Color="LightSkyBlue" />
+                                        <GradientStop Offset="1" Color="Purple" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+
                                 <StackPanel Orientation="Horizontal"                                         
                                             Height="24"
                                             HorizontalAlignment="Center"
@@ -478,7 +486,7 @@
                                                Text="{Binding LeftSplitterText, FallbackValue=Drag Up/down}" 
                                                FontSize="11" 
                                                Foreground="White"
-                                               Margin="0 0 0 0"
+                                               Margin="0 2 0 0"
                                                HorizontalAlignment="Center"/>
 
                                     <Image x:Name="hsplitimage"  Source="{Binding LsplitterImage}"  Margin="15 0 0 5"
@@ -488,7 +496,7 @@
                                                      Padding="0 0 0 0" 
                                                     Foreground="White"
                                                     FontSize="11" 
-                                                    Margin="0,0,0,0" />
+                                                    Margin="0,2,0,0" />
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -512,7 +520,13 @@
                     <ControlTemplate>
                         <Grid  Width="20">
 
-                            <Border Background="Black" BorderBrush="Red" BorderThickness="3" Width="20">
+                            <Border  BorderBrush="Black" BorderThickness="1" Width="20"  Margin="0 20 0 0">
+                                <Border.Background>
+                                    <LinearGradientBrush  StartPoint="1,0" EndPoint="0,1">
+                                        <GradientStop Offset="0" Color="Purple" />
+                                        <GradientStop Offset="1" Color="LightSkyBlue" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
                                 <StackPanel Orientation="Vertical"                                         
                                             Width="20"
                                             HorizontalAlignment="Center"
@@ -550,6 +564,7 @@
 				DragCompleted="VLeftSplitter_DragCompleted" 
                 DragOver="VLeftSplitter_DragOver"
                 HorizontalAlignment="Stretch" DragDelta="vLeftSplitter_DragDelta">
+
                     <GridSplitter.Template>
                         <ControlTemplate>
                             <Grid  Width="20">
@@ -557,12 +572,20 @@
                                 <RowDefinition Height="25" />
                             </Grid.RowDefinitions>-->
 
-                                <Border Background="Black" BorderBrush="Red" BorderThickness="3" Width="20">
-                                    <StackPanel Orientation="Vertical"                                         
+                                <Border  Width="20" BorderBrush="Black" BorderThickness="1" Margin="0 20 0 0">
+                                    <Border.Background>
+                                        <LinearGradientBrush  StartPoint="1,0" EndPoint="0,1">
+                                            <GradientStop Offset="0" Color="Purple" />
+                                            <GradientStop Offset="1" Color="LightSkyBlue" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <StackPanel Orientation="Vertical"   
+                                        Background="Transparent"
                                         Width="20"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Panel.ZIndex="25" 
+                                                Margin="0 0 0 0"
                                         Grid.Row="0"  >
 
                                         <Image x:Name="vsplitimage"  Source="{Binding VsplitterImage}"  Margin="0 0 0 0" Panel.ZIndex="25"  Height="20" Width="20" />
@@ -573,20 +596,46 @@
                     </GridSplitter.Template>
                 </GridSplitter>
 
-                <TreeView x:Name="treeViewModel" 
+                <!--#region LazyLoading LEFT side Grid-->
+                <Grid x:Name="Lazygrid" Grid.Row="0"  Panel.ZIndex="6" Grid.Column="0" Grid.ColumnSpan="2"  >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="LazyHeader"
+                                Grid.Row="0"  Text="LazyLoading System"                                 
+                                Foreground="White" 
+                                HorizontalAlignment="Stretch"
+                                TextAlignment="Center"
+                                FontSize="11"
+                                FontWeight="DemiBold"
+                                Padding="0 2 0 0" 
+                                Margin="0 0 20 0"
+                               Width="{Binding Path=ActualWidth, ElementName=Lazygrid}"
+                                Height="20" >
+                        <TextBlock.Background>
+                            <LinearGradientBrush  StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Offset="0" Color="LightSkyBlue" />
+                                <GradientStop Offset="1" Color="Purple" />
+                            </LinearGradientBrush>
+                        </TextBlock.Background>
+
+                    </TextBlock>
+                    <TreeView x:Name="treeViewModel" 
 					    Grid.Column="0" 			    
-					    Grid.Row="0"
+					    Grid.Row="1"
                        Panel.ZIndex="8"
 					    Background="{StaticResource Yellow3}"
 					    FontSize="18"
 					    Foreground="White" 
 				        Padding="5 5 5 5"
-                      HorizontalAlignment="Stretch"
-                      ItemContainerStyle="{StaticResource LibraryTreeViewItemStyle}"
-                      Loaded="treeViewModel_Loaded"
-                      PreviewMouseLeftButtonDown="treeViewModel_PreviewMouseLeftButtonDown"
-				    SelectedValuePath="C:\\"	
-                      SelectedItemChanged="treeViewModel_SelectedItemChanged"
+                        HorizontalAlignment="Stretch"
+                        ItemContainerStyle="{StaticResource LibraryTreeViewItemStyle}"
+                        Loaded="treeViewModel_Loaded"
+                        PreviewMouseLeftButtonDown="treeViewModel_PreviewMouseLeftButtonDown"
+				        SelectedValuePath="C:\\"	
+                        SelectedItemChanged="treeViewModel_SelectedItemChanged"
 					    TreeViewItem.Expanded="treeViewModel_Expanded"
 					    TreeViewItem.Collapsed="treeViewModel_Collapsed"
 					    TreeViewItem.Selected="treeViewModel_Selected"
@@ -595,37 +644,46 @@
 				        Height="{Binding row1.ActualHeight, ElementName=row1,Converter={StaticResource ReduceByParamValue},ConverterParameter=50}"
 				        Width="{Binding Path=Width, ElementName=Col1}"
 					    MinWidth="{Binding Path=Width, ElementName=Col1}"					  >
-                </TreeView>
+                    </TreeView>
+                </Grid>
+                <!--#endregion LazyLoading LEFT side Grid-->
 
                 <!--//Center listbox "listbox"-->
                 <!--#region TOP Centre PANEL ONLY-->
                 <Grid x:Name="innergrid" Grid.Row="0"  Panel.ZIndex="6" Grid.Column="2" Grid.ColumnSpan="1"  >
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="25" />
-                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="98*" />
+                        <RowDefinition Height="29*"/>
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="CurrentFolder"
                                 Grid.Row="0"
+                               Background="purple"
                                 Text="Current Folder Contents" 
-                                Background="Red" 
-                                Foreground="White" 
-                                HorizontalAlignment="Stretch"
+                                Foreground="White"
                                 TextAlignment="Center"
-                                Padding="0 5 0 0" 
+                                FontSize="11"
+                                FontWeight="DemiBold"
+                                 Padding="0 2 0 0" 
                                 Width="{Binding Path=ActualWidth, ElementName=innergrid}"
-                                Height="25" />
+                                Height="20" >
+                        <!--<TextBlock.Background>
+                            <LinearGradientBrush  StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Offset="0" Color="LightSkyBlue" />
+                                <GradientStop Offset="1" Color="Purple" />
+                            </LinearGradientBrush>
+                        </TextBlock.Background>-->
+
+                    </TextBlock>
 
                     <ListBox x:Name="listBox" 
                                 Grid.Row="1"
                                 Panel.ZIndex="6"
-                                 FontSize="14"
-                                Margin="0,0,0,0" 
+                                 FontSize="14" 
                                 IsSynchronizedWithCurrentItem="True"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
                                 Height="{Binding row1.Height}"
                                 Width="{Binding Path=Width, ElementName=innergrid}"
-                                Background="{StaticResource White4}"/>
+                                Background="{StaticResource White4}" Grid.RowSpan="2"/>
                 </Grid>
                 <!--#endregion TOP Centre PANEL ONLY-->
 
@@ -633,11 +691,38 @@
 
             <!--//=========================================================================//-->
             <!--// Right hand TREEVIEW only container grid-->
-            <Grid Grid.Row="0" Grid.Column="5">
+            <Grid x:Name="ManualGrid" Grid.Row="0" Grid.Column="5" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock 
+                                Grid.Row="0"
+                                Text="Manual Directories System" 
+                                Foreground="White" 
+                                HorizontalAlignment="Stretch"
+                                TextAlignment="Center"
+                                FontSize="11"
+                                FontWeight="DemiBold"
+                                Padding="0 2 0 0" 
+                                Margin="0 0 0 0"
+                                Width="{Binding Path=ActualWidth, ElementName=ManualGrid}"
+                                Height="20" >
+                    <TextBlock.Background>
+                        <LinearGradientBrush  StartPoint="1,0.5" EndPoint="0,0.5">
+                            <GradientStop Offset="0" Color="LightSkyBlue" />
+                            <GradientStop Offset="1" Color="Purple" />
+                        </LinearGradientBrush>
+                    </TextBlock.Background>
+
+                </TextBlock>
+
+
                 <TreeView x:Name="treeView4" 
 				    DataContext="{Binding this}"
 					Grid.Column="5"
-					Grid.Row="0"
+					Grid.Row="1"
 					Background="Green"
 					  Panel.ZIndex="6"
                       FontSize="16"
