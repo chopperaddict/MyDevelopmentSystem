@@ -99,6 +99,8 @@
     <Compile Include="AttachedProperties\ListboxColorCtrlAP.cs" />
     <Compile Include="AttachedProperties\MenuAttachedProperties.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converts\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converts\ExpanderArgumentsConverter.cs" />
     <Compile Include="Converts\GetCurrentReccount.cs" />
     <Compile Include="Models\FlowdocLib.cs" />
     <Compile Include="Models\GenericDbHandlers.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="UserControls\Ucontrol1.xaml.cs">
       <DependentUpon>Ucontrol1.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Notifier.cs" />
     <Compile Include="Views\Blink.cs" />
     <Compile Include="ViewModels\DatagridDataSupplier.cs" />
     <Compile Include="ViewModels\ListBoxDataSupplier.cs" />
@@ -260,6 +263,7 @@
     <Compile Include="Views\SysConfig.xaml.cs">
       <DependentUpon>SysConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TreeViewMethods.cs" />
     <Compile Include="Views\TreeViews.xaml.cs">
       <DependentUpon>TreeViews.xaml</DependentUpon>
     </Compile>
@@ -651,6 +655,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\small magnify.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Styles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Application.ico" />
+    <Resource Include="Images\Archive.png" />
+    <Resource Include="Images\Executable.png" />
+    <Resource Include="Images\Folder.png" />
+    <Resource Include="Images\Picture.png" />
+    <Resource Include="Images\Properties.png" />
+    <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Text.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('packages\Fody.6.5.1\build\Fody.targets')" />

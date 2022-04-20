@@ -17,8 +17,15 @@
 	<!--xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"-->
 	<UserControl.Resources>
 		<conv:ReduceByParamValue x:Key="resetTextWidth" />
+        <ContextMenu x:Key="DummyContextmenu">
+            <MenuItem Header="xxxxx"  Click="dummy_Click">
+                <MenuItem.Icon>
+                    <Image Source="/Icons/symlink_directory_30px.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
 
-		<ControlTemplate x:Key="GreenRadialButtonTemplate" TargetType="{x:Type Button}">
+        <ControlTemplate x:Key="GreenRadialButtonTemplate" TargetType="{x:Type Button}">
 			<!-- NB - it is the Border that controls the buttons default colors
 			which lets us set Back/Foreground and border colors in the button itself
 			but still have mouseover etc working correctly, but still have our text "Content" display-->
@@ -112,13 +119,6 @@
 			</ControlTemplate.Triggers>
 		</ControlTemplate>
 
-		<ContextMenu x:Key="DummyContextmenu">
-			<MenuItem Header="xxxxx"  Click="dummy_Click">
-				<MenuItem.Icon>
-					<Image Source="/Icons/symlink_directory_30px.png" />
-				</MenuItem.Icon>
-			</MenuItem>
-		</ContextMenu>
 	</UserControl.Resources>
 
 	<Grid>

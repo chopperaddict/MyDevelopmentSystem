@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MyDev.Views"
+        xmlns:att="clr-namespace:MyDev.AttachedProperties"
         xmlns:model="clr-namespace:MyDev.ViewModels"
         xmlns:views="clr-namespace:MyDev.Views"
         xmlns:userctrl="clr-namespace:MyDev.UserControls"
@@ -12,11 +13,13 @@
 	  xmlns:behaviors="clr-namespace:MyDev.ViewModels"
         mc:Ignorable="d"
 	  Loaded="Window_Loaded" 
+      PreviewKeyDown="TREEViews_KeyDown"
 	  Closing="TREEViews_Closing"
 	  Name="TREEViews"
   	  ResizeMode="CanResizeWithGrip"
-        Title="Mullti Tree Views wiith Grid Spliiters" Height="450" Width="784"
-	  MinHeight="450" MinWidth="780">
+        Title="Mullti Tree Views wiith Grid Spliiters"
+        Height="550" Width="880"
+	  MinHeight="450" MinWidth="880">
     <Window.Background>
         <LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
             <GradientStop Offset="0" Color="#FFAAAAAA" />
@@ -31,7 +34,123 @@
         <conv:BoolToYesNo x:Key="boolToYesNo"/>
         <conv:EqualityConverter x:Key="EqualityConverter" />
         <conv:ReduceByParamValue x:Key="ReduceByParamValue"/>
+        <!--<conv:ExpanderArgumentsConverter x:Key="ExpanderArgumentsConverter"/>-->
+        <!--Command="{Binding WalkTreeViewItem}"
+                                CommandParameter="1">-->
+        <ContextMenu x:Key="TVContextMenu" Background="Red"
+                     >
+            <MenuItem Click="TriggerExpand0">
 
+                <!--<MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ExpanderArgumentsConverter}">
+                        <Binding />
+                        <Binding Path="expandlevel" ElementName="1"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>-->
+                <MenuItem.Header >
+                    <TextBlock x:Name="ctmenu"
+                        Text="Open Top Level of Current Selection"
+                        Background="Red"
+                        Foreground="White"
+                        TextWrapping="Wrap"
+                        Width="{Binding ActualWidth, ElementName=TVContextMenu}"
+                        Height="Auto">
+                    </TextBlock>
+                </MenuItem.Header>
+                <MenuItem.Icon>
+                    <Image Source="/Icons/folder-open.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <MenuItem Click="TriggerExpand1">
+                <!--<MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ExpanderArgumentsConverter}">
+                        <Binding />
+                        <Binding Path="expandlevel" ElementName="2"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>-->
+                <MenuItem.Header >
+                    <TextBlock x:Name="ctmenu2"
+                        Text="Open 2  Levels of down Current Selection"
+                        Background="Red"
+                        Foreground="White"
+                        TextWrapping="Wrap"
+                        Width="{Binding ActualWidth, ElementName=TVContextMenu}"
+                        Height="Auto">
+                    </TextBlock>
+                </MenuItem.Header>
+                <MenuItem.Icon>
+                    <Image Source="/Icons/folder-open.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <MenuItem Click="TriggerExpand2" >
+                <MenuItem.Header >
+                    <TextBlock x:Name="ctmenu3"
+                        Text="Open 3 Levels down of Current Selection"
+                        Background="Red"
+                        Foreground="White"
+                        TextWrapping="Wrap"
+                        Width="{Binding ActualWidth, ElementName=TVContextMenu}"
+                        Height="Auto">
+                    </TextBlock>
+                </MenuItem.Header>
+                <MenuItem.Icon>
+                    <Image Source="/Icons/folder-open.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <MenuItem Click="TriggerExpand3">
+                <!--<MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ExpanderArgumentsConverter}">
+                        <Binding />
+                        <Binding Path="expandlevel" ElementName="3"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>-->
+                <MenuItem.Header >
+                    <TextBlock x:Name="ctmenu4"
+                        Text="Open 4 Levels down of Current Selection"
+                        Background="Red"
+                        Foreground="White"
+                        TextWrapping="Wrap"
+                        Width="{Binding ActualWidth, ElementName=TVContextMenu}"
+                        Height="Auto">
+                    </TextBlock>
+                </MenuItem.Header>
+                <MenuItem.Icon>
+                    <Image Source="/Icons/folder-open.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Click="TriggerExpand4">
+                <!--<MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ExpanderArgumentsConverter}">
+                        <Binding />
+                        <Binding Path="expandlevel" ElementName="4"/>
+                    </MultiBinding>
+                </MenuItem.CommandParameter>-->
+                <MenuItem.Header >
+                    <TextBlock x:Name="ctmenuAll"
+                        Text="Open ALL Levels of Current Selection"
+                        Background="Red"
+                        Foreground="White"
+                        TextWrapping="Wrap"
+                        Width="{Binding ActualWidth, ElementName=TVContextMenu}"
+                        Height="Auto">
+                    </TextBlock>
+                </MenuItem.Header>
+                <MenuItem.Icon>
+                    <Image Source="/Icons/folder-open.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+
+        <ContextMenu x:Key="DummyContextmenu">
+            <MenuItem Header="xxxxx"  >
+                <MenuItem.Icon>
+                    <Image Source="/Icons/symlink_directory_30px.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
 
         <DataTemplate  x:Key="lbdrive"  >
             <StackPanel Orientation="Horizontal">
@@ -44,6 +163,128 @@
             </StackPanel>
         </DataTemplate>
 
+        <Style x:Key="TxtblkStyle1" TargetType="{x:Type TextBlock}">
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <MultiTrigger.Setters>
+                        <Setter Property="Background" Value="{StaticResource Red5}"/>
+                        <Setter Property="TextElement.Foreground" Value="{StaticResource White0}"/>
+                        <!--<Setter Property="CbItemText.Background" Value="{StaticResource Red5}"/>-->
+                    </MultiTrigger.Setters>
+                </MultiTrigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver" Value="true"/>
+                    </MultiTrigger.Conditions>
+                    <MultiTrigger.Setters>
+                        <Setter Property="Background" Value="{StaticResource Red5}"/>
+                        <Setter Property="TextElement.Foreground" Value="{StaticResource White0}"/>
+                        <!--<Setter Property="CbItemText.Background" Value="{StaticResource Red5}"/>-->
+                    </MultiTrigger.Setters>
+                </MultiTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ExpanderCboxStyle" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <ControlTemplate.Triggers>
+                            <!--<Trigger Property="IsSelected" Value="True">
+                                <Setter Property="TextElement.Background" Value="{StaticResource Red5}"/>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource White0}"/>
+                            </Trigger>-->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Background" Value="{StaticResource Blue2}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource Cyan0}"/>
+                                    <!--<Setter Property="CbItemText.Background" Value="{StaticResource Cyan1}"/>-->
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Background" Value="{StaticResource Orange1}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource Cyan0}"/>
+                                    <!--<Setter Property="CbItemText.Background" Value="{StaticResource Cyan1}"/>-->
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ComboxItemsStyle" TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <ControlTemplate.Triggers>
+                            <!--<Trigger Property="IsSelected" Value="True">
+                                <Setter Property="TextElement.Background" Value="{StaticResource Red5}"/>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource White0}"/>
+                            </Trigger>-->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Background" Value="{StaticResource Cyan6}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource Cyan0}"/>
+                                    <!--<Setter Property="CbItemText.Background" Value="{StaticResource Cyan1}"/>-->
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Background" Value="{StaticResource Red5}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource White0}"/>
+                                    <!--<Setter Property="CbItemText.Background" Value="{StaticResource Red5}"/>-->
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="true"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.Setters>
+                                    <Setter Property="Background" Value="{StaticResource Red5}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource White0}"/>
+                                    <!--<Setter Property="CbItemText.Background" Value="{StaticResource Red5}"/>-->
+                                </MultiTrigger.Setters>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ComboSelectionStyle" TargetType="ComboBoxItem">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="TextElement.Background" Value="{StaticResource Red5}"/>
+                                <Setter Property="TextElement.Foreground" Value="{StaticResource White0}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="LibraryTreeViewItemStyle" TargetType="{x:Type TreeViewItem}">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -51,9 +292,11 @@
             <Setter Property="FontWeight" Value="Normal" />
             <Style.Triggers>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="FontWeight" Value="Regular" />
+                    <Setter Property="Background" Value="Red" />
                 </Trigger>
             </Style.Triggers>
+
         </Style>
 
         <Style x:Key="tvselitem" TargetType="TreeViewItem">
@@ -392,6 +635,40 @@
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
+
+
+        <TextBox x:Name="Duration" 
+                Grid.Row="3"
+                Margin="460,0,0,8" 
+                Background="{StaticResource Black0}"
+                Foreground="White"
+                FontSize="14"
+                FontWeight="Bold"
+                Height="30"
+                Width="90"
+                Panel.ZIndex="44"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                Padding="0 4 0 0"
+                Text="{Binding ExpandDuration}"
+                VerticalAlignment="Bottom"
+					   />
+        <TextBox x:Name="Expandcounter" 
+                Grid.Row="3"
+                Margin="560,0,0,8" 
+                Background="{StaticResource Black0}"
+                FontSize="14"
+                FontWeight="Bold"
+                Height="30"
+                Width="50"
+                Panel.ZIndex="44"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                Padding="0 4 0 0"
+                Text="{Binding Listboxtotal}"
+                VerticalAlignment="Bottom"
+					   />
+
         <!--#region Outer main Canvas for Flowdoc alone-->
 
         <!--// Covers entrie window - ZIndex=4-->
@@ -419,7 +696,6 @@
         <!--#endregion Outer main Canvas-->
 
         <!--#endregion setup-->
-
         <!--#region TreeViews-->
 
         <!--// FullWidth TOP CONTAINER GRID-->
@@ -440,9 +716,9 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition x:Name="Col1" Width="1*" MinWidth="100"/>
-                <ColumnDefinition Width="20" />
-                <ColumnDefinition x:Name="Col3" Width="1*" MinWidth="150" />
+                <ColumnDefinition x:Name="Col3" Width="1*" MinWidth="50"/>
+                <!--<ColumnDefinition Width="20" />
+                <ColumnDefinition x:Name="Col3" Width="1*" MinWidth="50" />-->
                 <ColumnDefinition Width="20" />
                 <ColumnDefinition x:Name="Col5" Width="1*" MinWidth="100"/>
                 <ColumnDefinition Width="5" />
@@ -455,6 +731,7 @@
 				Grid.ColumnSpan="5"
                 Grid.Row="1"
   				Margin="0,0,0,0" 
+                Cursor="ScrollNS"
 				Panel.ZIndex="24"
 				DragStarted="LeftSplitter_DragStarted"                           
 				DragCompleted="LeftSplitter_DragCompleted" 
@@ -481,7 +758,7 @@
                                             HorizontalAlignment="Center"
 		        		                        Panel.ZIndex="25" Grid.Row="0"  >
 
-                                    <TextBlock x:Name="HspliiterPrompt" 
+                                    <TextBlock 
                                                Background="Transparent"
                                                Text="{Binding LeftSplitterText, FallbackValue=Drag Up/down}" 
                                                FontSize="11" 
@@ -489,14 +766,14 @@
                                                Margin="0 2 0 0"
                                                HorizontalAlignment="Center"/>
 
-                                    <Image x:Name="hsplitimage"  Source="{Binding LsplitterImage}"  Margin="15 0 0 5"
+                                    <Image Source="{Binding LsplitterImage}"  Margin="15 0 0 5"
 	        				    	                        Panel.ZIndex="25"  Height="20" Width="20" />
 
-                                    <TextBlock x:Name="LsVerticalright"  Text="{Binding RightSplitterText, FallbackValue=Change view}"  
+                                    <TextBlock Text="{Binding RightSplitterText, FallbackValue=Change view}"  
                                                      Padding="0 0 0 0" 
                                                     Foreground="White"
                                                     FontSize="11" 
-                                                    Margin="0,2,0,0" />
+                                                    Margin="5,2,0,0" />
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -507,9 +784,10 @@
             <GridSplitter x:Name="vsplitterright" 
 				Width="20" 
 				Background="Transparent" 
-				Grid.Column="4"
+				Grid.Column="2"
 				Grid.ColumnSpan="1"
                 Grid.Row="0"
+                Cursor="ScrollWE"
   				Margin="0,0,0,0" 
 				Panel.ZIndex="24"
 				DragStarted="VRightSplitter_DragStarted"                           
@@ -544,15 +822,20 @@
 
             <!--//=========================================================================//-->
             <!--// TOP LEFT GRID holding TWO left hand panes-->
-            <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Background="Transparent" Panel.ZIndex="1">
+            <Grid Grid.Row="0" 
+                  Grid.Column="1" 
+                  Grid.ColumnSpan="1" 
+                  Background="Transparent" 
+                  Panel.ZIndex="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" MinWidth="100"/>
-                    <ColumnDefinition Width="20" />
-                    <ColumnDefinition Width="1*" MinWidth="100" />
+                    <ColumnDefinition Width="1*" MinWidth="50"/>
+                    <!--<ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="1*" MinWidth="50" />-->
                 </Grid.ColumnDefinitions>
 
                 <!--// Left Treeview/Listbox pair vertical splitter-->
-                <GridSplitter x:Name="vsplitterleft" 
+                <!--// Hidden-->
+                <!--<GridSplitter x:Name="vsplitterleft" 
 				Width="20" 
 				Background="Transparent" 
 				Grid.Column="1"
@@ -563,14 +846,15 @@
 				DragStarted="VLeftSplitter_DragStarted"                           
 				DragCompleted="VLeftSplitter_DragCompleted" 
                 DragOver="VLeftSplitter_DragOver"
-                HorizontalAlignment="Stretch" DragDelta="vLeftSplitter_DragDelta">
+                HorizontalAlignment="Stretch" DragDelta="vLeftSplitter_DragDelta"
+                              Visibility="Visible">
 
                     <GridSplitter.Template>
                         <ControlTemplate>
                             <Grid  Width="20">
-                                <!--<Grid.RowDefinitions>
+                                --><!--<Grid.RowDefinitions>
                                 <RowDefinition Height="25" />
-                            </Grid.RowDefinitions>-->
+                            </Grid.RowDefinitions>--><!--
 
                                 <Border  Width="20" BorderBrush="Black" BorderThickness="1" Margin="0 20 0 0">
                                     <Border.Background>
@@ -594,15 +878,16 @@
                             </Grid>
                         </ControlTemplate>
                     </GridSplitter.Template>
-                </GridSplitter>
+                </GridSplitter>-->
 
                 <!--#region LazyLoading LEFT side Grid-->
-                <Grid x:Name="Lazygrid" Grid.Row="0"  Panel.ZIndex="6" Grid.Column="0" Grid.ColumnSpan="2"  >
+                <!--<Grid x:Name="Lazygrid" Grid.Row="0"  Panel.ZIndex="6" Grid.Column="0" Grid.ColumnSpan="1" Visibility="Hidden" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
 
+                    --><!--ItemContainerStyle="{StaticResource TreeViewStyle1}"--><!--
                     <TextBlock x:Name="LazyHeader"
                                 Grid.Row="0"  Text="LazyLoading System"                                 
                                 Foreground="White" 
@@ -613,7 +898,8 @@
                                 Padding="0 2 0 0" 
                                 Margin="0 0 20 0"
                                Width="{Binding Path=ActualWidth, ElementName=Lazygrid}"
-                                Height="20" >
+                                Height="20"
+                               Visibility="Hidden">
                         <TextBlock.Background>
                             <LinearGradientBrush  StartPoint="0,0.5" EndPoint="1,0.5">
                                 <GradientStop Offset="0" Color="LightSkyBlue" />
@@ -622,6 +908,7 @@
                         </TextBlock.Background>
 
                     </TextBlock>
+                    --><!--ItemContainerStyle="{StaticResource LibraryTreeViewItemStyle}"--><!--
                     <TreeView x:Name="treeViewModel" 
 					    Grid.Column="0" 			    
 					    Grid.Row="1"
@@ -631,7 +918,6 @@
 					    Foreground="White" 
 				        Padding="5 5 5 5"
                         HorizontalAlignment="Stretch"
-                        ItemContainerStyle="{StaticResource LibraryTreeViewItemStyle}"
                         Loaded="treeViewModel_Loaded"
                         PreviewMouseLeftButtonDown="treeViewModel_PreviewMouseLeftButtonDown"
 				        SelectedValuePath="C:\\"	
@@ -643,61 +929,67 @@
 					    ScrollViewer.VerticalScrollBarVisibility="Auto"
 				        Height="{Binding row1.ActualHeight, ElementName=row1,Converter={StaticResource ReduceByParamValue},ConverterParameter=50}"
 				        Width="{Binding Path=Width, ElementName=Col1}"
-					    MinWidth="{Binding Path=Width, ElementName=Col1}"					  >
+					    MinWidth="{Binding Path=Width, ElementName=Col1}"
+                              Visibility="Hidden">
                     </TreeView>
-                </Grid>
+
+                </Grid>-->
                 <!--#endregion LazyLoading LEFT side Grid-->
 
                 <!--//Center listbox "listbox"-->
                 <!--#region TOP Centre PANEL ONLY-->
-                <Grid x:Name="innergrid" Grid.Row="0"  Panel.ZIndex="6" Grid.Column="2" Grid.ColumnSpan="1"  >
+                <Grid x:Name="innergrid" Grid.Row="0"  Panel.ZIndex="6" Grid.Column="1" Grid.ColumnSpan="1"  >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20" />
-                        <RowDefinition Height="98*" />
+                        <RowDefinition Height="*" />
                         <RowDefinition Height="29*"/>
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="CurrentFolder"
                                 Grid.Row="0"
-                               Background="purple"
-                                Text="Current Folder Contents" 
+                                Text="Information Panel" 
                                 Foreground="White"
                                 TextAlignment="Center"
                                 FontSize="11"
                                 FontWeight="DemiBold"
                                  Padding="0 2 0 0" 
-                                Width="{Binding Path=ActualWidth, ElementName=innergrid}"
                                 Height="20" >
-                        <!--<TextBlock.Background>
+                                <!--Width="{Binding Path=ActualWidth, ElementName=innergrid}"-->
+                        <TextBlock.Background>
                             <LinearGradientBrush  StartPoint="0,0.5" EndPoint="1,0.5">
                                 <GradientStop Offset="0" Color="LightSkyBlue" />
                                 <GradientStop Offset="1" Color="Purple" />
                             </LinearGradientBrush>
-                        </TextBlock.Background>-->
+                        </TextBlock.Background>
 
                     </TextBlock>
 
-                    <ListBox x:Name="listBox" 
+                <ListBox x:Name="listBox" 
                                 Grid.Row="1"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="1"
                                 Panel.ZIndex="6"
-                                 FontSize="14" 
+                                 FontSize="15" 
+                                FontWeight="DemiBold"
                                 IsSynchronizedWithCurrentItem="True"
+                                ContextMenu="{StaticResource DummyContextmenu}"
+                                PreviewMouseRightButtonDown="listBox_PreviewMouseRightButtonDown"
                                 Height="{Binding row1.Height}"
-                                Width="{Binding Path=Width, ElementName=innergrid}"
-                                Background="{StaticResource White4}" Grid.RowSpan="2"/>
+                                Background="{StaticResource White4}" Grid.RowSpan="2"
+                             Visibility="Visible" Margin="0,0,0,0"/>
+
                 </Grid>
                 <!--#endregion TOP Centre PANEL ONLY-->
-
             </Grid>
 
             <!--//=========================================================================//-->
             <!--// Right hand TREEVIEW only container grid-->
-            <Grid x:Name="ManualGrid" Grid.Row="0" Grid.Column="5" >
+            <Grid x:Name="ManualGrid" Grid.Row="0" Grid.Column="3" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="20" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock 
+                <TextBlock x:Name="testtreebanner"
                                 Grid.Row="0"
                                 Text="Manual Directories System" 
                                 Foreground="White" 
@@ -719,7 +1011,35 @@
                 </TextBlock>
 
 
-                <TreeView x:Name="treeView4" 
+                <TreeView x:Name="TestTree"
+                        Grid.Column="5"
+                        Grid.Row="1"
+                        Panel.ZIndex="6"
+                        FontSize="16" 
+                        ContextMenu="{StaticResource TVContextMenu}"
+                        FontWeight="DemiBold"
+                        Height="{Binding row1.Height}"
+                        Width="{Binding Path=Width, ElementName=innergrid}"
+                        TreeViewItem.Expanded="TestTree_Expanded"   
+                        TreeViewItem.Collapsed="TestTree_Collapsed"  
+                        PreviewMouseRightButtonDown="TestTree_PreviewMouseRightButtonDown"
+                        Visibility="Visible"
+                        Background="{StaticResource Cyan0}" 
+                          Foreground="White" Grid.RowSpan="1">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeViewItem
+                        Foreground="White">
+                    </TreeViewItem>
+                    <!--Style="{StaticResource LibraryTreeViewItemStyle}"-->
+                </TreeView>
+
+
+                <TreeView x:Name="xtreeView4" 
 				    DataContext="{Binding this}"
 					Grid.Column="5"
 					Grid.Row="1"
@@ -741,6 +1061,7 @@
 				    Height="{Binding row1.ActualHeight, ElementName=row1,Converter={StaticResource ReduceByParamValue},ConverterParameter=50}"
                   Width="{Binding Path=Width, ElementName=col3}"
                   MinWidth="{Binding Path=Width, ElementName=col3}"
+                          Visibility="Hidden"
 					>
                     <!--<ToggleButton Style="{StaticResource ExpandCollapseToggleStyle}"/>-->
                 </TreeView>
@@ -754,22 +1075,22 @@
               	Grid.Row="2"
 				Grid.RowSpan="1"
 				Grid.Column="1"
-				Grid.ColumnSpan="5"
+				Grid.ColumnSpan="3"
                Height="{Binding ActualHeight, ElementName=Grid1.row2}"  
               Panel.ZIndex="2"
 		>
                 <ListBox x:Name="InfoList" 
 						Grid.Row="0"
 						 Grid.RowSpan="1"
-						Grid.ColumnSpan="5"
+						Grid.ColumnSpan="1"
 						Panel.ZIndex="1"
-						 Height="{Binding ActualHeight, ElementName=lowergrid,Converter={StaticResource ReduceByParamValue},ConverterParameter=10}"
+						 Height="{Binding ActualHeight, ElementName=lowergrid,Converter={StaticResource ReduceByParamValue},ConverterParameter=8}"
 						Width="{Binding ActualWidth, ElementName=lowergrid}"
 						Background="{StaticResource Cyan0}"
 						Foreground="Black"
 						FontSize="14"
 						FontWeight="Regular"
-						Margin="0,10,0,10" 
+						Margin="0,0,0,10" 
 						ScrollViewer.VerticalScrollBarVisibility="Visible"
 						ScrollViewer.HorizontalScrollBarVisibility="Auto"
 						IsSynchronizedWithCurrentItem="True"
@@ -796,17 +1117,35 @@
                 <ColumnDefinition Width="5" />
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="Test" 
+            <Button x:Name="LoadDrive" 
 					  Grid.Column="1"
-					  Margin="0,0,0,39" 
+                    Content="Load / Expand Drive"
+                   Grid.ColumnSpan="4"
+					  Margin="192,0,0,91" 
 					  Click="TestViewModel"
-					  Content="{Binding Test}"
-					  Foreground="White"
-					  Height="40" 
+				        Height="40" 
 					  HorizontalAlignment="Left"
 					  Template="{StaticResource HorizontalGradientTemplateYellow}"
+                    Visibility="Visible"                    
 					  VerticalAlignment="Bottom"
-					  Width="100"/>
+					  Width="105" >
+                <!--<ContentPresenter>
+                    <ContentPresenter.Content>
+                        <TextBlock
+                            Text="Load Single Drive + Expand" TextWrapping="Wrap" >                            
+                        </TextBlock>
+                    </ContentPresenter.Content>
+                </ContentPresenter>-->
+
+                <!--<Button.Foreground>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF684900" Offset="0.514"/>
+                        <GradientStop Color="#FFC3A500" Offset="0.753"/>
+                        <GradientStop Color="#FFF5d816" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Foreground>-->
+            </Button>
+
 
             <Button x:Name="AllCloseBtn" 
 						Grid.Column="5"
@@ -833,17 +1172,6 @@
 					  Template="{StaticResource HorizontalGradientTemplateGreen}"
 					  VerticalAlignment="Bottom"
 					  Width="110"  />
-            <Button x:Name="Expand_All" 
-						Grid.Column="5"
-						Margin="0,0,127,51" 
-					  Click="ExpandAll"
-					  Content="Expand All"
-					  Foreground="White"
-					  Height="40" 
-					  HorizontalAlignment="Right"
-					  Template="{StaticResource HorizontalGradientTemplateGreen}"
-					  VerticalAlignment="Bottom"
-					  Width="110"/>
             <Button x:Name="driveinfoBtn" 
 						Grid.Column="1"
 						Margin="0,0,0,90" 
@@ -856,20 +1184,6 @@
 					  VerticalAlignment="Bottom"
 					  Width="180"/>
 
-            <TextBox x:Name="Selection" 
-                     Grid.Column="1"
-                     Grid.ColumnSpan="4"
-					Margin="0,0,0,8" 
-					Background="{StaticResource Red5}"
-					Foreground="White"
-					Height="25"
-					HorizontalAlignment="Left"
-					HorizontalContentAlignment="Left"
-					   Padding="0 3 0 0"
-					Width="629"
-					   Text="Information panel ..."
-					VerticalAlignment="Bottom"
-					   />
             <CheckBox x:Name="ShowallFiles" IsChecked="false"
 						Grid.Column="5"
 					    Grid.Row="4"
@@ -882,18 +1196,170 @@
 						Margin="0,17,20,0"
 						VerticalAlignment="Top"/>
 
-            <Button x:Name="CollapseNode" 
-					  Grid.Column="5"
-					  Margin="0,0,6,51" 
-					  Click="CollapseCurrentNode"
-					  Content="Collapse Selected"
-					  Foreground="{StaticResource ResourceKey=White0}"
-					  Height="40" 
-					  HorizontalAlignment="Right"
-					  Template="{StaticResource HorizontalGradientTemplateGreen}"
-					  VerticalAlignment="Bottom"
-					  Width="110" RenderTransformOrigin="0.5,0.5"   />
+            <!--Background="{StaticResource Cyan1}"-->
+            <!--ItemContainerStyle="{StaticResource ComboxItemsStyle}"-->
+            <ComboBox x:Name="DirectoryOptions" 
+  			        att:MenuAttachedProperties.NormalBackground="{StaticResource Cyan1}"
+			        att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
+			        att:MenuAttachedProperties.MouseoverBackground="{StaticResource Red5}"
+			        att:MenuAttachedProperties.MousoverForeground="{StaticResource White0}"
+                    Height="25"                       
+                      Grid.Column="5"                       
+                      Margin="0,63,47,57"
+                     Width="180"
+                      HorizontalAlignment="Right"
+                      SelectionChanged="DirectoryOptions_Selected"
+                      MaxDropDownHeight="750"
+                     PreviewMouseDoubleClick="treeView4_PreviewMouseDoubleClick"
+                      MaxWidth="350">
+                <ComboBoxItem
+                     Style="{StaticResource ExpanderCboxStyle}">
+
+                </ComboBoxItem>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate >
+                        <!--<WrapPanel Orientation="Vertical"  Background="Transparent">-->
+                        <!--Width="450"-->
+                        <TextBlock x:Name="CbItemText" 
+                                       TextWrapping="Wrap"
+                                       FontSize="14"
+                                       MaxWidth="350"
+                                       Width="350"
+                                       Text="{Binding}"
+                                       Style="{StaticResource ComboBoxTextBlockStyle2}">
+                        </TextBlock>
+                        <!--</WrapPanel>-->
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <!--Click="ExpandGo_Click"-->
+            <!--Command="{Binding WalkTreeViewItem}"-->
+            <Button x:Name="ExpandGo" 
+                    BorderBrush="Red"
+                    BorderThickness="2"
+                    Click="ExpandGo_Click"
+                    Content =" Go!" 
+                    Margin="222,57,0,52"
+                    Grid.Column="5" 
+                      HorizontalAlignment="Right"
+                    Background="Yellow" 
+                    Foreground="Red" 
+                    FontWeight="Bold" Width="40"/>
+
+            <ComboBox x:Name="DrivesCombo"
+                     Grid.Column="3" 
+                      Background="Black"
+                      BorderBrush="Black"
+                      BorderThickness="1"
+                      Margin="47,16,0,91"
+                      SelectionChanged="DrivesCombo_SelectionChanged"
+                       FontWeight="DemiBold"
+                      HorizontalAlignment="Left"
+                      MaxDropDownHeight="330"
+                      FontSize="14" Width="69">
+                <!--<ComboBoxItem
+                      Background="Black" 
+                      Foreground="White">
+                </ComboBoxItem>-->
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label 
+							Content="{Binding}"
+							Background="Black"
+                            Foreground="White"
+                            FontWeight="DemiBold"
+                            Width="{Binding ActualWidth, ElementName= DrivesCombo}"
+                            FontSize="14"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+
+            </ComboBox>
+
+            <!--Command="{Binding WalkTreeViewItem}"
+                    CommandParameter="90"-->
+            <Button x:Name="TriggerTreeWalkBtn" 
+                Click="WalkTestTree"
+                Grid.Column="3"
+                Margin="124,16,0,0" 
+               Height="40" 
+                Content="Expand Fully"
+                HorizontalAlignment="Left"
+                Template="{StaticResource HorizontalGradientTemplateYellow}"
+                Visibility="Visible"
+                VerticalAlignment="Top"
+                Width="92">
+                <!--<Button.Content>
+                    <TextBlock 
+                        Text="Fully Expand Current Item" 
+                        TextWrapping="Wrap" 
+                        TextAlignment="Center"/>
+                </Button.Content>
+                <Button.Foreground>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FF684900" Offset="0.514"/>
+                            <GradientStop Color="#FFC3A500" Offset="0.753"/>
+                            <GradientStop Color="#FFF5d816" Offset="1"/>
+                        </LinearGradientBrush>
+                </Button.Foreground>-->
+            </Button>
+            <TextBox x:Name="ExpanderMenuOption" 
+            Grid.Row="3"
+            Grid.Column="1"
+            Grid.ColumnSpan="3"
+            Margin="0,0,0,48" 
+            Background="{StaticResource Blue0}"
+            Foreground="White"
+            Height="25"
+            Width="450"
+            Panel.ZIndex="44"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Center"
+            Padding="0 3 0 0"
+            Text="Information panel ..."
+            VerticalAlignment="Bottom"
+                />
+            <TextBox x:Name="Selection" 
+                Grid.Row="3"
+                Grid.Column="1"
+                Grid.ColumnSpan="3"
+                Margin="0,0,0,10" 
+                Background="{StaticResource Red5}"
+                Foreground="White"
+                Height="25"
+                Width="450"
+                Panel.ZIndex="44"
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Center"
+                Padding="0 3 0 0"
+                Text="Information panel ..."
+                VerticalAlignment="Bottom"
+                />
         </Grid>
+
+        <TextBox x:Name="Expandprogress" 
+            Grid.Row="3"
+            Margin="461,0,0,46" 
+            Background="{StaticResource Black0}"
+            Text="{Binding ProgressString, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+            Foreground="White"
+            FontSize="14"
+            FontWeight="Bold"
+            Height="30"
+            Width="90"
+            Panel.ZIndex="44"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Left"
+            Padding="0 4 0 0"
+            VerticalAlignment="Bottom"/>
+
+        <TextBlock x:Name="BusyLabel" Text="Busy ..." 
+                   Background="{Binding BusyLabelBkgrn}"
+                   Foreground="{Binding BusyLabelColor}"
+            Grid.Row="3"
+                   FontSize="16"
+                   Margin="562,72,251,46" RenderTransformOrigin="0.484,0.462"
+                   Visibility="Hidden"/>
         <!--#endRegion Buttons panel-->
 
     </Grid>

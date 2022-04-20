@@ -3,7 +3,36 @@
 			xmlns:att="clr-namespace:MyDev.AttachedProperties"
 xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
 
-	<Style x:Key="ComboBoxTextBlockStyle1" TargetType="{x:Type Label}" >
+
+    <Style x:Key="ComboBoxTextBlockStyle2" TargetType="{x:Type TextBlock}" >
+        <!--<Setter Property="FrameworkElement.OverridesDefaultStyle" Value="True" />-->
+        <Setter Property="Background" Value="Green"  />
+        <Setter Property="Foreground" Value="White"  />
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Padding" Value="5 0 0 0"/>
+                    <Setter Property="Background" Value="{Binding Path=(att:MenuAttachedProperties.NormalBackground), RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                    <Setter Property="Foreground" Value="{Binding Path=(att:MenuAttachedProperties.NormalForeground), RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Padding" Value="5 0 0 0"/>
+                    <Setter Property="Background" Value="{Binding Path=(att:MenuAttachedProperties.MouseoverBackground), RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                    <Setter Property="Foreground" Value="{Binding Path=(att:MenuAttachedProperties.MousoverForeground), RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ComboBoxTextBlockStyle1" TargetType="{x:Type Label}" >
 		<!--<Setter Property="FrameworkElement.OverridesDefaultStyle" Value="True" />-->
 		<Setter Property="Background" Value="Green"  />
 		<Setter Property="Foreground" Value="White"  />
@@ -39,7 +68,9 @@ xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramewo
 			</MultiTrigger>
 		</Style.Triggers>
 	</Style>
-	<!--<Style x:Key="ComboBoxStyle1" TargetType="{x:Type ComboBox}" >
+
+    
+    <!--<Style x:Key="ComboBoxStyle1" TargetType="{x:Type ComboBox}" >
 		--><!--<Setter Property="FrameworkElement.OverridesDefaultStyle" Value="True" />--><!--
 		<Style.Triggers>
 			<MultiTrigger>

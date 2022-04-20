@@ -40,7 +40,7 @@ namespace MyDev . Views
                 }
                 else
                 {
-                    Console . WriteLine ( $"Drive [{driveInfo . Name} not loaded !, Drive type = {driveInfo . DriveType}" );
+                    Console . WriteLine ( $"Drive [{driveInfo . Name} not loaded !, Drive type = {driveInfo . DriveType} - Ignoring !" );
                     errors?.Add ( $"Drive [{driveInfo . Name} not loaded !, Drive type = {driveInfo . DriveType}" );
                 }
                 var index = tv . Items . Count;

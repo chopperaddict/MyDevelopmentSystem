@@ -1018,6 +1018,7 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        
         <ComboBox x:Name="dbNameLv"
 			  AllowDrop="True"
 			  FontSize="14"
@@ -1050,6 +1051,7 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        
         <ComboBox  x:Name="dbNameLb"
 			  AllowDrop="True"
 			  FontSize="14"

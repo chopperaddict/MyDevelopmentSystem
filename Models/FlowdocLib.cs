@@ -11,6 +11,7 @@ using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Controls;
 using System . Windows . Input;
+using System . Windows . Media . Media3D;
 
 
 namespace MyDev . Models
@@ -284,9 +285,9 @@ namespace MyDev . Models
 			if ( border == null )
 			{
 				if(e . LeftButton == MouseButtonState . Pressed)
-					Mouse . SetCursor ( Cursors . SizeAll );
+					Mouse . OverrideCursor = Cursors . SizeAll;
 				else
-					Mouse . SetCursor ( Cursors . Arrow );
+					Mouse . OverrideCursor = Cursors . Arrow;
 				//return;
 			}
 			// We are Resizing the Flowdoc using the mouse on a corner of the border  (Border.Name=FdBorder)
@@ -338,27 +339,27 @@ namespace MyDev . Models
 					|| ( flowdocLeft <= 15 && flowdocTop >= flowdocHeight - 15 ) )
 				{
 					// over any corner	    WORKING
-					Mouse . SetCursor ( Cursors . SizeAll );
+					Mouse . OverrideCursor = Cursors . SizeAll;
 				}
 				else
 				{
 					if ( flowdocLeft >= border . ActualWidth - 15
 						&& flowdocWidth >= border . ActualWidth - 15
 						&& flowdocWidth <= border . ActualWidth )
-							// over right border
-						Mouse . SetCursor ( Cursors . SizeWE );
+						// over right border
+						Mouse . OverrideCursor = Cursors . SizeWE;
 					else if ( flowdocLeft <= 10 && flowdocTop >= 11
 					     && flowdocTop >= 15
 					     && flowdocTop < flowdocHeight - 15 )
 						// Over left border
-						Mouse . SetCursor ( Cursors . SizeWE );
+						Mouse . OverrideCursor = Cursors . SizeWE;
 					else if ( flowdocTop <= 15
 						&& flowdocLeft >= 15 )
-						// over  top  border
-						Mouse . SetCursor ( Cursors . SizeNS );
+// over  top  border
+						Mouse . OverrideCursor = Cursors . SizeNS ;
 					else if ( flowdocTop >= flowdocHeight - 15 )
 						// over bottom border
-						Mouse . SetCursor ( Cursors . SizeNS );
+						Mouse . OverrideCursor = Cursors . SizeNS ;
 				}
 			}
 //			Console . WriteLine ( $"In Mousemove, at stage 2" );
@@ -388,7 +389,7 @@ namespace MyDev . Models
 				if ( Flowdoc . BorderSelected == 1 ) 
 				{
 					// Top border - WORKING CORRECTLY
-					Mouse . SetCursor ( Cursors . SizeNS );
+					Mouse . OverrideCursor = Cursors . SizeNS ;
 					Canvas . SetTop ( Flowdoc , MTop );
 					YDiff = MTop - FdTop;
 					FdTop = MTop;
@@ -412,14 +413,14 @@ namespace MyDev . Models
 				}
 				else if ( Flowdoc . BorderSelected == 2 )
 				{     // Bottom border
-					Mouse . SetCursor ( Cursors . SizeNS );
+					Mouse . OverrideCursor = Cursors . SizeNS;
 					newHeight = MTop - FdTop;
 					Flowdoc . Height = newHeight;
 					return;
 				}
 				else if ( Flowdoc . BorderSelected == 3 )
-				{	// Left hand side border  - WORKING CORRECTLY
-					Mouse . SetCursor ( Cursors . SizeWE );
+				{   // Left hand side border  - WORKING CORRECTLY
+					Mouse . OverrideCursor = Cursors . SizeWE ;
 					XDiff = MLeft - FdLeft;
 					newWidth = FdWidth - XDiff;
 					if ( newWidth < 350 )
