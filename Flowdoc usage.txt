@@ -1,5 +1,5 @@
 ﻿// How to use Flowdoc in any window
- // Just include ll of  this file in your window
+ // Just include  All of  this file in your window
 
 		#region Flowdoc support via library
 		/// <summary>

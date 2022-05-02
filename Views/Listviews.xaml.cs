@@ -30,7 +30,6 @@ using System . Windows . Input;
 using System . Windows . Media;
 using System . Windows . Media . Media3D;
 using System . Xml . Linq;
-using MyDev . AttachedProperties;
 using static Dapper . SqlMapper;
 using static System . Net . WebRequestMethods;
 using System . Windows . Media . Animation;

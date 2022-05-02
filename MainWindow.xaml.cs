@@ -262,7 +262,11 @@ namespace MyDev
 		private void button3_Click ( object sender , RoutedEventArgs e )
 		{
 			TreeViews tv = new TreeViews();
-			tv . Show ( );
+			try
+			{
+				tv . Show ( );
+			}
+            catch ( Exception ex ) { Console . WriteLine ("TreeViews already open"); }
 		}
 
 		private void button4_Click ( object sender , RoutedEventArgs e )
@@ -356,6 +360,17 @@ namespace MyDev
 
 		private void button15_Click ( object sender, RoutedEventArgs e )
         {
+        }
+
+        private void button16_Click ( object sender , RoutedEventArgs e )
+        {
+			HierarchicalTreeView hit = new HierarchicalTreeView ( );
+		hit . Show ( );
+        }
+
+        private void button17_Click ( object sender , RoutedEventArgs e )
+        {
+			//tTreeviews
         }
     }
 }

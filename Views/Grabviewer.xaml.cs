@@ -36,7 +36,7 @@ namespace MyDev . Views
 			InitializeComponent ( );
 			Utils . SetupWindowDrag ( this );
 			caller = parent;
-			ctrl = ctrl;
+			//ctrl = ctrl;
 			// just read image frm disk , cos the initial call ALLWAYS saves it to disk as "C:\\WPFPages-11nov21\\Icons\\Grabimage.png"
 			// / automatically, overwriting any existing file....
 			BitmapImage bmi = new BitmapImage ( new Uri ( "C:\\WPFPages-11nov21\\Icons\\Grabimage.png" ) );

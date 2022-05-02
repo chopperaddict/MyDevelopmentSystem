@@ -48,7 +48,7 @@
         <Button x:Name="button9" Content="Config" HorizontalAlignment="Left" Margin="378,81,0,0" 
 			  VerticalAlignment="Top" Height="40" Width="100" Click="button9_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
-        <Button x:Name="button10" Content="Close" HorizontalAlignment="Left" Margin="500,140,0,0" 
+        <Button x:Name="button10" Content="Close" HorizontalAlignment="Left" Margin="507,188,0,0" 
 			VerticalAlignment="Top" Height="40" Width="102" Click="button10_Click"
 			Foreground="{StaticResource White0}" Template="{StaticResource HorizontalGradientTemplateRed}" />
 
@@ -66,6 +66,12 @@
             Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}"/>
         <Button x:Name="button15" Content="tvDemo" HorizontalAlignment="Left" Margin="500,82,0,0" 
             VerticalAlignment="Top" Height="40" Width="102" Click="button15_Click"
+            Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}" />
+        <Button x:Name="button16" Content="button" HorizontalAlignment="Left" Margin="499,138,0,0" 
+            VerticalAlignment="Top" Height="40" Width="102" Click="button16_Click"
+            Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}" />
+        <Button x:Name="button17" Content="button" HorizontalAlignment="Left" Margin="375,187,0,0" 
+            VerticalAlignment="Top" Height="40" Width="102" Click="button17_Click"
             Foreground="{StaticResource White0}" Template="{StaticResource GradientButtonTemplateBlue}" />
     </Grid>
 </Window>

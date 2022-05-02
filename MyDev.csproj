@@ -57,6 +57,9 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MyDev.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Dapper.2.0.123\lib\net461\Dapper.dll</HintPath>
@@ -100,6 +103,7 @@
     <Compile Include="AttachedProperties\MenuAttachedProperties.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Converts\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converts\BoolToNotBool.cs" />
     <Compile Include="Converts\ExpanderArgumentsConverter.cs" />
     <Compile Include="Converts\GetCurrentReccount.cs" />
     <Compile Include="Models\FlowdocLib.cs" />
@@ -110,6 +114,7 @@
     <Compile Include="UserControls\MulltiDbUserControl.xaml.cs">
       <DependentUpon>MulltiDbUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\PropertyChanged.cs" />
     <Compile Include="UserControls\Ucontrol1.xaml.cs">
       <DependentUpon>Ucontrol1.xaml</DependentUpon>
     </Compile>
@@ -128,6 +133,9 @@
       <DependentUpon>ExpanderTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ListItem.cs" />
+    <Compile Include="Views\HierarchicalTreeView.xaml.cs">
+      <DependentUpon>HierarchicalTreeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ModernViews.xaml.cs">
       <DependentUpon>ModernViews.xaml</DependentUpon>
     </Compile>
@@ -314,6 +322,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dicts\TreeViewDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -363,6 +375,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ExpanderTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HierarchicalTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

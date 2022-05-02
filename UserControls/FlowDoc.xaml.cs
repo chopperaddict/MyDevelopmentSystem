@@ -3,8 +3,12 @@
 using MyDev . ViewModels;
 using MyDev . Views;
 
+using Newtonsoft . Json . Linq;
+
 using System;
 using System . Collections . Generic;
+using System . ComponentModel;
+using System . Diagnostics;
 using System . Linq;
 using System . Runtime . Remoting . Messaging;
 using System . Security . Cryptography;
@@ -15,6 +19,7 @@ using System . Windows . Controls;
 using System . Windows . Data;
 using System . Windows . Documents;
 using System . Windows . Input;
+using System . Windows . Markup;
 using System . Windows . Media;
 using System . Windows . Media . Imaging;
 using System . Windows . Navigation;
@@ -25,8 +30,9 @@ namespace MyDev . UserControls
 	/// <summary>
 	/// Interaction logic for FlowDoc.xaml
 	/// </summary>
-	public partial class FlowDoc : UserControl
+	public partial class FlowDoc : UserControl, INotifyPropertyChanged
 	{
+
 		#region Properties
 		private bool mouseCaptured  ;
 		public bool MouseCaptured
@@ -76,15 +82,46 @@ namespace MyDev . UserControls
 			get { return keepSizeIcon2; }
 			set { keepSizeIcon2 = value; }
 		}
+
+       #region OnPropertyChanged
+//        public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged ( string PropertyName )
+		{
+			if ( this . PropertyChanged != null )
+			{
+				var e = new PropertyChangedEventArgs ( PropertyName );
+				this . PropertyChanged ( this , e );
+			}
+		}
+		#endregion OnPropertyChanged
+
+		private bool useScrollviewer;
+		public bool UseScrollviewer
+		{
+			get { return useScrollviewer; }
+			set { useScrollviewer = value; OnPropertyChanged ( "UseScrollviewer" ); }
+		}
+		private bool useRichTextBox;
+		public bool UseRichTextBox
+		{
+			get { return useRichTextBox; }
+			set { useRichTextBox = value; OnPropertyChanged ( "UseRichTextBox" ); }
+		}
+
 		#endregion Properties
 
+		// Implement INameScope similar to this:
+	
 		public FlowDoc ( )
 		{
-			this . DataContext = this;
 			InitializeComponent ( );
+			//NameScope . SetNameScope ( OptionsContextmenu , this );
+			//this . DataContext = this;
 		}
 		private void flowdoc_Loaded ( object sender , RoutedEventArgs e )
 		{
+			this. DataContext = this;
 			Fontsize = this.Fontsize;
 			DocHeight = this . ActualHeight;
 			if ( DocHeight == 0 )
@@ -94,16 +131,21 @@ namespace MyDev . UserControls
 				DocWidth = 450;
 			if ( Flags . UseScrollView )
 			{
+				UseScrollviewer = true;
 				fdviewer . Visibility = Visibility . Visible;
 				doc . Visibility = Visibility . Hidden;
 				BorderSelected = -1;
+				UseScrollviewer = true;
+				UseRichTextBox = false;
 			}
 			else
 			{
+				UseScrollviewer = false;
 				fdviewer . Visibility = Visibility . Hidden;
-//				if(Flags.UseScrollView)
-					doc . Visibility = Visibility . Visible;
+				doc . Visibility = Visibility . Visible;
 				BorderSelected = -1;
+				UseScrollviewer = false;
+				UseRichTextBox = true;
 			}
 			KeepSizeIcon1 = "/Icons/down arroiw red.png";
 			KeepSizeIcon2 = "/Icons/up arroiw red.png";
@@ -468,20 +510,20 @@ namespace MyDev . UserControls
 
 		}
 
-		private void KeepSize_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
-		{
-			KeepSize = !KeepSize;
-			if ( KeepSize == true )
-			{
-				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon1 , UriKind . Relative ) );
-				SaveLabel . Content = "Using Saved Height =";
-			}
-			else
-			{
-				KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon2 , UriKind . Relative ) );
-				SaveLabel . Content = "Using Auto Height =";
-			}
-		}
+		//private void KeepSize_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
+		//{
+		//	KeepSize = !KeepSize;
+		//	if ( KeepSize == true )
+		//	{
+		//		KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon1 , UriKind . Relative ) );
+		//		SaveLabel . Content = "Using Saved Height =";
+		//	}
+		//	else
+		//	{
+		//		KeepIcon . Source = new BitmapImage ( new Uri ( KeepSizeIcon2 , UriKind . Relative ) );
+		//		SaveLabel . Content = "Using Auto Height =";
+		//	}
+		//}
 
 		private void Border_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
@@ -494,6 +536,7 @@ namespace MyDev . UserControls
 			if ( BorderClicked )
 			{
 			}
+			this . Focus ( );
 		}
 
 		private void FlowdocBorder_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
@@ -507,6 +550,8 @@ namespace MyDev . UserControls
 		private void Button_Click ( object sender , RoutedEventArgs e )
 		{
 			this . Visibility = Visibility . Hidden;
+			Mouse . OverrideCursor = Cursors . Arrow;
+			Mouse . SetCursor ( Cursors . Arrow );
 			BorderSelected = -1;
 		}
 
@@ -550,15 +595,26 @@ namespace MyDev . UserControls
         public static readonly DependencyProperty FontsizeProperty =
             DependencyProperty . Register ( "Fontsize" , typeof ( double ) , typeof ( FlowDoc) , new PropertyMetadata ( (double)12 ) );
 
-        #endregion Dependency properties
+		#endregion Dependency properties
 
+		public static void SetFocus ( )
+		{
+//			this . Focus ( );
+		}
         #region keyboard handlers
         private void flowdoc_PreviewKeyDown ( object sender , KeyEventArgs e )
 		{
+			OnHandleKeyEvents (e );
+
+
 			if ( e . Key == Key . Escape )
 			{
 				e . Handled = true;
-				this . Visibility = Visibility . Hidden;
+				{
+					this . Visibility = Visibility . Hidden;
+					Mouse . OverrideCursor = Cursors . Arrow;
+					Mouse . SetCursor ( Cursors . Arrow );
+				}
 				BorderSelected = -1;
 			}
 			else if ( e . Key == Key . F8 )
@@ -698,7 +754,9 @@ namespace MyDev . UserControls
 		{
 			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
-			this . Visibility = Visibility . Hidden;	 
+			this . Visibility = Visibility . Hidden;
+			Mouse . OverrideCursor = Cursors . Arrow;
+			Mouse . SetCursor ( Cursors . Arrow );
 		}
 
 		private void dummy_Click ( object sender , RoutedEventArgs e )
@@ -711,6 +769,8 @@ namespace MyDev . UserControls
 			this . Visibility = Visibility . Hidden;
 			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
+			Mouse . OverrideCursor = Cursors . Arrow;
+			Mouse . SetCursor ( Cursors . Arrow );
 		}
 
 		#region External Hook
@@ -722,6 +782,7 @@ namespace MyDev . UserControls
 			if ( ExecuteFlowDocBorderMethod != null )
 				ExecuteFlowDocBorderMethod ( this , e );
 		}
+
 		//code to allow this action in flowdocto be andled by an external window
 		// Clever stuff really
 		public event EventHandler<FlowArgs> ExecuteFlowDocResizeMethod;
@@ -732,11 +793,20 @@ namespace MyDev . UserControls
 		}
 
 		// Allows any other (External) window to control this via  the control 
-		public event EventHandler ExecuteFlowDocMaxmizeMethod;
+		public event EventHandler ExecuteFlowDocMaxmizeMethod;		
 		protected virtual void OnExecuteMethod ( )
 		{
 			if ( ExecuteFlowDocMaxmizeMethod != null )
 				ExecuteFlowDocMaxmizeMethod ( this , EventArgs . Empty );
+		}
+		
+		public event KeyEventHandler HandleKeyEvents;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnHandleKeyEvents ( KeyEventArgs e )
+		{
+			if ( HandleKeyEvents != null )
+				HandleKeyEvents ( this , e );
 		}
 		private void Image_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
@@ -750,15 +820,49 @@ namespace MyDev . UserControls
 		private void FdBorder_MouseEnter ( object sender , MouseEventArgs e )
 		{
 			Mouse . SetCursor ( Cursors.Hand);
+			//MouseCaptured = true;
+			//CaptureMouse ( );
+			this . Focus ( );
 		}
 
 		// Called by ListViews	&& Datagrids
 		private void FdBorder_MouseLeave ( object sender , MouseEventArgs e )
 		{
 			Mouse . SetCursor ( Cursors . Arrow );
+			//MouseCaptured = false;				
+		}
+
+        private void UseRTB_Click ( object sender , RoutedEventArgs e )
+        {
+			if ( UseRichTextBox == false )
+			{
+				UseScrollviewer = false;
+				UseRichTextBox  = true;
+			}
+			else
+			{
+				UseScrollviewer = true;
+				UseRichTextBox = false;
+			}
+			Flags . UseScrollView = UseScrollviewer;
+		}
+
+		private void UseSViewer_Click ( object sender , RoutedEventArgs e )
+        {
+			if ( UseScrollviewer == false )
+			{
+				UseScrollviewer = true;
+				UseRichTextBox = false;
+			}
+			else
+			{
+				UseScrollviewer = false;
+				UseRichTextBox = true;
+			}
+			Flags . UseScrollView = UseScrollviewer;
 		}
 	}
-	public class FlowArgs : EventArgs
+    public class FlowArgs : EventArgs
 	{
 		public double Height
 		{

@@ -1,34 +1,34 @@
-﻿
-#define DEBUGEXPAND
-#undef DEBUGEXPAND
-
-using System;
+﻿using System;
 using System . Collections . Generic;
 using System . ComponentModel;
 using System . Diagnostics;
 using System . IO;
 using System . Linq;
-using System . Runtime . InteropServices;
+using System . Text;
 using System . Threading;
 using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Controls;
 using System . Windows . Controls . Primitives;
+using System . Windows . Data;
+using System . Windows . Documents;
 using System . Windows . Input;
 using System . Windows . Media;
 using System . Windows . Media . Imaging;
+using System . Windows . Shapes;
 using System . Windows . Threading;
 
-using MyDev . AttachedProperties;
 using MyDev . Models;
 using MyDev . UserControls;
 using MyDev . ViewModels;
+
 namespace MyDev . Views
 {
-    public partial class TreeViews : Window, INotifyPropertyChanged
+    /// <summary>
+    /// Interaction logic for HierarchicalTreeView.xaml
+    /// </summary>
+    public partial class HierarchicalTreeView : Window, INotifyPropertyChanged
     {
-        #region Declarations
-
         #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public int SLEEPTIME { get; set; } = 100;
@@ -49,8 +49,6 @@ namespace MyDev . Views
 
         public static int PROGRESSWRAPVALUE = 24;
         public static int MAXSEARCHLEVELS = 99;
-
-        #region Brushes
         public SolidColorBrush YellowBrush;
         public SolidColorBrush WhiteBrush;
         public SolidColorBrush BlackBrush;
@@ -64,14 +62,80 @@ namespace MyDev . Views
         public SolidColorBrush Brush6;
         public SolidColorBrush Brush7;
         public SolidColorBrush Brush8;
-        #endregion Brushes
 
         BackgroundWorker worker = null;
+        #region full Props
+        private string t1SelectedItem;
+        public string T1SelectedItem
+        {
+            get { return t1SelectedItem; }
+            set { t1SelectedItem = value; }// OnPropertyChanged ( T1SelectedItem ); }
+        }
+
+        private string t2SelectedItem;
+        public string T2SelectedItem
+        {
+            get { return t2SelectedItem; }
+            set { t2SelectedItem = value; OnPropertyChanged ( T2SelectedItem ); }
+        }
+
+        private string t3SelectedItem;
+        public string T3SelectedItem
+        {
+            get { return t3SelectedItem; }
+            set { t3SelectedItem = value; OnPropertyChanged ( T3SelectedItem ); }
+        }
+        private string t4SelectedItem;
+        public string T4SelectedItem
+        {
+            get { return t4SelectedItem; }
+            set { t4SelectedItem = value; OnPropertyChanged ( T4SelectedItem ); }
+        }
+
+        private string fullDetail;
+        public string FullDetail
+        {
+            get { return fullDetail; }
+            set { fullDetail = value; OnPropertyChanged ( FullDetail ); }
+        }
+
+        private int currentTree;
+        public int CurrentTree
+        {
+            get { return currentTree; }
+            set { currentTree = value; }
+        }
+
+        private int currentLevel;
+        public int CurrentLevel
+        {
+            get { return currentLevel; }
+            set { currentLevel = value; }
+        }
+
+        private string defaultDrive;
+        public string DefaultDrive
+        {
+            get { return defaultDrive; }
+            set { defaultDrive = value; }
+        }
+
+        private TreeViews treeviewsclass;
+        public TreeViews Treeviewsclass
+        {
+            get { return treeviewsclass; }
+            set { treeviewsclass = value; }
+        }
+        private ExplorerClass explorer;
+        public ExplorerClass Explorer
+        {
+            get { return explorer; }
+            set { explorer = value; }
+        }
         public ExplorerClass TvExplorer = null;
         public TreeView ActiveTree { get; set; }
-
+        #endregion full Props
         //        public ICommand WalkTreeViewItem { get; set; }
-        #region Expansion Items
         public struct ExpandArgs
         {
             public TreeView tv;
@@ -84,15 +148,9 @@ namespace MyDev . Views
             public int Selection;
             public bool SearchSuccess;
             public bool ListResults;
-            public bool IsFullExpand;
             public TreeViewItem Parent;
         };
         public static ExpandArgs ExpArgs = new ExpandArgs ( );
-
-        public static Dictionary<string , string> VolumeLabelsDict = new Dictionary<string , string> ( );
-
-        #endregion Expansion Items
-
         public struct lbitemtemplate
         {
             public string Colm1 { get; set; }
@@ -106,7 +164,7 @@ namespace MyDev . Views
         public List<String> DirOptions { get; set; }
 
         public List<ComboBoxItem> DirectoryOptions2 = new List<ComboBoxItem> ( );
-        //        public List<Family> families = new List<Family> ( );
+        public List<Family> families = new List<Family> ( );
         public static List<string> LbStrings = new List<string> ( );
         public static List<string> ValidFiles = new List<string> ( );
         public static List<TreeViewItem> AllCheckedFolders = new List<TreeViewItem> ( );
@@ -115,42 +173,6 @@ namespace MyDev . Views
         //        public bool ClosePreviousFolder { get; set; } = false;
 
         #region Full Properties
-        private string fullDetail;
-        public string FullDetail
-        {
-            get { return fullDetail; }
-            set { fullDetail = value; OnPropertyChanged ( FullDetail ); }
-        }
-        private int currentTree;
-        public int CurrentTree
-        {
-            get { return currentTree; }
-            set { currentTree = value; }
-        }
-        private int currentLevel;
-        public int CurrentLevel
-        {
-            get { return currentLevel; }
-            set { currentLevel = value; }
-        }
-        private string defaultDrive;
-        public string DefaultDrive
-        {
-            get { return defaultDrive; }
-            set { defaultDrive = value; }
-        }
-        private TreeViews treeviewsclass;
-        public TreeViews Treeviewsclass
-        {
-            get { return treeviewsclass; }
-            set { treeviewsclass = value; }
-        }
-        private ExplorerClass explorer;
-        public ExplorerClass Explorer
-        {
-            get { return explorer; }
-            set { explorer = value; }
-        }
         private bool exactmatch;
         public bool Exactmatch
         {
@@ -163,6 +185,7 @@ namespace MyDev . Views
             get { return listresults; }
             set { listresults = value; OnPropertyChanged ( "LISTRESULTS" ); }
         }
+
         // Global flag to control auto closing of searched folders (only)
         private bool closePreviousNode;
         public bool ClosePreviousNode
@@ -184,11 +207,7 @@ namespace MyDev . Views
         }
 
         #endregion Full Properties
-
-        #region General  dclarations
-        public string def = ".....................................................";
         public string SearchString { get; set; } = "";
-        public string ExceptionMessage { get; set; }
         public static bool BreakExpand { get; set; } = false;
         private static bool isresettingSelection { get; set; } = false;
         public int maxlevels { get; set; }
@@ -196,9 +215,10 @@ namespace MyDev . Views
         public static lbitemtemplate lbtmp { get; set; }
         public TextBlock LbTextblock { get; set; }
         public string TextToSearchFor { set; get; } = "";
-        public static TreeViews treeViews { get; set; }
+        public static HierarchicalTreeView treeViews { get; set; }
         private TreeViewItem startitem { get; set; }
 
+        #region Public dclarations
         public bool HasHidden = false;
         private bool FullExpandinProgress = false;
         public bool Loading = true;
@@ -210,22 +230,19 @@ namespace MyDev . Views
         public DirectoryInfo DirInfo = new DirectoryInfo ( @"C:\\" );
         private static DispatcherTimer sw = new DispatcherTimer ( );
 
-        #endregion General declarations
+        #endregion Public dclarations
 
         private static FlowdocLib fdl;
-
-        #endregion Declarations
-
-        #region startup  items
-        public TreeViews ( )
+        #region startup
+        public HierarchicalTreeView ( )
         {
-            int count = 0;
             InitializeComponent ( );
             this . DataContext = this;
             ReadSettings ( );
 
             // Cannot use  this with FlowDoc cos of dragging/Resizing
             //Utils . SetupWindowDrag ( this );
+            //            WalkTreeViewItem = new RelayCommand ( ExecuteWalkTreeViewItem , CanExecuteWalkTreeViewItem );
             ActiveTree = TestTree;
             OptionsPanel . Visibility = Visibility . Hidden;
             treeViews = this;
@@ -235,6 +252,7 @@ namespace MyDev . Views
             FdMargin . Left = Flowdoc . Margin . Left;
             FdMargin . Top = Flowdoc . Margin . Top;
             TvExplorer = new ExplorerClass ( );
+            //            treeViewModel . SelectedValuePath = "C:\\";
             TreeViewItem tvi = new TreeViewItem ( );
             tvi . Header = @"C:\";
             BusyLabelColor = FindResource ( "Yellow0" ) as SolidColorBrush;
@@ -248,14 +266,18 @@ namespace MyDev . Views
             // Set Horizontal Splitter FULLY DOWN at startup
             TopGrid . RowDefinitions [ 2 ] . Height = new GridLength ( 0 , GridUnitType . Pixel );
             Col3 . Width = new GridLength ( 350 , GridUnitType . Pixel );
+//          ReadSettings ( );
+
+            //            treeViewModel . SetValue ( SelectedItemProperty , tvi );
         }
         private void Window_Loaded ( object sender , RoutedEventArgs e )
         {
             string output = "";
+            //ShowAllFiles  = true;
             this . SetValue ( FontsizeProperty , InfoList . FontSize );
             canvas . Visibility = Visibility . Visible;
+            CreateStaticData ( );
             CreateBrushes ( );
-            VolumeLabelsDict . Clear ( );
             LoadDrives ( TestTree );
             ExpArgs . SearchSuccessItem = new TreeViewItem ( );
             Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
@@ -272,6 +294,7 @@ namespace MyDev . Views
                 }
             }
             //Grid1 . RowDefinitions [ 1 ] . Height = new GridLength ( 3 , GridUnitType . Star );
+
             //Grid1 . RowDefinitions [ 3 ] . Height = new GridLength ( 155 , GridUnitType . Pixel );
             // orow2 . Height = new GridLength ( 0 , GridUnitType . Pixel ); 
             LsplitterImage = new BitmapImage ( new Uri ( @"\icons\Lrg updown arrow red copy.png" , UriKind . Relative ) );
@@ -329,7 +352,7 @@ namespace MyDev . Views
             File . WriteAllText ( @"TreeViewSettings.dat" , output );
         }
 
-        #endregion startup    items     
+        #endregion startup        
 
         #region close dwn
         private void App_Close ( object sender , RoutedEventArgs e )
@@ -346,29 +369,130 @@ namespace MyDev . Views
         }
         #endregion close dwn
 
-        #region Initialization methods
+        private void CreateStaticData ( )
+        {
+            //			treeView3 . ItemsSource = null;
+            //			treeView3 . Items . Clear ( );
+            //family1 = new Family ( ) { Name = "The Doe's" };
+            //family1 . Members . Add ( new FamilyMember ( ) { Name = "John Doe" , Age = 42 } );
+            //family1 . Members . Add ( new FamilyMember ( ) { Name = "Jane Doe" , Age = 39 } );
+            //family1 . Members . Add ( new FamilyMember ( ) { Name = "Sammy Doe" , Age = 13 } );
+            //families . Add ( family1 );
+
+            //Family family2 = new Family() { Name = "The Moe's" };
+            //family2 . Members . Add ( new FamilyMember ( ) { Name = "Mark Moe" , Age = 31 , Gender = "Male" , Employed = true } );
+            //family2 . Members . Add ( new FamilyMember ( ) { Name = "Norma Moe" , Age = 28 , Gender = "Female" , Employed = false } );
+            //families . Add ( family2 );
+
+            //treeView3 . ItemsSource = families;
+        }
+        //private void treeViewModel_SelectedItemChanged ( object sender , RoutedPropertyChangedEventArgs<object> e )
+        //{
+        //    //			var tree =( TreeViewItem ) treeViewModel . ItemContainerGenerator . ContainerFromItem ( e . OriginalSource ) as TreeViewItem;
+        //    //           var v = e . OriginalSource as TreeViewItem;
+        //    // This  gets the Current selectedItem Correctly !
+        //    var tvItem = treeViewModel . ItemContainerGenerator . ContainerFromItem ( ( ( TreeView ) sender ) . SelectedItem );
+
+        //}
+
+        //private void treeViewModel_Expanded ( object sender , RoutedEventArgs e )
+        //{
+        //    var sel = treeViewModel . SelectedItem as TreeViewItem;
+        //    if ( sel == null )
+        //    {
+        //        if ( CurrentTreeItem == null )
+        //            return;
+        //    }
+        //    else
+        //        LazyLoadingTreeview . TreeViewItem4_Expanded ( sender , e , CurrentTreeItem );
+        //}
+
+        //private void treeViewModel_Collapsed ( object sender , RoutedEventArgs e )
+        //{
+
+        //}
+
+        //private void treeViewModel_Selected ( object sender , RoutedEventArgs e )
+        //{
+
+        //}
+
+        //private void TesViewModel ( object sender , RoutedEventArgs e )
+        //{
+
+        //}
 
         private void TestViewModel ( object sender , RoutedEventArgs e )
         {
             List<string> dirs = new List<string> ( );
             List<string> files = new List<string> ( );
             string selecteddrive = DrivesCombo . SelectedItem . ToString ( );
+            //CreateTreeViewData ( $"{selecteddrive}" , dirs , files );
             LoadDrives ( ActiveTree );
         }
 
+        #region selection changing
+        private void treeView1_SelectedItemChanged ( object sender , RoutedPropertyChangedEventArgs<object> e )
+        {
+            CurrentTree = 1;
+            CurrentLevel = 1;
+            Selection . Text = "";
+            // How to get the currently seleted item's "Header" string
+            var entry = e . NewValue as TreeViewItem;
+            T1SelectedItem = entry?.Header . ToString ( );
+            Selection . Text = T1SelectedItem;
+        }
+        private void treeView2_SelectedItemChanged ( object sender , RoutedPropertyChangedEventArgs<object> e )
+        {
+            CurrentTree = 2;
+            CurrentLevel = 1;
+            // How to get the currently seleted item's "Header" string
+            var entry = e . NewValue as TreeViewItem;
+            T2SelectedItem = entry?.Header . ToString ( );
+            Selection . Text = T2SelectedItem;
+        }
+        private void treeView3_SelectedItemChanged ( object sender , RoutedPropertyChangedEventArgs<object> e )
+        {
+            CurrentTree = 3;
+            // How to get the currently seleted item's data when the Treeiew is Dynamic
+            // We parse down the levels in the tree to find out what level we have selected
+            var entry = e . NewValue as Family;
+            if ( entry != null )
+            {
+                T3SelectedItem = entry?.Name;
+                Selection . Text = T3SelectedItem;
+                CurrentLevel = 1;
+                return;
+            }
+            else
+            {
+                var entry2 = e . NewValue as FamilyMember;
+                entry2 = e . NewValue as FamilyMember;
+                if ( entry2 != null )
+                {
+                    CurrentLevel = 2;
+                    T3SelectedItem = entry2 . Name;
+                    string Empstatus = entry2 . Employed == true ? "Yes" : "No";
+                    FullDetail = entry2 . Name + ", " + entry2 . Age + " years, Employed : " + Empstatus;
+                    Selection . Text = FullDetail;
+                    return;
+                }
+            }
+        }
+        #endregion selection changing
         private void LoadDrives ( TreeView tv )
         {
             bool ValidDrive = false;
-            //            bool HasHiddenItems = false;
+            bool HasHiddenItems = false;
             string volabel = "";
-            string DriveHeader = "";
-            string Padding = "                 ";
+            string DriveHeader = "", Padding = "                 ";
             bool isvalid = false;
             tv . Items . Clear ( );
             listBox . Items . Clear ( );
             listBox . UpdateLayout ( );
             DrivesCombo . Items . Add ( "ALL" );
             LoadValidFiles ( );
+            //     TestTree . FontFamily = "Consolas";
             foreach ( var drive in Directory . GetLogicalDrives ( ) )
             {
                 ValidDrive = false;
@@ -384,8 +508,6 @@ namespace MyDev . Views
                             ValidDrive = false;
                             DriveHeader = Padding . Substring ( 0 , 10 );
                             DriveHeader += "CdRom Drive";
-                            string newlabel = " " + DriveHeader;
-                            VolumeLabelsDict . Add ( drive , newlabel );
                         }
                         else
                         {
@@ -396,12 +518,8 @@ namespace MyDev . Views
                                 if ( CheckIsVisible ( dir . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
                                 {
                                     isvalid = true;
-                                    string newlabel = " " + item . VolumeLabel;
-                                    VolumeLabelsDict . Add ( drive , newlabel );
                                     if ( ShowVolumeLabels == true )
-                                    {
-                                        DriveHeader = $"    [{newlabel}]";
-                                    }
+                                        DriveHeader = $"    [{item . VolumeLabel}]";
                                     break;
                                 }
                             }
@@ -425,6 +543,7 @@ namespace MyDev . Views
                     tv . Items . Add ( item );
                     // Add Dummy entry so we get an "Can be Opened" triangle icon
                     item . Items . Add ( "Loading" );
+                    UpdateListBox ( item . Tag . ToString ( ) );
                     DrivesCombo . Items . Add ( drive . ToString ( ) );
                 }
                 else
@@ -436,16 +555,16 @@ namespace MyDev . Views
                         item . Header = drive + DriveHeader;
                     item . Tag = drive;
                     tv . Items . Add ( item );
+                    UpdateListBox ( item . Tag . ToString ( ) );
                     DrivesCombo . Items . Add ( drive . ToString ( ) );
                 }
+                //break;
             }
             DrivesCombo . Items . Add ( "ALL" );
             DrivesCombo . SelectedIndex = 0;
             DrivesCombo . SelectedItem = 0;
             tv . UpdateLayout ( );
         }
-
-        // Stored list of all Hidden/System file names so we can handle not showing the,
         public void LoadValidFiles ( )
         {
             ValidFiles . Add ( "BOOTMGR" );
@@ -470,8 +589,6 @@ namespace MyDev . Views
             ValidFiles . Add ( "BACKUP_PARTITION" );
             ValidFiles . Add ( "BOOTSECT" );
         }
-
-        #endregion Initialization methods
         private void Window_KeyDown ( object sender , KeyEventArgs e )
         {
             if ( e . Key == Key . F8 )
@@ -514,16 +631,9 @@ namespace MyDev . Views
         }
         #endregion utilities
 
-        #region FULL (get; set; )  Properties
+        #region Dependency Properties
 
-
-        private string expandDuration;
-        public string ExpandDuration
-        {
-            get { return expandDuration; }
-            set { expandDuration = value; OnPropertyChanged ( "ExpandDuration" ); }
-        }
-
+        public string def = ".....................................................";
         private int progressCount;
         public int ProgressCount
         {
@@ -561,6 +671,7 @@ namespace MyDev . Views
             set
             {
                 progressString = value;
+                //               Console . WriteLine ($": [{ProgressString}]");
                 OnPropertyChanged ( ProgressString );
             }
         }
@@ -571,10 +682,6 @@ namespace MyDev . Views
             get { return listboxtotal; }
             set { listboxtotal = value; OnPropertyChanged ( Listboxtotal . ToString ( ) ); }
         }
-
-        #endregion FULL (get; set; )  Properties
-
-        #region Dependency Properties
 
         private SolidColorBrush busyLabelColor;
         public SolidColorBrush BusyLabelColor
@@ -596,42 +703,42 @@ namespace MyDev . Views
             set { SetValue ( tv1SelectedItemProperty , value ); }
         }
         public static readonly DependencyProperty tv1SelectedItemProperty =
-            DependencyProperty . Register ( "tv1SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
+            DependencyProperty . Register ( "tv1SelectedItem" , typeof ( bool ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( false ) );
         public bool tv2SelectedItem
         {
             get { return ( bool ) GetValue ( tv2SelectedItemProperty ); }
             set { SetValue ( tv2SelectedItemProperty , value ); }
         }
         public static readonly DependencyProperty tv2SelectedItemProperty =
-            DependencyProperty . Register ( "tv2SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
+            DependencyProperty . Register ( "tv2SelectedItem" , typeof ( bool ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( false ) );
         public bool tv3SelectedItem
         {
             get { return ( bool ) GetValue ( tv3SelectedItemProperty ); }
             set { SetValue ( tv3SelectedItemProperty , value ); }
         }
         public static readonly DependencyProperty tv3SelectedItemProperty =
-            DependencyProperty . Register ( "tv3SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
+            DependencyProperty . Register ( "tv3SelectedItem" , typeof ( bool ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( false ) );
         public TreeViewItem tv4SelectedItem
         {
             get { return ( TreeViewItem ) GetValue ( tv4SelectedItemProperty ); }
             set { SetValue ( tv4SelectedItemProperty , value ); }
         }
         public static readonly DependencyProperty tv4SelectedItemProperty =
-            DependencyProperty . Register ( "tv4SelectedItem" , typeof ( TreeViewItem ) , typeof ( TreeViews ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
+            DependencyProperty . Register ( "tv4SelectedItem" , typeof ( TreeViewItem ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
         public TreeViewItem SelectedItem
         {
             get { return ( TreeViewItem ) GetValue ( SelectedItemProperty ); }
             set { SetValue ( SelectedItemProperty , value ); }
         }
         public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty . Register ( "SelectedItem" , typeof ( TreeViewItem ) , typeof ( TreeViews ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
+            DependencyProperty . Register ( "SelectedItem" , typeof ( TreeViewItem ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
         public double Fontsize
         {
             get { return ( double ) GetValue ( FontsizeProperty ); }
             set { SetValue ( FontsizeProperty , value ); }
         }
         public static readonly DependencyProperty FontsizeProperty =
-            DependencyProperty . Register ( "Fontsize" , typeof ( double ) , typeof ( TreeViews ) , new PropertyMetadata ( ( double ) 12 ) );
+            DependencyProperty . Register ( "Fontsize" , typeof ( double ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( double ) 12 ) );
         public BitmapImage LsplitterImage
         {
             get
@@ -639,7 +746,7 @@ namespace MyDev . Views
             set { SetValue ( LsplitterImageProperty , value ); }
         }
         public static readonly DependencyProperty LsplitterImageProperty =
-            DependencyProperty . Register ( "LsplitterImage" , typeof ( BitmapImage ) , typeof ( TreeViews ) , new PropertyMetadata ( ( BitmapImage ) null ) );
+            DependencyProperty . Register ( "LsplitterImage" , typeof ( BitmapImage ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( BitmapImage ) null ) );
         public BitmapImage VsplitterImage
         {
             get
@@ -647,7 +754,7 @@ namespace MyDev . Views
             set { SetValue ( VsplitterImageProperty , value ); }
         }
         public static readonly DependencyProperty VsplitterImageProperty =
-            DependencyProperty . Register ( "VsplitterImage" , typeof ( BitmapImage ) , typeof ( TreeViews ) , new PropertyMetadata ( ( BitmapImage ) null ) );
+            DependencyProperty . Register ( "VsplitterImage" , typeof ( BitmapImage ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( BitmapImage ) null ) );
         public string LeftSplitterText
         {
             get { return ( string ) GetValue ( LeftSplitterTextProperty ); }
@@ -655,7 +762,7 @@ namespace MyDev . Views
         }
         // Using a DependencyProperty as the backing store for LeftSplitterText.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LeftSplitterTextProperty =
-            DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( TreeViews ) , new PropertyMetadata ( ( string ) "Drag Up or Down" ) );
+            DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( string ) "Drag Up or Down" ) );
         public string RightSplitterText
         {
             get { return ( string ) GetValue ( RightSplitterTextProperty ); }
@@ -663,7 +770,7 @@ namespace MyDev . Views
         }
         // Using a DependencyProperty as the backing store for LeftSplitterText.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty RightSplitterTextProperty =
-            DependencyProperty . Register ( "RightSplitterText" , typeof ( string ) , typeof ( TreeViews ) , new PropertyMetadata ( ( string ) "to View Directory Tree / Drive Technical Information." ) );
+            DependencyProperty . Register ( "RightSplitterText" , typeof ( string ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( string ) "to View Directory Tree / Drive Technical Information." ) );
 
 
         public SolidColorBrush LbTextColor
@@ -672,12 +779,33 @@ namespace MyDev . Views
             set { SetValue ( LbTextColorProperty , value ); }
         }
         public static readonly DependencyProperty LbTextColorProperty =
-            DependencyProperty . Register ( "LbTextColor" , typeof ( SolidColorBrush ) , typeof ( TreeViews ) ,
+            DependencyProperty . Register ( "LbTextColor" , typeof ( SolidColorBrush ) , typeof ( HierarchicalTreeView ) ,
                 new PropertyMetadata ( new SolidColorBrush ( Colors . Black ) ) );
 
         #endregion Dependency Properties
 
         #region Attached Properties
+        private string expandDuration;
+        public string ExpandDuration
+        {
+            get { return expandDuration; }
+            set { expandDuration = value; OnPropertyChanged ( "ExpandDuration" ); }
+        }
+
+
+        //       public static string GetExpandDuration ( DependencyObject obj )
+        //       {
+        //           Console . WriteLine ($"{( string ) obj . GetValue ( ExpandDurationProperty)}");
+        //           return ( string ) obj . GetValue ( ExpandDurationProperty );
+        //       }
+        //       public static void SetExpandDuration ( DependencyObject obj , string value )
+        //       {
+        //           obj . SetValue ( ExpandDurationProperty , value );
+        ////           Console . WriteLine ( $"{( string ) obj . GetValue ( ExpandDurationProperty )}" );
+        //       }
+        //       public static readonly DependencyProperty ExpandDurationProperty =
+        //           DependencyProperty . RegisterAttached ( "ExpandDuration" , typeof ( string ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( "0:00" ) );
+
 
         public static bool Gettvselection ( DependencyObject obj )
         {
@@ -688,7 +816,7 @@ namespace MyDev . Views
             obj . SetValue ( tvselectionProperty , value );
         }
         public static readonly DependencyProperty tvselectionProperty =
-            DependencyProperty . RegisterAttached ( "tvselection" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( ( bool ) false ) );
+            DependencyProperty . RegisterAttached ( "tvselection" , typeof ( bool ) , typeof ( HierarchicalTreeView ) , new PropertyMetadata ( ( bool ) false ) );
 
         #endregion Attached Properties
 
@@ -783,6 +911,36 @@ namespace MyDev . Views
 
         #endregion Flowdoc support via library
 
+        //private void treeViewModel_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        //{
+        //    if ( Utils . HitTestScrollBar ( sender , e ) )
+        //    {
+        //        return;
+        //    }
+        //    if ( treeViewModel . Items . CurrentItem == null )
+        //        CurrentTreeItem = treeViewModel . Items . GetItemAt ( 0 ) as TreeViewItem;
+        //    else
+        //    {
+        //    }
+        //    //var indx = treeViewModel . Items . IndexOf ( CurrentTreeItem );
+        //    //            var v = ( TreeViewItem ) treeViewModel . ItemContainerGenerator . ContainerFromItem ( e . OriginalSource ) as TreeViewItem;
+        //    //var v2 = ( TreeViewItem ) treeViewModel . ItemContainerGenerator . ContainerFromItem ( CurrentTreeItem ) as TreeViewItem;
+        //    Console . WriteLine ( $"Left Button Down returns ? CurrentTreeItem={CurrentTreeItem}" );
+        //    LazyLoadingTreeview . TreeViewItem4_Expanded ( sender , null , CurrentTreeItem );
+        //}
+        //private void treeViewModel_Loaded ( object sender , RoutedEventArgs e )
+        //{
+        //    // This  gets the Current selectedItem Correctly !
+        //    TreeViewItem tvi = new TreeViewItem ( );
+        //    tvi . Header = @"C:\";
+        //    treeViewModel . SetValue ( SelectedItemProperty , tvi );
+        //    treeViewModel . SetCurrentValue ( SelectedItemProperty , tvi );
+        //    var sel = treeViewModel . SelectedItem;
+        //    //. SetCurrentSelectedItem(@"C:\\" );
+        //    var tvItem = treeViewModel . ItemContainerGenerator . ContainerFromItem ( ( ( TreeView ) sender ) . SelectedItem );
+        //    var curr = TvExplorer . CurrentDrive;
+        //    treeViewModel . Focus ( );
+        //}
         private void ShowDriveInfo ( object sender , RoutedEventArgs e )
         {
             string output = "";
@@ -791,8 +949,6 @@ namespace MyDev . Views
             List<lbitemtemplate> lbtmplates = new List<lbitemtemplate> ( );
             InfoList . ItemsSource = null;
             InfoList . Items . Clear ( );
-
-            // Create list of drive info in individual Templates & add to array of templates
             for ( int x = 0 ; x < Texplorer . Drives . Count ; x++ )
             {
                 DriveInfo [ ] driveinfo = DriveInfo . GetDrives ( );
@@ -854,9 +1010,11 @@ namespace MyDev . Views
             foreach ( var dir in directories )
             {
                 var subitem = new TreeViewItem ( );
+                //                if ( subitem . Items . Count == 1 && subitem . Items [ 0 ] == "Loading" )
+                //                    subitem . Items . Clear ( );
                 ShowProgress ( );
 
-                if ( CheckIsVisible ( dir . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
+                if ( CheckIsVisible ( dir . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == true )
                 {
                     try
                     {
@@ -876,41 +1034,60 @@ namespace MyDev . Views
                             tv . Header = "Loading";
                             //                      tv . Tag = "Loading";
                             subitem . Items . Add ( tv );
-                            ScrollCurrentTvItemIntoView ( subitem );
+                            //ScrollCurrentTvItemIntoView (subitem );
 
-                            AddDirectoriesToTestTreeview ( directories , subitem , listBox );
+                            //AddDirectoriesToTestTreeview ( directories , subitem , listBox );
                         }
                         else
                         {
-                            //var dirfile = Directory . GetFiles ( dir , "*.*" );
-                            //count = ( int ) dirfile . Length;
-                            //if ( count > 0 )
-                            //{
-                            //    //foreach ( var temp in dirfile )
-                            //    //{
-                            var tv = new TreeViewItem ( );
-                            tv = item;
-                            if ( tv . Header . ToString ( ) == "Loading" )
-                                item . Items . Clear ( );
+                            var dirfile = Directory . GetFiles ( dir , "*.*" );
+                            count = ( int ) dirfile . Length;
+                            if ( count > 0 )
+                            {
+                                //foreach ( var temp in dirfile )
+                                //{
+                                var tv = new TreeViewItem ( );
+                                tv . Header = "Loading";
+                                //                            tv . Tag = temp;
+                                subitem . Items . Add ( tv );
+                                //                            subitem . IsExpanded = true;
+                                ActiveTree . HorizontalContentAlignment = HorizontalAlignment . Left;
+                                ScrollCurrentTvItemIntoView ( subitem );
+                                TestTree . Refresh ( );
 
-                            //    //                            tv . Tag = temp;
-                            //    subitem . Items . Add ( tv );
-                            //    //                            subitem . IsExpanded = true;
-                            //    ActiveTree . HorizontalContentAlignment = HorizontalAlignment . Left;
-                            //    ScrollCurrentTvItemIntoView ( subitem );
-                            //    TestTree . Refresh ( );
-
-                            //    //}
+                                //}
+                            }
                         }
                     }
-                    //}
                     catch ( Exception ex )
                     {
-                        Console . WriteLine ( $"AddDirectoriesoTestTreeView : 903 ; Invalid  directory accessed {ex . Message}" );
+                        Console . WriteLine ( $"Invalid  directory accessed {ex . Message}" );
+                        //                    continue;
                     }
                 }
                 ShowProgress ( );
+                //if ( CheckIsVisible ( dir . ToUpper ( ) , ShowAllfiles ) == true )
+                //{
+                //    // add the dummy entry to each of the subdirectories we are adding to the tree so we get the Expand icons
+                // need to protect against invalid folder access from crashing us!!!!
+                //int totdirs = GetDirectoryCount ( dir );
+                // if ( totdirs == 0 )
+                // {
+                //     //int count = GetDirectories ( dir , out directories );
+                //     //if ( count > 0 )
+                //     //    AddDirectoriesToTestTreeview ( directories , subitem , listBox );
+                // }
+                // else
+                // {
+                //     int count = GetDirectories ( dir, out directories );
+                //     if(count > 0)
+                //        AddDirectoriesToTestTreeview ( directories , subitem , listBox );
+                // }
+                //  ShowProgress ( );
                 added++;
+                //}
+                //else
+                //    ShowProgress ( );
             }
             return added;
         }
@@ -919,12 +1096,12 @@ namespace MyDev . Views
             int count = 0;
             if ( item . Items . Count == 1 )
             {
-                //var tmp = item . Items [ 0 ] . ToString ( );
-                //                if ( tmp == "Loading" )
-                item . Items . Clear ( );
+                var tmp = item . Items [ 0 ] . ToString ( );
+                if ( tmp == "Loading" )
+                    item . Items . Clear ( );
 
             }
-            //            item . IsExpanded = true;
+            item . IsExpanded = true;
             foreach ( var itm in Allfiles )
             {
                 ShowProgress ( );
@@ -933,7 +1110,7 @@ namespace MyDev . Views
                     Header = GetFileFolderName ( itm ) ,
                     Tag = itm
                 };
-                if ( CheckIsVisible ( itm . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
+                if ( CheckIsVisible ( itm . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == true )
                 {
                     item . Items . Add ( subitem );
                     item . IsSelected = true;
@@ -960,31 +1137,28 @@ namespace MyDev . Views
                 {
                     foreach ( var item in directs )
                     {
-                        try
+                        if ( filterSysfiles )
                         {
-                            if ( filterSysfiles )
-                            {
-                                ShowProgress ( );
-                                if ( IsSystemFile ( item . ToUpper ( ) ) == true )
-                                {
-                                    continue;
-                                }
-                            }
-                            directories . Add ( item );
                             ShowProgress ( );
-                            if ( FullExpandinProgress == false )
-                                ActiveTree . Refresh ( );
-                            count++;
+                            if ( IsSystemFile ( item . ToUpper ( ) ) == true )
+                            {
+                                continue;
+                            }
                         }
-                        catch ( Exception ex ) { Console . WriteLine ( $"GetDirectories : 980 : {ex . Message}" ); }
+                        //if ( CheckIsVisible ( item . ToUpper ( ) , ShowAllfiles ) == true )
+                        directories . Add ( item );
+
+                        //                        UpdateListBox ( item );
+
+
+                        ShowProgress ( );
+                        if ( FullExpandinProgress == false )
+                            ActiveTree . Refresh ( );
+                        count++;
                     }
-                    ShowExpandTime ( );
                 }
             }
-            catch ( Exception ex )
-            {
-                { Console . WriteLine ( $"GetDirectories : 981 : {ex . Message}" ); }
-            }
+            catch { }
             dirs = directories;
             return count;
         }
@@ -997,10 +1171,7 @@ namespace MyDev . Views
                 string [ ] directs = Directory . GetDirectories ( path , "*.*" );
                 count = directs . Length;
             }
-            catch ( Exception ex )
-            {
-                { Console . WriteLine ( $"GetDirectoryCount : 9968 : {ex . Message}" ); }
-            }
+            catch { }
             return count;
         }
         public int GetFiles ( string path , out List<string> allfiles )
@@ -1020,7 +1191,7 @@ namespace MyDev . Views
                     foreach ( var item in file )
                     {
                         ShowProgress ( );
-                        if ( CheckIsVisible ( item . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
+                        if ( CheckIsVisible ( item . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == true )
                         {
                             files . Add ( item );
                             count++;
@@ -1031,13 +1202,9 @@ namespace MyDev . Views
                         if ( FullExpandinProgress == false )
                             ActiveTree . Refresh ( );
                     }
-                    ShowExpandTime ( );
                 }
             }
-            catch ( Exception ex ) { 
-                Console . WriteLine ( $"GetFiles : 1052 : {ex . Message}" );
-                ExceptionMessage = $"{ex . Message}";
-            }
+            catch { }
             allfiles = files;
             return count;
         }
@@ -1066,13 +1233,208 @@ namespace MyDev . Views
                 //        //					files . AddRange ( file );
                 //    }
             }
-            catch ( Exception ex ) { Console . WriteLine ( $"GetFilesCount : 1081 : {ex . Message}" ); }
-
+            catch { }
             //allfiles = files;
             return count;
         }
 
         #endregion Treeview support methods
+
+        private void treeView4_Selected ( object sender , RoutedEventArgs e )
+        {
+            //bool isCollapsing = false;
+            //return;
+
+            //TreeViewItem tvi = treeView4 . SelectedItem as TreeViewItem;
+            //if ( tvi == null )
+            //    return;
+            //CurrentItem = tvi;
+            //var tag = tvi . Tag;
+            //if ( tvi . IsExpanded == true )
+            //{
+            //    isCollapsing = true;
+            //    isresettingSelection = true;
+            //    tvi . IsSelected = true;
+            //    return;
+            //}
+            //else
+            //    tvi . IsExpanded = false;
+            //// fully qualified path to selected item
+            //var s = tag . ToString ( );
+            //// This is  the current selection under the cursor !
+            //string selectedItem = tvi . Tag . ToString ( );
+            //GetItemCounts ( selectedItem , out int Dircount , out int Filecount );
+            //isresettingSelection = true;
+            //testtreebanner . Text = $"Current Folder Content(s) for : {selectedItem}";
+            //isresettingSelection = true;
+            //// tvi . IsSelected = true;
+            //if ( tvi . IsExpanded == false )
+            //{
+            //    //e . Handled = true;
+            //}
+            //else
+            //{
+            //    isresettingSelection = true;
+            //}
+            //return;
+        }
+        private void treeView4_Collapsed ( object sender , RoutedEventArgs e )
+        {
+            //Mouse . OverrideCursor = Cursors . Wait;
+            //TreeViewItem item = e . OriginalSource as TreeViewItem;
+            //CurrentItem = item;
+            //item . IsExpanded = false;
+            //item . Items . Clear ( );
+            //// Add Dummy entry just so we do get the expand icon
+            //item . Items . Add ( "Loading" );
+            //string header = item . Header . ToString ( );
+            //listBox . Items . Clear ( );
+            //listBox . Refresh ( );
+            ////            Mouse . SetCursor ( Cursors . Arrow );
+            //GetItemCounts ( header , out int Dircount , out int Filecount );
+            //Mouse . OverrideCursor = Cursors . Arrow;
+        }
+        private void treeView4_SelectedItemChanged ( object sender , RoutedPropertyChangedEventArgs<object> e )
+        {
+            //var item = e . NewValue as TreeViewItem;
+            //if ( item != null )//&& item . IsSelected == false )
+            //{
+            //    item . IsSelected = true;
+            //}
+            //// This  gets the Current selectedItem Correctly, but  as a DependencyObject - not sure how to use that !
+            //var tvItem = treeView4 . ItemContainerGenerator . ContainerFromItem ( ( ( TreeView ) sender ) . SelectedItem );
+            //SetValue ( tv4SelectedItemProperty , item );
+            //CurrentItem = item;
+        }
+        private void treeView4_PreviewMouseRightButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            //this . Flowdoc . Height = 200;
+
+            ////treeView4.GetValue(H)
+            //fdl . FdMsg ( Flowdoc , canvas , "Testing FdMsg in Treeview" , $"{treeView4 . DisplayMemberPath}" );
+        }
+        private void TreeViewItem4_Expanded ( object sender , RoutedEventArgs e )
+        {
+            //#region Expanding  setup
+            //TreeViewItem item = null;
+            //int itemscount = 0;
+            //if ( e != null )
+            //    item = e . Source as TreeViewItem;
+            //else
+            //    item = sender as TreeViewItem;
+            ////            Mouse . SetCursor ( Cursors . Wait );
+            //if ( item == null )
+            //    return;
+
+            //// This is CRITICAL to get any drive that is currently selected to open when the expand icon is clicked
+            ////if ( item . IsSelected == true )
+            ////item . IsSelected = false;
+            //listBox . Items . Clear ( );
+            //listBox . UpdateLayout ( );
+
+            //item . IsSelected = true;
+            //#endregion Expanding  setup
+
+            //#region Expanding Get Folders
+
+            //var directories = new List<string> ( );
+            //var Allfiles = new List<string> ( );
+            //string Fullpath = item . Tag . ToString ( ) . ToUpper ( );
+
+            //string InfoMessage = "";
+            //int DirectoryCount = 0;
+            //int FileCount = 0;
+            //itemscount = item . Items . Count;
+            //var tvi = item as TreeViewItem;
+            //if ( itemscount == 0 )
+            //    return;
+            //var itemheader = item . Items [ 0 ] . ToString ( );
+            //if ( itemheader == "Loading" )
+            //    item . Items . Clear ( );
+            //// Get a list of all items in the current folder
+            //int count = GetDirectories ( Fullpath , out directories );
+            //if ( count == 0 || directories == null )
+            //    return;
+            //DirectoryCount = count;
+            //if ( directories . Count >= 1 )
+            //{
+            //    DirectoryCount = AddDirectoriesToTreeview ( directories , item , listBox );
+            //}
+            //else
+            //    DirectoryCount = 0;
+            ////// Check to see if there any file items in the current folder
+            //if ( DirectoryCount > 0 )
+            //    InfoMessage = $"Current Item : {Fullpath} -  {DirectoryCount} SubDirectory(s)";
+            //else
+            //{
+            //    if ( ShowAllfiles )
+            //        InfoMessage = $"Current Item : {Fullpath} -  No SubDirectories ";
+            //    else
+            //        InfoMessage = $"Current Item : {Fullpath} -  No valid SubDirectories ";
+            //}
+            //GetFiles ( Fullpath , out Allfiles );
+            //FileCount = Allfiles . Count;
+            //if ( FileCount > 0 )
+            //{
+            //    int added = AddFilesToTreeview ( Allfiles , item );
+            //    if ( added == 0 )
+            //        InfoMessage += $",  No Files";
+            //    else
+            //        InfoMessage += $", {added} Files";
+            //}
+            //else
+            //    InfoMessage += $",  No Files";
+            //Selection . Text = InfoMessage;
+            //treeView4 . UpdateLayout ( );
+            //testtreebanner . Text = $"Current Folder Content(s) for : {Fullpath}";
+            //return;
+            //#region Expanding Get Files	  (UNUSED)
+            //#endregion Expanding Get Files	  (UNUSED)
+        }
+        private void treeView4_MouseDoubleClick ( object sender , MouseButtonEventArgs e )
+        {
+            //TreeView tv = treeView4;
+            //var rootTreeViewItem = treeView4 . SelectedItem as TreeViewItem;
+            //listBox . Items . Add ( rootTreeViewItem . Tag . ToString ( ) );
+            //return;
+
+        }
+        private void treeView4_PreviewMouseDoubleClick ( object sender , MouseButtonEventArgs e )
+        {
+            //TreeView tv = treeView4;
+            //string stre = tv . SelectedValuePath;
+            //treeView4 . UpdateLayout ( );
+            //// Get   the currently selected node
+            //var rootTreeViewItem = treeView4 . SelectedItem as TreeViewItem;
+            //if ( rootTreeViewItem != null && rootTreeViewItem . IsExpanded == false )
+            //{
+            //    ExpandAll3 ( rootTreeViewItem , true );
+            //    // ExpandAll3 ( rootTreeViewItem , false );
+            //    rootTreeViewItem . IsExpanded = true;
+            //}
+            //else
+            //    ExpandAll3 ( rootTreeViewItem , false );
+            ////rootTreeViewItem . UpdateLayout ( );
+        }
+        private void treeView4_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            //            var rootTreeViewItem = treeView4 . SelectedItem as TreeViewItem;
+            //if ( rootTreeViewItem != null )
+            //    CurrentItem = rootTreeViewItem;
+            //return;
+
+
+            //ExpandAll3 ( rootTreeViewItem , true );
+
+            //if ( rootTreeViewItem . IsExpanded )
+            //{
+            //    rootTreeViewItem . IsExpanded = false;
+            //    rootTreeViewItem . IsSelected = true;
+            //    rootTreeViewItem . UpdateLayout ( );
+            //    CurrentItem = rootTreeViewItem;
+            //}
+        }
+
 
         #region Splitter handlers
         private void LeftSplitter_DragStarted ( object sender , System . Windows . Controls . Primitives . DragStartedEventArgs e )
@@ -1182,11 +1544,14 @@ namespace MyDev . Views
 
         #endregion Splitter handlers
 
-        #region TestTree Expanding Handling methods
+        #region Expand // Collapse
 
-        //        int iterations = 0;
-        //        public Task t1;
-        //        public DispatcherOperation operation;
+        #region TestTree Expanding Handling methods
+        int iterations = 0;
+
+
+        public Task t1;
+        public DispatcherOperation operation;
         private bool ExpandAll3 ( TreeViewItem items , bool expand , int levels )
         {
             if ( items == null )
@@ -1197,9 +1562,12 @@ namespace MyDev . Views
             {
                 if ( AbortExpand )
                     return false;
-                //iterations++;
+                iterations++;
+                //                Thread . Sleep ( SLEEPTIME );
+
                 ShowProgress ( );
                 TreeViewItem childControl = obj as TreeViewItem;
+                //stack . Push ( childControl . Tag . ToString ( ) );
                 if ( childControl != null )
                 {
                     UpdateExpandprogress ( );
@@ -1208,10 +1576,10 @@ namespace MyDev . Views
                     try
                     {
                         childControl . IsExpanded = true;
+                        //stack . Push ( childControl . Tag . ToString ( ) );
                     }
-                    catch ( Exception ex ) { Console . WriteLine ( $"ExpandAll3: 1427 : {ex . Message}" ); }
-                    if ( childControl . Header . ToString ( ) == "Loading" )
-                        continue;
+                    catch ( Exception ex ) { }
+
                     if ( CheckSearchSuccess ( childControl . Tag . ToString ( ) ) == true )
                     {
                         UpdateListBox ( $"Search for {Searchtext . Text} found  as [" + childControl . Header . ToString ( ) + $"]\nin {childControl . Tag . ToString ( )}" );
@@ -1224,8 +1592,8 @@ namespace MyDev . Views
                         return true;
                     }
 
+
                     ShowProgress ( );
-                    ShowExpandTime ( );
                     if ( CalculateLevel ( childControl . Tag . ToString ( ) ) > levels )
                         break;
 
@@ -1247,6 +1615,7 @@ namespace MyDev . Views
                                     ActiveTree . HorizontalContentAlignment = HorizontalAlignment . Left;
                                     ScrollCurrentTvItemIntoView ( childControl );
                                     childControl . IsSelected = true;
+                                    //SearchSuccess = true;
                                     ExpArgs . SearchSuccess = true;
                                     return true;
                                 }
@@ -1258,8 +1627,10 @@ namespace MyDev . Views
                             {
                                 ShowProgress ( );
                                 Selection . Text = $"Calling ExpandAll3 for {childControl . Tag . ToString ( )}";
+                                //                                Console . WriteLine ( Selection . Text );
+                                //                                Thread . Sleep ( SLEEPTIME );
+
                                 UpdateListBox ( childControl . Tag . ToString ( ) );
-                                ShowExpandTime ( );
                                 if ( ExpandAll3 ( childControl as TreeViewItem , expand , levels ) == true )
                                 {
                                     //ActiveTree . HorizontalContentAlignment = HorizontalAlignment . Left;
@@ -1270,7 +1641,6 @@ namespace MyDev . Views
                                     return true;
                                 }
                                 ShowProgress ( );
-                                ShowExpandTime ( );
                                 if ( FullExpandinProgress == false )
                                     ActiveTree . Refresh ( );
                             }
@@ -1284,7 +1654,7 @@ namespace MyDev . Views
                                 childControl . IsExpanded = true;
                                 //stack . Push ( childControl . Tag . ToString ( ) );
                             }
-                            catch ( Exception ex ) { Console . WriteLine ( $"ExpandAll3: 1503 : {ex . Message}" ); }
+                            catch ( Exception ex ) { }
                             ShowProgress ( );
                             if ( FullExpandinProgress == false )
                                 ActiveTree . Refresh ( );
@@ -1298,7 +1668,7 @@ namespace MyDev . Views
                             childControl . IsExpanded = true;
                             //stack . Push ( childControl . Tag . ToString ( ) );
                         }
-                        catch ( Exception ex ) { Console . WriteLine ( $"ExpandAll3: 1517 : {ex . Message}" ); }
+                        catch ( Exception ex ) { }
                     }
                     ShowProgress ( );
                     if ( FullExpandinProgress == false )
@@ -1310,11 +1680,11 @@ namespace MyDev . Views
                     ActiveTree . Refresh ( );
             }
             ShowProgress ( );
-            ShowExpandTime ( );
             if ( FullExpandinProgress == false )
                 ActiveTree . Refresh ( );
             return false;
         }
+
         private void ExpandAllDrivesBelowCurrent ( object [ ] Args )
         {
             // WORKING for TWO levels onlly
@@ -1327,7 +1697,7 @@ namespace MyDev . Views
             List<string> list = new List<string> ( );
             string [ ] drives = Directory . GetLogicalDrives ( );
             bool islaterdrive = false;
-            //            ProgressCount = 0;
+            ProgressCount = 0;
             ProgressString = "";
             foreach ( var validdrive in drives )
             {
@@ -1338,7 +1708,7 @@ namespace MyDev . Views
                 }
                 islaterdrive = true;
                 ShowProgress ( );
-                ShowExpandTime ( );
+
                 foreach ( TreeViewItem nextdrive in ActiveTree . Items )
                 {
                     nextdrive . IsExpanded = true;
@@ -1369,20 +1739,20 @@ namespace MyDev . Views
                             }
                         }
                         ActiveTree . Refresh ( );
-                        ShowExpandTime ( );
                     }
                 }
             }
             ActiveTree . Refresh ( );
-            //            ProgressCount = 0;
+            ProgressCount = 0;
             ProgressString = "Done ...";
             ShowExpandTime ( );
             Mouse . OverrideCursor = Cursors . Arrow;
         }
 
         // ALL WORKING  REASONABLY CORRECTLY IT APPEARS 14/4/22
+        // BUT SOME FILE ENTRIES SEEM TO BE DUPLICATED
 
-        public void TriggerExpand0 ( object sender , RoutedEventArgs e )
+        public async void TriggerExpand0 ( object sender , RoutedEventArgs e )
         {
             if ( TestTree . SelectedItem == null )
             {
@@ -1391,15 +1761,15 @@ namespace MyDev . Views
             }
             object [ ] Args = { TestTree . SelectedItem as TreeViewItem , ( object ) 1 , null };
             startitem = TestTree . SelectedItem as TreeViewItem;
-            //            ExpandSetup ( true );
+            ExpandSetup ( true );
             DirectoryOptions . Focus ( );
-            ExpanderMenuOption . Text = "Expand Top Level only of Selected Item.";
+            ExpanderMenuOption . Text = "Expand Top Level only of Selected Item only";
 
-            // ClearExpandArgs ( );
+            ClearExpandArgs ( );
             ExpArgs . tvitem = ActiveTree . SelectedItem as TreeViewItem;
             ExpArgs . Selection = 0;
-            //            ExpArgs . ExpandLevels = 1;
-            RunExpandSystem ( null , null );
+            ExpArgs . ExpandLevels = 1;
+            await RunExpandSystem ( null , null );
             return;
         }
         public async void TriggerExpand1 ( object sender , RoutedEventArgs e )
@@ -1432,7 +1802,7 @@ namespace MyDev . Views
                 ExpArgs . Selection = 1;
             }
 
-            RunExpandSystem ( null , null );
+            await RunExpandSystem ( null , null );
             return;
 
             //if ( ExpandCurrentAllLevels ( Args ) == true && TextToSearchFor != "" )
@@ -1469,7 +1839,7 @@ namespace MyDev . Views
                 ExpanderMenuOption . Text = "Search for item down up to 3 levels";
                 ExpArgs . Selection = 2;
             }
-            RunExpandSystem ( null , null );
+            await RunExpandSystem ( null , null );
             return;
         }
         public async void TriggerExpand3 ( object sender , RoutedEventArgs e )
@@ -1500,7 +1870,7 @@ namespace MyDev . Views
                 ExpanderMenuOption . Text = "Search for Item down to 4 levels";
                 ExpArgs . Selection = 3;
             }
-            RunExpandSystem ( null , null );
+            await RunExpandSystem ( null , null );
             return;
         }
         public async void TriggerExpand4 ( object sender , RoutedEventArgs e )
@@ -1540,7 +1910,7 @@ namespace MyDev . Views
                 ExpanderMenuOption . Text = $"Search for Item in {ExpArgs . ExpandLevels} levels";
                 ExpArgs . Selection = 4;
             }
-            RunExpandSystem ( null , null );
+            await RunExpandSystem ( null , null );
             return;
 
         }
@@ -1579,7 +1949,7 @@ namespace MyDev . Views
                             item2 . IsExpanded = true;
                             //stack . Push ( item2 . Tag . ToString ( ) );
                         }
-                        catch ( Exception ex ) { Console . WriteLine ( $"ExpandFolder : 1797 : {ex . Message}" ); }
+                        catch ( Exception ex ) { }
                         UpdateListBox ( item2 . Tag . ToString ( ) );
                         ShowProgress ( );
                         ShowExpandTime ( );
@@ -1587,11 +1957,11 @@ namespace MyDev . Views
                             ActiveTree . Refresh ( );
                     }
                     UpdateExpandprogress ( );
-                    ShowExpandTime ( );
                 }
             }
             return false;
         }
+        #endregion Expanding
 
         #region Expanding support methods
         private void UpdateExpandprogress ( )
@@ -1683,10 +2053,14 @@ namespace MyDev . Views
             {
                 if ( drive != DriveToLoad && DriveToLoad != "ALL" )
                     continue;
+                //                if ( iterator > 1 )
+                //                  break;
                 iterator++;
                 var item = new TreeViewItem ( );
                 item . Header = drive;
                 item . Tag = drive;
+                //                item . Items . Add ( "Loading" );
+                //                continue;
 
                 // Add Dummy entry so we get an "Can be Opened" triangle icon
                 int dircount = GetDirectories ( drive , out List<string> directories );
@@ -1698,6 +2072,52 @@ namespace MyDev . Views
                     TestTree . Items . Add ( item );
                 }
                 continue;
+
+                dirs = directories;
+
+                foreach ( var directory in dirs )
+                {
+                    var diritem = new TreeViewItem ( );
+                    diritem . Header = directory;
+                    diritem . Tag = directory;
+                    // Add Dummy entry so we get an "Can be Opened" triangle icon
+                    int filecount = GetFiles ( directory , out files );
+                    if ( filecount > 0 )
+                        diritem . Items . Add ( "Loading" );
+                    // Add directory to treeview
+                    item . Items . Add ( diritem );
+                    //int DirectoryCount = AddDirectoriesToTestTree ( directories , diritem , listBox, true);
+                    continue;
+
+                    iterator++;
+                    currentdir . Clear ( );
+                    currentdir . Add ( directory );
+
+                    if ( filecount > 0 )
+                    {
+                        foreach ( var file in files )
+                        {
+                            // Add Files to treeview
+                            var subitem = new TreeViewItem ( );
+                            subitem . Header = GetFileFolderName ( file );
+                            subitem . Tag = file;
+                            if ( CheckIsVisible ( file . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == true )
+                            {     // add the dummy entry to each of the subdirectories we are adding to the tree so we get the Expand icons
+                                subitem . Items . Add ( "Loading" );
+                                // force it  to iterate  recursively
+                                //                                TreeViews tvs = new TreeViews ( );
+                                TestTree . Items . Add ( subitem );
+                                // Add item to parent
+
+                                //subitem . Expanded += tvs . TreeViewItem4_Expanded;
+                            }
+                        }
+                    }
+                    //foreach ( var file in files )
+                    //{
+                    //    TestTree . Items . Add ( file );
+                    //}
+                }
             }
         }
         private void listBox_PreviewMouseRightButtonDown ( object sender , MouseButtonEventArgs e )
@@ -1745,8 +2165,6 @@ namespace MyDev . Views
         {
             if ( ProgressCount < PROGRESSWRAPVALUE )
                 ProgressCount++;
-            else
-                ProgressCount = 0;
         }
         public void StartTimer ( )
         {
@@ -1811,8 +2229,6 @@ namespace MyDev . Views
         {
             if ( direction )
             {
-                //                ProgressCount = 0;
-                Duration . Text = "";
                 ProgressCount = 0;
                 ProgressString = "";
                 Listboxtotal = 0;
@@ -1842,7 +2258,7 @@ namespace MyDev . Views
                 BusyLabel . Visibility = Visibility . Hidden;
 
                 if ( ExpArgs . SearchSuccess )
-                    UpdateListBox ( $"\nSearch for {ExpArgs . SearchTerm} completed successfully ..." );
+                    UpdateListBox ( $"\nSearch for {ExpArgs . SearchTerm} completed successfully ...\nApproximately {Expandcounter . Text } objects have been Searched" );
                 else
                     UpdateListBox ( $"\nExpansion completed successfully ..." );
                 //UpdateListBox ( $"All SubDirectories below {startitem.Tag.ToString()} have been expanded" );
@@ -1850,7 +2266,7 @@ namespace MyDev . Views
                 //listBox . ScrollIntoView ( $"All SubDirectories below {startitem . Tag . ToString ( )} have been expanded" );
                 TotalItemsExpanded = 0;
                 //                Listboxtotal= 0;
-                //ProgressCount = 0;
+                ProgressCount = 0;
                 //ProgressString = "";
                 ShowExpandTime ( );
                 Expandprogress . Refresh ( );
@@ -1858,9 +2274,9 @@ namespace MyDev . Views
                 UpdateListBox ( "" );
                 //if ( TotalItemsExpanded > 0 )
                 if ( ExpArgs . SearchSuccess )
-                    UpdateListBox ( $"Around {Expandcounter . Text } objects have been\nOpened & Searched..." );
+                    UpdateListBox ( $"\nAround {Expandcounter . Text } objects have been Opened / Searched..." );
                 else
-                    UpdateListBox ( $"Around {Expandcounter . Text } objects have been Expanded..." );
+                    UpdateListBox ( $"\nAround {Expandcounter . Text } objects have been Expanded..." );
                 Expandprogress . Text = "Finished ...";
                 vsplitterright . Cursor = Cursors . SizeWE;
                 hsplitter . Cursor = Cursors . SizeNS;
@@ -1875,7 +2291,7 @@ namespace MyDev . Views
             for ( int i = count - 1 ; i >= 0 ; --i )
             {
                 var childItem = VisualTreeHelper . GetChild ( item , i );
-                if ( childItem != ( DependencyObject ) null )
+                if ( childItem != null )
                     ( ( FrameworkElement ) childItem ) . BringIntoView ( );
                 //item.BringIntoView ( );
             }
@@ -2268,12 +2684,6 @@ namespace MyDev . Views
                     TestTree . Refresh ( );
                 }
             }
-            else
-            {
-                // No Directories or files, so remove "Loading" Dummy
-                if ( item . Items . Count == 0 )
-                    item . Items . Clear ( );
-            }
         }
         // NOT USED
         private TreeViewItem SearchIterate ( TreeViewItem item , string SearchTerm )
@@ -2352,11 +2762,11 @@ namespace MyDev . Views
                 {
                     if ( ExpArgs . SearchActive )
                         listBox . Items . Add ( "Logging to this List is automatically disabled\nfor all Search operations to improve the\nspeed of  the search ..." );
-                    else if ( LISTRESULTS == false )
+                    else if(LISTRESULTS == false)
                     {
                         listBox . Items . Add ( "Logging to this List is currently disabled" );
                         listBox . Items . Add ( "Right click to access TreeView Options to change  this" );
-                        //                        listBox . Items . Add ( "from the TreeView Options to change  this..." );
+//                        listBox . Items . Add ( "from the TreeView Options to change  this..." );
                     }
                 }
                 return;
@@ -2458,7 +2868,7 @@ namespace MyDev . Views
             fail = false;
             if ( items == null )
                 return false;
-            //ProgressCount = 0;
+            ProgressCount = 0;
             string TagString = items . Tag . ToString ( ) . ToUpper ( );
             if ( TagString . Contains ( items . Header . ToString ( ) . ToUpper ( ) ) == false )
                 items . Header = items . Tag . ToString ( );
@@ -2478,7 +2888,10 @@ namespace MyDev . Views
             {
                 items . IsExpanded = true;
             }
-            catch ( Exception ex ) { Console . WriteLine ( $"ExpandCurrentAllLevels: 2736 : {ex . Message}" ); }
+            catch ( Exception ex )
+            {
+                Console . WriteLine ( $"Expanded=true failed...{ex . Message}" );
+            }
 
             ShowProgress ( );
             if ( FullExpandinProgress == false )
@@ -2515,7 +2928,6 @@ namespace MyDev . Views
                 // working correctly
                 //UpdateListBox ( childControl . Tag . ToString ( ) );
                 ShowProgress ( );
-                ShowExpandTime ( );
                 if ( CheckSearchSuccess ( childControl . Tag . ToString ( ) ) == true )
                 {
                     UpdateListBox ( $"Search for {Searchtext . Text} found  as [" + childControl . Header . ToString ( ) + $"]\nin {childControl . Tag . ToString ( )}" );
@@ -2533,7 +2945,7 @@ namespace MyDev . Views
                 {
                     childControl . IsExpanded = true;
                 }
-                catch ( Exception ex ) { Console . WriteLine ( $"ExpandCurrentAllLevels: 2790 : {ex . Message}" ); }
+                catch ( Exception ex ) { }
 
                 if ( childControl . Items . Count == 1 && childControl . Header . ToString ( ) == "Loading" )
                     continue;
@@ -2570,7 +2982,7 @@ namespace MyDev . Views
                         foreach ( TreeViewItem nextitem in childControl . Items )
                         {
                             ShowProgress ( );
-                            if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles , out HasHidden ) == false )
+                            if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == false )
                             {
                                 Console . WriteLine ( $"System file : {nextitem . Tag . ToString ( ) . ToUpper ( )}" );
                                 continue;
@@ -2596,7 +3008,7 @@ namespace MyDev . Views
                                 if ( ExpandLimited == true )
                                     continue;
                             }
-                            catch ( Exception ex ) { Console . WriteLine ( $"ExpandCurrentAllLevels: 2853 : {ex . Message}" ); }
+                            catch ( Exception ex ) { }
                             ShowProgress ( );
                             // working correctly
                             if ( FullExpandinProgress == false )
@@ -2610,7 +3022,7 @@ namespace MyDev . Views
                             UpdateListBox ( nextitem . Tag . ToString ( ) );
                             if ( ExpArgs . ExpandLevels >= 4 )
                             {
-                                if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles , out HasHidden ) == false )
+                                if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == false )
                                 {
                                     Console . WriteLine ( $"System file : {nextitem . Tag . ToString ( ) . ToUpper ( )}" );
                                     continue;
@@ -2633,7 +3045,7 @@ namespace MyDev . Views
                             break;
                         if ( AbortExpand == true )
                             break;
-                        ShowExpandTime ( );
+
                     }
                     ShowExpandTime ( );
                 }
@@ -2679,7 +3091,7 @@ namespace MyDev . Views
             fail = false;
             if ( items == null )
                 return Task . FromResult ( fail );
-            //ProgressCount = 0;
+            ProgressCount = 0;
             if ( items . Tag . ToString ( ) . ToUpper ( ) . Contains ( items . Header . ToString ( ) . ToUpper ( ) ) == false )
                 items . Header = items . Tag . ToString ( );
             // Essential to force root to be expanded, else nothing happens
@@ -2699,7 +3111,7 @@ namespace MyDev . Views
             {
                 items . IsExpanded = true;
             }
-            catch ( Exception ex ) { Console . WriteLine ( $"ExpandCurrentAllLevels: 2956 : {ex . Message}" ); }
+            catch ( Exception ex ) { }
 
             ShowProgress ( );
             if ( FullExpandinProgress == false )
@@ -2743,7 +3155,7 @@ namespace MyDev . Views
                 {
                     childControl . IsExpanded = true;
                 }
-                catch ( Exception ex ) { Console . WriteLine ( $"ExpandCurrentAllLevels: 3000 : {ex . Message}" ); }
+                catch ( Exception ex ) { }
                 //                Console . WriteLine ( $"2 Level={levelscount}, Outer loop {childControl . Tag . ToString ( )}" );
                 ShowProgress ( );
                 levelscount = CalculateLevel ( childControl . Tag . ToString ( ) );
@@ -2767,7 +3179,7 @@ namespace MyDev . Views
                         foreach ( TreeViewItem nextitem in childControl . Items )
                         {
                             ShowProgress ( );
-                            if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles , out HasHidden ) == false )
+                            if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == false )
                             {
                                 Console . WriteLine ( $"System file : {nextitem . Tag . ToString ( ) . ToUpper ( )}" );
                                 continue;
@@ -2789,7 +3201,7 @@ namespace MyDev . Views
                             {
                                 nextitem . IsExpanded = true;
                             }
-                            catch ( Exception ex ) { Console . WriteLine ( $"ExpandCurrentAllLevels: 3046 : {ex . Message}" ); }
+                            catch ( Exception ex ) { }
                             ShowProgress ( );
                             if ( FullExpandinProgress == false )
                                 TestTree . Refresh ( );
@@ -2803,7 +3215,7 @@ namespace MyDev . Views
                             UpdateListBox ( nextitem . Tag . ToString ( ) );
                             if ( ExpArgs . ExpandLevels >= 4 )
                             {
-                                if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles , out HasHidden ) == false )
+                                if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == false )
                                 {
                                     Console . WriteLine ( $"System file : {nextitem . Tag . ToString ( ) . ToUpper ( )}" );
                                     continue;
@@ -2855,6 +3267,7 @@ namespace MyDev . Views
             TreeViewItem item = e . Source as TreeViewItem;
             item . Items . Clear ( );
             item . Items . Add ( "Loading" );
+            //            item . Items . Add ( "Loading" );
             Mouse . OverrideCursor = Cursors . Arrow;
         }
 
@@ -2916,7 +3329,8 @@ namespace MyDev . Views
                 Console . WriteLine ( $"Parent found is {test}" );
                 return tv2;
             }
-            catch ( Exception ex ) { Console . WriteLine ( $"GetParentNode :3174 : {ex . Message}" ); }
+            catch ( Exception ex )
+            { }
             return null;
         }
 
@@ -2924,37 +3338,6 @@ namespace MyDev . Views
         {
             TreeViewItem tvnew = GetParentNode ( ExpArgs . tvitem );
 
-            //if ( ExpArgs . Selection == 4 )
-            //{
-            //TreeView tv = ExpArgs . tv as TreeView;
-            //TreeViewItem tvi = new TreeViewItem ( );
-            //List<string> dirs = new List<string> ( );
-            //List<string> files= new List<string> ( );
-            //foreach ( TreeViewItem item in tv. Items )
-            //{
-            //    tvi. Tag = item . Tag;
-            //    tvi . Header = item . Header;
-            //    if ( item . Items.Count  > 0 )
-            //    {
-            //        tvi . Items . Clear ( );
-            //       GetDirectories ( tvi . Tag . ToString ( ) , out   dirs);
-            //        AddDirectoriesToTestTree ( dirs , tvi , null , false );
-            //        GetFiles (tvi.Tag.ToString(), out files );
-            //        AddFilesToTreeview ( files , tvi );
-            //        if ( tvi . HasItems )
-            //        {
-            //            ExpArgs . tvitem = tvi;
-            //            RunRecurse ( e );
-            //            tvi . Refresh ( );
-            //            ActiveTree . Refresh ( );
-            //        }
-            //    }
-            //    continue;
-
-            //        tvi . IsExpanded = true;
-            //}
-            //}
-            //else
             RunRecurse ( e );
 
             //// All done;
@@ -2970,34 +3353,34 @@ namespace MyDev . Views
                     fdl . ShowInfo ( Flowdoc , canvas , $"Sorry, but an EXACT match to the Search term of [{ExpArgs . SearchTerm}] could not be identified for you in the {ExpArgs . ExpandLevels - 1} Expansion levels below the initial point of [{ExpArgs . tvitem . Tag . ToString ( )}]..." , "Black0" , $"[{ExpArgs . SearchTerm}] " , "Red5" , "NO Match found !" , "Cyan5" , "TreeView Search Sytem" );
             }
             // Called once recurse methods have completed
-            //if ( worker . IsBusy == false )
-            //{
-            //    TreeViewItem tvi = new TreeViewItem ( );
-            //    Console . WriteLine ( $"1 Recurse finished" );
-            //    try
-            //    {
-            //        if ( ShowVolumeLabels == true )
-            //        {
-            //            if ( ExpArgs . Parent != null )
-            //                tvi = ExpArgs . Parent;
-            //            else
-            //                tvi = ExpArgs . tvitem;
-            //            TreeViewItem caller = tvi as TreeViewItem;
-            //            if ( tvi . Tag . ToString ( ) . Length > 3 )
-            //            {
-            //                caller = tvi . Parent as TreeViewItem;
-            //            }
-            //            if ( caller . Tag . ToString ( ) . Length == 3 && caller . Tag . ToString ( ) . Contains ( "\\" ) )
-            //            {
-            //                string s = GetDriveInfo ( $"{caller . Header . ToString ( )}" );
-            //                caller . Header = $"{caller . Header}  [{s}]";
-            //            }
-            //        }
-            //    }
-            //    catch ( Exception ex ) { Console . WriteLine ( $"Parent name parsing of {tvi . Tag . ToString ( )} failed :-\n{ex . Message}" ); }
-            //}
-            ////Tidy up after ourselves
-            //  ClearExpandArgs ( );
+            if ( worker . IsBusy == false )
+            {
+                TreeViewItem tvi = new TreeViewItem ( );
+                Console . WriteLine ( $"1 Recurse finished" );
+                try
+                {
+                    if ( ShowVolumeLabels == true )
+                    {
+                        if ( ExpArgs . Parent != null )
+                            tvi = ExpArgs . Parent;
+                        else
+                            tvi = ExpArgs . tvitem;
+                        TreeViewItem caller = tvi as TreeViewItem;
+                        if ( tvi . Tag . ToString ( ) . Length > 3 )
+                        {
+                            caller = tvi . Parent as TreeViewItem;
+                        }
+                        if ( caller . Tag . ToString ( ) . Length == 3 && caller . Tag . ToString ( ) . Contains ( "\\" ) )
+                        {
+                            string s = GetDriveInfo ( $"{caller . Header . ToString ( )}" );
+                            caller . Header = $"{caller . Header}  [{s}]";
+                        }
+                    }
+                }
+                catch ( Exception ex ) { Console . WriteLine ( $"Parent name parsing of {tvi . Tag . ToString ( )} failed :-\n{ex . Message}" ); }
+            }
+            //Tidy up after ourselves
+            ClearExpandArgs ( );
         }
         public void RunRecurse ( ProgressChangedEventArgs e )
         {
@@ -3011,22 +3394,19 @@ namespace MyDev . Views
             var fail = false;
             var success = true;
 
-            if ( ExpArgs . SearchTerm != null )
-                // Force search to be upper case
-                ExpArgs . SearchTerm = ExpArgs . SearchTerm . ToUpper ( );
-            else
-                ExpArgs . SearchTerm = "";
+            // Force search to be upper case
+            ExpArgs . SearchTerm = ExpArgs . SearchTerm . ToUpper ( );
             //ExpandArgs eargs = e . UserState as ExpandArgs;
             //int levels = ( int ) Args [ 1 ];
             int levels = ExpArgs . ExpandLevels;
 
-            TreeViewItem startup = new TreeViewItem ( );
+            //TreeViewItem items = TestTree . SelectedItem as TreeViewItem;
             TreeViewItem items = ExpArgs . tvitem;
             startitem = items;
             fail = false;
             if ( items == null )
                 return;
-            //ProgressCount = 0;
+            ProgressCount = 0;
             if ( items . Tag . ToString ( ) . ToUpper ( ) . Contains ( items . Header . ToString ( ) . ToUpper ( ) ) == false )
                 items . Header = items . Tag . ToString ( );
             // Essential to force root to be expanded, else nothing happens
@@ -3049,7 +3429,7 @@ namespace MyDev . Views
                     return;
                 //stack . Push ( items . Tag . ToString ( ) );
             }
-            catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 3304 : {ex . Message}" ); }
+            catch ( Exception ex ) { }
             Thread . Sleep ( SLEEPTIME );
             ShowProgress ( );
             if ( FullExpandinProgress == false )
@@ -3057,12 +3437,8 @@ namespace MyDev . Views
             levelscount = CalculateLevel ( items . Tag . ToString ( ) );
             if ( levelscount >= ExpArgs . ExpandLevels )
             {
-                items . IsSelected = true;
-                items . IsExpanded = true;
-                Console . WriteLine ( $"{items . Header . ToString ( )} Expanded.... ?" );
-                ActiveTree . Refresh ( );
                 ShowExpandTime ( );
-                //                ExpandSetup ( false );
+                ExpandSetup ( false );
                 Expandprogress . Refresh ( );
                 return;
             }
@@ -3075,7 +3451,6 @@ namespace MyDev . Views
             {
                 if ( objct . ToString ( ) == "Loading" )
                     break;
-                startup = objct as TreeViewItem;
                 //Thread . Sleep ( SLEEPTIME );
                 TreeViewItem obj = objct as TreeViewItem;
                 ShowProgress ( );
@@ -3107,7 +3482,7 @@ namespace MyDev . Views
                     if ( AbortExpand )
                         return;
                 }
-                catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 3361 : {ex . Message}" ); }
+                catch ( Exception ex ) { }
                 ShowProgress ( );
 
                 //                if ( ClosePreviousNode )
@@ -3142,9 +3517,7 @@ namespace MyDev . Views
                         foreach ( TreeViewItem nextitem in childControl . Items )
                         {
                             ShowProgress ( );
-                            if ( nextitem . Header . ToString ( ) == "Loading" )
-                                continue;
-                            if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles , out HasHidden ) == false )
+                            if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == false )
                             {
                                 Console . WriteLine ( $"System file : {nextitem . Tag . ToString ( ) . ToUpper ( )}" );
                                 continue;
@@ -3170,13 +3543,17 @@ namespace MyDev . Views
                                 if ( AbortExpand )
                                     return;
                             }
-                            catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 3424 : {ex . Message}" ); }
+                            catch ( Exception ex ) { }
                             ShowProgress ( );
                             // working correctly
                             if ( FullExpandinProgress == false )
                                 TestTree . Refresh ( );
                             Console . WriteLine ( Selection . Text );
                             levelscount = CalculateLevel ( nextitem . Tag . ToString ( ) );
+
+                            //                          if ( ClosePreviousNode )
+                            //                                Console . WriteLine ( $"Closeprevious 2 : {childControl . Tag . ToString ( )}" );
+
                             if ( levelscount >= ExpArgs . ExpandLevels )
                             {
                                 continue;
@@ -3186,7 +3563,7 @@ namespace MyDev . Views
                             if ( ExpArgs . ExpandLevels >= 4 )
                             {
                                 //                                UpdateListBox ( nextitem . Tag . ToString ( ) );
-                                if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles , out HasHidden ) == false )
+                                if ( CheckIsVisible ( nextitem . Tag . ToString ( ) . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == false )
                                 {
                                     Console . WriteLine ( $"System file : {nextitem . Tag . ToString ( ) . ToUpper ( )}" );
                                     continue;
@@ -3194,11 +3571,19 @@ namespace MyDev . Views
                                 //Thread . Sleep ( SLEEPTIME );
                                 if ( nextitem . HasItems )
                                 {
+
+                                    //                                    if ( ClosePreviousNode )
+                                    //                                      Console . WriteLine ( $"Closeprevious 3 : {nextitem. Tag . ToString ( )}" );
+
                                     if ( ExpandAll3 ( nextitem , true , ExpArgs . ExpandLevels ) == true )
                                     {
                                         ExpArgs . SearchSuccess = true;
                                         Returnval = true;
                                         IsComplete = true;
+
+                                        //                                        if ( ClosePreviousNode )
+                                        //                                          Console . WriteLine ( $"Closeprevious 4 : {nextitem . Tag . ToString ( )}" );
+
                                         break;
                                     }
                                     else
@@ -3208,7 +3593,11 @@ namespace MyDev . Views
                                             // ONLY If Searching , Close the subdir we have just finished prcessing
                                             nextitem . IsExpanded = false;
                                             TestTree . Refresh ( );
+
+                                            //                                            if ( ClosePreviousNode )
+                                            //                                              Console . WriteLine ( $"Closeprevious 5 : {nextitem . Tag . ToString ( )}" );
                                         }
+                                        //              UpdateListBox ( nextitem . Tag . ToString ( ) );
                                     }
                                 }
                             }
@@ -3224,6 +3613,10 @@ namespace MyDev . Views
                         if ( ClosePreviousNode && ExpArgs . SearchActive == true && ExpArgs . SearchSuccess == false )
                         {
                             // ONLY If Searching , Close the subdir we have just finished prcessing
+
+                            //                            if ( ClosePreviousNode )
+                            //                              Console . WriteLine ( $"Closeprevious 6 CLOSING SUBDIR : {childControl. Tag . ToString ( )}" );
+
                             childControl . IsExpanded = false;
                             TestTree . Refresh ( );
                         }
@@ -3245,18 +3638,21 @@ namespace MyDev . Views
             testtreebanner . Text = $"{startitem . Tag . ToString ( )} Expanded {ExpArgs . ExpandLevels} levels Successfully...";
             if ( ExpArgs . SearchSuccess == false )
             {
-                ScrollCurrentTvItemIntoView ( startup );
                 startitem . IsSelected = true;
+                ScrollCurrentTvItemIntoView ( Args [ 0 ] as TreeViewItem );
             }
-            UpdateDriveHeader ( ShowVolumeLabels );
+            //if(worker.IsBusy == false)
+            //    Console . WriteLine ($"1 Recurse finished");
+            //else
+            //    Console . WriteLine ( $"2 Recurse finished" );
             return;
+
+
         }
         #endregion BackgroundWorker
         public int AddDirectoriesToTestTree ( List<string> directories , TreeViewItem item , ListBox lBox = null , bool UseExpand = true )
         {
             int added = 0;
-            int TotalDirs = 0;
-            int TotalFiles = 0;
             item . Items . Clear ( );
             foreach ( var directoryPath in directories )
             {
@@ -3264,40 +3660,35 @@ namespace MyDev . Views
                 //{
                 var dummy = new TreeViewItem ( );
                 var subitem = new TreeViewItem ( );
-
                 subitem . Header = GetFileFolderName ( directoryPath );
                 subitem . Tag = directoryPath;
                 UpdateListBox ( directoryPath . ToUpper ( ) );
-                if ( CheckIsVisible ( directoryPath . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
+                if ( CheckIsVisible ( directoryPath . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == true )
                 {     // add the dummy entry to each of the subdirectories we are adding to the tree so we get the Expand icons
-                    TotalDirs = GetDirectoryCount ( directoryPath );
-                    TotalFiles = GetFilesCount ( directoryPath );
+                    if ( item . Tag . ToString ( ) . ToUpper ( ) . Contains ( "BIGFONT" ) )
+                        Console . WriteLine ( $"" );
                     item . Items . Add ( subitem );
 
-                    // This works well in stopping empty Folders form having an Open Icon
-                    // But may not be the best idea ?
-                    //if(TotalDirs>  0 || TotalFiles> 0 )
-                    //{
                     dummy . Header = "Loading";
                     subitem . Items . Add ( dummy );
+                    //                    AllCheckedFolders . Add ( subitem );
                     item . IsExpanded = true;
                     ScrollCurrentTvItemIntoView ( subitem );
                     if ( FullExpandinProgress == false )
                         ActiveTree . Refresh ( );
-                    //}
                     //                    Console . WriteLine ( $"3 - ADTT : Added Subdir {subitem . Tag . ToString ( )} to expanded {item . Tag . ToString ( )}" );
                     added++;
-                    //if ( CheckSearchSuccess ( item . Tag . ToString ( ) ) == true )
-                    //{
-                    //    UpdateListBox ( $"Search for {Searchtext . Text} found  as [" + item . Header . ToString ( ) + $"]\nin {item . Tag . ToString ( )}" );
-                    //    ScrollCurrentTvItemIntoView ( item );
-                    //    item . IsSelected = true;
-                    //    ExpArgs . SearchSuccessItem = item;
-                    //    //SearchSuccess = true;
-                    //    ExpArgs . SearchSuccess = true;
-                    //    TestTree . Refresh ( );
-                    //    break;
-                    //}
+                    if ( CheckSearchSuccess ( item . Tag . ToString ( ) ) == true )
+                    {
+                        UpdateListBox ( $"Search for {Searchtext . Text} found  as [" + item . Header . ToString ( ) + $"]\nin {item . Tag . ToString ( )}" );
+                        ScrollCurrentTvItemIntoView ( item );
+                        item . IsSelected = true;
+                        ExpArgs . SearchSuccessItem = item;
+                        //SearchSuccess = true;
+                        ExpArgs . SearchSuccess = true;
+                        TestTree . Refresh ( );
+                        break;
+                    }
                 }
                 ShowProgress ( );
                 //});
@@ -3319,7 +3710,7 @@ namespace MyDev . Views
                     Header = GetFileFolderName ( itm ) ,
                     Tag = itm
                 };
-                if ( CheckIsVisible ( itm . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
+                if ( CheckIsVisible ( itm . ToUpper ( ) , ShowAllFiles  , out HasHidden ) == true )
                 {
                     item . Items . Add ( subitem );
                     item . IsExpanded = true;
@@ -3383,7 +3774,7 @@ namespace MyDev . Views
 
                 ClearExpandArgs ( );
                 ExpArgs . tvitem = ActiveTree . SelectedItem as TreeViewItem;
-                ExpArgs . Selection = 0;
+                ExpArgs . Selection = 4;
                 ExpArgs . ExpandLevels = LevelsCombo . SelectedIndex + 3;
                 ExpArgs . SearchTerm = Searchtext . Text . ToUpper ( );
                 ExpArgs . ListResults = false;
@@ -3391,7 +3782,6 @@ namespace MyDev . Views
                 ExpanderMenuOption . Text = $"Search for Item down up to {ExpArgs . ExpandLevels - 1} levels";
 
                 RunExpandSystem ( null , null );
-                //RecurseItem ( ExpArgs . tvitem , ExpArgs . SearchTerm , ExpArgs . IsFullExpand );
             }
             Mouse . OverrideCursor = Cursors . Arrow;
             return;
@@ -3408,11 +3798,11 @@ namespace MyDev . Views
                          public bool        ClosePrevious; 
                */
             // Expand our structure to parameters
-            //TreeView tv = ExpArgs . tv;
-            SearchTerm = ExpArgs . SearchTerm;
-            RunRecurseItem ( ExpArgs . tvitem , SearchTerm , ClosePrevious );
-            SearchTerm = "";
-            ExpArgs . SearchSuccess = false;
+            // TreeView tv = ExpArgs . tv;
+            //SearchTerm = ExpArgs . SearchTerm;
+            // RunRecurseItem ( ExpArgs . tvitem , SearchTerm , ClosePrevious );
+            // SearchTerm = "";
+            // ExpArgs . SearchSuccess = false;
             return true;
         }
         // NOT USED
@@ -3507,7 +3897,7 @@ namespace MyDev . Views
         {
             ClearExpandArgs ( );
             ExpArgs . Selection = DirectoryOptions . SelectedIndex;
-            RunExpandSystem ( sender , e );
+            await RunExpandSystem ( sender , e );
         }
         /// <summary>
         /// Process Expannd request
@@ -3515,13 +3905,14 @@ namespace MyDev . Views
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <returns></returns>
-        private bool RunExpandSystem ( object sender , RoutedEventArgs e )
+        private async Task<bool> RunExpandSystem ( object sender , RoutedEventArgs e )
         {
             double temp = 0;
             ComboBox cb = DirectoryOptions;
+            //int selindex = DirectoryOptions . SelectedIndex;
             int selindex = ExpArgs . Selection;
             string original = "";
-            //            int iterations = 0;
+            iterations = 0;
             listboxtotal = 0;
             TreeViewItem root = ActiveTree . SelectedItem as TreeViewItem;
             TreeViewItem caller = ActiveTree . SelectedItem as TreeViewItem;
@@ -3529,15 +3920,18 @@ namespace MyDev . Views
                 caller = root;
             if ( root != null )
             {
-                if ( root . HasItems == false && ExpArgs . IsFullExpand == false )
+                if ( root . HasItems == false )
                 {
                     Mouse . OverrideCursor = Cursors . Arrow;
                     MessageBox . Show ( "The current item is only a file (or contains only Hidden items)\nand cannot threfore be expanded.\n\nPlease select a Valid Drive or Folder in the TreeView before using these options...." ,
                         "Invalid Current Selection" );
+                    BusyLabel . Visibility = Visibility . Hidden;
                     return false;
                 }
                 Args [ 0 ] = root as object;
+                //TreeViewObject = (object)root;
                 original = root . Header . ToString ( );
+
             }
             else
             {
@@ -3551,11 +3945,13 @@ namespace MyDev . Views
             ExpArgs . Selection = selindex;
 
             InfoList . ItemsSource = null;
+            listBox . Items . Clear ( );
 
             Console . WriteLine ( $"User Selection in use = {ExpArgs . Selection }" );
             if ( ExpArgs . tvitem == null )
             {
                 Mouse . OverrideCursor = Cursors . Arrow;
+                //MessageBox . Show ( "Please a Drive or Folder in the TreeView before using these options...." );
                 fdl . ShowInfo ( Flowdoc , canvas ,
                       $"Please select a drive or subfolder before using  this option...." ,
                       "Blue1" ,
@@ -3566,22 +3962,28 @@ namespace MyDev . Views
 
             if ( selindex == 0 )   // Expand  2  levels
             {
+                //Args [ 1 ] = 2;
                 if ( ExpArgs . ExpandLevels == 0 )
                     ExpArgs . ExpandLevels = 2;
 
                 UpdateListBox ( $"Expanding {original} {ExpArgs . ExpandLevels} levels...." );
+                //InfoList . Items . Add ( $"Expanding {original} {Args [ 1 ]} levels...." );
             }
             else if ( selindex == 1 )
             {
+                //Args [ 1 ] = 3;   // Expand  3  levels
                 if ( ExpArgs . ExpandLevels == 0 )
                     ExpArgs . ExpandLevels = 3;
                 UpdateListBox ( $"Expanding {original} {ExpArgs . ExpandLevels } levels...." );
+                //InfoList . Items . Add ( $"Expanding {original} {ExpArgs . ExpandLevels } levels...." );
             }
             else if ( selindex == 2 )
             {
+                //Args [ 1 ] = 4;   // Expand  4  levels
                 if ( ExpArgs . ExpandLevels == 0 )
                     ExpArgs . ExpandLevels = 4;
                 TreeViewItem tvi = ( TreeViewItem ) ExpArgs . tvitem;
+                //                TreeViewItem tvi = ( TreeViewItem ) Args [ 0 ];
                 string str = tvi . Tag . ToString ( );
                 if ( ExpArgs . SearchActive == false )
                 {
@@ -3594,67 +3996,33 @@ namespace MyDev . Views
                     }
                 }
                 UpdateListBox ( $"Expanding {original} {Args [ 1 ]} levels...." );
+                //InfoList . Items . Add ( $"Expanding {original} {Args [ 1 ]} levels...." );
+                // inhibit listbox
                 ExpArgs . ListResults = LISTRESULTS;
             }
             else if ( selindex == 3 )
             {
+                //Args [ 1 ] = 90;
                 if ( ExpArgs . ExpandLevels == 0 )
                     ExpArgs . ExpandLevels = 90;
                 UpdateListBox ( $"Expanding {original} {Args [ 1 ]} levels...." );
+                //InfoList . Items . Add ( $"Expanding ALL  levels...." );
+                // inhibit listbox
                 ExpArgs . ListResults = LISTRESULTS;
-            }
-            else if ( selindex == 4 )
-            {
-                // Expand All Drives 1 level 
-                ExpArgs . tv = ActiveTree;
-                ExpArgs . Selection = 0;
-                ExpArgs . ExpandLevels = 1;
-                ExpandSetup ( true );
-                foreach ( TreeViewItem item in ActiveTree . Items )
-                {
-                    TreeViewItem tvi = new TreeViewItem ( );
-                    tvi = item;
-                    tvi . IsSelected = true;
-                    ExpArgs . tvitem = tvi;
-                    ExpArgs . IsFullExpand = true;
-                    TriggerExpand0 ( sender , e );
-                    Thread . Sleep ( 10 );
-                }
-                ExpandSetup ( false );
-                ScrollCurrentTvItemIntoView ( ( TreeViewItem ) ActiveTree . Items [ 0 ] );
-                return true;
-            }
-            else if ( selindex == 5 )
-            {
-                // Expand All Drives 2 levels 
-                ExpArgs . tv = ActiveTree;
-                ExpArgs . Selection = 0;
-                ExpArgs . ExpandLevels = 2;
-                ExpandSetup ( true );
-                foreach ( TreeViewItem item in ActiveTree . Items )
-                {
-                    TreeViewItem tvi = new TreeViewItem ( );
-                    tvi = item;
-                    tvi . IsSelected = true;
-                    ExpArgs . tvitem = tvi;
-                    ExpArgs . IsFullExpand = true;
-                    ExpArgs . ExpandLevels = 2;
-                    TriggerExpand0 ( sender , e );
-                    Thread . Sleep ( 10 );
-                }
-                ExpandSetup ( false );
-                ScrollCurrentTvItemIntoView ( ( TreeViewItem ) ActiveTree . Items [ 0 ] );
-                return true;
             }
             else if ( selindex == 6 )
             {
                 // Expand ALL below  current drive
+                //                InfoList . Items . Add ( "Calling EXPANDALLRECURSIVE" );
                 ExpArgs . tvitem = ActiveTree . SelectedItem as TreeViewItem;
                 if ( ExpArgs . ExpandLevels == 0 )
                     ExpArgs . ExpandLevels = 90;
                 // inhibit listbox
                 ExpArgs . ListResults = LISTRESULTS;
+
+                ExpandSetup ( true );
                 UpdateListBox ( $"Expanding ALL items BELOW current...." );
+                //                InfoList . Items . Add ( $"Expanding ALL items BELOW current..." );
                 if ( ExpandCurrentAllLevels ( Args ) == true && TextToSearchFor != "" )
                     MessageBox . Show ( $"[{Searchtext . Text}] FOUND ...." , "Search System" );
                 ExpandSetup ( false );
@@ -3665,7 +4033,11 @@ namespace MyDev . Views
             {
                 // Collapse All Drives
                 ExpArgs . tv = ActiveTree;
+                ExpandSetup ( true );
+                //Dispatcher . BeginInvoke ( new Action ( ( ) =>
+                //{
                 CollapseAllDrives ( );
+                //} ) , DispatcherPriority . ApplicationIdle );
                 Mouse . OverrideCursor = Cursors . Arrow;
                 ExpandSetup ( false );
                 ScrollCurrentTvItemIntoView ( ( TreeViewItem ) ActiveTree . Items [ 0 ] );
@@ -3675,20 +4047,22 @@ namespace MyDev . Views
             // go ahead
             TreeViewItem tview = new TreeViewItem ( );
             tview = ExpArgs . tvitem;
+            tview . IsExpanded = false;
             tview . IsSelected = true;
             ActiveTree . Refresh ( );
-            if ( ExpArgs . IsFullExpand )
-                worker_ProgressChanged ( sender , null );
-            else
-            {
-                worker = new BackgroundWorker ( );
-                worker . WorkerSupportsCancellation = true;
-                worker . WorkerReportsProgress = true;
-                worker . DoWork += worker_DoWork;
-                worker . ProgressChanged += worker_ProgressChanged;
-                worker . RunWorkerCompleted += worker_RunWorkerCompleted;
-                worker . RunWorkerAsync ( ExpArgs );
-            }
+            //Expand current 2 levels
+            ExpandSetup ( true );
+
+            worker = new BackgroundWorker ( );
+            worker . WorkerSupportsCancellation = true;
+            worker . WorkerReportsProgress = true;
+            //new DoWorkEventArgs ( Args);
+            //object TreeViewObject = Args [ 0 ];
+            worker . DoWork += worker_DoWork;
+            worker . ProgressChanged += worker_ProgressChanged;
+            worker . RunWorkerCompleted += worker_RunWorkerCompleted;
+            //args [ 0 ] = TreeViewObject as TreeViewItem;
+            worker . RunWorkerAsync ( ExpArgs );
             try
             {
                 TreeViewItem tv2 = new TreeViewItem ( );
@@ -3719,7 +4093,8 @@ namespace MyDev . Views
                 }
                 Console . WriteLine ( $"Parent is {test}" );
             }
-            catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 4020 : {ex . Message}" ); }
+            catch ( Exception ex )
+            { }
             return true;
         }
         private void TestTree_Expanded ( object sender , RoutedEventArgs e )
@@ -3736,12 +4111,6 @@ namespace MyDev . Views
                 item = sender as TreeViewItem;
             if ( item == null )
                 return;
-            if ( item . Header . ToString ( ) == "Loading" )
-            {
-                Caller . Header = currentHeader;
-                item.Header = currentHeader;
-                return;
-            }
             Caller = item;
             currentHeader = item . Header . ToString ( );
             item . Header = item . Tag . ToString ( );
@@ -3749,6 +4118,11 @@ namespace MyDev . Views
             // This is CRITICAL to get any drive that is currently selected to open when the expand icon is clicked
 
             item . IsSelected = true;
+            if ( item . Header . ToString ( ) == "Loading" )
+            {
+                Caller . Header = currentHeader;
+                return;
+            }
             Selection . Text = $"{item . Tag . ToString ( )}";
             ActiveTree . HorizontalContentAlignment = HorizontalAlignment . Left;
             ScrollCurrentTvItemIntoView ( item );
@@ -3759,17 +4133,53 @@ namespace MyDev . Views
             string Fullpath = item . Tag . ToString ( ) . ToUpper ( );
             int DirectoryCount = 0, filescount = 0;
             itemscount = item . Items . Count;
-            if ( itemscount == 0 )
-                return;
             var tvi = item as TreeViewItem;
-//            if ( itemscount == 0 )
-  //          {
+            if ( itemscount == 0 )
+            {
                 Caller . Header = currentHeader;
-      //          return;
-    //        }
+                return;
+            }
             //TreeViewItem tmp = item. Items [ 0 ] as TreeViewItem;
             var itemheader = item . Items [ 0 ] . ToString ( );
             //  UpdateListBox ( $"{item . Tag . ToString ( )}" );
+
+            GetFiles ( Fullpath , out Allfiles );
+            if ( Allfiles . Count > 0 )
+            {
+                filescount = Allfiles . Count;
+                if ( filescount > 500 )
+                {
+                    MessageBoxResult result = MessageBox . Show ( $"Directory {Fullpath} contains {filescount} Files\nExpanding these will take a considerable time...\n\nAre you sure you want to continue ?" ,
+                     "Potential long delay" , MessageBoxButton . YesNoCancel , MessageBoxImage . Warning , MessageBoxResult . Cancel );
+                    if ( result == MessageBoxResult . Yes )
+                    {
+                        item . Items . Clear ( );
+                        AddFilesToTreeview ( Allfiles , item );
+                    }
+                    else if ( result == MessageBoxResult . Cancel )
+                    {
+                        AbortExpand = true;
+                        {
+                            Caller . Header = currentHeader;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        ExpandLimited = true;
+                        {
+                            Caller . Header = currentHeader;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    item . Items . Clear ( );
+                    AddFilesToTreeview ( Allfiles , item );
+                }
+            }
+            //            Console . WriteLine ( $"TT.Added - {filescount} Files to {item . Tag . ToString ( )}" );
             // Get a list of all items in the current folder
             int count = GetDirectories ( Fullpath , out directories );
             if ( count > 0 )
@@ -3811,6 +4221,7 @@ namespace MyDev . Views
                     if ( directories . Count > 0 )
                         if ( item . Items [ 0 ] . ToString ( ) == "Loading" )
                         {
+                            //                       if ( tmp . Header . ToString ( ) == "Loading" )
                             item . Items . Clear ( );
                         }
                     {
@@ -3818,98 +4229,23 @@ namespace MyDev . Views
                         ActiveTree . HorizontalContentAlignment = HorizontalAlignment . Left;
                         ScrollCurrentTvItemIntoView ( item );
                         TestTree . Refresh ( );
-                        DirectoryCount = AddDirectoriesToTestTree ( directories , item , listBox );
-                        //                        item . IsExpanded = true;
+                        DirectoryCount = AddDirectoriesToTestTreeview ( directories , item , listBox );
+                        item . IsExpanded = true;
                     }
                 }
+                //                Console . WriteLine ( $"TT.Expanded - {count} Subdirs to {item . Tag . ToString ( )}" );
             }
             else
             {
                 DirectoryCount = 0;
                 ShowProgress ( );
             }
-            // Now Get FILES
-
-            GetFiles ( Fullpath , out Allfiles );
-            if ( Allfiles . Count > 0 )
-            {
-                filescount = Allfiles . Count;
-                if ( filescount > 500 )
-                {
-                    MessageBoxResult result = MessageBox . Show ( $"Directory {Fullpath} contains {filescount} Files\nExpanding these will take a considerable time...\n\nAre you sure you want to expand  thiis  subdirectory?\n\n(Cancel to stop the entire Expansion immediately)" ,
-                     "Potential long delay" , MessageBoxButton . YesNoCancel , MessageBoxImage . Warning , MessageBoxResult . Cancel );
-                    if ( result == MessageBoxResult . Yes )
-                    {
-                        if ( item . Items [ 0 ] . ToString ( ) == "Loading" )
-                        {
-                            item . Items . Clear ( );
-                        }
-                        AddFilesToTreeview ( Allfiles , item );
-                    }
-                    else if ( result == MessageBoxResult . Cancel )
-                    {
-                        AbortExpand = true;
-                        {
-                            Caller . Header = currentHeader;
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        ExpandLimited = true;
-                        {
-                            Caller . Header = currentHeader;
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    if ( item . Items [ 0 ] . ToString ( ) == "Loading" )
-                    {
-                        item . Items . Clear ( );
-                    }
-                    AddFilesToTreeview ( Allfiles , item );
-                }
-            }
-            if ( DirectoryCount == 0 && Allfiles . Count == 0 )
-            {
-                item . IsExpanded = false;
-                if ( ExceptionMessage != "" )
-                {
-                    Selection . Text = ExceptionMessage;
-                    ExceptionMessage="";
-                }
-                else
-                    Selection . Text = "This Subdirectory does not contain any Non System or Hidden files, or perhaps Access is denied by Windows ...";
-                //Utils . DoErrorBeep ( 280 , 100 , 1 );
- //               FlashInfopanel ( Selection . Text );
-            }
-            else
-            {
-                item . IsExpanded = true;
-                TestTree . UpdateLayout ( );
-                TestTree . Refresh ( );
-                Selection . Text = $"{item . Header . ToString ( )} SubDirectories = {DirectoryCount} , Files = {Allfiles . Count}";
-            }
-
+            TestTree . UpdateLayout ( );
+            //            Selection . Text = $"Expanding : {Fullpath} ...";
             Caller . Header = currentHeader;
+            TestTree . Refresh ( );
             ShowProgress ( );
             return;
-        }
-        private void FlashInfopanel (string text )
-        {
-            Selection . Text = "";
-            Selection.UpdateLayout();
-            Thread . Sleep ( 500 );
-            Selection . Text = text;
-            Selection . UpdateLayout ( );
-            Thread . Sleep ( 500 );
-            Selection . Text = "";
-            Selection . UpdateLayout ( );
-            Thread . Sleep ( 300 );
-            Selection . Text = text; ;
-            Selection . UpdateLayout ( );
         }
         private void ClearExpandArgs ( )
         {
@@ -3922,13 +4258,12 @@ namespace MyDev . Views
             ExpArgs . SearchSuccess = false;
             ExpArgs . MaxItems = 250;
             ExpArgs . ListResults = LISTRESULTS;
-            ExpArgs . IsFullExpand = false;
             ExpArgs . Parent = null;
         }
+
         private void TreeOptions ( object sender , RoutedEventArgs e )
         {
             OptionsPanel . Visibility = Visibility . Visible;
-            RefreshOptions ( );
         }
         private void Image_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
@@ -3936,7 +4271,7 @@ namespace MyDev . Views
             LISTRESULTS = ( bool ) Opt2cbox . IsChecked;
             Exactmatch = ( bool ) Opt4cbox . IsChecked;
             ShowVolumeLabels = ( bool ) Opt3cbox . IsChecked;
-            ShowAllFiles = ( bool ) Opt5cbox . IsChecked;
+            ShowAllFiles  = ( bool ) Opt5cbox . IsChecked;
             OptionsPanel . Visibility = Visibility . Hidden;
         }
         private string GetDriveInfo ( string arg )
@@ -3952,13 +4287,16 @@ namespace MyDev . Views
         }
         private void ShowallVolumes_Click ( object sender , RoutedEventArgs e )
         {
-            ShowAllFiles = !ShowAllFiles;
+            //CheckBox cb = sender as CheckBox;
+            //ShowVolumeLabels = ( bool ) cb . IsChecked;
+            ShowAllFiles  = !ShowAllFiles ;
+            LoadDrives ( ActiveTree );
         }
         private void MenuItem_Click ( object sender , RoutedEventArgs e )
         {
             OptionsPanel . Visibility = Visibility . Visible;
-            RefreshOptions ( );
         }
+
         private void CollapseAll ( object sender , RoutedEventArgs e )
         {
             CollapseAllDrives ( );
@@ -3971,6 +4309,12 @@ namespace MyDev . Views
             if ( tv != null )
                 tv . IsExpanded = false;
         }
+
+        private void MenuItem_Click_1 ( object sender , RoutedEventArgs e )
+        {
+
+        }
+
         private void Close_Click ( object sender , RoutedEventArgs e )
         {
             this . Close ( );
@@ -3983,11 +4327,8 @@ namespace MyDev . Views
 
         private void TreviewOptions_Click ( object sender , RoutedEventArgs e )
         {
-            if ( OptionsPanel . Visibility == Visibility . Hidden )
-                OptionsPanel . Visibility = Visibility . Visible;
-            else
-                OptionsPanel . Visibility = Visibility . Hidden;
-            RefreshOptions ( );
+            OptionsPanel . Visibility = Visibility . Visible;
+            OptionsPanel . Refresh ( );
         }
 
         private void searchcurrent_Click ( object sender , RoutedEventArgs e )
@@ -4046,13 +4387,11 @@ namespace MyDev . Views
         }
         private void ExactMatch_Click ( object sender , RoutedEventArgs e )
         {
-            //called by main menu option
             if ( ( bool ) CboxExactMatch . IsChecked == false )
                 Exactmatch = ( bool ) true;
             else
                 Exactmatch = ( bool ) false;
             CboxExactMatch . IsChecked = Exactmatch;
-            Opt4cbox_Click ( sender , e );
             this . Refresh ( );
             RefreshOptions ( );
         }
@@ -4061,7 +4400,6 @@ namespace MyDev . Views
         {
             LISTRESULTS = !LISTRESULTS;
             UseListBox . IsChecked = LISTRESULTS;
-            Opt2cbox_Click ( sender , e );
             this . Refresh ( );
             RefreshOptions ( );
         }
@@ -4070,7 +4408,6 @@ namespace MyDev . Views
         {
             ClosePreviousNode = !ClosePreviousNode;
             Opt1cbox . IsChecked = ClosePreviousNode;
-            Opt1cbox_Click ( sender , e );
             this . Refresh ( );
 
             RefreshOptions ( );
@@ -4080,22 +4417,49 @@ namespace MyDev . Views
             ShowVolumeLabels = !ShowVolumeLabels;
             Opt3cbox . IsChecked = ShowVolumeLabels;
             ShowVolumes . IsChecked = ShowVolumeLabels;
-            Opt3cbox_Click ( sender , e );
             this . Refresh ( );
             RefreshOptions ( );
             ShowallVolumes_Click ( sender , e );
         }
         private void ShowHidden_Click ( object sender , RoutedEventArgs e )
         {
-            ShowAllFiles = !ShowAllFiles;
-            Opt5cbox . IsChecked = ShowAllFiles;
-            showallFiles . IsChecked = ShowAllFiles;
-            Opt5cbox_Click ( sender , e );
+            ShowAllFiles  = !ShowAllFiles ;
+            Opt5cbox . IsChecked = ShowAllFiles ;
+            showallFiles . IsChecked = ShowAllFiles ;
             this . Refresh ( );
             RefreshOptions ( );
             LoadDrives ( ActiveTree );
 
         }
+        //private void MenuItem_ContextMenuOpening ( object sender , ContextMenuEventArgs e )
+        //{
+        //    if ( ClosePreviousNode )
+        //        Closenodes . Header = "Do NOT close Searched Nodes if no match";
+        //    else
+        //        Closenodes . Header = "Close Searched Nodes if no match";
+
+        //    if ( LISTRESULTS )
+        //        showlog . Header = "Do NOT log Search/Expand operations";
+        //    else
+        //        showlog . Header = "Log all Search/Expand operations";
+
+        //    if ( Exactmatch == false )
+        //        exactmatching . Header = "SEARCH : Require EXACT (full) Match for Success";
+        //    else
+        //        exactmatching . Header = "SEARCH : Allow Partial Matches for Success";
+
+        //    if ( ShowVolumeLabels == true )
+        //        showVolumes . Header = "Do NOT show Volume labels";
+        //    else
+        //        showVolumes . Header= "Show Volume labels";
+
+        //    if ( ShowAllfiles == false )
+        //        Showhidden . Header = "Do NOT show Hidden/System files";
+        //    else
+        //        Showhidden . Header = "Show Hidden/System files";
+        //    this . Refresh ( );
+        //    RefreshOptions ( );
+        //}
         private void MainTVMenu_MouseDown ( object sender , MouseButtonEventArgs e )
         {
             MenuItem_GotFocus ( sender , e );
@@ -4115,7 +4479,7 @@ namespace MyDev . Views
 
             if ( Exactmatch == false )
                 exactmatching . Header = "SEARCH : Require EXACT (full) Match for Success";
-            else
+                else
                 exactmatching . Header = "SEARCH : Allow Partial Matches for Success";
 
             if ( ShowVolumeLabels == true )
@@ -4123,7 +4487,7 @@ namespace MyDev . Views
             else
                 showVolumes . Header = "Show Volume labels";
 
-            if ( ShowAllFiles == true )
+            if ( ShowAllFiles  == true )
                 Showhidden . Header = "Do NOT show Hidden/System files";
             else
                 Showhidden . Header = "Show Hidden/System files";
@@ -4135,15 +4499,9 @@ namespace MyDev . Views
             if ( OptionsPanel . Visibility == Visibility . Visible )
             {
                 Opt1cbox . IsChecked = ClosePreviousNode;
-                Opt1cbox . Foreground = ClosePreviousNode ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
                 Opt2cbox . IsChecked = LISTRESULTS;
-                Opt2cbox . Foreground = LISTRESULTS ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
                 Opt3cbox . IsChecked = ShowVolumeLabels;
-                Opt3cbox . Foreground = ShowVolumeLabels ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
                 Opt4cbox . IsChecked = Exactmatch;
-                Opt4cbox . Foreground = Exactmatch ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
-                Opt5cbox . IsChecked = ShowAllFiles;
-                Opt5cbox . Foreground = ShowAllFiles ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
                 OptionsPanel . Refresh ( );
             }
         }
@@ -4167,22 +4525,22 @@ namespace MyDev . Views
         private void TREEViews_MouseMove ( object sender , MouseEventArgs e )
         {
             TestTree . Refresh ( );
+
         }
-        private void Opt1cbox_Click ( object sender , RoutedEventArgs e )
+
+        private void Opt3cbox_Click ( object sender , RoutedEventArgs e )
         {
-            ClosePreviousNode = ( bool ) Opt1cbox . IsChecked;
-            Opt1cbox . Content = ClosePreviousNode ? "Yes" : "No";
-            if ( ClosePreviousNode )
-                Opt1cbox . Foreground = FindResource ( "Green3" ) as SolidColorBrush;
-            else
-                Opt1cbox . Foreground = FindResource ( "Red3" ) as SolidColorBrush;
-            if ( LISTRESULTS && ClosePreviousNode )
+            ShowVolumeLabels = (bool)Opt3cbox . IsChecked;
+            Opt3cbox . Content = ShowVolumeLabels ? "Yes" : "No";
+            if ( LISTRESULTS && ShowVolumeLabels )
             {
-                Selection . Text = "Previous Nodes will be closed during Searching....";
+                listBox . Items . Add ( "Volume labels are being shown ...." );
+                listBox . ScrollIntoView ( "Volume labels are being shown ...." );
             }
             else
             {
-                Selection . Text = "Previous Nodes will NOT be closed during Searching....";
+                listBox . Items . Add ( "Volume labels are not being shown ..." );
+                listBox . ScrollIntoView ( "Volume labels are not being shown ..." );
             }
             OptionsPanel . Refresh ( );
         }
@@ -4191,75 +4549,53 @@ namespace MyDev . Views
         {
             LISTRESULTS = ( bool ) Opt2cbox . IsChecked;
             Opt2cbox . Content = LISTRESULTS ? "Yes" : "No";
-            if ( LISTRESULTS )
-                Opt2cbox . Foreground = FindResource ( "Green3" ) as SolidColorBrush;
-            else
-                Opt2cbox . Foreground = FindResource ( "Red3" ) as SolidColorBrush;
+            //listBox . Items . Clear ( );
             if ( LISTRESULTS )
             {
-                Selection . Text = "Search/Expansion information will be listed ....";
-                listBox . Items . Clear ( );
-                listBox . Items . Add ( "Logging of Expansion and Search\nactivity is current ENABLED." );
+                listBox . Items . Add ( "Search/Expansion information will be listed ...." );
+                listBox . ScrollIntoView ( "Search/Expansion information will be listed ...." );
             }
             else
             {
-                Selection . Text = "Listing Search/Expansion is Disabled ...";
-                listBox . Items . Clear ( );
-                listBox . Items . Add ( "Logging of Expansion and Search\nactivity is current DISABLED." );
+                listBox . Items . Add ( "Listing Search/Expansion is Disabled ..." );
+                listBox . ScrollIntoView ( "Listing Search/Expansion is Disabled ..." );
             }
             OptionsPanel . Refresh ( );
         }
 
-        private void Opt3cbox_Click ( object sender , RoutedEventArgs e )
+        private void Opt1cbox_Click ( object sender , RoutedEventArgs e )
         {
-            ShowVolumeLabels = ( bool ) Opt3cbox . IsChecked;
-            Opt3cbox . Content = ShowVolumeLabels ? "Yes" : "No";
-            if ( ShowVolumeLabels )
-                Opt3cbox . Foreground = FindResource ( "Green3" ) as SolidColorBrush;
-            else
-                Opt3cbox . Foreground = FindResource ( "Red3" ) as SolidColorBrush;
-            if ( LISTRESULTS && ShowVolumeLabels )
+            ClosePreviousNode = ( bool ) Opt1cbox . IsChecked;
+            Opt1cbox . Content = ClosePreviousNode ? "Yes" : "No";
+            if ( LISTRESULTS && ClosePreviousNode )
             {
-                Selection . Text = "Volume labels are being shown ....";
+                listBox . Items . Add ( "Previous Nodes will be closed during Searching...." );
+                listBox . ScrollIntoView ( "Previous Nodes will be closed during Searching...." );
             }
             else
             {
-                Selection . Text = "Volume labels are not being shown ...";
+                listBox . Items . Add ( "Previous Nodes will NOT be closed during Searching...." );
+                listBox . ScrollIntoView ( "Previous Nodes will NOT be closed during Searching...." );
             }
-            //LoadDrives ( ActiveTree );
-            UpdateDriveHeader ( ShowVolumeLabels );
+
             OptionsPanel . Refresh ( );
         }
-        private void UpdateDriveHeader ( bool ShowVolumeLabels )
-        {
-            string drivestring = "";
-            string dictvalue = "";
-            foreach ( TreeViewItem item in ActiveTree . Items )
-            {
-                drivestring = item . Tag . ToString ( );
-                if ( ShowVolumeLabels )
-                    item . Header = drivestring + "  " + Utils . GetDictionaryEntry ( VolumeLabelsDict , drivestring , out dictvalue );
-                else
-                    item . Header = drivestring;
-            }
-            ActiveTree . Refresh ( );
-        }
+
         private void Opt4cbox_Click ( object sender , RoutedEventArgs e )
         {
             Exactmatch = ( bool ) Opt4cbox . IsChecked;
             Opt4cbox . Content = Exactmatch ? "Yes" : "No";
-            if ( Exactmatch )
-                Opt4cbox . Foreground = FindResource ( "Green3" ) as SolidColorBrush;
-            else
-                Opt4cbox . Foreground = FindResource ( "Red3" ) as SolidColorBrush;
             if ( LISTRESULTS && Exactmatch )
             {
-                Selection . Text = "Searching will use EXACT matching....";
+                int x = listBox . Items . Add ( "Searching will use EXACT matching...." );
+                listBox . ScrollIntoView ( x-1);
             }
             else
             {
-                Selection . Text = "Searching will use Partial matching....";
+                int x = listBox . Items . Add ( "Searching will use Partial matching...." );
+                listBox . ScrollIntoView (x-1);
             }
+
             OptionsPanel . Refresh ( );
         }
 
@@ -4267,53 +4603,17 @@ namespace MyDev . Views
         {
             ShowAllFiles = ( bool ) Opt5cbox . IsChecked;
             Opt5cbox . Content = ShowAllFiles ? "Yes" : "No";
-            if ( ShowAllFiles )
-                Opt5cbox . Foreground = FindResource ( "Green3" ) as SolidColorBrush;
-            else
-                Opt5cbox . Foreground = FindResource ( "Red3" ) as SolidColorBrush;
             if ( LISTRESULTS && ShowAllFiles )
             {
-                Selection . Text = "Hidden/System files will be shown....";
+                listBox . Items . Add ( "Hidden/System files will be shown...." );
+                listBox . ScrollIntoView ( "Hidden/System files will be shown...." );
             }
             else
             {
-                Selection . Text = "Hidden/System files will NOT be shown....";
+                listBox . Items . Add ( "Hidden/System files will NOT be shown...." );
+                listBox . ScrollIntoView ( "Hidden/System files will NOT be shown...." );
             }
-            VolumeLabelsDict . Clear ( );
-            LoadDrives ( ActiveTree );
             OptionsPanel . Refresh ( );
-        }
-        private void Opt1cbox_Click ( object sender , MouseButtonEventArgs e )
-        {
-            Opt1cbox . IsChecked = !Opt1cbox . IsChecked;
-            Opt1cbox_Click ( sender , new RoutedEventArgs ( null ) );
-        }
-        private void Opt2cbox_Click ( object sender , MouseButtonEventArgs e )
-        {
-            Opt2cbox . IsChecked = !Opt2cbox . IsChecked;
-            Opt2cbox_Click ( sender , new RoutedEventArgs ( null ) );
-        }
-        private void Opt3cbox_Click ( object sender , MouseButtonEventArgs e )
-        {
-            Opt3cbox . IsChecked = !Opt3cbox . IsChecked;
-            Opt3cbox_Click ( sender , new RoutedEventArgs ( null ) );
-        }
-        private void Opt4cbox_Click ( object sender , MouseButtonEventArgs e )
-        {
-            Opt4cbox . IsChecked = !Opt4cbox . IsChecked;
-            Opt4cbox_Click ( sender , new RoutedEventArgs ( null ) );
-        }
-        private void Opt5cbox_Click ( object sender , MouseButtonEventArgs e )
-        {
-            Opt5cbox . IsChecked = !Opt5cbox . IsChecked;
-            Opt5cbox_Click ( sender , new RoutedEventArgs ( null ) );
-        }
-
-        private void ExpandNode_Click ( object sender , RoutedEventArgs e )
-        {
-            TreeViewItem tv = new TreeViewItem ( );
-            tv = TestTree . SelectedItem as TreeViewItem;
-            tv . IsExpanded = !tv . IsExpanded;
         }
     }
 }
@@ -4328,4 +4628,13 @@ namespace MyDev . Views
 
 //        this . BringIndexIntoView ( index );
 //    }
-//
+//}
+
+/*
+ExpArgs . tv =
+ExpArgs . tvitem =
+ExpArgs . ExpandLevels =
+ExpArgs . SearchTerm =
+ExpArgs . ClosePrevious =
+ExpArgs . Selection =
+*/

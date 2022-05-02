@@ -24,6 +24,26 @@ namespace MyDev
 
 			}
 		}
+		public static Brush ToSolidColorBrush ( this string HexColorString )
+		{
+			if ( HexColorString . Length < 9 )
+			{
+				//				MessageBox.Show( "The Hex value entered is invalid. It needs to be # + 4 hex pairs\n\neg: [#FF0000FF] = BLUE ");
+				return null;
+			}
+			try
+			{
+				if ( HexColorString != null && HexColorString != "" )
+					return ( SolidColorBrush ) System . Windows . Application . Current . FindResource(HexColorString);
+				else
+					return null;
+			}
+			catch ( Exception ex )
+			{
+				Console . WriteLine ( $"ToSolidColorBrush failed - input = {HexColorString}" );
+				return null;
+			}
+		}
 
 		public static Brush ToSolidBrush ( this string HexColorString )
 		{

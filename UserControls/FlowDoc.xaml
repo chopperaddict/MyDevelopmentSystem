@@ -17,12 +17,24 @@
 	<!--xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"-->
 	<UserControl.Resources>
 		<conv:ReduceByParamValue x:Key="resetTextWidth" />
-        <ContextMenu x:Key="DummyContextmenu">
-            <MenuItem Header="xxxxx"  Click="dummy_Click">
+        <conv:BoolToNotBool x:Key="NotBool"/>
+
+        <ContextMenu x:Key="OptionsContextmenu"
+                     >
+            <!--DataContext = "{Binding PlacementTarget, RelativeSource={RelativeSource Self}}" >-->
+            <MenuItem Name="UseRtb" Header="Use RichTextBox"  
+                      Click="UseRTB_Click">
                 <MenuItem.Icon>
                     <Image Source="/Icons/symlink_directory_30px.png" />
                 </MenuItem.Icon>
             </MenuItem>
+            <MenuItem  Name="UseSview" Header="Use ScrollViewer"  
+                      Click="UseSViewer_Click">
+                <MenuItem.Icon>
+                    <Image Source="/Icons/symlink_directory_30px.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+              
         </ContextMenu>
 
         <ControlTemplate x:Key="GreenRadialButtonTemplate" TargetType="{x:Type Button}">
@@ -124,18 +136,24 @@
 	<Grid>
 			  <!--MouseMove="FdBorder_MouseMove"-->
 		<Border x:Name="FlowdocBorder"
-			  PreviewMouseLeftButtonDown="FlowdocBorder_PreviewMouseLeftButtonDown">
+			  PreviewMouseLeftButtonDown="FlowdocBorder_PreviewMouseLeftButtonDown"
+                PreviewKeyDown="flowdoc_PreviewKeyDown"
+			   MouseEnter="FdBorder_MouseEnter"
+				   MouseLeave="FdBorder_MouseLeave"
+                >
 			<Border  x:Name="FdBorder"
 				BorderBrush="{StaticResource Black4}"
 				PreviewMouseLeftButtonDown="Border_PreviewMouseLeftButtonDown"
 				PreviewMouseLeftButtonUp="Border_PreviewMouseLeftButtonUp"
-				   MouseEnter="FdBorder_MouseEnter"
+				PreviewKeyDown="flowdoc_PreviewKeyDown"
+                     MouseEnter="FdBorder_MouseEnter"
 				   MouseLeave="FdBorder_MouseLeave"
 				BorderThickness="10 10 10 10">
 				<!--Width="{Binding Path=ActualWidth, ElementName=flowdoc}"-->
 
 				<Grid x:Name="MainGrid"
-					Background="{Binding backGround}">
+					Background="{Binding backGround}"
+                      PreviewKeyDown="flowdoc_PreviewKeyDown">
 
 					<!--<behaviors:Interaction.Behaviors>
 					<behaviors:MouseDragElementBehavior ConstrainToParentBounds="True" />
@@ -204,6 +222,7 @@
                     </Canvas>
 
 					<RichTextBox x:Name="doc"
+							ContextMenu="{StaticResource OptionsContextmenu}"
 							Focusable="true"
 							 FontSize="{Binding Fontsize}"
 							 Foreground="{StaticResource Black5}"
@@ -232,7 +251,7 @@
 
                                               <!--FontSize="11"-->
 					<FlowDocumentScrollViewer x:Name="fdviewer"
-						ContextMenu="{StaticResource DummyContextmenu}"
+						ContextMenu="{StaticResource OptionsContextmenu}"
 						Focusable="true"
 						FontFamily="Arial"
 						FontSize="{Binding Fontsize}"
@@ -271,11 +290,12 @@
 						Template="{StaticResource GreenRadialButtonTemplate}"
 						Content="Close" />
 
-						<Label  x:Name="SaveLabel"
+						<!--<Label  x:Name="SaveLabel"
 						Content="Using Auto Height ="
 						Foreground="{StaticResource Red5}"
 						Grid.Column="1"
 						Grid.Row="2"
+                        Visibility="Hidden"
 						HorizontalAlignment="Right" Margin="0,8,40,10"
 		/>
 					<Image x:Name="KeepIcon"
@@ -287,8 +307,8 @@
 						 Panel.ZIndex="5"
 						PreviewMouseLeftButtonUp="KeepSize_PreviewMouseLeftButtonUp"
 						Source="/Icons/up arroiw red.png" 
-						Visibility="Visible"
-						Width="20"/>
+						Visibility="Hidden"
+						Width="20"/>-->
 
 				</Grid>
 			</Border>

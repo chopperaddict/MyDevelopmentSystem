@@ -1146,6 +1146,13 @@ xmlns:analogclock="clr-namespace:WPFPages.Analogclock"
 				MenuCommands .Hello_Executed ( e .Parameter );
 					});
 
+		or
+
+		//Dispatcher . BeginInvoke ( new Action ( ( ) =>
+        //{
+                CollapseAllDrives ( );
+        //} ) , DispatcherPriority . ApplicationIdle );
+ 
 ===============================================================================================================
 // How to use my DataGrid "Styles" with any DataGrid
 ===============================================================================================================
