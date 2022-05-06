@@ -44,14 +44,6 @@
 
         <SolidColorBrush x:Key="GlyphBrush" Color="#444" />
 
-
-        <!--<DataTemplate x:Key="tvtooltip" >
-            <StackPanel Orientation="Vertical" Width="200" Height="100" Background="Red" >
-                <TextBlock Text="Dbl-Click to Expand / Collapse items, or " Foreground="White"/>
-                <TextBlock Text="Right click to access Options" Foreground="White"/>
-            </StackPanel>
-        </DataTemplate>-->
-
         <!--<DataTemplate x:Key="MenuCheckboxItem" DataType="{x:Type MenuItem}">
             <StackPanel Orientation="Horizontal">
                 <Border Height="30" Width="30" Background="Transparent"/>
@@ -1286,15 +1278,6 @@
                                 GotFocus="MenuItem_GotFocus"
                                 />
 
-                    <MenuItem  Header="Track Expanded items"
-                                x:Name="trackitemexpansion"
-                                Background="{StaticResource Green5}" 
-                                FontWeight="Medium"
-                                FontSize="15"
-                                Style="{StaticResource MenuItemCyan}"
-                                Click="TrackExpansion_Click" 
-                                GotFocus="MenuItem_GotFocus"
-                                />
                     <MenuItem  Header="DEBUG : Expand current "
                                 x:Name="ExpandNodehowhidden"
                                 Background="{StaticResource Green5}" 
@@ -1838,39 +1821,29 @@
                           VirtualizingStackPanel.VirtualizationMode="Recycling"-->
 
                     <!--FontFamily="Global User Interface"-->
-                    <!--FontFamily="GlobalMonospace.CompositeFont"-->
                     <!--The style handles all coloration - in TreeViewDictionary.XAML-->
                     <TreeView x:Name="TestTree"
                             Background="{StaticResource Cyan0}"
                             Grid.Row="1"
                             Grid.RowSpan="1"
                             ContextMenu="{StaticResource TVContextMenu}"
-                            FontFamily="Lucida Sans"
-                            FontSize="14" 
+                            FontFamily="GlobalMonospace.CompositeFont"
+                            FontSize="16" 
                             FontWeight="Normal"
                             Height="{Binding row1.ActualHeight}"
                             Panel.ZIndex="6"
                               SelectedItemChanged="TestTree_SelectedItemChanged"
                               RequestBringIntoView="TreeViewItem_RequestBringIntoView"
-                            PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
                             TreeViewItem.Expanded="TestTree_Expanded"   
                             TreeViewItem.Collapsed="TestTree_Collapsed"  
+                            ToolTip="Right Click for Expansion Options"
+                            MouseDoubleClick="TestTree_MouseDoubleClick"
+                            MouseEnter="TestTree_MouseEnter"                              
                             Style="{StaticResource TreeViewItemMainStyle}"
-                              ToolTipService.HasDropShadow="True"
-                              ToolTipService.InitialShowDelay="750"
-                              ToolTipService.BetweenShowDelay="5"
-                              ToolTipService.ShowDuration="4000"
                             Visibility="Visible"
                             Width="{Binding Path=Width, ElementName=TopGrid}">
-
-                        <TreeViewItem
-                            MouseDoubleClick="TestTree_MouseDoubleClick"
-                            MouseEnter="TestTree_MouseEnter"    
-                            MouseMove="TREEViews_MouseMove"
-                            PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
-                              IsMouseDirectlyOverChanged="TREEViews_IsMouseDirectlyOverChanged">                            
-                        </TreeViewItem>
-                        
+                              <!--Style="{StaticResource TreeViewItemMainStyle}"-->
+                        <!--<TreeViiewItems Style ="{StaticResource TreeViewItemMainStyle}"/>-->
                         <TreeView.Resources>
                             <!--<HierarchicalDataTemplate x:Key="HiTv" DataType="{x:Type TreeViewItem}">
                                 <TextBlock Text="{Binding}"
@@ -1888,12 +1861,12 @@
                         </TreeView.Resources>
                     </TreeView>
 
-                    <!--<TreeView x:Name="XTestTree"
+                    <TreeView x:Name="ObsTree"
                             Background="{StaticResource Cyan2}"
                             Grid.Row="1"
                             Grid.RowSpan="1"
                             ContextMenu="{StaticResource TVContextMenu}"
-                             FontFamily="GlobalMonospace.CompositeFont"
+                            FontFamily="GlobalMonospace.CompositeFont"
                             FontSize="16" 
                             FontWeight="Normal"
                             Height="{Binding row1.ActualHeight}"
@@ -1908,10 +1881,10 @@
                             Style="{StaticResource TreeViewItemMainStyle}"
                             Visibility="Hidden"
                             Width="{Binding Path=Width, ElementName=TopGrid}">
-                        --><!--Style="{StaticResource TreeViewItemMainStyle}"-->
-                        <!--<TreeViiewItems Style ="{StaticResource TreeViewItemMainStyle}"/>--><!--
+                        <!--Style="{StaticResource TreeViewItemMainStyle}"-->
+                        <!--<TreeViiewItems Style ="{StaticResource TreeViewItemMainStyle}"/>-->
                         <TreeView.Resources>
-                            --><!--<HierarchicalDataTemplate x:Key="HiTv" DataType="{x:Type TreeViewItem}">
+                            <!--<HierarchicalDataTemplate x:Key="HiTv" DataType="{x:Type TreeViewItem}">
                                 <TextBlock Text="{Binding}"
                                        Background="Black"
                                        Height="45"
@@ -1923,9 +1896,9 @@
                                        Height="65"
                                        Width="50"/>
 
-                            </DataTemplate>--><!--
+                            </DataTemplate>-->
                         </TreeView.Resources>
-                    </TreeView>-->
+                    </TreeView>
 
                 </Grid>
                 <!--//=========================================================================//-->

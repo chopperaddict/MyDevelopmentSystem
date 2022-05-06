@@ -271,10 +271,15 @@
     <Compile Include="Views\SysConfig.xaml.cs">
       <DependentUpon>SysConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TreeViewCollection.cs" />
     <Compile Include="Views\TreeViewMethods.cs" />
+    <Compile Include="Views\TreeviewObs.xaml.cs">
+      <DependentUpon>TreeviewObs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TreeViews.xaml.cs">
       <DependentUpon>TreeViews.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TvItemClass.cs" />
     <Compile Include="Views\VmTest.xaml.cs">
       <DependentUpon>VmTest.xaml</DependentUpon>
     </Compile>
@@ -455,6 +460,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SysConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TreeviewObs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -684,6 +693,9 @@
     <Resource Include="Images\Properties.png" />
     <Resource Include="Images\Search.png" />
     <Resource Include="Images\Text.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\folderwithdocs.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('packages\Fody.6.5.1\build\Fody.targets')" />

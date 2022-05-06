@@ -1494,19 +1494,24 @@ namespace MyDev
                 var v = original . GetType ( );
                 if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
                 {
-    //                Console . WriteLine ( "Border clicked" );
+                    //                Console . WriteLine ( "Border clicked" );
                     //					Mouse . SetCursor ( Cursors . SizeAll );
                     return true;
                 }
                 Type type = original . GetType ( );
                 if ( type . Equals ( typeof ( TextBlock ) ) )
                 {
-//                    Console . WriteLine ( "TextBlock clicked" );
+                    //                    Console . WriteLine ( "TextBlock clicked" );
                     return false;
                 }
                 if ( type . Equals ( typeof ( Grid ) ) )
                 {
-  //                  Console . WriteLine ( "Grid clicked" );
+                    //                  Console . WriteLine ( "Grid clicked" );
+                    return false;
+                }
+                if ( type . Equals ( typeof ( TreeViewItem ) ) )
+                {
+                    //                  Console . WriteLine ( "Grid clicked" );
                     return false;
                 }
                 else if ( FindVisualParent<Border> ( original as DependencyObject ) != null )
@@ -1520,7 +1525,44 @@ namespace MyDev
             }
             catch ( Exception ex )
             {
-  //              Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
+                //              Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
+                return false;
+            }
+            //		return true;
+        }
+        public static bool HitTestTreeViewItem( object sender , MouseButtonEventArgs e )
+        {
+            TreeView tv = sender as TreeView;
+            object original = e . OriginalSource;
+            var vv = e . Source;
+            try
+            {
+                var v = original . GetType ( );
+                if ( original . GetType ( ) . Equals ( typeof ( Border ) ) )
+                {
+                    //                Console . WriteLine ( "Border clicked" );
+                    //					Mouse . SetCursor ( Cursors . SizeAll );
+                    return true;
+                }
+                Type type = original . GetType ( );
+                 if ( type . Equals ( typeof ( System.Windows.Shapes.Path) ) )
+                {
+                    //                  Console . WriteLine ( "Grid clicked" );
+                    //IInputElement dropNode = tv . InputHitTest ( (Point)tv.GetPosition(tv).);
+                    return false;
+                }
+                else if ( FindVisualParent<Border> ( original as DependencyObject ) != null )
+                {
+                    //scroll bar is clicked
+                    Console . WriteLine ( "Calling FindVisualParent" );
+                    return true;
+                }
+                return false;
+                //}
+            }
+            catch ( Exception ex )
+            {
+                //              Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
                 return false;
             }
             //		return true;

@@ -364,8 +364,8 @@ namespace MyDev
 
         private void button16_Click ( object sender , RoutedEventArgs e )
         {
-			HierarchicalTreeView hit = new HierarchicalTreeView ( );
-		hit . Show ( );
+			TreeviewObs hit = new TreeviewObs ( );
+			hit . Show ( );
         }
 
         private void button17_Click ( object sender , RoutedEventArgs e )
