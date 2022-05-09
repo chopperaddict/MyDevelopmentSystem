@@ -21,7 +21,7 @@
 			but still have mouseover etc working correctly, but still have our text "Content" display-->
 			<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}"
 				   BorderThickness="{TemplateBinding BorderThickness}"
-				   Background="{Binding btnBkGround}"
+				   Background="{TemplateBinding Background}"
 				   CornerRadius="15"
 				   SnapsToDevicePixels="True">
 				<ContentPresenter x:Name="contentPresenter"

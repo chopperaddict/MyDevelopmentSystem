@@ -7,11 +7,14 @@
         mc:Ignorable="d"
         xmlns:att="clr-namespace:MyDev.AttachedProperties"
         xmlns:userctrl="clr-namespace:MyDev.UserControls"
-        xmlns:model="clr-namespace:MyDev.ViewModels"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+          xmlns:model="clr-namespace:MyDev.ViewModels"
         xmlns:views="clr-namespace:MyDev.Views"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-         xmlns:xbehaviors="clr-namespace:MyDev.ViewModels"
+         xmlns:behave="clr-namespace:MyDev.Behaviors"
          xmlns:conv="clr-namespace:MyDev.Converts"
+
+
         KeyDown="Window_KeyDown"
         Loaded="Window_Loaded" 
         MouseEnter="TREEViews_MouseEnter"
@@ -24,6 +27,8 @@
         Title="Mullti Tree Views wiith Grid Spliiters"
         Height="500" Width="950"
         MinHeight="750" MinWidth="950">
+    <!--xmlns:TxtBoxbhavor="clr-namespace:MyDev.Behaviors"
+        xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"-->
     <Window.Background>
         <LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
             <GradientStop Offset="0" Color="#FFAAAAAA" />
@@ -34,15 +39,111 @@
         </LinearGradientBrush>
     </Window.Background>
 
+    <!--#region Resources-->
+
     <Window.Resources>
         <conv:BoolToYesNo x:Key="boolToYesNo"/>
         <conv:EqualityConverter x:Key="EqualityConverter" />
         <conv:ReduceByParamValue x:Key="ReduceByParamValue"/>
+        <!--<TxtBoxbhavor:TextChangeBehavior x:Key="TextChangeBehavior"/>-->
         <!--<conv:ExpanderArgumentsConverter x:Key="ExpanderArgumentsConverter"/>-->
         <!--Command="{Binding WalkTreeViewItem}"
                                 CommandParameter="1">-->
 
         <SolidColorBrush x:Key="GlyphBrush" Color="#444" />
+
+        <Style x:Key="Expansion" TargetType="{x:Type TreeViewItem}">
+            <!--This Setter applies an attached behavior to all TreeViewItems.-->
+            <Setter Property="behave:TreeViewItemBehavior.IsBroughtIntoViewWhenSelected"  Value="True" />
+
+            <!-- These Setters bind a TreeViewItem to a PersonViewModel.-->
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--//Contract TreeView-->
+        <!--AccelerationRatio="0.5" DecelerationRatio="0.5"-->
+        <Storyboard x:Key="sb"  >
+            <DoubleAnimation Storyboard.TargetName="listBox" 
+                  Storyboard.TargetProperty="Width" To="{Binding ActualWidth}" 
+                             From=" 1"                    
+                  Duration="0:0:1" BeginTime="0:0:0">
+                <!--<DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>-->
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="listBox"
+                   Storyboard.TargetProperty="Height" To="{Binding ActualHeight}"  
+                             From="1"  
+                   Duration="0:0:1" BeginTime="0:0:0">
+                <!--<DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>-->
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="TestTree" 
+                  Storyboard.TargetProperty="Width" To="{Binding ActualWidth, ElementName=ManualGrid}"  From="1" 
+                  Duration="0:0:1.0" BeginTime="0:0:0">
+                <!--<DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>-->
+            </DoubleAnimation>
+
+            <DoubleAnimation Storyboard.TargetName="TestTree" 
+                   Storyboard.TargetProperty="Height" To="{Binding ActualHeight, ElementName=ManualGrid}"   From="1"
+                   Duration="0:0:1.0" BeginTime="0:0:0">
+                <!--<DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>-->
+            </DoubleAnimation>
+
+
+        </Storyboard>
+
+        <!--<Style x:Key="sb" TargetType="{x:Type ListBox}">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseDown">
+                    <BeginStoryboard>
+                    <Storyboard>
+                            <DoubleAnimation From="0" To="{Binding ActualHeight}" Duration="0:0:5"
+                                Storyboard.TargetProperty
+                                    ="RenderTransform.(TranslateTransform.X)"/>
+                            <DoubleAnimation From="0" To="{Binding ActualHeight}" Duration="0:0:5"
+                                Storyboard.TargetProperty
+                                    ="RenderTransform.(TranslateTransform.Y)"/>
+                    </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+            </Style>-->
+
+
+
+
+
+
+
+
+
+        <!--//Expand TreeView-->
+        <!--
+            <DoubleAnimation Storyboard.TargetName="TestTree" AccelerationRatio="0.2" DecelerationRatio="0.8"
+          Storyboard.TargetProperty="Width" From="1" To="{Binding ActualWidth}"
+          Duration="0:0:5" BeginTime="0:0:5"/>
+            <DoubleAnimation Storyboard.TargetName="TestTree"  AccelerationRatio="0.5" 
+          Storyboard.TargetProperty="Height" From="1" To="{Binding ActualHeight}"
+          Duration="0:0:4" BeginTime="0:0:5"/>
+            <DoubleAnimation Storyboard.TargetName="TestTree"  AccelerationRatio="0.4" DecelerationRatio="0.6"
+          Storyboard.TargetProperty="Opacity" From="0" To="1" 
+          Duration="0:0:9" BeginTime="0:0:5"/>
+        </Storyboard>-->
 
 
         <!--<DataTemplate x:Key="tvtooltip" >
@@ -262,7 +363,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource Black0}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource Orange5}"/>
+                        <Setter Property="Background" Value="{StaticResource Orange5}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -276,7 +377,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource White0}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource Red5}"/>
+                        <Setter Property="Background" Value="{StaticResource Red5}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -289,7 +390,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource Black0}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource Green8}"/>
+                        <Setter Property="Background" Value="{StaticResource Green8}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -302,7 +403,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource White0}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource Red5}"/>
+                        <Setter Property="Background" Value="{StaticResource Red5}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -320,7 +421,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource Black0}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource White3}"/>
+                        <Setter Property="Background" Value="{StaticResource White3}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -334,7 +435,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource White3}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource Red5}"/>
+                        <Setter Property="Background" Value="{StaticResource Red5}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -351,7 +452,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource Black0}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource Green6}"/>
+                        <Setter Property="Background" Value="{StaticResource Green6}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -364,7 +465,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource Red5}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource White3}"/>
+                        <Setter Property="Background" Value="{StaticResource White3}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
                 <MultiTrigger>
@@ -377,7 +478,7 @@
                     </MultiTrigger.Conditions>
                     <MultiTrigger.Setters>
                         <Setter Property="Foreground" Value="{StaticResource Blue0}"/>
-                        <Setter Property="Border.Background" Value="{StaticResource White0}"/>
+                        <Setter Property="Background" Value="{StaticResource White0}"/>
                     </MultiTrigger.Setters>
                 </MultiTrigger>
 
@@ -427,7 +528,7 @@
                                 <Condition Property="IsMouseOver" Value="false"/>
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
-                                <Setter Property="Border.Background" Value="{StaticResource {StaticResource Red5}}"/>
+                                <Setter Property="Border.Background" Value="{StaticResource Red5}"/>
                                 <Setter Property="Foreground" Value="{StaticResource White0}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
@@ -1169,6 +1270,9 @@
         <!--#endregion MenuItem full style that handles Checkmarks etc correctly-->
 
     </Window.Resources>
+
+    <!--#endregion Resources-->
+
     <!--<Window.DataContext>
 		<vm:ViewModel />
 	</Window.DataContext>-->
@@ -1184,10 +1288,13 @@
 
         <!--#region Main Menu-->
         <Border Background="Red" Grid.Row="0" Height="30" HorizontalAlignment="Left">
+
+            <!--#region Main Menu-->
+
             <Menu x:Name="MainTVMenu" 
                     Background="Red" 
                     HorizontalAlignment="Left"
-                    Width="375"  Height="30" 
+                    Width="555"  Height="30" 
                     PreviewMouseLeftButtonDown="MainTVMenu_MouseDown"
                     GotFocus="MenuItem_GotFocus"  >
 
@@ -1204,14 +1311,25 @@
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Left"
                             Width="140"/>
-                            <!--Style="{StaticResource TopMenuItemYellow}"-->
+                <!--Style="{StaticResource TopMenuItemYellow}"-->
+
+                <MenuItem Header="Storyboard" 
+                            Background="{StaticResource Green5}" 
+                            FontWeight="Medium"
+                            FontSize="15"
+                            Margin="0 0 0 0"
+                            Padding="0 0 0 0"
+                            Height="30" 
+                            Style="{StaticResource MenuItemCyan}"
+                            Click="TVStoryboardstart_Click" 
+                            GotFocus="MenuItem_GotFocus"/>
 
                 <MenuItem Header="Options"
                         x:Name="OptionsMenuItems"
                         FontWeight="DemiBold"
                         BorderThickness="0"
                         FontSize="15"
-                        Margin="5 -5 0 0"
+                        Margin="0 -5 0 0"
                         Padding="10 0 0 0"
                         Height="30" 
                         HorizontalAlignment="Left"
@@ -1225,7 +1343,7 @@
                             Background="{StaticResource Green5}" 
                             FontWeight="Medium"
                             FontSize="15"
-                            Padding="10 1 0 0"
+                            Padding="10 0 0 0"
                             Style="{StaticResource MenuItemCyan}"
                             Click="TreviewOptions_Click" 
                             GotFocus="MenuItem_GotFocus"/>
@@ -1256,6 +1374,13 @@
                             Style="{StaticResource MenuItemCyan}"
                             Click="clearlog_Click"
                             />
+                    <MenuItem  Header="Reset Listbox each operation"
+                            x:Name="togglelog"
+                            Background="{StaticResource Green5}" 
+                            FontSize="15"
+                            FontWeight="Medium"
+                            Style="{StaticResource MenuItemCyan}"
+                            Click="togglelog_Click"/>
 
                     <MenuItem  Header="Show Drive Volume labels"
                             x:Name="showVolumes"
@@ -1310,7 +1435,7 @@
                             FontWeight="DemiBold"
                             BorderThickness="0"
                             FontSize="15"
-                            Margin="5 -5 0 0"
+                            Margin="0 -5 0 0"
                             Padding="10 0 0 0"
                             Height="30" 
                             HorizontalAlignment="Left"
@@ -1329,13 +1454,13 @@
                             Click="searchdrive_Click"/>
                 </MenuItem>
 
-                   <MenuItem Header="Exit" 
+                <MenuItem Header="Exit" 
                             Background="{StaticResource Red3}" 
                             Foreground="White" 
                             FontWeight="DemiBold"
                             BorderThickness="0"
                             FontSize="15"
-                            Margin="5 -5 0 0"
+                            Margin="0 -5 0 0"
                             Padding="10 0 0 0"
                             Height="30" 
                             HorizontalAlignment="Right"
@@ -1358,9 +1483,11 @@
                             Click="CloseApp_Click"/>
                 </MenuItem>
             </Menu>
+
+            <!--#endregion Main Menu-->
+
         </Border>
         <!--#endregion Main Menu-->
-
         <Grid x:Name="Grid1" 
               Grid.Row="1"
 			Panel.ZIndex="0" Margin="-3,0,3,0">
@@ -1417,7 +1544,7 @@
                 <userctrl:FlowDoc x:Name="Flowdoc" 
 					Canvas.Top="100"
 					Canvas.Left="200" 
-					Height="100" Width="422"
+					Height="300" Width="800"
 					Visibility="Collapsed"
                     Fontsize="16"
 					PreviewMouseLeftButtonDown="Flowdoc_PreviewMouseLeftButtonDown"
@@ -1429,11 +1556,81 @@
 
                 </userctrl:FlowDoc>
 
+                <Border  x:Name="RectGrid" Canvas.Top="430" Canvas.Left="97" 
+                         HorizontalAlignment="Left" Height="70" VerticalAlignment="Center" Width="559"
+                         Visibility="Hidden">
+                    <Grid>
+                        <Rectangle x:Name="myrect" Margin="0,234,90,0"
+                           >
+                            <Rectangle.Fill>
+                                <LinearGradientBrush  StartPoint="1,0" EndPoint="0,0">
+                                    <GradientStop Offset="0" Color="#FFAAAAAA" />
+                                    <GradientStop Offset="0.3" Color="#FF411586" />
+                                    <GradientStop Offset="0.609" Color="#FF411563" />
+                                    <GradientStop Offset="1" Color="#FF14A7C1" />
+                                    <!--<GradientStop Offset="0" Color="#FF193A44" />-->
+                                </LinearGradientBrush>
+
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <!--#region StoryBoard Butons-->
+
+                        <Button x:Name="btnStart" 
+                    Content="StartStory"
+                    Margin="0,0,10,10" 
+                    Click="StartStory"
+                    Height="40"
+                    Template="{StaticResource HorizontalGradientTemplateYellow}"
+                    Visibility="Visible"   
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom" Width="97" />
+                        <!--<Button x:Name="btnStop" 
+                    Content="StopStory"
+                    Margin="0,0,110,10" 
+                    Click="StopStory"
+                    Height="40"
+                    Template="{StaticResource HorizontalGradientTemplateYellow}"
+                    Visibility="Visible"   
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom" Width="97" />-->
+                        <!--<Button x:Name="btnPause" 
+                    Content="Pause"
+                    Margin="0,0,210,10" 
+                    Click="PauseStory"
+                    Height="40"
+                    Template="{StaticResource HorizontalGradientTemplateYellow}"
+                    Visibility="Visible"   
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom" Width="97" />
+                        <Button x:Name="btnResume" 
+                    Content="Resume"
+                    Margin="0,0,310,10" 
+                    Click="ResumeStory"
+                    Height="40"
+                    Template="{StaticResource HorizontalGradientTemplateYellow}"
+                    Visibility="Visible"   
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom" Width="97" />-->
+                        <!--<Button x:Name="btnHide" 
+                    Content="Hide"
+                    Margin="0,0,410,10" 
+                    Click="HideStory"
+                    Height="40"
+                    Template="{StaticResource HorizontalGradientTemplateYellow}"
+                    Visibility="Visible"   
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom" Width="97" />-->
+                        <!--#endregion StoryBoard Butons-->
+
+                    </Grid>
+                </Border>
             </Canvas>
 
             <!--#endregion Outer main Canvas-->
 
             <!--#region Options dialog box !!-->
+
             <Border x:Name="OptionsPanel"
                     Grid.Row="1"
                     Grid.RowSpan="2"
@@ -1442,7 +1639,7 @@
                     Margin="358,185,0,0"
                     BorderBrush="{StaticResource Green2}"
                     BorderThickness="2"
-                    Height="170"
+                    Height="190"
                     Width="420"
                     Panel.ZIndex="55"
                     Background="{StaticResource White2}"
@@ -1581,6 +1778,25 @@
                                 IsChecked="{Binding ShowAllFiles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Content="{Binding ShowAllFiles, Converter={StaticResource boolToYesNo}}"/>
 
+                        <TextBlock x:Name="option6" 
+                                Grid.Row="6"
+                                Grid.Column="0" 
+                                Grid.ColumnSpan="3" 
+                                Height="35"
+                                PreviewMouseLeftButtonDown="Opt6cbox_Click"
+                                FontSize="16"
+                                  Padding="10 3 0 0 "
+                              Text="Reset Listbox each Expansion operation"/>
+                        <CheckBox x:Name="Opt6cbox"
+                                  Click="Opt6cbox_Click"
+                                Grid.Row="6"
+                                Grid.Column="1" 
+                                Foreground="{StaticResource Red3}"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Margin="10 5 5 0"
+                                IsChecked="{Binding RefreshListBox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Content="{Binding RefreshListBox, Converter={StaticResource boolToYesNo}}"/>
                     </Grid>
 
                 </StackPanel>
@@ -1801,7 +2017,7 @@
                 <Grid x:Name="ManualGrid" Grid.Row="0" Grid.Column="3" MinWidth="150" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20" />
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition x:Name="ttrow" Height="1*"/>
                     </Grid.RowDefinitions>
                     <!--<Grid.ColumnDefinitions  MinWidth="150"/>-->
 
@@ -1834,13 +2050,9 @@
                                ToolTip="Click to Toggle logging"
                                PreviewMouseLeftButtonDown="ToggleTreeview"/>
 
-                    <!--VirtualizingStackPanel.IsVirtualizing="True"
-                          VirtualizingStackPanel.VirtualizationMode="Recycling"-->
-
-                    <!--FontFamily="Global User Interface"-->
-                    <!--FontFamily="GlobalMonospace.CompositeFont"-->
                     <!--The style handles all coloration - in TreeViewDictionary.XAML-->
                     <TreeView x:Name="TestTree"
+                              diag:PresentationTraceSources.TraceLevel="None"
                             Background="{StaticResource Cyan0}"
                             Grid.Row="1"
                             Grid.RowSpan="1"
@@ -1849,28 +2061,38 @@
                             FontSize="14" 
                             FontWeight="Normal"
                             Height="{Binding row1.ActualHeight}"
+                              
                             Panel.ZIndex="6"
                               SelectedItemChanged="TestTree_SelectedItemChanged"
                               RequestBringIntoView="TreeViewItem_RequestBringIntoView"
                             PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
-                            TreeViewItem.Expanded="TestTree_Expanded"   
                             TreeViewItem.Collapsed="TestTree_Collapsed"  
                             Style="{StaticResource TreeViewItemMainStyle}"
+                            TreeViewItem.Expanded="TestTree_Expanded"   
                               ToolTipService.HasDropShadow="True"
-                              ToolTipService.InitialShowDelay="750"
-                              ToolTipService.BetweenShowDelay="5"
-                              ToolTipService.ShowDuration="4000"
+                              ToolTipService.InitialShowDelay="1500"
+                              ToolTipService.BetweenShowDelay="5000"
+                              ToolTipService.ShowDuration="2000"
                             Visibility="Visible"
                             Width="{Binding Path=Width, ElementName=TopGrid}">
-
+                        
+                        <!--<TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem" >
+                                <EventSetter Event="TreeViewItem.Expanded" Handler="OnTreeExpanded" />
+                                --><!--<EventSetter Event="TreeViewItem.Collapsed" Handler="OnTreeCollapsed" />--><!--
+                            </Style>
+                            </TreeView.ItemContainerStyle>-->
+                        
                         <TreeViewItem
                             MouseDoubleClick="TestTree_MouseDoubleClick"
                             MouseEnter="TestTree_MouseEnter"    
                             MouseMove="TREEViews_MouseMove"
+                            Style="{StaticResource Expansion}"
                             PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
-                              IsMouseDirectlyOverChanged="TREEViews_IsMouseDirectlyOverChanged">                            
+                              IsMouseDirectlyOverChanged="TREEViews_IsMouseDirectlyOverChanged">
                         </TreeViewItem>
-                        
+                        <!--IsSelected="{Binding IsBroughtIntoViewWhenSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"-->
+
                         <TreeView.Resources>
                             <!--<HierarchicalDataTemplate x:Key="HiTv" DataType="{x:Type TreeViewItem}">
                                 <TextBlock Text="{Binding}"
@@ -1888,44 +2110,6 @@
                         </TreeView.Resources>
                     </TreeView>
 
-                    <!--<TreeView x:Name="XTestTree"
-                            Background="{StaticResource Cyan2}"
-                            Grid.Row="1"
-                            Grid.RowSpan="1"
-                            ContextMenu="{StaticResource TVContextMenu}"
-                             FontFamily="GlobalMonospace.CompositeFont"
-                            FontSize="16" 
-                            FontWeight="Normal"
-                            Height="{Binding row1.ActualHeight}"
-                            Panel.ZIndex="6"
-                              SelectedItemChanged="TestTree_SelectedItemChanged"
-                              RequestBringIntoView="TreeViewItem_RequestBringIntoView"
-                            TreeViewItem.Expanded="TestTree_Expanded"   
-                            TreeViewItem.Collapsed="TestTree_Collapsed"  
-                            ToolTip="Right Click for Expansion Options"
-                            MouseDoubleClick="TestTree_MouseDoubleClick"
-                            MouseEnter="TestTree_MouseEnter"                              
-                            Style="{StaticResource TreeViewItemMainStyle}"
-                            Visibility="Hidden"
-                            Width="{Binding Path=Width, ElementName=TopGrid}">
-                        --><!--Style="{StaticResource TreeViewItemMainStyle}"-->
-                        <!--<TreeViiewItems Style ="{StaticResource TreeViewItemMainStyle}"/>--><!--
-                        <TreeView.Resources>
-                            --><!--<HierarchicalDataTemplate x:Key="HiTv" DataType="{x:Type TreeViewItem}">
-                                <TextBlock Text="{Binding}"
-                                       Background="Black"
-                                       Height="45"
-                                       Width="100"/>
-                            </HierarchicalDataTemplate>
-                            <DataTemplate x:Key="TvItemsControl" DataType="{x:Type TreeViewItem}">
-                                <TextBlock  Text="{Binding}"
-                                       Background="Black"
-                                       Height="65"
-                                       Width="50"/>
-
-                            </DataTemplate>--><!--
-                        </TreeView.Resources>
-                    </TreeView>-->
 
                 </Grid>
                 <!--//=========================================================================//-->
@@ -1933,8 +2117,9 @@
 
                 <!--LOWER GRID PANEL-->
                 <!--$$$$$$$$$$$$$$$$$$$$$$$$$-->
+
                 <!--#region lowerDrive information listbox container grid-->
-                
+
                 <Grid x:Name="lowergrid"
                     Grid.Row="2"
                     Grid.RowSpan="1"
@@ -1942,7 +2127,7 @@
                     Grid.ColumnSpan="3"
                     Height="{Binding ActualHeight, ElementName=Grid1.row2}"  
                     Panel.ZIndex="2">
-                    
+
                     <ListBox x:Name="InfoList" 
                             Grid.Row="0"
                             Grid.RowSpan="1"
@@ -1972,9 +2157,9 @@
             </Grid>
             <!--//End of main wrapper grid-->
 
-           <!--$$$$$$$$$$$$$$$$$$$$$$$$$-->
+            <!--$$$$$$$$$$$$$$$$$$$$$$$$$-->
             <!--#Region Buttons panel-->
-            
+
             <Grid x:Name="btngrid" Grid.Row="2" Margin="0,129,0,-39" Grid.RowSpan="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5" />
@@ -2102,7 +2287,7 @@
                           Visibility="Collapsed"
 						VerticalAlignment="Bottom" RenderTransformOrigin="-0.367,0.783" Grid.ColumnSpan="3"/>
 
-                   <!--// Use attached properties to style ExpanderCboxStyle-->
+                <!--// Use attached properties to style ExpanderCboxStyle-->
                 <ComboBox x:Name="DirectoryOptions" 
   			        att:MenuAttachedProperties.NormalBackground="{StaticResource Cyan1}"
 			        att:MenuAttachedProperties.NormalForeground="{StaticResource Black0}"
@@ -2116,9 +2301,9 @@
                     SelectionChanged="DirectoryOptions_Selected"
                     MaxDropDownHeight="750"
                     Width="170">
-                  
-                <ComboBoxItem Style="{StaticResource ExpanderCboxStyle}"/>
-                        <ComboBox.ItemTemplate>
+
+                    <ComboBoxItem Style="{StaticResource ExpanderCboxStyle}"/>
+                    <ComboBox.ItemTemplate>
                         <DataTemplate >
                             <TextBlock x:Name="CbItemText" 
                                        TextWrapping="Wrap"
@@ -2218,7 +2403,7 @@
                         ToolTip="Current Expand condition selected..."
                         Text="Information panel ..."
                         VerticalAlignment="Bottom"/>
-                
+
                 <TextBox x:Name="Selection"
                         Grid.Column="1"
                         Grid.ColumnSpan="5"
@@ -2234,7 +2419,7 @@
                         Text="Information panel ..."
                         ToolTip="Information on current operation is shown here"
                         VerticalAlignment="Bottom"/>
-                
+
                 <Button x:Name="SearchBtn" 
                 Click="SearchTree"
                 Margin="237,0,0,155" 
@@ -2283,7 +2468,11 @@
                     VerticalAlignment="Bottom"
                      Background="Red" Foreground="White" 
                      PreviewMouseDown="Searchtext_PreviewMouseDown"
-                     FontSize="16"   Text="Search for...."/>
+                     FontSize="16"   Text="Search for....">
+                    <!--<e:Interaction.Behaviors>
+                        <TxtBoxbhavor:TextChangeBehavior/>
+                    </e:Interaction.Behaviors>-->
+                </TextBox>
 
                 <Button x:Name="StopExpand" 
                 Grid.Column="3"
@@ -2297,7 +2486,7 @@
                 VerticalAlignment="Bottom"
                     Visibility="Hidden"
                 Width="84" />
-      
+
             </Grid>
 
             <TextBox x:Name="Expandprogress" 
@@ -2325,7 +2514,7 @@
                    VerticalAlignment="Center"
                    Margin="586,0,0,0" 
                    TextAlignment="Center"
-                   Visibility="Visible" Width="89"/>
+                   Visibility="Visible" Width="89" Height="30"/>
 
             <!--#endRegion Buttons panel-->
             <!--$$$$$$$$$$$$$$$$$$$$$$$$$-->

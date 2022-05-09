@@ -1,4 +1,18 @@
 ﻿===============================================================================================================
+	// How to use behavior (in its own class)
+===============================================================================================================
+
+ //REQUIRED HEADER
+       xmlns:TxtChBhe="clr-namespace:MyDev . Behaviors"
+       xmlns:e="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+
+ <TextBox Width="150" Height="25">
+           <e:Interaction.Behaviors>
+               <TxtChBhe:TextChangeBehavior></TxtChBhe:TextChangeBehavior>
+           </e:Interaction.Behaviors>
+       </TextBox>
+
+===============================================================================================================
 	// How to access items in  Styles
 ===============================================================================================================
 		// This is the style we are accessing

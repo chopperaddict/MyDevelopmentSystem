@@ -1628,6 +1628,7 @@ namespace MyDev . Views
                 else
                     UpdateListBox ( $"Around {Expandcounter . Text } objects have been Expanded..." );
                 Expandprogress . Text = "Finished ...";
+                Expandprogress . Refresh ( );
                 vsplitterright . Cursor = Cursors . SizeWE;
                 hsplitter . Cursor = Cursors . SizeNS;
                 treeViews . Cursor = Cursors . Arrow;
@@ -3459,42 +3460,7 @@ namespace MyDev . Views
                 StartTimer ( );
             //            var exp = TestTree.FindResource ( "Expander" );
             tvitemclass . ExpandTreeViewItem ( Caller , Mouseovertvitem );
-            // Needed to let us show the volume label if the option is checked
-            //TreeViewItem Caller = new TreeViewItem ( );
-            //TreeViewItem item = null;
-            //int itemscount = 0;
-            //if ( e != null )
-            //    item = e . Source as TreeViewItem;
-            //else
-            //    item = sender as TreeViewItem;
-            //if ( item == null )
-            //{
-            //    iterations = 0;
-            //    BusyLabel . Text = "";
-            //    return;
-            //}
-            //if ( item . Header . ToString ( ) == "Loading" )
-            //{
-            //    Caller . Header = currentHeader;
-            //    item . Header = currentHeader;
-            //    iterations = 0;
-            //    BusyLabel . Text = "";
-            //    return;
-            //}
-            //if ( item . Items . Count == 0 )
-            //{
-            //    // if ( item . Items [ 0 ] == "Loading" )
-            //    item . IsExpanded = false;
-            //    iterations = 0;
-            //    BusyLabel . Text = "";
-            //    return;
-            //}
-            // Caller = item;
-            //currentlevel = GetCurrentLevel ( item . Tag . ToString ( ) );
-            //currentHeader = item . Header . ToString ( );
-            //             Console . WriteLine ( $"Level = {currentlevel} : {item . Header}  ||   {item . Tag}" );
-
-
+            ExpandSetup ( false );
             //REINSTATE LATER 
 
             //TreeViewItem current = new TreeViewItem ( );
@@ -3672,7 +3638,7 @@ namespace MyDev . Views
 
             //Caller . Header = currentHeader;
             ShowProgress ( );
-            //ExpandSetup ( false );
+           
             iterations = 0;
             //            ActiveTree . HorizontalContentAlignment = HorizontalAlignment . Left;
 

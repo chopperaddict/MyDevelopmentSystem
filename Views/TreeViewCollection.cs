@@ -13,7 +13,7 @@ using System . Windows . Controls;
 public class TreeViewCollection : ObservableCollection<TreeViewItem>
 {
     #region OnPropertyChanged
-    public event PropertyChangedEventHandler PropertyChanged;
+    new public event PropertyChangedEventHandler PropertyChanged;
     public int SLEEPTIME { get; set; } = 100;
 
     public static object [ ] Args = new object [ ] { new object ( ) , new object ( ) , new object ( ) };

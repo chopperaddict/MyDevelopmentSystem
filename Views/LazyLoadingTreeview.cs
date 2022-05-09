@@ -29,8 +29,7 @@ namespace MyDev . Views
         {
             DriveInfo [ ] drives = DriveInfo . GetDrives ( );
             Treeview = tv;
-            //TVs = tvs;
-            foreach ( DriveInfo driveInfo in drives )
+             foreach ( DriveInfo driveInfo in drives )
             {
                 if ( driveInfo . IsReady == true )
                 {
@@ -137,7 +136,7 @@ namespace MyDev . Views
 
             // Now use my Files Class to get the list of any lowest level files  & add to treeview 
             // by adding each one to the TreeViewItem collection "item"
-            // if tey are not Special files or they are marked as Hidden
+            // if they are not Special files or they are marked as Hidden
             List<FileInfo> AllFiles = Texplorer . GetFiles ( );
             foreach ( var str in AllFiles )
             {
@@ -164,6 +163,7 @@ namespace MyDev . Views
             TreeViewItem item = new TreeViewItem ( );
             item . Header = o . ToString ( );
             item . Tag = o;
+            // Add  dummy entry so we can expand it
             item . Items . Add ( "Loading..." );
             return item;
         }

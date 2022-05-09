@@ -1,5 +1,4 @@
-﻿
-#define DEBUGEXPAND
+﻿#define DEBUGEXPAND
 #undef DEBUGEXPAND
 
 using System;
@@ -30,7 +29,7 @@ namespace MyDev . Views
 {
     public partial class TreeViews : Window, INotifyPropertyChanged
     {
-        #region Declarations
+        #region ALL Declarations
 
         #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -69,12 +68,6 @@ namespace MyDev . Views
         public SolidColorBrush Brush8;
         #endregion Brushes
 
-        BackgroundWorker worker = null;
-        public ExplorerClass TvExplorer = null;
-        public TreeView ActiveTree { get; set; }
-        //        public TvItemClass tvitemclass { get; set; }
-
-        //        public ICommand WalkTreeViewItem { get; set; }
         #region Expansion Items
         public struct ExpandArgs
         {
@@ -97,6 +90,10 @@ namespace MyDev . Views
 
         #endregion Expansion Items
 
+        #region general variable declarations
+
+        public ExplorerClass TvExplorer = null;
+        public TreeView ActiveTree { get; set; }
         public struct lbitemtemplate
         {
             public string Colm1 { get; set; }
@@ -119,76 +116,243 @@ namespace MyDev . Views
         public TreeViewItem SelectedTVItem { get; set; }
         //        public bool ClosePreviousFolder { get; set; } = false;
         public Image tvimage = new Image ( );
+        public static int iterations { get; set; } = 0;
+
+
+        #endregion general variable declarations
+
         #region Full Properties
+
         private string fullDetail;
         public string FullDetail
         {
             get { return fullDetail; }
-            set { fullDetail = value; OnPropertyChanged ( FullDetail ); }
+            set { fullDetail = value; OnPropertyChanged ( nameof ( FullDetail )); }
+        }
+        private bool refreshListbox;
+        public bool RefreshListBox
+        {
+            get { return (bool) refreshListbox; }
+            set { refreshListbox = value; OnPropertyChanged ( nameof(RefreshListBox) ); }
         }
         private int currentTree;
         public int CurrentTree
         {
             get { return currentTree; }
-            set { currentTree = value; }
+            set { currentTree = value; OnPropertyChanged ( nameof ( RefreshListBox ) ); }
         }
         private int currentLevel;
         public int CurrentLevel
         {
             get { return currentLevel; }
-            set { currentLevel = value; }
+            set { currentLevel = value; OnPropertyChanged ( nameof ( CurrentLevel) ); }
         }
         private string defaultDrive;
         public string DefaultDrive
         {
             get { return defaultDrive; }
-            set { defaultDrive = value; }
+            set { defaultDrive = value; OnPropertyChanged ( nameof ( DefaultDrive) ); }
         }
         private TreeViews treeviewsclass;
         public TreeViews Treeviewsclass
         {
             get { return treeviewsclass; }
-            set { treeviewsclass = value; }
+            set { treeviewsclass = value; OnPropertyChanged ( nameof ( Treeviewsclass ) ); }
         }
         private ExplorerClass explorer;
         public ExplorerClass Explorer
         {
             get { return explorer; }
-            set { explorer = value; }
+            set { explorer = value; OnPropertyChanged ( nameof ( Explorer) ); }
         }
         private bool exactmatch;
         public bool Exactmatch
         {
             get { return exactmatch; }
-            set { exactmatch = value; OnPropertyChanged ( "Exactmatch" ); }
+            set { exactmatch = value; OnPropertyChanged ( nameof(Exactmatch )); }
         }
         private bool listresults;
         public bool LISTRESULTS
         {
             get { return listresults; }
-            set { listresults = value; OnPropertyChanged ( "LISTRESULTS" ); }
+            set { listresults = value; OnPropertyChanged ( nameof ( LISTRESULTS )); }
         }
         // Global flag to control auto closing of searched folders (only)
         private bool closePreviousNode;
         public bool ClosePreviousNode
         {
             get { return closePreviousNode; }
-            set { closePreviousNode = value; OnPropertyChanged ( "ClosePreviousNode" ); }
+            set { closePreviousNode = value; OnPropertyChanged ( nameof ( ClosePreviousNode ) ); }
         }
         private bool showVolumeLabels;
         public bool ShowVolumeLabels
         {
             get { return showVolumeLabels; }
-            set { showVolumeLabels = value; OnPropertyChanged ( "ShowVolumeLabels " ); }
+            set { showVolumeLabels = value; OnPropertyChanged ( nameof ( ShowVolumeLabels ) ); }
         }
         private bool showallfiles;
         public bool ShowAllFiles
         {
             get { return showallfiles; }
-            set { showallfiles = value; OnPropertyChanged ( "ShowAllFiles " ); }
+            set { showallfiles = value; OnPropertyChanged ( nameof ( ShowAllFiles ) ); }
+        }
+        private string expandDuration;
+        public string ExpandDuration
+        {
+            get { return expandDuration; }
+            set { expandDuration = value; OnPropertyChanged ( nameof ( ExpandDuration ) ); }
+        }
+
+        private int progressCount;
+        public int ProgressCount
+        {
+            get { return progressCount; }
+            set
+            {
+                if ( value != 0 && value % PROGRESSWRAPVALUE == 0 )
+                {
+                    if ( BusyLabel . Visibility == Visibility . Hidden )
+                        BusyLabel . Visibility = Visibility . Visible;
+                    progressCount = 0;
+                    ProgressString = ".";
+                    if ( BusyLabelColor == RedBrush )
+                    {
+                        BusyLabelColor = YellowBrush;
+                        BusyLabelBkgrn = BlackBrush;
+                    }
+                    else
+                    {
+                        BusyLabelColor = RedBrush;
+                        BusyLabelBkgrn = WhiteBrush;
+                    }
+
+                }
+                else
+                {
+                    progressCount = value;
+                    ProgressString = def . Substring ( 0 , value );
+                    OnPropertyChanged ( ProgressCount . ToString ( ) );
+                }
+            }
+        }
+        private string progressString;
+        public string ProgressString
+        {
+            get { return progressString; }
+            set
+            {
+                progressString = value;
+                OnPropertyChanged ( ProgressString );
+            }
+        }
+        private int listboxtotal;
+        public int Listboxtotal
+        {
+            get { return listboxtotal; }
+            set { listboxtotal = value; OnPropertyChanged ( Listboxtotal . ToString ( ) ); }
+        }  
+        private SolidColorBrush busyLabelColor;
+        public SolidColorBrush BusyLabelColor
+        {
+            get { return busyLabelColor; }
+            set { busyLabelColor = value; OnPropertyChanged ( BusyLabelColor . ToString ( ) ); }
+        }
+        private SolidColorBrush busyLabelBkgrn;
+        public SolidColorBrush BusyLabelBkgrn
+        {
+            get { return busyLabelBkgrn; }
+            set { busyLabelBkgrn = value; OnPropertyChanged ( BusyLabelBkgrn . ToString ( ) ); }
         }
 
         #endregion Full Properties
+
+        #region Dependency Properties
+        public bool tv1SelectedItem
+        {
+            get { return ( bool ) GetValue ( tv1SelectedItemProperty ); }
+            set { SetValue ( tv1SelectedItemProperty , value ); }
+        }
+        public static readonly DependencyProperty tv1SelectedItemProperty =
+            DependencyProperty . Register ( "tv1SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
+        public bool tv2SelectedItem
+        {
+            get { return ( bool ) GetValue ( tv2SelectedItemProperty ); }
+            set { SetValue ( tv2SelectedItemProperty , value ); }
+        }
+        public static readonly DependencyProperty tv2SelectedItemProperty =
+            DependencyProperty . Register ( "tv2SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
+        public bool tv3SelectedItem
+        {
+            get { return ( bool ) GetValue ( tv3SelectedItemProperty ); }
+            set { SetValue ( tv3SelectedItemProperty , value ); }
+        }
+        public static readonly DependencyProperty tv3SelectedItemProperty =
+            DependencyProperty . Register ( "tv3SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
+        public TreeViewItem tv4SelectedItem
+        {
+            get { return ( TreeViewItem ) GetValue ( tv4SelectedItemProperty ); }
+            set { SetValue ( tv4SelectedItemProperty , value ); }
+        }
+        public static readonly DependencyProperty tv4SelectedItemProperty =
+            DependencyProperty . Register ( "tv4SelectedItem" , typeof ( TreeViewItem ) , typeof ( TreeViews ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
+        public TreeViewItem SelectedItem
+        {
+            get { return ( TreeViewItem ) GetValue ( SelectedItemProperty ); }
+            set { SetValue ( SelectedItemProperty , value ); }
+        }
+        public static readonly DependencyProperty SelectedItemProperty =
+            DependencyProperty . Register ( "SelectedItem" , typeof ( TreeViewItem ) , typeof ( TreeViews ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
+        public double Fontsize
+        {
+            get { return ( double ) GetValue ( FontsizeProperty ); }
+            set { SetValue ( FontsizeProperty , value ); }
+        }
+        public static readonly DependencyProperty FontsizeProperty =
+            DependencyProperty . Register ( "Fontsize" , typeof ( double ) , typeof ( TreeViews ) , new PropertyMetadata ( ( double ) 12 ) );
+        public BitmapImage LsplitterImage
+        {
+            get
+            { return ( BitmapImage ) GetValue ( LsplitterImageProperty ); }
+            set { SetValue ( LsplitterImageProperty , value ); }
+        }
+        public static readonly DependencyProperty LsplitterImageProperty =
+            DependencyProperty . Register ( "LsplitterImage" , typeof ( BitmapImage ) , typeof ( TreeViews ) , new PropertyMetadata ( ( BitmapImage ) null ) );
+        public BitmapImage VsplitterImage
+        {
+            get
+            { return ( BitmapImage ) GetValue ( VsplitterImageProperty ); }
+            set { SetValue ( VsplitterImageProperty , value ); }
+        }
+        public static readonly DependencyProperty VsplitterImageProperty =
+            DependencyProperty . Register ( "VsplitterImage" , typeof ( BitmapImage ) , typeof ( TreeViews ) , new PropertyMetadata ( ( BitmapImage ) null ) );
+        public string LeftSplitterText
+        {
+            get { return ( string ) GetValue ( LeftSplitterTextProperty ); }
+            set { SetValue ( LeftSplitterTextProperty , value ); }
+        }
+        // Using a DependencyProperty as the backing store for LeftSplitterText.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LeftSplitterTextProperty =
+            DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( TreeViews ) , new PropertyMetadata ( ( string ) "Drag Up or Down" ) );
+        public string RightSplitterText
+        {
+            get { return ( string ) GetValue ( RightSplitterTextProperty ); }
+            set { SetValue ( RightSplitterTextProperty , value ); }
+        }
+        // Using a DependencyProperty as the backing store for LeftSplitterText.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty RightSplitterTextProperty =
+            DependencyProperty . Register ( "RightSplitterText" , typeof ( string ) , typeof ( TreeViews ) , new PropertyMetadata ( ( string ) "to View Directory Tree / Drive Technical Information." ) );
+
+
+        public SolidColorBrush LbTextColor
+        {
+            get { return ( SolidColorBrush ) GetValue ( LbTextColorProperty ); }
+            set { SetValue ( LbTextColorProperty , value ); }
+        }
+        public static readonly DependencyProperty LbTextColorProperty =
+            DependencyProperty . Register ( "LbTextColor" , typeof ( SolidColorBrush ) , typeof ( TreeViews ) ,
+                new PropertyMetadata ( new SolidColorBrush ( Colors . Black ) ) );
+
+        #endregion Dependency Properties
 
         #region General  dclarations
         public string def = ".....................................................";
@@ -217,9 +381,36 @@ namespace MyDev . Views
 
         #endregion General declarations
 
+
+        #region Attached Properties
+
+        public static bool Gettvselection ( DependencyObject obj )
+        {
+            return ( bool ) obj . GetValue ( tvselectionProperty );
+        }
+        public static void Settvselection ( DependencyObject obj , bool value )
+        {
+            obj . SetValue ( tvselectionProperty , value );
+        }
+        public static readonly DependencyProperty tvselectionProperty =
+            DependencyProperty . RegisterAttached ( "tvselection" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( ( bool ) false ) );
+
+        public static bool GetIsMouseDirectlyOverItem ( DependencyObject obj )
+        {
+            return ( bool ) obj . GetValue ( IsMouseDirectlyOverItemProperty );
+        }
+        public static void SetIsMouseDirectlyOverItem ( DependencyObject obj , bool value )
+        {
+            obj . SetValue ( IsMouseDirectlyOverItemProperty , value );
+        }
+        public static readonly DependencyProperty IsMouseDirectlyOverItemProperty =
+            DependencyProperty . RegisterAttached ( "IsMouseDirectlyOverItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( ( bool ) false ) );
+        
+        #endregion Attached Properties
+
         private static FlowdocLib fdl;
-        //public static ObservableCollection<TreeViewItem> tvitems;
-        #endregion Declarations
+
+        #endregion ALL Declarations
 
         #region startup  items
         public TreeViews ( )
@@ -303,14 +494,14 @@ namespace MyDev . Views
             ttprogbar . Content = $"Dbl-Click to Expand / Collapse any selected item\nor Right Click to access various useful built-in\nTree View Expansion Options.\n    ";
             ttprogbar . Background = FindResource ( "White3" ) as SolidColorBrush;
             ttprogbar . Foreground = FindResource ( "Blue4" ) as SolidColorBrush;
-            ttprogbar . FontWeight = FontWeights. SemiBold;
+            ttprogbar . FontWeight = FontWeights . SemiBold;
 
             TestTree . ToolTip = ttprogbar;
 
             //fdl . ShowInfo ( Flowdoc, canvas, "This Version is here to demonstrate the use of a Templated style that handles all coloring", "Black0", "Information Idiot !!", "Red5");
         }
-        public void HandleImageClick ( object sender, MouseButtonEventArgs e)
-        { 
+        public void HandleImageClick ( object sender , MouseButtonEventArgs e )
+        {
         }
         private void TREEViews_Closing ( object sender , CancelEventArgs e )
         {
@@ -342,6 +533,9 @@ namespace MyDev . Views
                     case 4:
                         ShowAllFiles = input [ x ] == "T" ? true : false;
                         break;
+                    case 5:
+                        RefreshListBox = input [ x ] == "T" ? true : false;
+                        break;                        
                 }
             }
         }
@@ -352,7 +546,8 @@ namespace MyDev . Views
             output += LISTRESULTS ? "T," : "F,";
             output += ClosePreviousNode ? "T," : "F,";
             output += ShowVolumeLabels ? "T," : "F,";
-            output += ShowAllFiles ? "T," : "F,";
+            output += ShowVolumeLabels ? "T," : "F,";
+            output += RefreshListBox ? "T," : "F,";
             output += "\n";
             File . WriteAllText ( @"TreeViewSettings.dat" , output );
         }
@@ -559,196 +754,6 @@ namespace MyDev . Views
         }
         #endregion utilities
 
-        #region FULL (get; set; )  Properties
-
-
-        private string expandDuration;
-        public string ExpandDuration
-        {
-            get { return expandDuration; }
-            set { expandDuration = value; OnPropertyChanged ( "ExpandDuration" ); }
-        }
-
-        private int progressCount;
-        public int ProgressCount
-        {
-            get { return progressCount; }
-            set
-            {
-                if ( value != 0 && value % PROGRESSWRAPVALUE == 0 )
-                {
-                    if ( BusyLabel . Visibility == Visibility . Hidden )
-                        BusyLabel . Visibility = Visibility . Visible;
-                    progressCount = 0;
-                    ProgressString = ".";
-                    if ( BusyLabelColor == RedBrush )
-                    {
-                        BusyLabelColor = YellowBrush;
-                        BusyLabelBkgrn = BlackBrush;
-                    }
-                    else
-                    {
-                        BusyLabelColor = RedBrush;
-                        BusyLabelBkgrn = WhiteBrush;
-                    }
-
-                }
-                else
-                {
-                    progressCount = value;
-                    ProgressString = def . Substring ( 0 , value );
-                    OnPropertyChanged ( ProgressCount . ToString ( ) );
-                }
-            }
-        }
-        private string progressString;
-        public string ProgressString
-        {
-            get { return progressString; }
-            set
-            {
-                progressString = value;
-                OnPropertyChanged ( ProgressString );
-            }
-        }
-
-        private int listboxtotal;
-        public int Listboxtotal
-        {
-            get { return listboxtotal; }
-            set { listboxtotal = value; OnPropertyChanged ( Listboxtotal . ToString ( ) ); }
-        }
-
-        #endregion FULL (get; set; )  Properties
-
-        #region Dependency Properties
-
-        private SolidColorBrush busyLabelColor;
-        public SolidColorBrush BusyLabelColor
-        {
-            get { return busyLabelColor; }
-            set { busyLabelColor = value; OnPropertyChanged ( BusyLabelColor . ToString ( ) ); }
-        }
-
-        private SolidColorBrush busyLabelBkgrn;
-        public SolidColorBrush BusyLabelBkgrn
-        {
-            get { return busyLabelBkgrn; }
-            set { busyLabelBkgrn = value; OnPropertyChanged ( BusyLabelBkgrn . ToString ( ) ); }
-        }
-
-        public bool tv1SelectedItem
-        {
-            get { return ( bool ) GetValue ( tv1SelectedItemProperty ); }
-            set { SetValue ( tv1SelectedItemProperty , value ); }
-        }
-        public static readonly DependencyProperty tv1SelectedItemProperty =
-            DependencyProperty . Register ( "tv1SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
-        public bool tv2SelectedItem
-        {
-            get { return ( bool ) GetValue ( tv2SelectedItemProperty ); }
-            set { SetValue ( tv2SelectedItemProperty , value ); }
-        }
-        public static readonly DependencyProperty tv2SelectedItemProperty =
-            DependencyProperty . Register ( "tv2SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
-        public bool tv3SelectedItem
-        {
-            get { return ( bool ) GetValue ( tv3SelectedItemProperty ); }
-            set { SetValue ( tv3SelectedItemProperty , value ); }
-        }
-        public static readonly DependencyProperty tv3SelectedItemProperty =
-            DependencyProperty . Register ( "tv3SelectedItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( false ) );
-        public TreeViewItem tv4SelectedItem
-        {
-            get { return ( TreeViewItem ) GetValue ( tv4SelectedItemProperty ); }
-            set { SetValue ( tv4SelectedItemProperty , value ); }
-        }
-        public static readonly DependencyProperty tv4SelectedItemProperty =
-            DependencyProperty . Register ( "tv4SelectedItem" , typeof ( TreeViewItem ) , typeof ( TreeViews ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
-        public TreeViewItem SelectedItem
-        {
-            get { return ( TreeViewItem ) GetValue ( SelectedItemProperty ); }
-            set { SetValue ( SelectedItemProperty , value ); }
-        }
-        public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty . Register ( "SelectedItem" , typeof ( TreeViewItem ) , typeof ( TreeViews ) , new PropertyMetadata ( ( TreeViewItem ) null ) );
-        public double Fontsize
-        {
-            get { return ( double ) GetValue ( FontsizeProperty ); }
-            set { SetValue ( FontsizeProperty , value ); }
-        }
-        public static readonly DependencyProperty FontsizeProperty =
-            DependencyProperty . Register ( "Fontsize" , typeof ( double ) , typeof ( TreeViews ) , new PropertyMetadata ( ( double ) 12 ) );
-        public BitmapImage LsplitterImage
-        {
-            get
-            { return ( BitmapImage ) GetValue ( LsplitterImageProperty ); }
-            set { SetValue ( LsplitterImageProperty , value ); }
-        }
-        public static readonly DependencyProperty LsplitterImageProperty =
-            DependencyProperty . Register ( "LsplitterImage" , typeof ( BitmapImage ) , typeof ( TreeViews ) , new PropertyMetadata ( ( BitmapImage ) null ) );
-        public BitmapImage VsplitterImage
-        {
-            get
-            { return ( BitmapImage ) GetValue ( VsplitterImageProperty ); }
-            set { SetValue ( VsplitterImageProperty , value ); }
-        }
-        public static readonly DependencyProperty VsplitterImageProperty =
-            DependencyProperty . Register ( "VsplitterImage" , typeof ( BitmapImage ) , typeof ( TreeViews ) , new PropertyMetadata ( ( BitmapImage ) null ) );
-        public string LeftSplitterText
-        {
-            get { return ( string ) GetValue ( LeftSplitterTextProperty ); }
-            set { SetValue ( LeftSplitterTextProperty , value ); }
-        }
-        // Using a DependencyProperty as the backing store for LeftSplitterText.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LeftSplitterTextProperty =
-            DependencyProperty . Register ( "LeftSplitterText" , typeof ( string ) , typeof ( TreeViews ) , new PropertyMetadata ( ( string ) "Drag Up or Down" ) );
-        public string RightSplitterText
-        {
-            get { return ( string ) GetValue ( RightSplitterTextProperty ); }
-            set { SetValue ( RightSplitterTextProperty , value ); }
-        }
-        // Using a DependencyProperty as the backing store for LeftSplitterText.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty RightSplitterTextProperty =
-            DependencyProperty . Register ( "RightSplitterText" , typeof ( string ) , typeof ( TreeViews ) , new PropertyMetadata ( ( string ) "to View Directory Tree / Drive Technical Information." ) );
-
-
-        public SolidColorBrush LbTextColor
-        {
-            get { return ( SolidColorBrush ) GetValue ( LbTextColorProperty ); }
-            set { SetValue ( LbTextColorProperty , value ); }
-        }
-        public static readonly DependencyProperty LbTextColorProperty =
-            DependencyProperty . Register ( "LbTextColor" , typeof ( SolidColorBrush ) , typeof ( TreeViews ) ,
-                new PropertyMetadata ( new SolidColorBrush ( Colors . Black ) ) );
-
-        #endregion Dependency Properties
-
-        #region Attached Properties
-
-        public static bool Gettvselection ( DependencyObject obj )
-        {
-            return ( bool ) obj . GetValue ( tvselectionProperty );
-        }
-        public static void Settvselection ( DependencyObject obj , bool value )
-        {
-            obj . SetValue ( tvselectionProperty , value );
-        }
-        public static readonly DependencyProperty tvselectionProperty =
-            DependencyProperty . RegisterAttached ( "tvselection" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( ( bool ) false ) );
-
-        public static bool GetIsMouseDirectlyOverItem ( DependencyObject obj )
-        {
-            return ( bool ) obj . GetValue ( IsMouseDirectlyOverItemProperty );
-        }
-        public static void SetIsMouseDirectlyOverItem ( DependencyObject obj , bool value )
-        {
-            obj . SetValue ( IsMouseDirectlyOverItemProperty , value );
-        }
-        public static readonly DependencyProperty IsMouseDirectlyOverItemProperty =
-            DependencyProperty . RegisterAttached ( "IsMouseDirectlyOverItem" , typeof ( bool ) , typeof ( TreeViews ) , new PropertyMetadata ( ( bool ) false ) );
-        #endregion Attached Properties
-
         #region Flowdoc support via library
         /// <summary>
         /// These methods are needed to allow FLowdoc  to work via FlowDocLib
@@ -839,49 +844,6 @@ namespace MyDev . Views
 
 
         #endregion Flowdoc support via library
-
-        private void ShowDriveInfo ( object sender , RoutedEventArgs e )
-        {
-            string output = "";
-            ExplorerClass Texplorer = new ExplorerClass ( );
-            Texplorer . GetDrives ( "C:\\" );
-            List<lbitemtemplate> lbtmplates = new List<lbitemtemplate> ( );
-            InfoList . ItemsSource = null;
-            InfoList . Items . Clear ( );
-
-            // Create list of drive info in individual Templates & add to array of templates
-            for ( int x = 0 ; x < Texplorer . Drives . Count ; x++ )
-            {
-                DriveInfo [ ] driveinfo = DriveInfo . GetDrives ( );
-                List<string> drives = Texplorer . GetDrives ( Texplorer . Drives [ x ] );
-                Texplorer . GetDirectories ( drives [ x ] );
-                Texplorer . GetFiles ( drives [ x ] );
-                lbitemtemplate lbtmp = new lbitemtemplate ( );
-                if ( driveinfo [ x ] . IsReady == true )
-                {
-                    output += $"Drive [{Texplorer . Name}, Volume Label = {driveinfo [ x ] . VolumeLabel}, Type = {driveinfo [ x ] . DriveType}, Format = {driveinfo [ x ] . DriveFormat}, " +
-                        $"Directories = {Texplorer . Directories . Count}, Files = {Texplorer . Files . Count}\n";
-                    lbtmp . Colm1 = $"Drive [{Texplorer . Name}]";
-                    lbtmp . Colm2 = $"Drive Type = [{driveinfo [ x ] . DriveType}]";
-                    lbtmp . Colm3 = $"Volume label = [{driveinfo [ x ] . VolumeLabel}]";
-                    lbtmp . Colm4 = $"Format = [{driveinfo [ x ] . DriveFormat}]";
-                    lbtmp . Colm5 = $"Directories = [{Texplorer . Directories . Count}]";
-                    lbtmp . Colm6 = $"Files[{Texplorer . Files . Count}]";
-                }
-                else
-                {
-                    output += $"NOT READY : Drive [{Texplorer . Name}, Type = {driveinfo [ x ] . DriveType}\n";
-                    lbtmp . Colm1 = $"Drive [{Texplorer . Name} ";
-                    lbtmp . Colm2 = $"Drive Type = {driveinfo [ x ] . DriveType}";
-                    lbtmp . Colm3 = $" DRIVE NOT READY!!";
-                }
-                lbtmplates . Add ( lbtmp );
-                continue;
-
-            }
-            InfoList . ItemsSource = null;
-            InfoList . ItemsSource = lbtmplates;
-        }
 
         #region Treeview lower level  support methods
         private static bool CheckIsVisible ( string entry , bool showall , out bool HasHidden )
@@ -1068,7 +1030,7 @@ namespace MyDev . Views
             try
             {
                 ShowProgress ( );
-                string [ ] directs = Directory . GetDirectories ( path,"*.*",SearchOption.TopDirectoryOnly);
+                string [ ] directs = Directory . GetDirectories ( path , "*.*" , SearchOption . TopDirectoryOnly );
                 foreach ( var item in directs )
                 {
                     if ( CheckIsVisible ( item . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
@@ -1141,7 +1103,7 @@ namespace MyDev . Views
             try
             {
                 //var file = Directory . EnumerateFiles ( path , "*.*" );
-                var dirfile= Directory . GetFiles ( path , "*.*" , SearchOption . TopDirectoryOnly );
+                var dirfile = Directory . GetFiles ( path , "*.*" , SearchOption . TopDirectoryOnly );
                 count = ( int ) dirfile . Length;
                 ShowProgress ( );
                 //    //var file = Directory . GetFiles ( path , "*.*");
@@ -1508,7 +1470,9 @@ namespace MyDev . Views
             ExpArgs . tvitem = ActiveTree . SelectedItem as TreeViewItem;
             ExpArgs . Selection = 0;
             //            ExpArgs . ExpandLevels = 1;
+            Console . WriteLine ($"TriggerExpand0 : {startitem.Tag.ToString()}");
             RunExpandSystem ( null , null );
+            Thread . Sleep ( 100 );
             return;
         }
         public async void TriggerExpand1 ( object sender , RoutedEventArgs e )
@@ -1614,6 +1578,9 @@ namespace MyDev . Views
         }
         public async void TriggerExpand4 ( object sender , RoutedEventArgs e )
         {
+
+            WalkTestTree ( sender, e);
+            return;
             // Open ALL levels
             if ( ActiveTree . SelectedItem == null )
             {
@@ -1772,7 +1739,48 @@ namespace MyDev . Views
         }
 
         #endregion Expand // Collapse
+        private void ShowDriveInfo ( object sender , RoutedEventArgs e )
+        {
+            string output = "";
+            ExplorerClass Texplorer = new ExplorerClass ( );
+            Texplorer . GetDrives ( "C:\\" );
+            List<lbitemtemplate> lbtmplates = new List<lbitemtemplate> ( );
+            InfoList . ItemsSource = null;
+            InfoList . Items . Clear ( );
 
+            // Create list of drive info in individual Templates & add to array of templates
+            for ( int x = 0 ; x < Texplorer . Drives . Count ; x++ )
+            {
+                DriveInfo [ ] driveinfo = DriveInfo . GetDrives ( );
+                List<string> drives = Texplorer . GetDrives ( Texplorer . Drives [ x ] );
+                Texplorer . GetDirectories ( drives [ x ] );
+                Texplorer . GetFiles ( drives [ x ] );
+                lbitemtemplate lbtmp = new lbitemtemplate ( );
+                if ( driveinfo [ x ] . IsReady == true )
+                {
+                    output += $"Drive [{Texplorer . Name}, Volume Label = {driveinfo [ x ] . VolumeLabel}, Type = {driveinfo [ x ] . DriveType}, Format = {driveinfo [ x ] . DriveFormat}, " +
+                        $"Directories = {Texplorer . Directories . Count}, Files = {Texplorer . Files . Count}\n";
+                    lbtmp . Colm1 = $"Drive [{Texplorer . Name}]";
+                    lbtmp . Colm2 = $"Drive Type = [{driveinfo [ x ] . DriveType}]";
+                    lbtmp . Colm3 = $"Volume label = [{driveinfo [ x ] . VolumeLabel}]";
+                    lbtmp . Colm4 = $"Format = [{driveinfo [ x ] . DriveFormat}]";
+                    lbtmp . Colm5 = $"Directories = [{Texplorer . Directories . Count}]";
+                    lbtmp . Colm6 = $"Files[{Texplorer . Files . Count}]";
+                }
+                else
+                {
+                    output += $"NOT READY : Drive [{Texplorer . Name}, Type = {driveinfo [ x ] . DriveType}\n";
+                    lbtmp . Colm1 = $"Drive [{Texplorer . Name} ";
+                    lbtmp . Colm2 = $"Drive Type = {driveinfo [ x ] . DriveType}";
+                    lbtmp . Colm3 = $" DRIVE NOT READY!!";
+                }
+                lbtmplates . Add ( lbtmp );
+                continue;
+
+            }
+            InfoList . ItemsSource = null;
+            InfoList . ItemsSource = lbtmplates;
+        }
         private void TREEViews_KeyDown ( object sender , KeyEventArgs e )
         {
             if ( e . Key == Key . F5 )
@@ -1837,8 +1845,6 @@ namespace MyDev . Views
         }
         private void WalkTestTree ( object sender , RoutedEventArgs e )
         {
-            //        TriggerExpand4 ( sender , e );
-            //object [ ] Args = new object [ 3 ] { null , null , null };
             Args [ 0 ] = ActiveTree . SelectedItem as TreeViewItem;
             Args [ 1 ] = 90;
             //SelectedTVItem = ActiveTree . SelectedItem as TreeViewItem;
@@ -1852,6 +1858,13 @@ namespace MyDev . Views
         }
 
         #region Expand Utility methods
+        public int GetCurrentLevel ( string currentpath )
+        {
+            int count = 0;
+            string [ ] paths = currentpath . Split ( '\\' );
+            count = paths . Length - 1;
+            return count;
+        }
         public void ShowProgress ( )
         {
             if ( ProgressCount < PROGRESSWRAPVALUE )
@@ -1995,9 +2008,8 @@ namespace MyDev . Views
         }
 
         #endregion Expand Utility methods
-        private ScrollEventType ScrollToLeftEnd;
-
-        #region Failed Search fom M$$$$$$
+ 
+         #region Failed Search fom M$$$$$$
 
         /// <summary>
         /// Recursively search for an item in this subtree.
@@ -2571,8 +2583,13 @@ namespace MyDev . Views
         /// </summary>
         /// <param name="Args"></param>
         /// <returns></returns>
-        public bool ExpandCurrentAllLevels ( object [ ] Args )
+        async public Task<bool> ExpandCurrentAllLevels ( object [ ] Args )
         {
+
+            await ExpandCurrentAllLevelsTask ( Args );
+            return true;
+            
+            
             bool Returnval = false;
             bool IsComplete = false;
             int iterations = 0;
@@ -3040,44 +3057,14 @@ namespace MyDev . Views
             return null;
         }
 
-        private void worker_ProgressChanged ( object sender , ProgressChangedEventArgs e )
+        async private void worker_ProgressChanged ( object sender , ProgressChangedEventArgs e )
         {
             TreeViewItem tvnew = GetParentNode ( ExpArgs . tvitem );
 
-            //if ( ExpArgs . Selection == 4 )
-            //{
-            //TreeView tv = ExpArgs . tv as TreeView;
-            //TreeViewItem tvi = new TreeViewItem ( );
-            //List<string> dirs = new List<string> ( );
-            //List<string> files= new List<string> ( );
-            //foreach ( TreeViewItem item in tv. Items )
-            //{
-            //    tvi. Tag = item . Tag;
-            //    tvi . Header = item . Header;
-            //    if ( item . Items.Count  > 0 )
-            //    {
-            //        tvi . Items . Clear ( );
-            //       GetDirectories ( tvi . Tag . ToString ( ) , out   dirs);
-            //        AddDirectoriesToTestTree ( dirs , tvi , null , false );
-            //        GetFiles (tvi.Tag.ToString(), out files );
-            //        AddFilesToTreeview ( files , tvi );
-            //        if ( tvi . HasItems )
-            //        {
-            //            ExpArgs . tvitem = tvi;
-            //            RunRecurse ( e );
-            //            tvi . Refresh ( );
-            //            ActiveTree . Refresh ( );
-            //        }
-            //    }
-            //    continue;
-
-            //        tvi . IsExpanded = true;
-            //}
-            //}
-            //else
-            StartTimer ( );
-
-            RunRecurse ( ActiveTree , e );
+              StartTimer ( );
+            
+            //// Run expansion as a task.....
+            await RunRecurse ( ActiveTree , e );
 
             //// All done;
             Mouse . OverrideCursor = Cursors . Arrow;
@@ -3091,37 +3078,8 @@ namespace MyDev . Views
                 else
                     fdl . ShowInfo ( Flowdoc , canvas , $"Sorry, but an EXACT match to the Search term of [{ExpArgs . SearchTerm}] could not be identified for you in the {ExpArgs . ExpandLevels - 1} Expansion levels below the initial point of [{ExpArgs . tvitem . Tag . ToString ( )}]..." , "Black0" , $"[{ExpArgs . SearchTerm}] " , "Red5" , "NO Match found !" , "Cyan5" , "TreeView Search Sytem" );
             }
-            // Called once recurse methods have completed
-            //if ( worker . IsBusy == false )
-            //{
-            //    TreeViewItem tvi = new TreeViewItem ( );
-            //    Console . WriteLine ( $"1 Recurse finished" );
-            //    try
-            //    {
-            //        if ( ShowVolumeLabels == true )
-            //        {
-            //            if ( ExpArgs . Parent != null )
-            //                tvi = ExpArgs . Parent;
-            //            else
-            //                tvi = ExpArgs . tvitem;
-            //            TreeViewItem caller = tvi as TreeViewItem;
-            //            if ( tvi . Tag . ToString ( ) . Length > 3 )
-            //            {
-            //                caller = tvi . Parent as TreeViewItem;
-            //            }
-            //            if ( caller . Tag . ToString ( ) . Length == 3 && caller . Tag . ToString ( ) . Contains ( "\\" ) )
-            //            {
-            //                string s = GetDriveInfo ( $"{caller . Header . ToString ( )}" );
-            //                caller . Header = $"{caller . Header}  [{s}]";
-            //            }
-            //        }
-            //    }
-            //    catch ( Exception ex ) { Console . WriteLine ( $"Parent name parsing of {tvi . Tag . ToString ( )} failed :-\n{ex . Message}" ); }
-            //}
-            ////Tidy up after ourselves
-            //  ClearExpandArgs ( );
-        }
-        public void RunRecurse ( TreeView ActiveTree , ProgressChangedEventArgs e )
+         }
+        public Task<bool> RunRecurse ( TreeView ActiveTree , ProgressChangedEventArgs e )
         {
             // e contains current treeviewitem !!!
             // All parameters are in ExpandArgs ExpArgs
@@ -3148,7 +3106,7 @@ namespace MyDev . Views
             startitem = items;
             fail = false;
             if ( items == null )
-                return;
+                return Task . FromResult ( success );
             //ProgressCount = 0;
             if ( items . Tag . ToString ( ) . ToUpper ( ) . Contains ( items . Header . ToString ( ) . ToUpper ( ) ) == false )
                 items . Header = items . Tag . ToString ( );
@@ -3161,7 +3119,7 @@ namespace MyDev . Views
                 items . IsSelected = true;
                 //    SearchSuccess = true;
                 ExpArgs . SearchSuccess = true;
-                return;
+                return Task . FromResult ( success );
             }
 
             try
@@ -3169,7 +3127,7 @@ namespace MyDev . Views
                 items . IsSelected = true;
                 items . IsExpanded = true;
                 if ( AbortExpand )
-                    return;
+                    return Task . FromResult ( fail );
                 //stack . Push ( items . Tag . ToString ( ) );
             }
             catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 3304 : {ex . Message}" ); }
@@ -3187,7 +3145,7 @@ namespace MyDev . Views
                 ShowExpandTime ( );
                 ExpandSetup ( false );
                 Expandprogress . Refresh ( );
-                return;
+                return Task . FromResult ( success );
             }
             //**************
             // Main LOOP
@@ -3228,7 +3186,7 @@ namespace MyDev . Views
                 {
                     childControl . IsExpanded = true;
                     if ( AbortExpand )
-                        return;
+                        return Task . FromResult ( fail);
                 }
                 catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 3361 : {ex . Message}" ); }
                 ShowProgress ( );
@@ -3308,7 +3266,7 @@ namespace MyDev . Views
                                 iterations++;
                                 nextitem . IsExpanded = true;
                                 if ( AbortExpand )
-                                    return;
+                                    return Task . FromResult ( fail);
                             }
                             catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 3424 : {ex . Message}" ); }
                             ShowProgress ( );
@@ -3389,7 +3347,7 @@ namespace MyDev . Views
                 startitem . IsSelected = true;
             }
             UpdateDriveHeader ( ShowVolumeLabels );
-            return;
+            return Task . FromResult ( success );
         }
         #endregion BackgroundWorker
         public int AddDirectoriesToTestTree ( List<string> directories , TreeViewItem item , ListBox lBox = null , bool UseExpand = true )
@@ -3638,6 +3596,8 @@ namespace MyDev . Views
         }
         private async void Expand_Click ( object sender , RoutedEventArgs e )
         {
+            // Called by Expand ALL drives one level
+            TreeViewItem tvi; 
             ClearExpandArgs ( );
             ExpArgs . Selection = DirectoryOptions . SelectedIndex;
             if ( ExpArgs . Selection == 3 )
@@ -3648,8 +3608,18 @@ namespace MyDev . Views
             if ( ExpArgs . Selection == 2 )
                 ExpArgs . ExpandLevels = 3;
             ExpArgs . tvitem = ActiveTree . SelectedItem as TreeViewItem;
+            tvi = ExpArgs . tvitem;
             RunExpandSystem ( sender , e );
-            //            ExpandSetup ( false );
+            Utils . DoErrorBeep ( 300 , 60 , 1 );
+            Utils . DoErrorBeep ( 250 , 70 , 1 );
+            if (tvi != null )
+            {
+                // Return to original selected item
+                tvi. IsSelected = true;
+                ScrollTvItemIntoView ( tvi);
+                BringIntoView ( );
+                //            ExpandSetup ( false );
+            }
         }
 
         /// <summary>
@@ -3658,8 +3628,13 @@ namespace MyDev . Views
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <returns></returns>
-        private bool RunExpandSystem ( object sender , RoutedEventArgs e )
+        async private Task<bool>  RunExpandSystem ( object sender , RoutedEventArgs e )
         {
+            //called by Context menu and dropdown list options to handle individual and multiple drive expansions
+            // This iterates internally to fully expand xx levels as per ExpArgs level setting
+            // and visually track the items as they are expanded down the tree in the TreeView itself
+            // and finally selects the original calling item that has been opened
+            
             double temp = 0;
             ComboBox cb = DirectoryOptions;
             int selindex = ExpArgs . Selection;
@@ -3707,27 +3682,25 @@ namespace MyDev . Views
                 return false;
             }
 
+            #region  FALL THRU SELECTIONS
+
             if ( selindex == 0 )   // Expand  2  levels
             {
                 if ( ExpArgs . ExpandLevels == 0 )
                     ExpArgs . ExpandLevels = 2;
-                //else
-                //    ExpArgs . ExpandLevels = 1;
-
                 UpdateListBox ( $"Expanding {original} {ExpArgs . ExpandLevels} levels...." );
                 TestTree_Expanded ( sender , null );
-                //ActiveTree .HorizontalAlignment = HorizontalAlignment . Left;
+                //Fall thru to main handler .......
             }
             else if ( selindex == 1 )    // Expand 3 levels
             {
                 if ( ExpArgs . ExpandLevels == 0 )
                     ExpArgs . ExpandLevels = 3;
                 UpdateListBox ( $"Expanding {original} {ExpArgs . ExpandLevels } levels...." );
+                //Fall thru to main handler .......
             }
             else if ( selindex == 2 )    // Expand 4 levels
             {
-
-                //                if ( ExpArgs . ExpandLevels == 0 )
                 ExpArgs . ExpandLevels = 4;
                 TreeViewItem tvi = ( TreeViewItem ) ExpArgs . tvitem;
                 string str = tvi . Tag . ToString ( );
@@ -3743,6 +3716,7 @@ namespace MyDev . Views
                 }
                 UpdateListBox ( $"Expanding {original} {Args [ 1 ]} levels...." );
                 ExpArgs . ListResults = LISTRESULTS;
+                //Fall thru to main handler .......
             }
             else if ( selindex == 3 )
             {
@@ -3750,8 +3724,13 @@ namespace MyDev . Views
                     ExpArgs . ExpandLevels = 90;
                 UpdateListBox ( $"Expanding {original} {Args [ 1 ]} levels...." );
                 ExpArgs . ListResults = LISTRESULTS;
+                //Fall thru to main handler .......
             }
-            else if ( selindex == 4 )
+            #endregion  FALL THRU SELECTIONS
+
+            #region  SPECIFIC SELECTIONS (calls the various TriggerExpand(x) options)
+
+            else if ( selindex == 4 )   //TriggerExpand0
             {
                 // Expand All Drives 1 level 
                 ExpArgs . tv = ActiveTree;
@@ -3772,7 +3751,7 @@ namespace MyDev . Views
                 ScrollCurrentTvItemIntoView ( ( TreeViewItem ) ActiveTree . Items [ 0 ] );
                 return true;
             }
-            else if ( selindex == 5 )
+            else if ( selindex == 5 )   //TriggerExpand 0 multiple times
             {
                 // Expand All Drives 2 levels 
                 ExpArgs . tv = ActiveTree;
@@ -3794,7 +3773,7 @@ namespace MyDev . Views
                 ScrollCurrentTvItemIntoView ( ( TreeViewItem ) ActiveTree . Items [ 0 ] );
                 return true;
             }
-            else if ( selindex == 6 )
+            else if ( selindex == 6 )   //ExpandCurrentLevels()
             {
                 bool IterateGo = false;
                 // Expand ALL below  current drive
@@ -3809,7 +3788,8 @@ namespace MyDev . Views
                     if ( IterateGo || item . Header . ToString ( ) == ExpArgs . tvitem . Header . ToString ( ) )
                     {
                         ExpArgs . tvitem = item;
-                        if ( ExpandCurrentAllLevels ( Args ) == true && TextToSearchFor != "" )
+                        Task<bool> asyncresult = ExpandCurrentAllLevels ( Args );
+                        if (asyncresult.IsCompleted && TextToSearchFor != "" )
                             MessageBox . Show ( $"[{Searchtext . Text}] FOUND ...." , "Search System" );
                         IterateGo = true;
                     }
@@ -3818,7 +3798,7 @@ namespace MyDev . Views
                 ScrollCurrentTvItemIntoView ( ( TreeViewItem ) Args [ 0 ] );
                 return true;
             }
-            else if ( selindex == 7 )
+            else if ( selindex == 7 )   //CollapseAllDrives
             {
                 // Collapse All Drives
                 ExpArgs . tv = ActiveTree;
@@ -3828,6 +3808,9 @@ namespace MyDev . Views
                 ScrollCurrentTvItemIntoView ( ( TreeViewItem ) ActiveTree . Items [ 0 ] );
                 return true;
             }
+            #endregion  SPECIFIC SELECTIONS
+
+            #region generic handling
 
             // go ahead
             TreeViewItem tview = new TreeViewItem ( );
@@ -3835,18 +3818,16 @@ namespace MyDev . Views
             tview . IsSelected = true;
             ActiveTree . Refresh ( );
             if ( ExpArgs . IsFullExpand )
-                worker_ProgressChanged ( sender , null );
+            {
+                    worker_ProgressChanged ( sender , new ProgressChangedEventArgs ( 100 , null ) ) ;
+            }
             else
             {
-                worker = new BackgroundWorker ( );
-                worker . WorkerSupportsCancellation = true;
-                worker . WorkerReportsProgress = true;
-                worker . DoWork += worker_DoWork;
-                worker . ProgressChanged += worker_ProgressChanged;
-                worker . RunWorkerCompleted += worker_RunWorkerCompleted;
-                worker . RunWorkerAsync ( ExpArgs );
+                    worker_ProgressChanged ( sender , new ProgressChangedEventArgs ( 100 , null ) ) ;
             }
-            try
+
+            #endregion generic handling
+         try
             {
                 TreeViewItem tv2 = new TreeViewItem ( );
                 tv2 = tview;
@@ -3879,16 +3860,8 @@ namespace MyDev . Views
             catch ( Exception ex ) { Console . WriteLine ( $"RunRecurse: 4020 : {ex . Message}" ); }
             return true;
         }
-        public static int iterations { get; set; } = 0;
 
-        public int GetCurrentLevel ( string currentpath )
-        {
-            int count = 0;
-            string [ ] paths = currentpath . Split ( '\\' );
-            count = paths . Length - 1;
-            return count;
-        }
-        private void TestTree_Expanded ( object sender , RoutedEventArgs e )
+           private void TestTree_Expanded ( object sender , RoutedEventArgs e )
         {
             // All working when clicking on any folder !!!!
             // this gets callled iteratively  as it progress down a tree of subdirectories
@@ -4188,6 +4161,7 @@ namespace MyDev . Views
             Exactmatch = ( bool ) Opt4cbox . IsChecked;
             ShowVolumeLabels = ( bool ) Opt3cbox . IsChecked;
             ShowAllFiles = ( bool ) Opt5cbox . IsChecked;
+            RefreshListBox = ( bool ) Opt6cbox . IsChecked;
             OptionsPanel . Visibility = Visibility . Hidden;
         }
         private string GetDriveInfo ( string arg )
@@ -4379,6 +4353,10 @@ namespace MyDev . Views
                 Showhidden . Header = "Do NOT show Hidden/System files";
             else
                 Showhidden . Header = "Show Hidden/System files";
+            //if ( RefreshListBox== true )
+            //    RefreshListBox . Header = "Do NOT show Hidden/System files";
+            //else
+            //    RefreshListBox . Header = "Show Hidden/System files";
             this . Refresh ( );
             RefreshOptions ( );
         }
@@ -4396,6 +4374,8 @@ namespace MyDev . Views
                 Opt4cbox . Foreground = Exactmatch ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
                 Opt5cbox . IsChecked = ShowAllFiles;
                 Opt5cbox . Foreground = ShowAllFiles ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
+                Opt6cbox . IsChecked = RefreshListBox;
+                Opt6cbox . Foreground = RefreshListBox ? FindResource ( "Green3" ) as SolidColorBrush : FindResource ( "Red3" ) as SolidColorBrush;
                 OptionsPanel . Refresh ( );
             }
         }
@@ -4555,6 +4535,28 @@ namespace MyDev . Views
             LoadDrives ( ActiveTree );
             OptionsPanel . Refresh ( );
         }
+
+        private void Opt6cbox_Click ( object sender , RoutedEventArgs e )
+        {
+            RefreshListBox = ( bool ) Opt6cbox . IsChecked;
+            Opt6cbox . Content = RefreshListBox ? "Yes" : "No";
+            if ( RefreshListBox )
+                Opt6cbox . Foreground = FindResource ( "Green3" ) as SolidColorBrush;
+            else
+                Opt6cbox . Foreground = FindResource ( "Red3" ) as SolidColorBrush;
+            if ( RefreshListBox )
+            {
+                Selection . Text = "Listbox will be cleared/reloaded for each new Expansion....";
+            }
+            else
+            {
+                Selection . Text = "Listbox will NOT be cleared/reloaded for each new Expansion....";
+            }
+            OptionsPanel . Refresh ( );
+
+        }
+
+
         private void Opt1cbox_Click ( object sender , MouseButtonEventArgs e )
         {
             Opt1cbox . IsChecked = !Opt1cbox . IsChecked;
@@ -4579,6 +4581,11 @@ namespace MyDev . Views
         {
             Opt5cbox . IsChecked = !Opt5cbox . IsChecked;
             Opt5cbox_Click ( sender , new RoutedEventArgs ( null ) );
+        }
+        private void Opt6cbox_Click ( object sender , MouseButtonEventArgs e )
+        {
+            Opt6cbox . IsChecked = !Opt6cbox . IsChecked;
+            Opt6cbox_Click ( sender , new RoutedEventArgs ( null ) );
         }
 
         private void ExpandNode_Click ( object sender , RoutedEventArgs e )
@@ -4680,7 +4687,7 @@ namespace MyDev . Views
             }
         }
 
-          private void TreeViewItem_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        private void TreeViewItem_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
 
             return;
@@ -4749,6 +4756,22 @@ namespace MyDev . Views
             else
                 trackitemexpansion . Header = "Track Expanded items";
         }
+
+        private void StartStory ( object sender , RoutedEventArgs e )
+        {
+
+        }
+
+        private void togglelog_Click ( object sender , RoutedEventArgs e )
+        {
+
+        }
+
+        private void TVStoryboardstart_Click ( object sender , RoutedEventArgs e )
+        {
+
+        }
+
     }
 }
 // End of CLASS TreeViews

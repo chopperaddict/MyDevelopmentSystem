@@ -61,13 +61,13 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Visible" />
          <!--<EventSetter Event="RequestBringIntoView" Handler="TreeViewItem_RequestBringIntoView"/>-->
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TreeView">
-                    <Border x:Name="Border" 
+                    <Border x:Name="XBorder" 
                             CornerRadius="0" 
                             BorderThickness="0" 
                             Background="{TemplateBinding Background}"
@@ -176,8 +176,9 @@
         <!--<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />-->
 
         <!--//ITEM FOREGROUND-->
-        <Setter Property="Foreground" Value="{StaticResource Red2}" />
-        <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
+        <!--<Setter Property="Foreground" Value="{StaticResource Red2}" />-->
+        <!--<Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />-->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TreeViewItem}" >
@@ -192,7 +193,9 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
+                        
                         <VisualStateManager.VisualStateGroups>
+                            
                             <VisualStateGroup x:Name="SelectionStates">
 
                                 <!--HANDLES SELECTED ITEM BACKGROUND COLOR-->
@@ -220,6 +223,7 @@
                                     </Storyboard>-->
                                 </VisualState>
                             </VisualStateGroup>
+                            
                             <VisualStateGroup x:Name="ExpansionStates">
                                 <VisualState x:Name="Expanded">
                                     <Storyboard>
@@ -231,7 +235,9 @@
                                 </VisualState>
                                 <VisualState x:Name="Collapsed" />
                             </VisualStateGroup>
+                            
                         </VisualStateManager.VisualStateGroups>
+                        
                         <ToggleButton x:Name="Expander"
                                                     Style="{StaticResource ExpandCollapseToggleStyle}" ClickMode="Press" 
                                                           IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"/>
@@ -260,31 +266,38 @@
                     <!--#region TreeViewItem Triggers-->
                     
                     <ControlTemplate.Triggers>
-                        <Trigger Property="HasItems" Value="false">
+                        <!--<Trigger Property="HasItems" Value="false">
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
-                        </Trigger>
+                            </Trigger>-->
 
                         
                         <!--***************  START ************-->
-                        <!--<MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=Content,ElementName=PART_Header}" Value="C:\\" />
-                                --><!--<Condition Property="HasItems" Value="true" />
-                                <Condition Property="IsMouseOver" Value="false" />-->
-                                <!--<Condition Property="IsExpanded" Value="NOT USED" />--><!--
-                            </MultiDataTrigger.Conditions>
-                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Red3}" />
-                            <Setter TargetName="PART_Header" Property="Opacity" Value="0.3" />
-                            <Setter Property="Background" Value="{StaticResource White0}" />
-                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
-                        </MultiDataTrigger>-->
-
+    
 
                         <!--###########################-->
                         <!--#region NO ITEMS-->
                         <!--###########################-->
-                        
-                        
+
+                        <!-- NOT SELECTED , HAS ITEMS, NOT EXPANDED, MOUSEOVER!!-->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="false" />
+                                <Condition Property="HasItems" Value="true" />
+                                <Condition Property="IsExpanded" Value="false" />
+                                <Condition Property="IsMouseOver" Value="true" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource Green8}"/>
+                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Black0}"/>
+                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\folderwithdocs.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="35" />
+                            <Setter TargetName="itemimage" Property="Margin" Value="-2 0 0 0" />
+                            <Setter TargetName="PART_Header" Property="Margin" Value="5 0 0 0"/>
+                            <Setter TargetName="PART_Header" Property="TextElement.FontWeight" Value="SemiBold"/>
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                        </MultiTrigger>
+
+
                         <!--SELECTED, NO ITEMS, MOUSEOVER:  !!-->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -298,6 +311,9 @@
                             <Setter TargetName="PART_Header" Property="Opacity" Value="1" />
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\docs.ico" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--SELECTED, NO ITEMS, NO MOUSE:  !!-->
@@ -313,6 +329,9 @@
                             <Setter Property="Background" Value="{StaticResource Yellow1}" />
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\docs.ico" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--NOT SELECTED, NO ITEMS, NO MOUSE:   Normal listed item !!-->
@@ -329,6 +348,9 @@
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                             <!--<Setter TargetName="PART_Header" Property="Margin" Value="-25 0 0 0" />-->
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\TextFile.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--NOT SELECTED, NO ITEMS, MOUSE OVER:   -->
@@ -342,9 +364,11 @@
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Blue3}" />
                             <Setter TargetName="PART_Header" Property="Opacity" Value="1" />
                             <Setter TargetName="PART_Header" Property="TextElement.FontWeight" Value="DemiBold" />
-                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                             <!--<Setter TargetName="PART_Header" Property="Margin" Value="-25 0 0 0" />-->
-                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\docs.ico" />
+                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\blackYellow document.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--###########################-->
@@ -367,7 +391,10 @@
                             </MultiTrigger.Conditions>
                             <Setter Property="Background" Value="{StaticResource Blue2}" />
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Yellow0}" />
-                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder.gif" />
+                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\blue folder open.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--THIS ONE CONTROLS THE SELECTED TYPE BACKGROUND & FOREGROUND CORRECTLY-->
@@ -381,7 +408,10 @@
                             </MultiTrigger.Conditions>
                             <Setter Property="Background" Value="{StaticResource Black0}" />
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Yellow0}" />
-                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder.gif" />
+                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\blue folder open.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--HAS  ITEMS-->
@@ -400,6 +430,9 @@
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Black0}" />
                             <Setter TargetName="PART_Header" Property="Control.FontWeight" Value="SemiBold" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder.gif" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <MultiTrigger>
@@ -413,6 +446,9 @@
                             <Setter Property="Background" Value="{StaticResource White4}" />
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Blue2}" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder with docs.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--NOT SELECTED , HAS ITEMS, IS EXPANDED, MOUSEOVER!!-->
@@ -426,9 +462,16 @@
                             <Setter Property="Background" Value="{StaticResource Red5}" />
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Yellow1}" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder-open.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
+                        
+                        
+                        
+                        
 
-                        <!--SELECTED , HAS ITEMS, IS EXPANDED, MOUSEOVER!!-->
+                        <!--SELECTED , HAS ITEMS, IS EXPANDED, MOUSEOVER!!--><!--
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -439,23 +482,14 @@
                             <Setter Property="Background" Value="{StaticResource Red5}" />
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource White0}" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder-open.png" />
-                        </MultiTrigger>
+                        </MultiTrigger>-->
 
-                        <!--SELECTED , HAS ITEMS, IS EXPANDED, NO MOUSE!!-->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True" />
-                                <Condition Property="HasItems" Value="true" />
-                                <Condition Property="IsExpanded" Value="true" />
-                                <Condition Property="IsMouseOver" Value="false" />
-                                <!--<Condition Property="Width" Value="Auto" />-->
-                            </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="{StaticResource Black0}" />
-                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Yellow0}" />
-                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder-open.png" />
-                        </MultiTrigger>
-
-                        <!--HAS  ITEMS-->
+                        
+                        
+                        
+                        
+                        
+                             <!--HAS  ITEMS-->
                         <!-- NOt SELECTED, HAS ITEMS,  EXPANDED, MOUSEOVER !!-->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -463,30 +497,22 @@
                                 <Condition Property="HasItems" Value="true" />
                                 <Condition Property="IsExpanded" Value="true" />
                                 <Condition Property="IsMouseOver" Value="true" />
+                                <!--<Condition Property="IsFocused" Value="true" />-->
                                 <!--<Condition Property="Width" Value="Auto" />-->
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="{StaticResource Black0}" />
-                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource White0}" />
-                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder-open.png" />
+                            <Setter Property="Background" Value="{StaticResource White0}" />
+                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Red4}" />
+                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\blackcross.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="PART_Header" Property="Margin" Value="0 0 0 0"/>
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         
-                        <!-- NOT SELECTED , HAS ITEMS, NOT EXPANDED, MOUSEOVER!!-->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="false" />
-                                <Condition Property="HasItems" Value="true" />
-                                <Condition Property="IsExpanded" Value="false" />
-                                <Condition Property="IsMouseOver" Value="true" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="{StaticResource Green8}"/>
-                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Black0}"/>
-                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\folderwithdocs.png" />
-                        </MultiTrigger>
-
-
+   
                             <!-- SELECTED, HAS ITEMS, NOT EXPANDED, MOUSEOVER !!-->
-                        <MultiTrigger>
+                        <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="true" />
                                 <Condition Property="HasItems" Value="true" />
@@ -496,7 +522,9 @@
                             <Setter Property="Background" Value="{StaticResource Blue3}" />
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource White0}" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder-open.png" />
-                        </MultiTrigger>
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                        </MultiTrigger>-->
 
                         <!--NOT SELECTED, HAS ITEMS, EXPANDED, NO MOUSE !!-->
                         <MultiTrigger>
@@ -510,6 +538,9 @@
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource   White0}" />
                             <Setter Property="Background" Value="{StaticResource Red0}" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder-open.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                             <!--NO MOUSE : WORKING  HasItems + IsSelected - NO mouseover!!-->
@@ -524,6 +555,26 @@
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Yellow0}" />
                             <Setter Property="Background" Value="{StaticResource Red5}" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder-open.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                        </MultiTrigger>
+
+                        <!--SELECTED , HAS ITEMS, IS EXPANDED, NO MOUSE!!-->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="HasItems" Value="true" />
+                                <Condition Property="IsExpanded" Value="true" />
+                                <Condition Property="IsMouseOver" Value="false" />
+                                <!--<Condition Property="IsSelectedInactive" Value="true" />-->
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource Black0}" />
+                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Yellow0}" />
+                            <Setter TargetName="itemimage" Property="Source" Value="\Icons\blackcross.png" />
+                            <Setter TargetName="itemimage" Property="Height" Value="20" />
+                            <Setter TargetName="itemimage" Property="Width" Value="20" />
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
                         <!--#end region HAS ITEMS-->

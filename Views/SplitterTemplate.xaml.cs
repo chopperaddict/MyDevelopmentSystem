@@ -57,7 +57,7 @@ namespace MyDev . Views
 
         private string SqlCommand = "";
         private string DefaultSqlCommand = "Select * from BankAccount";
-        private bool UseBGThread = false;
+//        private bool UseBGThread = false;
         private bool LoadDirect = true;
 
         #region Binding full props

@@ -20,9 +20,11 @@ using System . Windows . Shapes;
 
 namespace MyDev
 {
-	// All System wide Delegates are declared here...
-	#region DELEGATE DECLARATIONS
-	public delegate void LoadTableDelegate ( string Sqlcommand , string TableType , object bvm );
+
+    #region Generic System wide structures and Definitions
+    // All System wide Delegates are declared here...
+    #region DELEGATE DECLARATIONS
+    public delegate void LoadTableDelegate ( string Sqlcommand , string TableType , object bvm );
 	public delegate void LoadTableWithDapperDelegate ( string Sqlcommand , string TableType , object bvm , object Args);
 	#endregion DELEGATE DECLARATIONS
 
@@ -202,8 +204,6 @@ namespace MyDev
 
 	#endregion My GridColors arguments
 
-
-
 	// structure to hold all arguments required by DapperSuport data loading calls
 	public struct DbLoadArgs
 	{
@@ -216,6 +216,11 @@ namespace MyDev
 		public string Caller;
 		public int [ ] args;
 	}
+	#endregion Generic System wide structures and Definitions
+
+	//=======================//
+	// Start of Mainwindow class
+	//=======================//
 	public partial class MainWindow : Window
 	{
 		public static GridViewer gv = new GridViewer ( );

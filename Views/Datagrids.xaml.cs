@@ -109,7 +109,7 @@ namespace MyDev . Views
         private bool LoadDirect = false;
         // pro temp variables
         private bool UseFlowdoc = true;
-        private bool UseFlowdocBeep = false;
+//        private bool UseFlowdocBeep = false;
         private bool showall = false;
         private bool ShowFullScript = false;
         private bool LoadAll = false;

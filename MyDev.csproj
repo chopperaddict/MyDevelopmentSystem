@@ -64,6 +64,11 @@
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Dapper.2.0.123\lib\net461\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Expression.Interaction.3.0.40218.0\lib\net46\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.DesignTools.Interaction, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Windows.Design.Interaction, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
@@ -78,6 +83,9 @@
       <HintPath>packages\System.Data.SqlClient.4.8.3\lib\net461\System.Data.SqlClient.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Expression.Interaction.3.0.40218.0\lib\net46\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -101,9 +109,14 @@
     <Compile Include="AttachedProperties\IsExpand.cs" />
     <Compile Include="AttachedProperties\ListboxColorCtrlAP.cs" />
     <Compile Include="AttachedProperties\MenuAttachedProperties.cs" />
+    <Compile Include="Behaviors\DigitsOnlyBehavior.cs" />
+    <Compile Include="Behaviors\DragBehavior.cs" />
+    <Compile Include="Behaviors\ListDragBlendBehavior.cs" />
+    <Compile Include="Behaviors\TreeViewItemBehavior.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Converts\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converts\BoolToNotBool.cs" />
+    <Compile Include="Converts\DebugConverter.cs" />
     <Compile Include="Converts\ExpanderArgumentsConverter.cs" />
     <Compile Include="Converts\GetCurrentReccount.cs" />
     <Compile Include="Models\FlowdocLib.cs" />
@@ -118,6 +131,7 @@
     <Compile Include="UserControls\Ucontrol1.xaml.cs">
       <DependentUpon>Ucontrol1.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\BindingErrorListner.cs" />
     <Compile Include="ViewModels\Notifier.cs" />
     <Compile Include="Views\Blink.cs" />
     <Compile Include="ViewModels\DatagridDataSupplier.cs" />
@@ -696,6 +710,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\folderwithdocs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\blackwhite document.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\blackyellow document.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('packages\Fody.6.5.1\build\Fody.targets')" />
