@@ -25,7 +25,7 @@ namespace MyDev . UserControls
 	/// Interaction logic for StdDataUserControl.xaml
 	///  USERCONTROL VERSION
 	/// </summary>
-	public partial class StdDataUserControl : UserControl
+	public partial class StdDataUserControl 
 	{
 		#region Declarations
 		// Db SQL handles

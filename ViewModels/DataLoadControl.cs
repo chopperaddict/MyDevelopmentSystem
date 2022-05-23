@@ -13,6 +13,7 @@ using System . Security . AccessControl;
 using System . Text;
 using System . Threading . Tasks;
 using System . Windows;
+using System . Windows . Threading;
 
 using static MyDev . MainWindow;
 
@@ -67,14 +68,14 @@ namespace MyDev . ViewModels
 		//Called by a Delegate to load SQL data (in a BackgroundWorker thread)
 		// Working Well 6/2/22
 		//******************************************//
-		public void LoadTableInBackground ( string Sqlcommand , string tabletype, object obj )
+		 public void LoadTableInBackground ( string Sqlcommand , string tabletype, object obj )
 		{
 			int[] args={0,0,0,0 };
 			if ( tabletype == "BANKACCOUNT" )
 			{
 				bankcollection = obj as ObservableCollection<BankAccountViewModel>;
 				// We are running a BackGroundWorker thread, so
-				// We MUST use the Dispatcher because the ObservableCollections will not allow changes on a different thread
+		
 				Application . Current . Dispatcher . Invoke ( ( ) =>
 				{
 					obj = SqlBackgroundLoad . LoadBackground_Bank (

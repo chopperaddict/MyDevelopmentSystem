@@ -35,7 +35,7 @@ namespace MyDev . UserControls
 	/// <summary>
 	/// Interaction logic for ListBoxUserControl.xaml
 	/// </summary>
-	public partial class ListBoxUserControl : UserControl
+	public partial class ListBoxUserControl 
 	{
 		public ListBoxUserControl ( )
 		{

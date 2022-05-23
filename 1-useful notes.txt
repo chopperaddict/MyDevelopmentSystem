@@ -1,4 +1,175 @@
 ﻿===============================================================================================================
+	// How to Setup messaging between windows/Controls with specialized arguments (Args)
+===============================================================================================================
+        // In Provider Control/Window
+		//=====================
+		// define the delegate handler signature and the event that will be raised
+        // to send the message using my own specific Arguments
+        public delegate void SendUserHandler ( object sender , MessageEventArgs args );
+        public event SendUserHandler SendUser;
+
+		// How  to trigger the messaging system
+		//=============================
+		private void UserControl_LostFocus ( object sender , RoutedEventArgs e )
+        {
+            // make sure we have >= 1 listener
+			if ( this . SendUser != null )
+            {
+                // This works fine, but have to parse out the arguments format
+                MessageEventArgs mea = new MessageEventArgs ( );
+                string str = e . OriginalSource.ToString();
+                mea . message = $"{str}";
+                this . SendUser ( sender , mea );
+            }
+
+		In Recipient/Subscriber window/Control
+		==============================
+		//Setup a RoutedEvent to pass data to anyone listening for it when Enter is hit or it looses focus (if Valid)
+        // setup a handler in Loaded event or simillar
+		tbw . SendUser += new SendUserHandler ( UpdateUserNameEventHandler);
+
+		// Create method to handle  the data received from remote control/Window
+		protected void UpdateUserNameEventHandler ( object sender , MessageEventArgs e )
+        {
+            //Handle event sent from TextBoxwithDataError user control on Focus lost or Enter hit
+            string str = e . message;
+		}
+
+		//and  finally create Args  structure as a new class somewhere :
+		//=============================================
+		public class MessageEventArgs : System . EventArgs
+		{
+			private String mMessage;
+			public String message
+			{
+				get
+				{
+					return ( mMessage );
+				}
+				set
+				{
+					mMessage = value;
+				}
+			}  // message
+		}  // MessageEventArgs
+
+
+===============================================================================================================
+	// How to valid a  Cell # in  code
+===============================================================================================================
+
+	Private string checkCellNumber(string Mobilenumber)
+	{
+		Regex regex = new Regex(@"^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$");
+            if (regex.Match(Mobilenumber) == Match.Empty)
+                  return "Invalid Phone Format";
+			else
+				  return Mobilenumber
+	}
+
+===============================================================================================================
+	// Easy way to access IDataErrorInfo in XAML with "popup" error messages"
+	that appear over whatever is imediately below  the field concerned
+	and shows whatever your DataError processing returns, so if all is well, return blank string to clear the display of the message
+===============================================================================================================
+	      
+		  <TextBox Text="Enter User name as 2 words...." />
+        <TextBox Text="{Binding Name ,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnDataErrors=True,NotifyOnValidationError=true}" 
+                 Height="30"
+                  FontSize="16">
+            <!--// How  to show error responses witohut using a seperate field-->
+            <!--It pops up below the entry field, so you need to have a background color of some form for the message.-->
+            <Validation.ErrorTemplate>
+                <ControlTemplate>
+                    <StackPanel>
+                        <!-- Placeholder for the TextBox itself -->
+						<!-- this could be as complex as you want -->
+                        <AdornedElementPlaceholder x:Name="textBox"/>
+                        <Border BorderBrush="Red" BorderThickness="1">
+							<TextBlock Text="{Binding [0].ErrorContent}" Foreground="{Binding ErrorContent, Converter={StaticResource SetBoolRedBlack}}"
+                                   Background="Beige" Height="25" />
+                        </Border>
+                    </StackPanel>
+                </ControlTemplate>
+            </Validation.ErrorTemplate>
+        </TextBox>
+
+===============================================================================================================
+	// How to access IDataErrorInfo in XAML
+===============================================================================================================
+	// This part MUST be in a Binding clause
+        Height="{Binding ActualHeight, ElementName=row1, ValidatesOnDataErrors=True}"
+        Width="{Binding ActualWidth, ElementName=col1,ValidatesOnDataErrors=True}"
+
+// Also we need a generic style to match control being validated eg:
+
+	TextBox.Style>
+			<Style TargetType="{x:Type TextBox}">
+				<Style.Triggers>
+				
+				// one method - note the RelativeSource stuff !!
+
+					<Trigger Property="Validation.HasError" Value="true">
+						<Setter Property="ToolTip"
+					Value="{Binding RelativeSource={RelativeSource Self}, 
+						   Path=(Validation.Errors)[0].ErrorContent}"/>
+					</Trigger>
+				
+				//Another method - note the RelativeSource stuff !!
+
+					<Trigger Property="Validation.HasError" Value="true">
+						<Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, 
+						Path=(Validation.Errors).CurrentItem.ErrorContent}" />
+                </Trigger>
+				
+				</Style.Triggers>
+			</Style>
+		</TextBox.Style>
+
+		in Code behind ( or ViewModel ) we need IDataErrorInfo i/f method :
+		public string this [ string PropertyName ] 
+        { 
+            get 
+            { 
+                if(PropertyName == "img")
+                {
+                    if ( img . Source == null )
+                        return null;
+                }
+                return null;
+            } 
+        }
+
+		And/ Or
+
+		string IDataErrorInfo.Error
+		{
+			get
+			{
+				if(PersonName=="Tom" && Age!=30)
+				{
+					return "Tom must be 30.";
+				}
+				return null;
+			}
+		}
+
+NB See DataErrorWindow for a different Method
+
+===============================================================================================================
+	// How to close entire application elegantly
+===============================================================================================================
+            Application . Current . Shutdown ( );
+
+===============================================================================================================
+	// How to use Dispatcher to run a thread 
+===============================================================================================================
+
+            await Dispatcher . BeginInvoke ( DispatcherPriority . Normal , ( Action ) ( async ( ) => 
+				await RunExpandSystem ( tvi )  
+			) );
+
+===============================================================================================================
 	// How to use behavior (in its own class)
 ===============================================================================================================
 
@@ -971,10 +1142,38 @@ System . Diagnostics . PresentationTraceSources . DataBindingSource . Switch . L
 	}
 	
 	To use it in a Lambda expression :-
+	
+	Action<int> MyAction = i => Console.WriteLine(i);       
+    MyAction(10);
 
 ===============================================================================================================
 //How to use a Func
 ===============================================================================================================
+
+public delegate TResult Func<in T1, in T2, out TResult>(T1 arg1, T2 arg2);
+
+static int Sum(int x, int y)
+    {return x + y;}
+
+To use it :
+
+        Func<int,int, int> add = Sum;
+        int result = add(10, 10);
+        Console.WriteLine(result); 
+
+Using Anonymous method :
+	Func<int> getRandomNumber = delegate()
+        {
+            Random rnd = new Random();
+            return rnd.Next(1, 100);
+        };
+
+Using Lambda :
+Func<int> getRandomNumber = () => new Random().Next(1, 100);
+
+//Or 
+
+Func<int, int, int>  Sum  = (x, y) => x + y;
 
 ===============================================================================================================
 // How to check for an existing data View and if one is available, use it rather than loading form Db via SQL

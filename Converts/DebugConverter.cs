@@ -14,14 +14,14 @@ namespace MyDev . Converts
 	{
 		public object Convert ( object value , Type targetType , object parameter , System . Globalization . CultureInfo culture )
 		{
-            Console . WriteLine ($"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
+//            Console . WriteLine ($"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
 			Debugger . Break ( );
 			return value;
 		}
 
 		public object ConvertBack ( object value , Type targetType , object parameter , System . Globalization . CultureInfo culture )
 		{
-			Console . WriteLine ( $"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
+//			Console . WriteLine ( $"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
 			Debugger . Break ( );
 			return value;
 		}

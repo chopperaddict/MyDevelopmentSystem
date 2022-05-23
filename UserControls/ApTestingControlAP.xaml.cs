@@ -21,7 +21,7 @@ namespace MyDev . UserControls
 	/// <summary>
 	/// Interaction logic for ApTestingControlAP.xaml
 	/// </summary>
-	public partial class ApTestingControlAP : UserControl
+	public partial class ApTestingControlAP
 	{
 		#region OnPropertyChanged
 		public event PropertyChangedEventHandler PropertyChanged;

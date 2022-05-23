@@ -23,10 +23,12 @@ namespace MyDev . ViewModels
                   _canexecuteMethod = canexecuteMethod;
             }
 
-            public bool CanExecute ( object parameter )
-            {
-    //              return true;
+        public RelayCommand ( )
+        {
+        }
 
+        public bool CanExecute ( object parameter )
+            {
                   if ( _canexecuteMethod != null )
                   {
                         return _canexecuteMethod ( parameter );
@@ -50,7 +52,11 @@ namespace MyDev . ViewModels
 
             public void Execute ( object parameter )
             {
-                  _executeMethod ( parameter );
+            try
+            {
+                _executeMethod ( parameter );
+            }
+            catch ( Exception ex ) { }
             }
       }
 }

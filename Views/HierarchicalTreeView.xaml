@@ -995,7 +995,7 @@
             </Style.Triggers>
         </Style>
 
-        <!--// Togglebutton style - WORKS !-->
+        <!--// Togglebutton style - WORKS !--><!--
         <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
             <Setter Property="Focusable" Value="False"/>
             <Setter Property="Template">
@@ -1011,7 +1011,7 @@
 								Margin="1,1,1,1"
 								Fill="{StaticResource Red5}"
 								Data="M 4 0 L 15 7 L 4 15 Z"/>
-                            <!--Fill="{StaticResource GlyphBrush}"-->
+                            --><!--Fill="{StaticResource GlyphBrush}"--><!--
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
@@ -1021,7 +1021,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
+        </Style>-->
 
         <Style x:Key="lbitems" TargetType="{x:Type ListBoxItem}">
             <!--<Setter Property="Control.Template">
@@ -1521,7 +1521,7 @@
             <!--// FullWidth TOP CONTAINER GRID-->
             <Grid x:Name="TopGrid" 
               Panel.ZIndex="22"
-              Background="Orange"
+              Background="Green"
               Grid.Row="1"
               Grid.RowSpan="2"
               Grid.ColumnSpan="6"

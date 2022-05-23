@@ -1,7 +1,6 @@
 ﻿using MyDev . Models;
 using MyDev . Views;
 
-using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
 using System . Linq;
@@ -16,7 +15,7 @@ using System . Xml . Linq;
 
 namespace MyDev . ViewModels
 {
-	public class PersonViewModel : BaseViewModel 
+    public class PersonViewModel : BaseViewModel 
 	{
 		//..Viewmodel for just one (of four) grid sections in the GENERICMVVM.window
 		private  static Person selectedItem;
@@ -58,19 +57,6 @@ namespace MyDev . ViewModels
 					Selecteditem . Address = obj . ToString ( );
 				else
 					MessageBox . Show ( "Please select an item in the listbox above before trying to modify the Address !!!" );
-			}
-		}
-		public ICommand UpdateCommand
-		{
-			get
-			{
-				if ( mUpdater == null )
-					mUpdater = new Updater ( );
-				return mUpdater;
-			}
-			set
-			{
-				mUpdater = value;
 			}
 		}
 		#endregion ICommands UPDATENAME, UPDATEADDRESS
@@ -121,25 +107,18 @@ namespace MyDev . ViewModels
 
 		#endregion Properties
 
-	}
-	class Updater : ICommand
-	{
-		#region ICommand Members  
-
-		public bool CanExecute ( object parameter )
+		public ICommand UpdateCommand
 		{
-			return true;
+			get
+			{
+				if ( mUpdater == null )
+					mUpdater = new Updater ( );
+				return mUpdater;
+			}
+			set
+			{
+				mUpdater = value;
+			}
 		}
-		public event EventHandler CanExecuteChanged
-		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
-
-		public void Execute ( object parameter )
-		{
-			// This updates the selected Item in _personslist - not sure how right now
-		}
-		#endregion
 	}
 }

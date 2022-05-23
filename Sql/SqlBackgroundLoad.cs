@@ -30,9 +30,146 @@ namespace MyDev . SQL
 					this . PropertyChanged ( this , e );
 				}
 		}
-		#endregion PropertyChanged
+        #endregion PropertyChanged
 
-		public static ObservableCollection<BankAccountViewModel> LoadBackground_Bank (
+
+        async public Task <ObservableCollection<BankAccountViewModel>> LoadBackground_BankAsync (
+            ObservableCollection<BankAccountViewModel> bvmcollection ,
+            string SqlCommand = "" ,
+            string DbNameToLoad = "" ,
+            string Orderby = "" ,
+            string Conditions = "" ,
+            bool wantSort = false ,
+            bool wantDictionary = false ,
+            bool Notify = false ,
+            string Caller = "" ,
+            int [ ] args = null )
+        {
+            string ConString = Flags . CurrentConnectionString;
+            //			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+            string [ ] ValidFields =
+            {
+                "ID",
+                "CUSTNO",
+                "BANKNO",
+                "ACTYPE",
+                "INTRATE" ,
+                "BALANCE" ,
+                "ODATE" ,
+                "CDATE"
+                };
+            string [ ] errorcolumns;
+            int [ ] dummyargs = { 0 , 0 , 0 };
+
+            // Use defaullt Db if none received frm caller
+            if ( DbNameToLoad == "" )
+                DbNameToLoad = "BankAccount";
+
+            // Utility Support Methods to validate data
+            if ( DapperSupport . ValidateSortConditionColumns ( ValidFields , "Bank" , Orderby , Conditions , out errorcolumns ) == false )
+            {
+                if ( Orderby . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+                {
+                    MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Column name has been \nidentified in the Sorting Clause provided.\n\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}.\n\nTherefore No Sort will be performed for this Db" );
+                    Orderby = "";
+                }
+                else if ( Conditions . ToUpper ( ) . Contains ( errorcolumns [ 0 ] ) )
+                {
+                    MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but an invalid Match clause or Column Name \nhas been identified in the Data Selection Clause.\n\nThe Invalid item identified was :\n\t{errorcolumns [ 0 ]}\n\nTherefore No Data Matching will be performed for this Db" );
+                    Conditions = "";
+                }
+                else
+                {
+                    MessageBox . Show ( $"BANKACCOUNT dB\nSorry, but the Loading of the BankAccount Db is being aborted due to \na non existent Column name.\nThe Invalid Column identified was :\n{errorcolumns [ 0 ]}" );
+                    return null;
+                }
+            }
+            //====================================================
+            // Use standard ADO.Net to to load Bank data to run Stored Procedure
+            //====================================================
+            BankAccountViewModel bvm = new BankAccountViewModel ( );
+            string Con = Flags . CurrentConnectionString;
+            //			string Con = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
+            SqlConnection sqlCon = null;
+
+            // Works with default command 31/10/21
+            // works with Records limited 31/10/21
+            // works with Selection conditions limited 31/10/21
+            // works with Sort conditions 31/10/21
+            try
+            {
+                using ( sqlCon = new SqlConnection ( Con ) )
+                {
+                    SqlCommand sql_cmnd;
+                    sqlCon . Open ( );
+                    Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+                    Conditions = Conditions . Contains ( "where " ) ? Conditions . Substring ( 6 ) : Conditions;
+                    if ( SqlCommand != "" )
+                        sql_cmnd = new SqlCommand ( SqlCommand , sqlCon );
+                    else
+                    {
+                        sql_cmnd = new SqlCommand ( "dbo.spLoadBankAccountComplex " , sqlCon );
+                        sql_cmnd . CommandType = CommandType . StoredProcedure;
+                        // Now handle parameters
+                        sql_cmnd . Parameters . AddWithValue ( "@Arg1" , SqlDbType . NVarChar ) . Value = DbNameToLoad;
+                        if ( args == null )
+                            args = dummyargs;
+                        if ( args . Length > 0 )
+                        {
+                            if ( args [ 2 ] > 0 )
+                            {
+                                string limits = $" Top ({args [ 2 ]}) ";
+                                sql_cmnd . Parameters . AddWithValue ( "@Arg2" , SqlDbType . NVarChar ) . Value = limits;
+                            }
+                        }
+                        Orderby = Orderby . Contains ( "Order by" ) ? Orderby . Substring ( 9 ) : Orderby;
+                        if ( Conditions != "" )
+                            sql_cmnd . Parameters . AddWithValue ( "@Arg3" , SqlDbType . NVarChar ) . Value = Conditions;
+                        if ( Orderby != "" )
+                            sql_cmnd . Parameters . AddWithValue ( "@Arg4" , SqlDbType . NVarChar ) . Value = Orderby . Trim ( );
+                    }
+                    var sqlDr = sql_cmnd . ExecuteReader ( );
+                    while ( sqlDr . Read ( ) )
+                    {
+                        bvm . Id = int . Parse ( sqlDr [ "ID" ] . ToString ( ) );
+                        bvm . CustNo = sqlDr [ "CustNo" ] . ToString ( );
+                        bvm . BankNo = sqlDr [ "BankNo" ] . ToString ( );
+                        bvm . AcType = int . Parse ( sqlDr [ "ACTYPE" ] . ToString ( ) );
+                        bvm . Balance = Decimal . Parse ( sqlDr [ "BALANCE" ] . ToString ( ) );
+                        bvm . IntRate = Decimal . Parse ( sqlDr [ "INTRATE" ] . ToString ( ) );
+                        bvm . ODate = DateTime . Parse ( sqlDr [ "ODATE" ] . ToString ( ) );
+                        bvm . CDate = DateTime . Parse ( sqlDr [ "CDATE" ] . ToString ( ) );
+                        bvmcollection . Add ( bvm );
+                        bvm = new BankAccountViewModel ( );
+                    }
+                    sqlDr . Close ( );
+                    Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  loaded : {bvmcollection . Count} records successfuly" );
+                }
+                sqlCon . Close ( );
+                if ( Notify )
+                {
+                    EventControl . TriggerBankDataLoaded ( null ,
+                        new LoadedEventArgs
+                        {
+                            CallerType = "DAPPERSUPPORT" ,
+                            CallerDb = Caller ,
+                            DataSource = bvmcollection ,
+                            RowCount = bvmcollection . Count
+                        } );
+                    return bvmcollection;
+                }
+                else
+                    return bvmcollection;
+            }
+            catch ( Exception ex )
+            {
+                Console . WriteLine ( $"Sql Error, {ex . Message}, {ex . Data}" );
+                //	MessageBox . Show ( $"Db Load Failed\n{ex . Message}, {ex . Data}" );
+            }
+            return null;
+        }
+
+        public static ObservableCollection<BankAccountViewModel> LoadBackground_Bank (
 			ObservableCollection<BankAccountViewModel> bvmcollection ,
 			string SqlCommand = "" ,
 			string DbNameToLoad = "" ,

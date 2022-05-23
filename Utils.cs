@@ -2313,41 +2313,18 @@ namespace MyDev
             }
             return true;
         }
-        //public static void LoadBankDbGeneric ( BankCollection bvm , string caller = "" , bool Notify = false , int lowvalue = -1 , int highvalue = -1 , int maxrecords = -1 )
-        //{
-        //	if ( maxrecords == -1 )
-        //		BankCollection . LoadBank ( bcollection: bvm , caller: "BankAccount" , ViewerType: 99 , NotifyAll: Notify );
-        //	else
-        //	{
-        //		DataTable dtBank  = new DataTable();
-        //		dtBank = BankCollection . LoadSelectedBankData ( Min: lowvalue , Max: highvalue , Tot: maxrecords );
-        //		bvm = BankCollection . LoadSelectedCollection ( bankCollection: bvm , max: -1 , dtBank: dtBank , Notify: Notify );
-        //	}
-
-        //}
         public static void SetGridRowSelectionOn ( DataGrid dgrid , int index )
         {
             if ( dgrid . Items . Count > 0 && index != -1 )
             {
                 try
                 {
-                    // clear any selection on current record in datagrid
-                    //DataGridRow r = dgrid . ItemContainerGenerator . ContainerFromIndex ( dgrid . SelectedIndex ) as DataGridRow;
-                    //if ( r != null )
-                    //    r . IsSelected = false;
                     //Setup new selected index
                     dgrid . SelectedIndex = index;
                     dgrid . SelectedItem = index;
                     dgrid . UpdateLayout ( );
                     dgrid . BringIntoView ( );
                     dgrid . ScrollIntoView ( dgrid . Items [ index ] );
-                    //r = dgrid . ItemContainerGenerator . ContainerFromIndex ( index ) as DataGridRow;
-                    //if ( r != null )
-                    //{
-                    //    // Select new record
-                    //    r . IsSelected = false;
-                    //    r . IsSelected = true;
-                    //}
                 }
                 catch ( Exception ex )
                 {

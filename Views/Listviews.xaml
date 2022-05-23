@@ -155,7 +155,7 @@
         </HierarchicalDataTemplate>
 
 
-        <Style x:Key="DataGridStyle" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+        <Style x:Key="DataGridStyleBlue" TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
             <Style.Triggers>
                 <!--// Window IS FOCUSED-->
 
@@ -171,7 +171,7 @@
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
                         <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Cyan3}" />
-                        <Setter Property="Foreground" Value="{StaticResource Black2}" />
+                        <Setter Property="Foreground" Value="{StaticResource White0}" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
 
@@ -183,7 +183,7 @@
                         <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue3}" />
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource UniversalConvert}, ConverterParameter=Blue2}" />
                         <Setter Property="Foreground" Value="{StaticResource White0}" />
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
@@ -195,7 +195,7 @@
                         <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGridRow}, Path=IsMouseOver}" Value="True" />
                     </MultiDataTrigger.Conditions>
                     <MultiDataTrigger.Setters>
-                        <Setter Property="Background" Value="{StaticResource Red0}" />
+                        <Setter Property="Background" Value="{StaticResource Red4}" />
                         <Setter Property="Foreground" Value="{StaticResource White0}" />
                         <Setter Property="FontWeight" Value="DemiBold" />
                     </MultiDataTrigger.Setters>
@@ -357,9 +357,9 @@
 										FontWeight="DemiBold"
 									     Foreground="{StaticResource Black0}"
 										Height="20"
-										PreviewMouseLeftButtonUp="TextBlock_PreviewMouseLeftButtonUp"
-									
+										PreviewMouseLeftButtonUp="TextBlock_PreviewMouseLeftButtonUp"									
 										Width="{Binding Path=Width, ElementName=DbTablesTree}"></TextBlock>
+                                
                                 <HierarchicalDataTemplate.ItemTemplate>
                                     <DataTemplate DataType="{x:Type model:SqlTable}">
                                         <TextBlock 
@@ -586,7 +586,7 @@
 
         <!--#region DataGrid-->
         <DataGrid x:Name="dGrid"
-			CellStyle="{StaticResource DataGridStyle}"
+			CellStyle="{StaticResource DataGridStyleBlue}"
 			Grid.Column="1"
 			Grid.Row="1"                  
             Style="{StaticResource DatagridMagnifyAnimation4}"
@@ -1068,8 +1068,8 @@
 			  Margin="0,46,0,0"
 			  MaxDropDownHeight="257"
 			  Padding="5 3 0 0"
-		              Style="{StaticResource ComboBoxMagnifyAnimation}"
-	  PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
+		      Style="{StaticResource ComboBoxMagnifyAnimation}"
+				PreviewMouseRightButtonUp="dbName_PreviewMouseRightButtonUp"
 			  SelectionChanged="dbNameLb_SelectionChanged"
 			  TabIndex="4"
 			  Text="Db Name..."
@@ -1308,21 +1308,6 @@
         <!--</Border>-->
         <!--#endregion Checkboxes-->
 
-        <!--#region images-->
-        <Image x:Name="Arrow2" Source="/Icons/left arroiw red.png"
-			 Grid.Row="3"
-			 Height="20"
-               Width="20"
-			 Margin="306,0,272,10"
-			 VerticalAlignment="Bottom" Grid.Column="1">
-            <Image.RenderTransform>
-                <TransformGroup>
-                    <RotateTransform Angle="90.656" />
-                    <TranslateTransform X="-5.732" Y="-13.922" />
-                </TransformGroup>
-            </Image.RenderTransform>
-        </Image>
-
-        <!--#endregion images-->
+ 
     </Grid>
 </Window>

@@ -13,8 +13,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
          xmlns:behave="clr-namespace:MyDev.Behaviors"
          xmlns:conv="clr-namespace:MyDev.Converts"
-
-
+         xmlns:menus="clr-namespace:MyDev.Menus"
         KeyDown="Window_KeyDown"
         Loaded="Window_Loaded" 
         MouseEnter="TREEViews_MouseEnter"
@@ -45,6 +44,19 @@
         <conv:BoolToYesNo x:Key="boolToYesNo"/>
         <conv:EqualityConverter x:Key="EqualityConverter" />
         <conv:ReduceByParamValue x:Key="ReduceByParamValue"/>
+        <!--<menus:SimpleCommandItem x:Key="_templateSelector"/>-->
+
+  <!--#region scrollbar-->
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Border.Background" Value="{StaticResource Red3}"/>
+            <Setter Property="Rectangle.Fill" Value="{StaticResource Green4}"/>
+        </Style>
+        <Style TargetType="{x:Type ScrollViewer}">
+            <Setter Property="Rectangle.Fill"  Value="{StaticResource Green4}"/>
+            <!--<Setter Property="Background" Value="{StaticResource Green0}"/>-->
+        </Style>
+        <!--#endregion-->
+
         <!--<TxtBoxbhavor:TextChangeBehavior x:Key="TextChangeBehavior"/>-->
         <!--<conv:ExpanderArgumentsConverter x:Key="ExpanderArgumentsConverter"/>-->
         <!--Command="{Binding WalkTreeViewItem}"
@@ -53,9 +65,26 @@
         <SolidColorBrush x:Key="GlyphBrush" Color="#444" />
 
         <Style x:Key="Expansion" TargetType="{x:Type TreeViewItem}">
+
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Name="img"
+                                   Width="20"
+                                   Height="20"
+                                   Stretch="Fill"
+                                   Source="\Images/folder.png"/>
+                            <TextBlock Text="{Binding}" Margin="5,0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+
             <!--This Setter applies an attached behavior to all TreeViewItems.-->
             <Setter Property="behave:TreeViewItemBehavior.IsBroughtIntoViewWhenSelected"  Value="True" />
 
+            
             <!-- These Setters bind a TreeViewItem to a PersonViewModel.-->
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
@@ -65,7 +94,8 @@
                     <Setter Property="FontWeight" Value="Bold" />
                 </Trigger>
             </Style.Triggers>
-        </Style>
+
+           </Style>
 
         <!--//Contract TreeView-->
         <!--AccelerationRatio="0.5" DecelerationRatio="0.5"-->
@@ -123,13 +153,6 @@
                 </EventTrigger>
             </Style.Triggers>
             </Style>-->
-
-
-
-
-
-
-
 
 
         <!--//Expand TreeView-->
@@ -594,7 +617,7 @@
         </Style>
 
 
-        <Style x:Key="StackPanelStyle1" TargetType="{x:Type StackPanel}">
+        <Style x:Key="StackPanelStyleWhiteOnRed" TargetType="{x:Type StackPanel}">
             <Style.Triggers>
                 <MultiTrigger>
                     <MultiTrigger.Conditions>
@@ -625,7 +648,7 @@
 
             <MenuItem  Click="CboxExactMatch_Click" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Match Search Term Exactly"
                                 FontSize="16"
@@ -642,7 +665,7 @@
 
             <MenuItem Click="TriggerExpand0" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Open Top Level of Current Selection"
                                 FontSize="16"
@@ -659,7 +682,7 @@
 
             <MenuItem Click="TriggerExpand1" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Open 2 Levels down from Current Selection" 
                                 FontSize="16"
@@ -676,7 +699,7 @@
 
             <MenuItem Click="TriggerExpand2" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Open 3 Levels down from Current Selection" 
                                 FontSize="16"
@@ -693,7 +716,7 @@
 
             <MenuItem Click="TriggerExpand3" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Open 4 Levels down from Current Selection"
                                 FontSize="16"
@@ -710,7 +733,7 @@
 
             <MenuItem Click="TriggerExpand4" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Open ALL Levels down from Current Selection"
                                 FontSize="16"
@@ -727,7 +750,7 @@
 
             <MenuItem Click="ShowFullPath" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Show Full Path for current item"
                                 FontSize="16"
@@ -744,7 +767,7 @@
 
             <MenuItem Click="CollapseCurrent" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Collapse current Drive"
                                 FontSize="16"
@@ -762,7 +785,7 @@
 
             <MenuItem Click="CollapseAll" >
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="Collapse All Drives"
                                 FontSize="16"
@@ -777,9 +800,26 @@
                 </MenuItem.Icon>
             </MenuItem>
 
+            <MenuItem Click="ShowExpander" >
+                <MenuItem.Header>
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
+                        <TextBlock 
+                                Text="Load nto Viewer Window"
+                                FontSize="16"
+                                 Height="25"
+                                Padding="10 0 0 0"
+                                Margin="0 0 0 0"
+                                Width="350"/>
+                    </StackPanel>
+                </MenuItem.Header>
+                <MenuItem.Icon>
+                    <Image Source="/Icons/down arroiw red.png" Height="15" Width="25" />
+                </MenuItem.Icon>
+            </MenuItem>
+
             <MenuItem Click="TreeOptions">
                 <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyle1}">
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
                         <TextBlock 
                                 Text="TreeView Options"
                                 FontSize="16"
@@ -1104,7 +1144,7 @@
             </Style.Triggers>
         </Style>
 
-        <!--// Togglebutton style - WORKS !-->
+        <!--// Togglebutton style - WORKS !--><!--
         <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
             <Setter Property="Focusable" Value="False"/>
             <Setter Property="Template">
@@ -1120,7 +1160,7 @@
 								Margin="1,1,1,1"
 								Fill="{StaticResource Red5}"
 								Data="M 4 0 L 15 7 L 4 15 Z"/>
-                            <!--Fill="{StaticResource GlyphBrush}"-->
+                            --><!--Fill="{StaticResource GlyphBrush}"--><!--
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
@@ -1130,7 +1170,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
+        </Style>-->
 
         <Style x:Key="lbitems" TargetType="{x:Type ListBoxItem}">
             <!--<Setter Property="Control.Template">
@@ -1269,6 +1309,18 @@
 
         <!--#endregion MenuItem full style that handles Checkmarks etc correctly-->
 
+
+        <Style x:Key="LbContextMenu" TargetType="ContextMenu">
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="MaxHeight" Value="75" />
+            <Style.Triggers>
+                <Trigger Property="IsHitTestVisible" Value="True">
+                    <Setter Property="Opacity" Value="1.0" />
+                </Trigger>
+                </Style.Triggers>
+        </Style>
+
+
     </Window.Resources>
 
     <!--#endregion Resources-->
@@ -1277,6 +1329,7 @@
 		<vm:ViewModel />
 	</Window.DataContext>-->
 
+  
     <!--#region setup-->
     <Grid x:Name="GridMain" 
           Background="Transparent"
@@ -1285,18 +1338,49 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid.Resources>
+          </Grid.Resources>
 
-        <!--#region Main Menu-->
-        <Border Background="Red" Grid.Row="0" Height="30" HorizontalAlignment="Left">
-
-            <!--#region Main Menu-->
-
-            <Menu x:Name="MainTVMenu" 
+        <Menu x:Name="MainTVMenu2" 
                     Background="Red" 
                     HorizontalAlignment="Left"
                     Width="555"  Height="30" 
                     PreviewMouseLeftButtonDown="MainTVMenu_MouseDown"
                     GotFocus="MenuItem_GotFocus"  >
+
+        </Menu>
+
+
+        <!--<DockPanel Grid.Row="1" Background="{StaticResource Yellow2}"
+                   Height="100" Panel.ZIndex="1">-->
+            <Grid>
+            </Grid>
+        <!--</DockPanel>-->
+        
+        <!--#region Main Menu-->
+         
+        <Border Background="Red" Grid.Row="0" Height="30" HorizontalAlignment="Left" Visibility="Visible">
+
+            <!--#region Main Menu-->
+            <Menu x:Name="MainTVMenu" 
+                  Visibility="Visible"
+                    Background="Red" 
+                    HorizontalAlignment="Left"
+                    Width="555"  Height="30" 
+                    PreviewMouseLeftButtonDown="MainTVMenu_MouseDown"
+                    GotFocus="MenuItem_GotFocus"  >
+                
+                <MenuItem Header="Context menu" 
+                            Background="{StaticResource Green5}" 
+                            FontWeight="Medium"
+                            FontSize="15"
+                            Margin="0 0 0 0"
+                            Padding="0 0 0 0"
+                            Height="30" 
+                            Style="{StaticResource MenuItemCyan}"
+                            Click="CtxTest" 
+                            />
+
 
                 <MenuItem Header="Options Window" 
                           Click="TreviewOptions_Click"
@@ -1311,9 +1395,20 @@
                             HorizontalAlignment="Right"
                             HorizontalContentAlignment="Left"
                             Width="140"/>
-                <!--Style="{StaticResource TopMenuItemYellow}"-->
+                <!--Style="{StaticResource TopMenuItemYellow}"--><!--
 
-                <MenuItem Header="Storyboard" 
+                <MenuItem Header="TreeView Window" 
+                            Background="{StaticResource Green5}" 
+                            FontWeight="Medium"
+                            FontSize="15"
+                            Margin="0 0 0 0"
+                            Padding="0 0 0 0"
+                            Height="30" 
+                            Style="{StaticResource MenuItemCyan}"
+                            Click="TViiewert_Click" 
+                            GotFocus="MenuItem_GotFocus"/>
+
+                --><!--<MenuItem Header="Storyboard" 
                             Background="{StaticResource Green5}" 
                             FontWeight="Medium"
                             FontSize="15"
@@ -1322,7 +1417,7 @@
                             Height="30" 
                             Style="{StaticResource MenuItemCyan}"
                             Click="TVStoryboardstart_Click" 
-                            GotFocus="MenuItem_GotFocus"/>
+                            GotFocus="MenuItem_GotFocus"/>-->
 
                 <MenuItem Header="Options"
                         x:Name="OptionsMenuItems"
@@ -1499,7 +1594,8 @@
                 <RowDefinition Height="5" />
             </Grid.RowDefinitions>
 
-
+            <!--#region Screen Real Estate items-->
+            
             <TextBox x:Name="Duration" 
                 Grid.Row="3"
                 Margin="0,0,170,0" 
@@ -1531,6 +1627,7 @@
                 Text="{Binding Listboxtotal}"
                 VerticalAlignment="Center"
 					   />
+            <!--#endregion Screen Real Estate items-->
 
             <!--#region Outer main Canvas for Flowdoc alone-->
 
@@ -1831,6 +1928,8 @@
                     <ColumnDefinition x:Name="Col5" Width="1*" MinWidth="100"/>
                     <ColumnDefinition Width="5" />
                 </Grid.ColumnDefinitions>
+                
+                <!--#region GridSplitters-->
 
                 <GridSplitter x:Name="hsplitter" 
 				Height="25" 
@@ -1935,6 +2034,8 @@
                     </GridSplitter.Template>
                 </GridSplitter>
 
+                <!--#endregion GridSplitters-->
+
                 <!--//=========================================================================//-->
                 <!--// TOP LEFT GRID holding TWO left hand panes-->
                 <Grid Grid.Row="0" 
@@ -1944,10 +2045,7 @@
                   Panel.ZIndex="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" MinWidth="50"/>
-                        <!--<ColumnDefinition Width="20" />
-                    <ColumnDefinition Width="1*" MinWidth="50" />-->
-                    </Grid.ColumnDefinitions>
-
+                     </Grid.ColumnDefinitions>
 
                     <!--#region TOP Centre PANEL ONLY-->
                     <Grid x:Name="innergrid" Grid.Row="0"  Panel.ZIndex="6" Grid.Column="1" Grid.ColumnSpan="1"  >
@@ -1956,7 +2054,8 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="29*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock x:Name="CurrentFolder"
+                        
+                           <TextBlock x:Name="CurrentFolder"
                                 Grid.Row="0"
                                 Text="Information / Log  Panel" 
                                 Foreground="White"
@@ -2005,6 +2104,13 @@
                             <ListBoxItem x:Name="LbItem"  >
                                 <!--<TextBlock x:Name="lbtextblock" />-->
                             </ListBoxItem>
+                            <ListBox.Resources>
+                                <Style TargetType="ScrollBar">
+                                    <Setter Property="Background" Value="{StaticResource Gray3}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource Red5}"/>
+                                </Style>
+
+                            </ListBox.Resources>
 
                         </ListBox>
 
@@ -2014,6 +2120,7 @@
 
                 <!--//=========================================================================//-->
                 <!--// Right hand TREEVIEW only container grid-->
+                <!--//=========================================================================//-->
                 <Grid x:Name="ManualGrid" Grid.Row="0" Grid.Column="3" MinWidth="150" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="20" />
@@ -2051,65 +2158,112 @@
                                PreviewMouseLeftButtonDown="ToggleTreeview"/>
 
                     <!--The style handles all coloration - in TreeViewDictionary.XAML-->
-                    <TreeView x:Name="TestTree"
-                              diag:PresentationTraceSources.TraceLevel="None"
-                            Background="{StaticResource Cyan0}"
-                            Grid.Row="1"
-                            Grid.RowSpan="1"
-                            ContextMenu="{StaticResource TVContextMenu}"
-                            FontFamily="Lucida Sans"
-                            FontSize="14" 
-                            FontWeight="Normal"
-                            Height="{Binding row1.ActualHeight}"
-                              
-                            Panel.ZIndex="6"
-                              SelectedItemChanged="TestTree_SelectedItemChanged"
-                              RequestBringIntoView="TreeViewItem_RequestBringIntoView"
-                            PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
-                            TreeViewItem.Collapsed="TestTree_Collapsed"  
-                            Style="{StaticResource TreeViewItemMainStyle}"
-                            TreeViewItem.Expanded="TestTree_Expanded"   
-                              ToolTipService.HasDropShadow="True"
-                              ToolTipService.InitialShowDelay="1500"
-                              ToolTipService.BetweenShowDelay="5000"
-                              ToolTipService.ShowDuration="2000"
-                            Visibility="Visible"
-                            Width="{Binding Path=Width, ElementName=TopGrid}">
-                        
-                        <!--<TreeView.ItemContainerStyle>
-                            <Style TargetType="TreeViewItem" >
-                                <EventSetter Event="TreeViewItem.Expanded" Handler="OnTreeExpanded" />
-                                --><!--<EventSetter Event="TreeViewItem.Collapsed" Handler="OnTreeCollapsed" />--><!--
+                    <ScrollViewer Grid.Row="1" >
+                        <ScrollViewer.Resources>
+                            <Style TargetType="ScrollBar">
+                                <Setter Property="Background" Value="{StaticResource Red4}"/>
+                                <Setter Property="Foreground" Value="{StaticResource White0}"/>
                             </Style>
-                            </TreeView.ItemContainerStyle>-->
+                            <Style TargetType="RepeatButton">
+                                <Setter Property="Background" Value="{StaticResource Orange2}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Black1}"/>
+                            </Style>
+                        </ScrollViewer.Resources>
                         
-                        <TreeViewItem
-                            MouseDoubleClick="TestTree_MouseDoubleClick"
-                            MouseEnter="TestTree_MouseEnter"    
-                            MouseMove="TREEViews_MouseMove"
-                            Style="{StaticResource Expansion}"
-                            PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
-                              IsMouseDirectlyOverChanged="TREEViews_IsMouseDirectlyOverChanged">
-                        </TreeViewItem>
-                        <!--IsSelected="{Binding IsBroughtIntoViewWhenSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"-->
+                        <StackPanel Orientation="Vertical">
+                               <TreeView x:Name="TestTree"
+                                    BorderBrush="{StaticResource Black0}" 
+                                    BorderThickness="2" 
+                                    Padding="0 0 0 0"
+                                    diag:PresentationTraceSources.TraceLevel="None"
+                                    Background="{StaticResource Cyan0}"
+                                    Foreground="{StaticResource Blue3}"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="1"
+                                    ContextMenu="{StaticResource TVContextMenu}"
+                                    FontFamily="Lucida Sans"
+                                    FontSize="14" 
+                                    FontWeight="Normal"
+                                    Height="{Binding row1.ActualHeight}"
+                                    MaxHeight="350"
+                                    Panel.ZIndex="6"
+                                    ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                    SelectedItemChanged="TestTree_SelectedItemChanged"
+                                    RequestBringIntoView="TreeViewItem_RequestBringIntoView"
+                                    PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
+                                    TreeViewItem.Collapsed="TestTree_Collapsed"  
+                                    Style="{StaticResource TreeViewItemMainStyle}"
+                                    ToolTipService.HasDropShadow="True"
+                                    ToolTipService.InitialShowDelay="1500"
+                                    ToolTipService.BetweenShowDelay="5000"
+                                    ToolTipService.ShowDuration="2000"
+                                    TreeViewItem.Expanded="TestTree_Expanded"   
+                                    Visibility="Visible"
+                                    Width="{Binding Path=Width, ElementName=TopGrid, Converter={StaticResource ReduceByParamValue},ConverterParameter=200}">
+                                   
+                                  <TreeViewItem Template="{DynamicResource TreeViewItemTemplate1}"
+                                        MouseDoubleClick="TestTree_MouseDoubleClick"
+                                        MouseEnter="TestTree_MouseEnter"    
+                                        MouseMove="TREEViews_MouseMove"
+                                        Style="{StaticResource Expansion}"
+                                        PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
+                                        IsMouseDirectlyOverChanged="TREEViews_IsMouseDirectlyOverChanged">
+                                    </TreeViewItem>
 
-                        <TreeView.Resources>
-                            <!--<HierarchicalDataTemplate x:Key="HiTv" DataType="{x:Type TreeViewItem}">
-                                <TextBlock Text="{Binding}"
-                                       Background="Black"
-                                       Height="45"
-                                       Width="100"/>
-                            </HierarchicalDataTemplate>
-                            <DataTemplate x:Key="TvItemsControl" DataType="{x:Type TreeViewItem}">
-                                <TextBlock  Text="{Binding}"
-                                       Background="Black"
-                                       Height="65"
-                                       Width="50"/>
+                                <TreeView.Resources>
+                                    <Style TargetType="ScrollBar">
+                                        <Setter Property="Background" Value="{StaticResource Cyan3}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource White0}"/>
+                                    </Style>
+                                </TreeView.Resources>
+                            </TreeView>
+                                        <!--Foreground="{StaticResource Red2}"-->
+                                <TreeView x:Name="TestTree2"
+                                        BorderBrush="{StaticResource Black0}" BorderThickness="2" Margin="0 10 0 0"
+                                        diag:PresentationTraceSources.TraceLevel="None"
+                                        Background="{StaticResource Yellow1}"
+                                        Grid.Row="1"
+                                        Grid.RowSpan="1"
+                                        ContextMenu="{StaticResource TVContextMenu}"
+                                        FontFamily="Lucida Sans"
+                                        FontSize="14" 
+                                        FontWeight="Normal"
+                                        Height="{Binding row1.ActualHeight}"
+                                        MaxHeight="350"                              
+                                        Panel.ZIndex="6"
+                                        ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                        SelectedItemChanged="TestTree_SelectedItemChanged"
+                                        RequestBringIntoView="TreeViewItem_RequestBringIntoView"
+                                        PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
+                                        TreeViewItem.Collapsed="TestTree_Collapsed"  
+                                        Style="{StaticResource TreeViewItemMainStyle}"
+                                        ToolTipService.HasDropShadow="True"
+                                        ToolTipService.InitialShowDelay="1500"
+                                        ToolTipService.BetweenShowDelay="5000"
+                                        ToolTipService.ShowDuration="2000"
+                                        TreeViewItem.Expanded="TestTree_Expanded"   
+                                        Visibility="Visible"
+                                        Width="{Binding Path=Width, ElementName=TopGrid, Converter={StaticResource ReduceByParamValue},ConverterParameter=40}">
 
-                            </DataTemplate>-->
-                        </TreeView.Resources>
-                    </TreeView>
+                                <TreeView.Resources>
+                                        <Style TargetType="ScrollBar">
+                                            <Setter Property="Background" Value="{StaticResource Yellow4}"/>
+                                            <Setter Property="Foreground" Value="{StaticResource White0}"/>
+                                        </Style>
+                                </TreeView.Resources>
 
+                                <TreeViewItem
+                                        MouseDoubleClick="TestTree_MouseDoubleClick"
+                                        MouseEnter="TestTree_MouseEnter"    
+                                        MouseMove="TREEViews_MouseMove"
+                                        Style="{StaticResource Expansion}"
+                                        PreviewMouseLeftButtonDown="TreeViewItem_PreviewMouseLeftButtonDown"
+                                        IsMouseDirectlyOverChanged="TREEViews_IsMouseDirectlyOverChanged">
+                            </TreeViewItem>
+
+                              </TreeView>
+                        </StackPanel>
+                    </ScrollViewer>
 
                 </Grid>
                 <!--//=========================================================================//-->
@@ -2149,6 +2303,93 @@
                             VerticalAlignment="Bottom"
                             ItemTemplate="{StaticResource lbdrive}"
                             ItemContainerStyle="{StaticResource _ListBoxItemStyle1}" >
+                        <ListBox.ContextMenu >
+
+                            <ContextMenu x:Name="LbContext" Background="{StaticResource Black6}"
+                                         Width="120">
+                                <!--<MenuItem Style="{StaticResource MenuItemGreen2}">
+                                </MenuItem>-->
+                                         
+                                <!--DataContext="{Binding PlacementTarget.DataContext,RelativeSource={RelativeSource Self}}"
+                                    ItemsSource="{Binding EditContentMenuitems, RelativeSource={RelativeSource AncestorType=local:TreeViews}}">-->
+                                <MenuItem Header="{Binding}" Click="click0">
+                                    <!--<MenuItem.ItemContainerStyle>
+                                        <Style TargetType="{x:Type MenuItem}">
+                                            <Setter Property="Header" Value="{Binding}"/>
+                                            <EventSetter Event="Click" Handler="Clickopt1"/>
+                                        </Style>
+                                    </MenuItem.ItemContainerStyle>-->
+                                </MenuItem>
+                                <!--Style="{StaticResource Contextmenu10}">-->
+
+                                    <!--<CompositeCollection>
+                                            <MenuItem Header="Test1" Click="click0"  
+                                                  Style="{StaticResource MenuItemGreen2}"/>
+                                        <MenuItem Header="Test2"  Click="click1"
+                                            Style="{StaticResource MenuItemGreen2}">
+                                        --><!--<MenuItem.ItemContainerStyle>
+                                            <Style>
+                                                    <Setter Property="MenuItem.Header" Value="{Binding EditContentMenuitems}"/>
+                                                </Style>
+                                                    </MenuItem.ItemContainerStyle>--><!--
+                                        </MenuItem>
+                                            
+                                        <MenuItem Header="Test3" Click="click2"  
+                                                  Style="{StaticResource MenuItemRed2}"/>
+                                        <MenuItem Header="Test4" Click="click3"  
+                                                  Style="{StaticResource MenuItemRed2}"/>
+                                    </CompositeCollection>-->
+                                
+                                <!--<MenuItem Click="click0">
+                                    <MenuItem.Header>
+                                        <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
+                                            <TextBlock 
+                                                    Text="line1"
+                                                    FontSize="16"
+                                                     Height="25"
+                                                    Padding="10 0 0 0"
+                                                    Margin="0 0 0 0"
+                                                    Width="Auto"/>
+                                        </StackPanel>
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem Click="click1">
+                                    <MenuItem.Header>
+                                        <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
+                                            <TextBlock 
+                                                    Text="line2"
+                                                    FontSize="16"
+                                                     Height="25"
+                                                    Padding="10 0 0 0"
+                                                    Margin="0 0 0 0"
+                                                    Width="Auto"/>
+                                        </StackPanel>
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem Click="click2">
+                                    <MenuItem.Header>
+                                        <StackPanel Orientation="Horizontal" Style="{StaticResource StackPanelStyleWhiteOnRed}">
+                                            <TextBlock 
+                                                    Text="line3"
+                                                    FontSize="16"
+                                                     Height="25"
+                                                    Padding="10 0 0 0"
+                                                    Margin="0 0 0 0"
+                                                    Width="Auto"/>
+                                        </StackPanel>
+                                    </MenuItem.Header>
+                                </MenuItem>-->
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                        <ListBox.Resources>
+                                <Style TargetType="ScrollBar">
+                                    <Setter Property="Background" Value="{StaticResource Green2}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource White0}"/>
+                                </Style>
+                        
+                        </ListBox.Resources>
+                        <!--<ContextMenu ItemsSource="{Binding Path=EditContentMenuitems}" UsesItemContainerTemplate="True"  
+                                         ItemContainerTemplateSelector="{StaticResource _templateSelector}" />-->
                     </ListBox>
                 </Grid>
                 <!--#endregion lowerDrive information listbox container grid-->

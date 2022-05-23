@@ -547,7 +547,14 @@
 		     Text="Db Name..."
 		     ToolTip="Right Click to refresh list of Tables... "
 		     VerticalAlignment="Top"
-			Width="196" />
+			Width="196">
+            
+            <ComboBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel/>
+                </ItemsPanelTemplate>
+            </ComboBox.ItemsPanel>
+        </ComboBox>
 
         <ComboBox  x:Name="Storedprocs"
 			AllowDrop="True"

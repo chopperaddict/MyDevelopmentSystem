@@ -25,7 +25,7 @@ namespace MyDev . Converts
 			double offset = 0;
 			double d = 0;
 			Type t = targetType;
-			Console . WriteLine ( $"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
+//			Console . WriteLine ( $"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
 
 			if ( parameter != null && value != null )
 			{

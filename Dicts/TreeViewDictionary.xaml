@@ -78,7 +78,7 @@
                         <!--<Border.Background>
                                                 <SolidColorBrush Color="{DynamicResource ControlLightColor}" />
                                             </Border.Background>-->
-                        <ScrollViewer Focusable="False" CanContentScroll="False" Padding="0">
+                        <ScrollViewer Focusable="False" CanContentScroll="False" Padding="0" Background="Transparent">
                             <ItemsPresenter  />
                         </ScrollViewer>
                     </Border>
@@ -272,9 +272,8 @@
 
                         
                         <!--***************  START ************-->
-    
 
-                        <!--###########################-->
+                              <!--###########################-->
                         <!--#region NO ITEMS-->
                         <!--###########################-->
 
@@ -342,11 +341,12 @@
                                 <Condition Property="IsMouseOver" Value="false" />
                                 <!--<Condition Property="IsExpanded" Value="NOT USED" />-->
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="{StaticResource Cyan0}" />
-                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Blue3}" />
+                            <!--This lets us  use the Treeview's specified background color for all non colored objects-->
+                            <Setter Property="Background" Value="{Binding Path=Background,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeView}}}"/>
+                            <!--This lets us  use the Treeview's specified foreground color for all non colored objects-->
+                            <Setter Property="Control.Foreground" Value="{Binding Path=Foreground,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeView}}}"/>
+                            <!--<Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Blue3}" />-->
                             <Setter TargetName="PART_Header" Property="Opacity" Value="1" />
-                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
-                            <!--<Setter TargetName="PART_Header" Property="Margin" Value="-25 0 0 0" />-->
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\TextFile.png" />
                             <Setter TargetName="itemimage" Property="Height" Value="20" />
                             <Setter TargetName="itemimage" Property="Width" Value="20" />
@@ -360,8 +360,11 @@
                                 <Condition Property="HasItems" Value="false" />
                                 <Condition Property="IsMouseOver" Value="true" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="{StaticResource Cyan0}" />
-                            <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Blue3}" />
+                            <!--This lets us  use the Treeview's specified background color for all non colored objects-->
+                            <Setter Property="Background" Value="{Binding Path=Background,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeView}}}"/>
+                            <!--This lets us  use the Treeview's specified foreground color for all non colored objects-->
+                            <Setter Property="Control.Foreground" Value="{Binding Path=Foreground,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeView}}}"/>
+                            <!--<Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Blue3}" />-->
                             <Setter TargetName="PART_Header" Property="Opacity" Value="1" />
                             <Setter TargetName="PART_Header" Property="TextElement.FontWeight" Value="DemiBold" />
                             <!--<Setter TargetName="PART_Header" Property="Margin" Value="-25 0 0 0" />-->
@@ -426,7 +429,8 @@
                                 <Condition Property="IsExpanded" Value="false" />
                                 <Condition Property="IsMouseOver" Value="false" />
                             </MultiTrigger.Conditions>
-                            <Setter Property="Background" Value="{StaticResource Cyan0}" />
+                            <!--This lets us  use the Treeview's specified background color for all non colored objects-->
+                            <Setter Property="Background" Value="{Binding Path=Background,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TreeView}}}"/>
                             <Setter TargetName="PART_Header" Property="Control.Foreground" Value="{StaticResource Black0}" />
                             <Setter TargetName="PART_Header" Property="Control.FontWeight" Value="SemiBold" />
                             <Setter TargetName="itemimage" Property="Source" Value="\Icons\folder.gif" />
@@ -577,6 +581,7 @@
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </MultiTrigger>
 
+                         
                         <!--#end region HAS ITEMS-->
 
                     </ControlTemplate.Triggers>
@@ -587,8 +592,155 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <!--#endregion Treeview Drive  viewer style-->
 
+    <LinearGradientBrush x:Key="VerticalScrollBarBackground" EndPoint="1,0" StartPoint="0,0">
+        <GradientStop Color="#E1E1E1" Offset="0"/>
+        <GradientStop Color="#FFAE00A5" Offset="0.20"/>
+        <GradientStop Color="#FF8F00DB" Offset="0.80"/>
+        <GradientStop Color="#E3E3E3" Offset="1"/>
+    </LinearGradientBrush>
+    
+    <SolidColorBrush x:Key="ScrollBarDisabledBackground" Color="#F4F4F4"/>
+    <!--<Style x:Key="ScrollBarButton" TargetType="{x:Type RepeatButton}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Focusable" Value="false"/>
+        <Setter Property="IsTabStop" Value="false"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    --><!--<Themes:ScrollChrome x:Name="Chrome" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsPressed}" SnapsToDevicePixels="true"/>--><!--
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+    <!--<Style x:Key="VerticalScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Focusable" Value="false"/>
+        <Setter Property="IsTabStop" Value="false"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Rectangle Fill="{TemplateBinding Background}" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+    
+    <!--//colors  the button of the scrollbar (in listobx at least-->
+    <!--<Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="IsTabStop" Value="false"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="MediumSpringGreen" SnapsToDevicePixels="True"/>
+                    --><!--<Themes:ScrollChrome x:Name="Chrome" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsDragging}" SnapsToDevicePixels="true" Themes:ScrollChrome.ScrollGlyph="{TemplateBinding Themes:ScrollChrome.ScrollGlyph}"/>--><!--
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+    
+    <!--<LinearGradientBrush x:Key="HorizontalScrollBarBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#E1E1E1" Offset="0"/>
+        <GradientStop Color="#EDEDED" Offset="0.20"/>
+        <GradientStop Color="#EDEDED" Offset="0.80"/>
+        <GradientStop Color="#E3E3E3" Offset="1"/>
+    </LinearGradientBrush>
+    <Style x:Key="HorizontalScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Background" Value="SteelBlue"/>
+        <Setter Property="Focusable" Value="false"/>
+        <Setter Property="IsTabStop" Value="false"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Rectangle Fill="{StaticResource Orange3}" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+    
+    <!--<Style TargetType="{x:Type ScrollBar}">
+        <Setter Property="Background" Value="{StaticResource VerticalScrollBarBackground}"/>
+        <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+        <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="Width" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}"/>
+        <Setter Property="MinWidth" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                    <Grid x:Name="Bg" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                        <Grid.RowDefinitions>
+                            <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
+                            <RowDefinition Height="0.00001*"/>
+                            <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
+                        </Grid.RowDefinitions>
+                        <RepeatButton Command="{x:Static ScrollBar.LineUpCommand}" IsEnabled="{TemplateBinding IsMouseOver}" Style="{StaticResource ScrollBarButton}" />
+                        <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}" Grid.Row="1">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Style="{StaticResource VerticalScrollBarPageButton}"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Style="{StaticResource VerticalScrollBarPageButton}"/>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource ScrollBarThumb}" />
+                            </Track.Thumb>
+                        </Track>
+                        <RepeatButton Command="{x:Static ScrollBar.LineDownCommand}" IsEnabled="{TemplateBinding IsMouseOver}" Grid.Row="2" Style="{StaticResource ScrollBarButton}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Background" TargetName="Bg" Value="{StaticResource ScrollBarDisabledBackground}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="MinWidth" Value="0"/>
+                <Setter Property="Height" Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}"/>
+                <Setter Property="MinHeight" Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}"/>
+                <Setter Property="Background" Value="{StaticResource HorizontalScrollBarBackground}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                            --><!--<Grid x:Name="Bg" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">--><!--
+                                <Grid x:Name="Bg" Background="{StaticResource Green1}" SnapsToDevicePixels="true">
+                                    <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
+                                    <ColumnDefinition Width="0.00001*"/>
+                                    <ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
+                                </Grid.ColumnDefinitions>
+                                <RepeatButton Command="{x:Static ScrollBar.LineLeftCommand}" IsEnabled="{TemplateBinding IsMouseOver}" Style="{StaticResource ScrollBarButton}" />
+                                <Track x:Name="PART_Track" Grid.Column="1" IsEnabled="{TemplateBinding IsMouseOver}">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="{x:Static ScrollBar.PageLeftCommand}" Style="{StaticResource HorizontalScrollBarPageButton}"/>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="{x:Static ScrollBar.PageRightCommand}" Style="{StaticResource HorizontalScrollBarPageButton}"/>
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource ScrollBarThumb}" />
+                                    </Track.Thumb>
+                                </Track>
+                                <RepeatButton Grid.Column="2" Command="{x:Static ScrollBar.LineRightCommand}" IsEnabled="{TemplateBinding IsMouseOver}" Style="{StaticResource ScrollBarButton}" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Background" TargetName="Bg" Value="{StaticResource ScrollBarDisabledBackground}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>-->
     <!--#endregion MAIN Style for TreeView-->
 
 </ResourceDictionary>

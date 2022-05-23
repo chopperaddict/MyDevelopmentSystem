@@ -30,7 +30,7 @@ namespace MyDev . UserControls
 	/// <summary>
 	/// Interaction logic for FlowDoc.xaml
 	/// </summary>
-	public partial class FlowDoc : UserControl, INotifyPropertyChanged
+	public partial class FlowDoc : INotifyPropertyChanged
 	{
 
 		#region Properties

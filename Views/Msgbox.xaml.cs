@@ -1345,8 +1345,7 @@ namespace MyDev . Views
 		}
 		protected virtual void RaiseProcessOKEvent ( )
 		{
-			RoutedEventArgs args = new
-		RoutedEventArgs(ProcessOKEvent);
+			RoutedEventArgs args = new RoutedEventArgs(ProcessOKEvent);
 			RaiseEvent ( args );
 		}
 

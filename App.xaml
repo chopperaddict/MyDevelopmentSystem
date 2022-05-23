@@ -1,6 +1,7 @@
 ﻿<Application x:Class="MyDev.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             
              xmlns:local="clr-namespace:MyDev"
              xmlns:cmd="clr-namespace:MyDev.Commands"
              StartupUri="MainWindow.xaml">
@@ -13,6 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="\Dicts\MainMenu.xaml" />
                 <ResourceDictionary Source="\Dicts\ColorsDictionary.xaml" />
+                <ResourceDictionary Source="\DataTemplates\ContextMenuResources.xaml" />
                 <ResourceDictionary Source="\Dicts\ButtonsMaster.xaml" />
 				<ResourceDictionary Source="\ViewModels\ListBoxViewStyles.xaml"/>
 				<ResourceDictionary Source="\Dicts\AppButtonsDictionary.xaml"/>
@@ -28,10 +30,13 @@
                 <ResourceDictionary Source="\Dicts\ComboBoxStyles.xaml"/>
                 <ResourceDictionary Source="\Dicts\Storyboards.xaml"/>
                 <ResourceDictionary Source="\Dicts\TreeViewDictionary.xaml"/>
+                <ResourceDictionary Source="\Menus\ContextMenuTemplates.xaml"/>
                 <!--<ResourceDictionary Source="\DataTemplates\NWDataTemplates.xaml"/>-->
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary >
- 
         
     </Application.Resources>
+    
+    
 </Application>
+    

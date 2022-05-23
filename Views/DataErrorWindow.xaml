@@ -1,0 +1,136 @@
+﻿<Window x:Class="MyDev.Views.DataErrorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:model="clr-namespace:MyDev.Models"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyDev.Views"
+        xmlns:user="clr-namespace:MyDev.UserControls"
+        xmlns:conv="clr-namespace:MyDev.Converts"
+        mc:Ignorable="d"
+        Closing="Window_Closing"
+        Title="DataErrorWindow" Height="460" Width="800">
+
+    <Window.DataContext>
+        <model:Person />
+    </Window.DataContext>
+    <Window.Resources>
+        <model:Person x:Key="data"/>
+        <conv:SetBoolRedBlack x:Key="SetBoolRedBlack"/>
+
+        <!--The tool tip for the"Age"TextBox to display the validation error message in aTooltip.-->
+        <Style x:Key="textBoxInError" TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--<Style TargetType="{x:Type TextBox}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,2,40,2" />
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="true">
+                            <Border Background="OrangeRed" DockPanel.Dock="right" Margin="5,0,0,0" 
+                                Width="20" Height="25" CornerRadius="15"
+                                ToolTip="{Binding ElementName=customAdorner, 
+                                          Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                                <TextBlock Text="!" VerticalAlignment="center" HorizontalAlignment="center" 
+                                   FontWeight="Bold" Foreground="white" />
+                            </Border>
+                            <AdornedElementPlaceholder Name="customAdorner" VerticalAlignment="Center" >
+                                <Border BorderBrush="red" BorderThickness="1" />
+                            </AdornedElementPlaceholder>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+    </Window.Resources>
+    
+    <!--<StackPanel x:Name="spanel" Margin="20">-->
+        <!--<TextBlock>Enter your full Name as 2 words with 1 space  between them</TextBlock>-->
+        <!--<TextBlock Text="{Binding ErrorInfo1,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,FallbackValue=Enter User Name as 2 words with 1 space  between them}" 
+                   Foreground="{Binding ErrorInfo1, Converter={StaticResource SetBoolRedBlack}}"
+                   Height="30">
+        </TextBlock>-->
+        
+
+        <!--// This is the easy way without all the Pfaffff-->
+                 <!--Validation.Error="Validation_Error"-->
+        <!--<TextBlock Text="Enter Person Class User name as 2 words...." />
+        <TextBox Text="{Binding Name ,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnDataErrors=True,NotifyOnValidationError=true}" 
+                 Height="30"
+                 ToolTip="User Name is two words with at least one space  between them"
+                 ToolTipService.HasDropShadow="True"
+                 ToolTipService.Placement="MousePoint"
+                 ToolTipService.ShowDuration="2000"
+                 ToolTipService.VerticalOffset="15"
+                  FontSize="16">
+            --><!--// How  to show error responses witohut using a seperate field-->
+            <!--It pops up below the entry field, so you need to have a background color of some form for the message.--><!--
+            <Validation.ErrorTemplate>
+                <ControlTemplate>
+                    <StackPanel>
+                        --><!-- Placeholder for the TextBox itself --><!--
+                        <AdornedElementPlaceholder x:Name="textBox"/>
+                        <Border BorderBrush="Red" BorderThickness="1">
+                            --><!--// Turns to red if invalid character is found !!--><!--
+                        <TextBlock Text="{Binding [0].ErrorContent}" Foreground="{Binding ErrorContent, Converter={StaticResource SetBoolRedBlack}}"
+                                   Background="Beige" Height="25"  FontSize="16"/>
+                        </Border>
+                    </StackPanel>
+                </ControlTemplate>
+            </Validation.ErrorTemplate>
+        </TextBox>-->
+
+        <!--// This is the complex way that triggers a ToolTip-->  
+        <!--<TextBlock Text="{Binding ErrorInfo2,UpdateSourceTrigger=PropertyChanged}" Height="30"/>-->
+        <!--<TextBox Style="{StaticResource textBoxInError}"  Height="30">
+            --><!--Background="Red" Foreground="White" Height="25">--><!--
+            <TextBox.Text>
+                --><!--By setting ValidatesOnExceptions to True, it checks for exceptions
+                that are thrown during the update of the source property.
+                An alternative syntax is to add <ExceptionValidationRule/> within
+                the <Binding.ValidationRules> section.--><!--
+                <Binding Path="Age" Source="{StaticResource data}"
+                         ValidatesOnExceptions="True"
+                         UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        --><!--DataErrorValidationRule checks for validation 
+                            errors raised by the IDataErrorInfo object.-->
+                        <!--Alternatively, you can set ValidationOnDataErrors="True" on the Binding.--><!--
+                        <DataErrorValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>-->
+
+        <StackPanel x:Name="spanel" Margin="20">
+        <TextBlock Text="These fields are each seperate UserControls (TextBoxWithDataError) that in their turn use various ViewModels to handle the control of the data entered." TextWrapping="Wrap" Width="700"/>
+        <TextBlock Text="EG: The User name field only accepts entries that have at most 2 words, and they cannot contain any non alpaha Characters." TextWrapping="Wrap" Width="700"/>
+        <TextBlock Text="this is controlled by the ValidateUsernameClass ViewModel." TextWrapping="Wrap" Width="700"/>
+        <!--<TextBlock Text="Mouse-over Age field to see the validation error message"/>-->
+
+        <user:TextBoxwithDataError x:Name="secondtextbox" Width="180" HorizontalAlignment="Left"  Margin="0 5 0 0"/>
+        <user:TextBoxwithDataError x:Name="thirdtextbox" Width="170" HorizontalAlignment="Left" Margin="0 5 0 0"/>
+        <user:TextBoxwithDataError x:Name="countytextbox" Width="259" HorizontalAlignment="Left" Margin="0 5 0 0"/>
+        <!--<Button Content="send message" Click="Button_Click" Height="60"/>-->
+        <TextBlock x:Name="result1" Height="35" Width="180" Background="Blue" Foreground="White" HorizontalAlignment="Left" Margin="0 15 0 0 " />
+        <TextBlock x:Name="result2"  Height="35" Width="180" Background="Red" Foreground="White" HorizontalAlignment="Left" Margin="0 15 0 0 " />
+        <WrapPanel Orientation="Horizontal">
+            <TextBlock x:Name="result3"  Height="35" Width="180" Background="Yellow" Foreground="Black" HorizontalAlignment="Left" Margin="0 15 0 0 " />
+        <Button x:Name="Closebtn" Content="Close" Click="CloseBtn"  Margin="120 0 0 0"
+                Background="Red" Foreground="White" Height="45" Width="120" HorizontalAlignment="Right">
+            <!--<Button.DataContext>
+                 <model:ValidateUsernameClass/>
+            </Button.DataContext>-->
+        </Button>
+        </WrapPanel>
+    </StackPanel>
+</Window>

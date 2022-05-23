@@ -13,10 +13,26 @@ namespace MyDev
 	public static class ExtensionMethods
 	{
 		private static Action EmptyDelegate = delegate ( ) { };
-		public static void Refresh ( this UIElement uiElement )
+		public static void CW ( this string message )
 		{
-			try
+			Console . WriteLine ( message );
+		}
+		public static void cwerror ( this string message )
+		{
+			Console . WriteLine ( $"ERROR : {message}" );
+		}
+		public static void cwwarn( this string message )
+		{
+			Console . WriteLine ( $"WARNING: {message}" );
+		}
+		public static void cwinfo( this string message )
+		{
+			Console . WriteLine ( $"INFO : {message}" );
+		}
+		public static void Refresh ( this UIElement uiElement )
 			{
+				try
+				{
 				uiElement . Dispatcher . Invoke ( DispatcherPriority . Render , EmptyDelegate );
 			}
 			catch

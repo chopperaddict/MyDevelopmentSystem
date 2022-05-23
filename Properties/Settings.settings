@@ -32,5 +32,8 @@
     <Setting Name="UseMagnify" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="AppRootPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">W:\\MyDev\\bin\\Debug\\</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

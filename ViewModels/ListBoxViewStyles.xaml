@@ -87,15 +87,19 @@
 	</Style>
 
     <Style x:Key="_ListBoxItemStyle1" TargetType="ListBoxItem" >
-		<Setter Property="FontWeight" Value="Normal" />
-		<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-		<Setter Property="Width" Value="{Binding Path=Width}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="TextElement.Foreground" Value="White" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Width" Value="{Binding Path=Width}" />
 
 		<!--Remove focus rectangle - IT WORKS-->
 		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
 
-		<Setter Property="Template">
-			<Setter.Value>
+        <!--<Setter Property="_Border" Value="{TemplateBinding Background}" />-->
+        <!--<Setter Property="TextElement.Foreground" Value="{TemplateBinding Foreground}" />-->
+        
+        <Setter Property="Template">
+            <Setter.Value>
 				<ControlTemplate TargetType="ListBoxItem">
 					<Border
 							x:Name="_Border"
@@ -115,10 +119,10 @@
 							<MultiTrigger.Setters>
 								<Setter Property="HorizontalAlignment" Value="Stretch" />
 								<Setter Property="HorizontalAlignment" Value="Left" />
-								<Setter Property="TextElement.Foreground" Value="{StaticResource Red0}" />
-								<Setter TargetName="_Border" Property="Background" Value="{StaticResource Gray5}" />
+								<Setter Property="TextElement.Foreground" Value="{StaticResource White0}" />
+								<Setter TargetName="_Border" Property="Background" Value="{StaticResource Gray1}" />
 								<Setter Property="FontSize" Value="{Binding Path=Fontsize,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
-								<Setter Property="FontWeight" Value="DemiBold" />
+								<Setter Property="FontWeight" Value="Regular" />
 							</MultiTrigger.Setters>
 						</MultiTrigger>
 
@@ -225,8 +229,8 @@
 								<Condition Property="IsMouseOver" Value="True"/>
 								<Condition Property="IsSelected" Value="false"/>
 							</MultiTrigger.Conditions>
-							<Setter Property="Background" TargetName="Bd" Value="{StaticResource Cyan5}"/>
-							<Setter Property="Foreground" Value="{StaticResource Black0}"/>
+							<Setter Property="Background" TargetName="Bd" Value="{StaticResource Cyan8}"/>
+							<Setter Property="Foreground" Value="{StaticResource White0}"/>
 							<Setter Property="FontSize" Value="{Binding Path=Fontsize,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
 							<!--<Setter Property="BorderThickness" Value="1"/>-->
 							<Setter Property="BorderBrush" TargetName="Bd" Value="Transparent"/>

@@ -1,4 +1,5 @@
-﻿using MyDev . ViewModels;
+﻿using MyDev . UserControls;
+using MyDev . ViewModels;
 using MyDev . Views;
 
 using System;
@@ -250,6 +251,16 @@ namespace MyDev
 			Properties . Settings . Default . Save ( );
 			Flags . UseMagnify = Properties . Settings . Default . UseMagnify;
 			Properties . Settings . Default . Save ( );
+
+			string startpath = Properties . Settings . Default . AppRootPath;
+			if ( startpath == "" )
+			{
+				startpath = SupportMethods . GetCurrentApplicationFullPath ( );
+				Properties . Settings . Default . AppRootPath = startpath;
+				Properties . Settings . Default . Save ( );
+				Utils . SaveProperty ( "AppRootPath" , startpath );
+			}
+
 		}
 
 		private void button1_Click ( object sender , RoutedEventArgs e )
@@ -359,23 +370,52 @@ namespace MyDev
 
         private void button14_Click ( object sender, RoutedEventArgs e )
         {
-            SplitterTemplate st = new SplitterTemplate ( );
-            st . Show ( );
+ //           SplitterTemplate st = new SplitterTemplate ( );
+//            st . Show ( );
 		}
 
 		private void button15_Click ( object sender, RoutedEventArgs e )
         {
+			Menutest mt = new Menutest ( );
+			mt . Show ( );
         }
 
         private void button16_Click ( object sender , RoutedEventArgs e )
         {
-			TreeviewObs hit = new TreeviewObs ( );
+			DataErrorWindow hit = new DataErrorWindow ( );
 			hit . Show ( );
         }
 
         private void button17_Click ( object sender , RoutedEventArgs e )
         {
-			//tTreeviews
+			MvvmContainerWin ucm = new MvvmContainerWin ( );
+			ucm . Show ( );
+        }
+
+        private void button19_Click ( object sender , RoutedEventArgs e )
+        {
+			//get a pointer to class view mdel
+			//UserCtrlViewModel ucvm = new UserCtrlViewModel ( );			
+			UcHostWindow uch = new UcHostWindow ( );
+			uch . Show ( );
+			uch . LoadHostWindow ( );
+		}
+
+        private void button18_Click ( object sender , RoutedEventArgs e )
+        {
+
+        }
+
+        private void button20_Click ( object sender , RoutedEventArgs e )
+        {
+//			ScrollviewerSample ss = new ScrollviewerSample ( );
+	//		ss . Show ( );
+
+		}
+
+        private void button21_Click ( object sender , RoutedEventArgs e )
+        {
+
         }
     }
 }

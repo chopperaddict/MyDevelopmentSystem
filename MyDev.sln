@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31911.196
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDev", "MyDev.csproj", "{C0211B71-5C74-4DCE-8744-01F5794AD4F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webviewApp", "C:\Users\ianch\source\repos\webviewApp\webviewApp.csproj", "{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{C0211B71-5C74-4DCE-8744-01F5794AD4F8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C0211B71-5C74-4DCE-8744-01F5794AD4F8}.Release|x64.ActiveCfg = Release|x64
 		{C0211B71-5C74-4DCE-8744-01F5794AD4F8}.Release|x64.Build.0 = Release|x64
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Debug|x64.Build.0 = Debug|Any CPU
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Release|x64.ActiveCfg = Release|Any CPU
+		{B648DAC5-2D57-4BEF-B35E-0BB4BD814EF8}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

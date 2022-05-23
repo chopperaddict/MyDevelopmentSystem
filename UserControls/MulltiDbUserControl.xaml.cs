@@ -28,7 +28,7 @@ namespace MyDev . UserControls
 	/// <summary>
 	/// Interaction logic for BankGridUserControl.xaml
 	/// </summary>
-	public partial class MulltiDbUserControl : UserControl
+	public partial class MulltiDbUserControl 
 	{
 		// Individual records
 		public BankAccountViewModel bvm = new BankAccountViewModel();
