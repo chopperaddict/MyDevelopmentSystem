@@ -7,6 +7,7 @@ using MyDev . Views;
 using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
+using System . ComponentModel;
 using System . Data . SqlClient;
 using System . Diagnostics;
 using System . Linq;
@@ -27,8 +28,18 @@ namespace MyDev . ViewModels
 	///  Also sends lower level requests to MvvmGridView for data access etc
 	///   This only handles ICommands and Binding variables for the View itself
 	/// </summary>
-	public class MvvmViewModel : BaseViewModel
+	public class MvvmViewModel
 	{
+		#region NotifyPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion NotifyPropertyChanged
 		internal static MvvmGenericModel mvvm { get; set; }
 		public static MvvmGridModel mvgm { get; set; }
 		public static MvvmDataGrid ParentBGView { get; set; }
@@ -52,26 +63,26 @@ namespace MyDev . ViewModels
 		public string FilterLabel
 		{
 			get { return fillterlabel; }
-			set { fillterlabel = value; OnPropertyChanged ( FilterLabel ); }
+			set { fillterlabel = value; NotifyPropertyChanged ( FilterLabel ); }
 		}
 		private string  acFilterLabel;
 		public string AcFilterLabel
 		{
 			get { return acFilterLabel; }
-			set { acFilterLabel = value; OnPropertyChanged ( AcFilterLabel ); }
+			set { acFilterLabel = value; NotifyPropertyChanged ( AcFilterLabel ); }
 		}
 		#region Filter TextBoxes
 		private string  filtertextbox;
 		public string FilterTextBox
 		{
 			get { return filtertextbox; }
-			set { filtertextbox = value; OnPropertyChanged ( FilterTextBox ); }
+			set { filtertextbox = value; NotifyPropertyChanged ( FilterTextBox ); }
 		}
 		private string  acFilterTextBox;
 		public string ACFilterTextBox
 		{
 			get { return acFilterTextBox; }
-			set { acFilterTextBox = value; OnPropertyChanged ( ACFilterTextBox ); }
+			set { acFilterTextBox = value; NotifyPropertyChanged ( ACFilterTextBox ); }
 		}
 		#endregion Filter TextBoxes
 
@@ -79,13 +90,13 @@ namespace MyDev . ViewModels
 		public string LoadButtonText
 		{
 			get { return loadbuttontext; }
-			set { loadbuttontext = value; OnPropertyChanged ( LoadButtonText ); }
+			set { loadbuttontext = value; NotifyPropertyChanged ( LoadButtonText ); }
 		}
 		private string activeTable;
 		public string ActiveTable
 		{
 			get { return activeTable; }
-			set { activeTable = value; OnPropertyChanged ( ActiveTable ); }
+			set { activeTable = value; NotifyPropertyChanged ( ActiveTable ); }
 		}
 
 		#endregion Full Properties
@@ -160,9 +171,9 @@ namespace MyDev . ViewModels
 			List<int> VarCharLength  = new List<int>();
 //			IsBankActive = ( bool ) obj;
 			if ( IsBankActive == false )
-				dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , "Customer" , "IAN1" , ref VarCharLength );
+				dict = GenericDbUtilities . GetDbTableColumns ( ref GenericClass , ref list , "Customer" , "IAN1" , ref VarCharLength );
 			else
-				dict = GenericDbHandlers . GetDbTableColumns ( ref GenericClass , ref list , "BankAccount" , "IAN1" , ref VarCharLength );
+				dict = GenericDbUtilities . GetDbTableColumns ( ref GenericClass , ref list , "BankAccount" , "IAN1" , ref VarCharLength );
 			
 			indx = 0;
 			if ( VarCharLength . Count > 0 )

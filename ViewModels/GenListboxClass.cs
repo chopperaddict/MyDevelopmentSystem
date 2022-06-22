@@ -2,14 +2,25 @@
 
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
+using System . ComponentModel;
 using System . Windows . Controls;
 using System . Windows . Input;
 
 namespace MyDev . ViewModels
 {
-	public class GenListboxClass : BaseViewModel
+	public class GenListboxClass
 	{
-//		private GenericMvvmWindow gvm;
+		#region NotifyPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion NotifyPropertyChanged
+		//		private GenericMvvmWindow gvm;
 		private bool Toggle = true;
 
 		public GenListboxClass ( )
@@ -32,12 +43,12 @@ namespace MyDev . ViewModels
 		public List<string> LbData
 		{
 			get { return lbData; }
-			set { lbData = value; OnPropertyChanged ( LbData . ToString ( ) ); }
+			set { lbData = value; NotifyPropertyChanged ( LbData . ToString ( ) ); }
 		}
 		public ObservableCollection<string> LbDataCollection
 		{
 			get { return lbDataCollection; }
-			set { lbDataCollection = value; OnPropertyChanged ( LbDataCollection . ToString ( ) ); }
+			set { lbDataCollection = value; NotifyPropertyChanged ( LbDataCollection . ToString ( ) ); }
 		}
 		#endregion Properties
 

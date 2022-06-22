@@ -24,7 +24,9 @@ namespace MyDev . Views
 	{
 		private int ActiveField = 1;
 		private string[] bytes = {"","","","" };
+#pragma warning disable CS0169 // The field 'MsgboxSetup.DlgHandle' is never used
 		private static Window DlgHandle;
+#pragma warning restore CS0169 // The field 'MsgboxSetup.DlgHandle' is never used
 		new public static bool IsLoaded = false;
 		public Brush BtnBackground { get; set; }
 		public Brush BtnForeground { get; set; }
@@ -668,6 +670,7 @@ namespace MyDev . Views
 						fontsizelarge1 . Text = "21";
 
 					}
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 					try
 					{
 						img2MainText1 . FontSize = Convert . ToDouble ( input );
@@ -681,6 +684,7 @@ namespace MyDev . Views
 						fontsizelarge1 . Text = "13";
 						return;
 					}
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				}
 				else
 					fontsizelarge1 . Text = "13";
@@ -719,6 +723,7 @@ namespace MyDev . Views
 						fontsizelarge1 . Text = "21";
 
 					}
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 					try
 					{
 						img2MainText3 . FontSize = Convert . ToDouble ( input );
@@ -730,6 +735,7 @@ namespace MyDev . Views
 						fontsizelarge3 . Text = "13";
 						return;
 					}
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				}
 				else
 					fontsizelarge3 . Text = "13";
@@ -760,6 +766,7 @@ namespace MyDev . Views
 
 				if ( input . Length > 0 )
 				{
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 					try
 					{
 						img1MainText1 . FontSize = Convert . ToDouble ( input );
@@ -771,6 +778,7 @@ namespace MyDev . Views
 						fontsizesmall1 . Text = "13";
 						return;
 					}
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				}
 				else
 					fontsizesmall1 . Text = "13";
@@ -802,6 +810,7 @@ namespace MyDev . Views
 						SaveButtonColors ( );
 						return;
 					}
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 					try
 					{
 						img1MainText2 . FontSize = Convert . ToDouble ( input );
@@ -813,6 +822,7 @@ namespace MyDev . Views
 						fontsizesmall2 . Text = "13";
 						return;
 					}
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				}
 				else
 					fontsizesmall2 . Text = "13";
@@ -1478,10 +1488,22 @@ namespace MyDev . Views
 		// Returns a new Hex color string (based on value from slider mostly)
 		private string CalculateNewColor ( double value , string caller )
 		{
+#pragma warning disable CS0219 // The variable 'clr' is assigned but its value is never used
 			string output="", temp="", clr="";
+#pragma warning restore CS0219 // The variable 'clr' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'b' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'g' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 't' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'r' is assigned but its value is never used
 			byte t=0, r=0,g=0,b=0;
+#pragma warning restore CS0219 // The variable 'r' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 't' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'g' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'b' is assigned but its value is never used
 
+#pragma warning disable CS0219 // The variable 'val' is assigned but its value is never used
 			double val=0.00;
+#pragma warning restore CS0219 // The variable 'val' is assigned but its value is never used
 			if ( IsLoaded == false )
 				return "";
 			//			Console . WriteLine ( "In CalculateNewColor ..." );
@@ -1516,7 +1538,15 @@ namespace MyDev . Views
 		}
 		private string GetStringfromColor ( string [ ] bytes )
 		{
+#pragma warning disable CS0219 // The variable 'a' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'g' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'b' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'r' is assigned but its value is never used
 			double a=0.0, r=0.0, g=0.0, b=0.0;
+#pragma warning restore CS0219 // The variable 'r' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'b' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'g' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'a' is assigned but its value is never used
 			int w=0,x=0,y=0,z=0;
 			if ( bytes [ 0 ] == "" || bytes [ 1 ] == "" || bytes [ 2 ] == "" || bytes [ 3 ] == "" )
 				return "";
@@ -1769,7 +1799,9 @@ namespace MyDev . Views
 		// Reset text display and therefore color panel
 		private void ReadDlgInput ( )
 		{
+#pragma warning disable CS0168 // The variable 'sb' is declared but never used
 			SolidColorBrush sb;
+#pragma warning restore CS0168 // The variable 'sb' is declared but never used
 			if ( File . Exists ( @"Messageboxes.dat" ) == false )
 			{
 				//				Utils . Mbox ( this , string1: "Error - The Message Boxes configuration file is not available !" , string2: "Therefore the system will start with defaullt settings for all MessageBox colours" , caption: "Message Box initialization faillure" , iconstring: "\\icons\\red-cross-icon.png" , Btn1: MB . OK , Btn2: MB . NNULL , defButton: MB . OK );
@@ -2019,7 +2051,9 @@ namespace MyDev . Views
 		{
 			// Save colors to both types of MessageBoxes
 
+#pragma warning disable CS0168 // The variable 'brush' is declared but never used
 			Brush brush;
+#pragma warning restore CS0168 // The variable 'brush' is declared but never used
 			bool b = false;
 			string output="";
 
@@ -3100,7 +3134,9 @@ namespace MyDev . Views
 		private bool CheckValid ( string value )
 		{
 			// Validate  border size entries (0-9)
+#pragma warning disable CS0219 // The variable 'validcount' is assigned but its value is never used
 			int validcount = 0;
+#pragma warning restore CS0219 // The variable 'validcount' is assigned but its value is never used
 			if ( value . Length > 1 )
 			{
 				Utils . DoErrorBeep ( 280 , 20 , 1 );
@@ -3118,7 +3154,9 @@ namespace MyDev . Views
 		private string CheckValidTextSize ( string value )
 		{
 			// Validate  border size entries (0-9)
+#pragma warning disable CS0219 // The variable 'validcount' is assigned but its value is never used
 			int validcount = 0;
+#pragma warning restore CS0219 // The variable 'validcount' is assigned but its value is never used
 			if ( value . Length > 2 )
 				value = value . Substring ( 0 , 2 );
 			if ( ValidBorderSizes . Contains ( value [ 0 ] ) == false )

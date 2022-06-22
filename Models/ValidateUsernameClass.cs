@@ -17,74 +17,29 @@ namespace MyDev . Models
     /// <summary>
     /// Class to support my TextBox UserControl with suport for IDataErrorInfo
     /// </summary>
-    [DebuggerDisplay ( "{" + nameof ( GetDebuggerDisplay ) + "(),nq}" )]
-    public class ValidateUsernameClass : IDataErrorInfo, INotifyPropertyChanged, ICommand
+//    [DebuggerDisplay ( "{" + nameof ( GetDebuggerDisplay ) + "(),nq}" )]
+    public class ValidateUsernameClass : IDataErrorInfo
     {
         private string ErrorInfo1;
         private string invalidchars = "0123456789!=+!£$%^&*()}{@\"~#?//>\"\"<,.\\¬";
-//        public ICommand CloseBtn;
   
+       public ValidateUsernameClass ( )
+        {
+        }
         #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
-        public event EventHandler CanExecuteChanged;
-
-        protected void OnPropertyChanged ( string PropertyName )
+        private void NotifyPropertyChanged ( string propertyName )
         {
-            if ( this . PropertyChanged != null )
+            if ( PropertyChanged != null )
             {
-                var e = new PropertyChangedEventArgs ( PropertyName );
-                this . PropertyChanged ( this , e );
+                PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
             }
         }
-        /// <summary>
-        /// Warns the developer if this object does not have
-        /// a public property with the specified name. This
-        /// method does not exist in a Release build.
-        /// </summary>
-        [Conditional ( "DEBUG" )]
-        [DebuggerStepThrough]
-        public virtual void VerifyPropertyName ( string propertyName )
-        {
-            // Verify that the property name matches a real,
-            // public, instance property on this object.
-            if ( TypeDescriptor . GetProperties ( this ) [ propertyName ] == null )
-            {
-                string msg = "Invalid property name: " + propertyName;
-
-                if ( this . ThrowOnInvalidPropertyName )
-                    throw new Exception ( msg );
-                else
-                    Debug . Fail ( msg );
-            }
-        }
-
-        /// <summary>
-        /// Returns whether an exception is thrown, or if a Debug.Fail() is used
-        /// when an invalid property name is passed to the VerifyPropertyName method.
-        /// The default value is false, but subclasses used by unit tests might
-        /// override this property's getter to return true.
-        /// </summary>
-        protected virtual bool ThrowOnInvalidPropertyName
-        {
-            get; private set;
-        }
-
         #endregion OnPropertyChanged
-        public ValidateUsernameClass ( )
-        {
-//            ICommand CloseBtn = new RelayCommand ( ExecuteClosewin , CanExecuteCloseWin );
-        }
-        //private bool CanExecuteCloseWin ( object arg )
-        //{return true;}
-        //private void ExecuteClosewin ( object obj )
-        //{
-        //    Window win = obj as Window;
-        //    win . Close ( );
-        //}
 
 
         #region Full Properties
- 
+
         private string userName;
         public string UserName
         {
@@ -92,14 +47,14 @@ namespace MyDev . Models
             { return userName; }
             set
             {
-                userName = value; OnPropertyChanged ( "UserName" );
+                userName = value; NotifyPropertyChanged ( "UserName" );
             }
         }
         private string promptText;
         public string PromptText
         {
             get { return promptText; }
-            set { promptText = value; OnPropertyChanged ( "PromptText" ); }
+            set { promptText = value; NotifyPropertyChanged ( "PromptText" ); }
         }
         private string dataItem { get; set; }
         public string DataItem
@@ -109,51 +64,51 @@ namespace MyDev . Models
             {
                 dataItem = value;
                 UserName = value;
-                OnPropertyChanged ( "DataItem" );
+                NotifyPropertyChanged ( "DataItem" );
             }
         }
         private Visibility isPromptVisible;
         public Visibility IsPromptVisible
         {
             get { return isPromptVisible; }
-            set { isPromptVisible = value; OnPropertyChanged ( "IsPromptVisible" ); }
+            set { isPromptVisible = value; NotifyPropertyChanged ( "IsPromptVisible" ); }
         }
         private double promptFontsize;
         public double  PromptFontsize
         {
             get { return promptFontsize; }
-            set { promptFontsize = value; OnPropertyChanged ( "PromptFontsize" ); }
+            set { promptFontsize = value; NotifyPropertyChanged ( "PromptFontsize" ); }
         }
         private SolidColorBrush promptBkground;
         public SolidColorBrush PromptBkground
         {
             get { return promptBkground; }
-            set { promptBkground = value; OnPropertyChanged ( "PromptBkground" ); }
+            set { promptBkground = value; NotifyPropertyChanged ( "PromptBkground" ); }
         }
         private SolidColorBrush textboxBkground;
         public SolidColorBrush TextboxBkground
         {
             get { return textboxBkground; }
-            set { textboxBkground = value; OnPropertyChanged ( "TextboxBkground" ); }
+            set { textboxBkground = value; NotifyPropertyChanged ( "TextboxBkground" ); }
         }        
         private SolidColorBrush textboxFground;
         public SolidColorBrush TextboxFground
         {
             get { return textboxFground; }
-            set { textboxFground = value; OnPropertyChanged ( "TextboxFground" ); }
+            set { textboxFground = value; NotifyPropertyChanged ( "TextboxFground" ); }
         }
         private double dataFontSize;
         public double DataFontSize
         {
             get { return dataFontSize; }
-            set { dataFontSize = value; OnPropertyChanged ( "DataFontSize" ); }
+            set { dataFontSize = value; NotifyPropertyChanged ( "DataFontSize" ); }
         }
         // Data flag to check if data in field is valid, that can be checked by the process before using it
         private bool isValid;
         public bool IsValid
         {
             get { return isValid; }
-            set { isValid = value; OnPropertyChanged ( "IsValid" ); }
+            set { isValid = value; NotifyPropertyChanged ( "IsValid" ); }
         }
 
         #endregion Full Properties
@@ -184,7 +139,6 @@ namespace MyDev . Models
             // Reports back if any other values are identified
             // Responses are targetted at a Full Property (ErrorInfo x ) Text field in the caller module
             // This does NOT provide ToolTip response
-            string result = null;
             int reslt = -1;
             string ch = "";
             if ( PropertyName == "DataItem" )
@@ -192,7 +146,7 @@ namespace MyDev . Models
                 IsValid = false;
                 if ( DataItem == null )
                     return null;
-                reslt = CheckforValidChars ( DataItem , out ch );
+                reslt = CheckforValidChars ( DataItem , invalidchars, ref ch );
                 if ( reslt != -1 )
                 {
                     this . ErrorInfo1 = $"Entry contains an invalid character of '{ch}' at position {reslt + 1}...";
@@ -256,9 +210,9 @@ namespace MyDev . Models
             }
             return "";
         }
-        private int CheckforValidChars ( string entry , out string ch )
+        public  int CheckforValidChars ( string entry , string invalidchars , ref string ch )
         {
-            ch = "";
+            //ch = "";
             bool success = true;
             //int sourcecounter = 0;
             int result = -1;
@@ -288,6 +242,7 @@ namespace MyDev . Models
                 //sourcecounter++;
             }
             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             if ( !success )
                 return result;
             else return -1;

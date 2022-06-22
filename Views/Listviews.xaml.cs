@@ -132,14 +132,20 @@ namespace MyDev . Views
         #endregion  Public variables
 
         #region private variables
+#pragma warning disable CS0414 // The field 'Listviews.UseDirectLoad' is assigned but its value is never used
         private bool UseDirectLoad = true;
+#pragma warning restore CS0414 // The field 'Listviews.UseDirectLoad' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'Listviews.UseBGThread' is assigned but its value is never used
         private bool UseBGThread = true;
+#pragma warning restore CS0414 // The field 'Listviews.UseBGThread' is assigned but its value is never used
         //private bool LoadDirect=false;
         private bool alldone = false;
         // pro temp variables
         // Flowdoc flags
         private bool UseFlowdoc = false;
+#pragma warning disable CS0414 // The field 'Listviews.UseFlowdocBeep' is assigned but its value is never used
         private bool UseFlowdocBeep = false;
+#pragma warning restore CS0414 // The field 'Listviews.UseFlowdocBeep' is assigned but its value is never used
         private bool UseScrollViewer = false;
         private bool TvMouseCaptured = false;
 
@@ -148,10 +154,16 @@ namespace MyDev . Views
         //private  double flowdocWidth=0;
         //private  double flowdocTop=0;
         //private  double flowdocLeft=0;
+#pragma warning disable CS0414 // The field 'Listviews.XLeft' is assigned but its value is never used
         private double XLeft = 0;
+#pragma warning restore CS0414 // The field 'Listviews.XLeft' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'Listviews.YTop' is assigned but its value is never used
         private double YTop = 0;
+#pragma warning restore CS0414 // The field 'Listviews.YTop' is assigned but its value is never used
         private bool Startup = false;
+#pragma warning disable CS0414 // The field 'Listviews.LoadAll' is assigned but its value is never used
         private bool LoadAll = true;
+#pragma warning restore CS0414 // The field 'Listviews.LoadAll' is assigned but its value is never used
         private bool Usetimer = true;
         private bool ComboSelectionActive = false;
         private static Stopwatch timer = new Stopwatch ( );
@@ -766,7 +778,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "VIEW" , genaccts . Count );
@@ -778,7 +790,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "BOX" , genaccts . Count );
@@ -792,7 +804,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "" , genaccts . Count );
@@ -811,7 +823,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "VIEW" , genaccts . Count );
@@ -822,7 +834,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "BOX" , genaccts . Count );
@@ -835,7 +847,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "" , genaccts . Count );
@@ -944,7 +956,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "VIEW" , genaccts . Count );
@@ -956,7 +968,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "BOX" , genaccts . Count );
@@ -969,7 +981,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "" , genaccts . Count );
@@ -990,7 +1002,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         if ( genaccts . Count == 0 )
@@ -1013,7 +1025,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         listBox . SelectedIndex = 0;
@@ -1029,7 +1041,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         listView . SelectedIndex = 0;
@@ -1142,7 +1154,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "VIEW" , genaccts . Count );
@@ -1156,7 +1168,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         HandleCaption ( "BOX" , genaccts . Count );
@@ -1175,7 +1187,7 @@ namespace MyDev . Views
                             SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                             if ( Flags . ReplaceFldNames )
                             {
-                                GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                                GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                             }
                             dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                             listView . SelectedIndex = 0;
@@ -1192,7 +1204,7 @@ namespace MyDev . Views
                             SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                             if ( Flags . ReplaceFldNames )
                             {
-                                GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                                GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                             }
                             dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                             listBox . SelectedIndex = 0;
@@ -1208,7 +1220,7 @@ namespace MyDev . Views
                             SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                             if ( Flags . ReplaceFldNames )
                             {
-                                GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                                GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                             }
                             dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                             listView . SelectedIndex = 0;
@@ -1234,7 +1246,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         lvHeader . Text = $"List View Display :  No records returned...";
@@ -1245,7 +1257,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         lbHeader . Text = $"List Box Display :  No records returned...";
@@ -1258,7 +1270,7 @@ namespace MyDev . Views
                         SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                         if ( Flags . ReplaceFldNames )
                         {
-                            GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                            GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                         }
                         dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                         lvHeader . Text = $"List View Display :  No records returned...";
@@ -1724,7 +1736,9 @@ namespace MyDev . Views
         }
         private void dbNameLb_SelectionChanged ( object sender , SelectionChangedEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'ResultString' is assigned but its value is never used
             string ResultString = "";
+#pragma warning restore CS0219 // The variable 'ResultString' is assigned but its value is never used
             if ( alldone )
                 return;
             if ( ComboSelectionActive || dbNameLb . Items . Count == 0 )
@@ -1735,7 +1749,9 @@ namespace MyDev . Views
         }
         private void dbNameLv_SelectionChanged ( object sender , SelectionChangedEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'ResultString' is assigned but its value is never used
             string ResultString = "";
+#pragma warning restore CS0219 // The variable 'ResultString' is assigned but its value is never used
             if ( alldone )
                 return;
             if ( ComboSelectionActive || dbNameLv . Items . Count == 0 )
@@ -1954,7 +1970,9 @@ namespace MyDev . Views
                 Utils . DoErrorBeep ( 125 , 55 , 1 );
                 return false;
             }
+#pragma warning disable CS0162 // Unreachable code detected
             return true;
+#pragma warning restore CS0162 // Unreachable code detected
             //SqlCommand = DefaultSqlCommand;
         }
 
@@ -2231,7 +2249,7 @@ namespace MyDev . Views
                     SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                     if ( Flags . ReplaceFldNames )
                     {
-                        GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                        GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                     }
                     dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                     DbCountlv = genaccts . Count;
@@ -2288,7 +2306,7 @@ namespace MyDev . Views
                     SqlServerCommands . LoadActiveRowsOnlyInGrid ( dGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                     if ( Flags . ReplaceFldNames )
                     {
-                        GenericDbHandlers . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
+                        GenericDbUtilities . ReplaceDataGridFldNames ( CurrentTableName , ref dGrid );
                     }
                     dGrid . SelectedItem = dGrid . SelectedIndex = 0;
                     DbCountlb = genaccts . Count;
@@ -2339,7 +2357,9 @@ namespace MyDev . Views
         private void ViewTableColumnsLb ( object sender , RoutedEventArgs e )
         {
             bool flowdocswitch = false;
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             List<string> list = new List<string> ( );
             List<string> fldnameslist = new List<string> ( );
             string output = "";
@@ -2371,7 +2391,9 @@ namespace MyDev . Views
         private void ViewTableColumnsLv ( object sender , RoutedEventArgs e )
         {
             bool flowdocswitch = false;
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             List<string> list = new List<string> ( );
             string output = "";
             SqlCommand = $"spGetTableColumnWithSize {dbNameLv . SelectedItem . ToString ( )}";
@@ -2706,7 +2728,9 @@ namespace MyDev . Views
             // right click for S.P script
             TextBlock tb = sender as TextBlock;
             string selection = tb . Text;
+#pragma warning disable CS0219 // The variable 'index' is assigned but its value is never used
             int index = 0;
+#pragma warning restore CS0219 // The variable 'index' is assigned but its value is never used
             foreach ( var item in ProcsCollection )
             {
                 if ( item . Procname == selection )
@@ -2724,7 +2748,9 @@ namespace MyDev . Views
             {
                 DataTable dt = new DataTable ( );
                 string [ ] args = { "" , "" , "" , "" };
+#pragma warning disable CS0219 // The variable 'err' is assigned but its value is never used
                 string err = "", errormsg = "";
+#pragma warning restore CS0219 // The variable 'err' is assigned but its value is never used
                 List<string> list = new List<string> ( );
                 ObservableCollection<GenericClass> Generics = new ObservableCollection<GenericClass> ( );
                 foreach ( var item in DatabasesCollection )
@@ -2736,6 +2762,7 @@ namespace MyDev . Views
                     List<string> procslist = new List<string> ( );
                     ObservableCollection<BankAccountViewModel> bvmparam = new ObservableCollection<BankAccountViewModel> ( );
                     List<string> genericlist = new List<string> ( );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                     try
                     {
                         DapperSupport . CreateGenericCollection (
@@ -2753,6 +2780,7 @@ namespace MyDev . Views
                     }
                     catch ( Exception ex )
                     { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 
                 }
                 if ( Generics . Count == 0 )
@@ -2836,7 +2864,9 @@ namespace MyDev . Views
 
         private void DbProcsTree_Expanded ( object sender , RoutedEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'x' is assigned but its value is never used
             int x = 0;
+#pragma warning restore CS0219 // The variable 'x' is assigned but its value is never used
         }
         private void LoadTreeView ( object sender , RoutedEventArgs e )
         {
@@ -2912,7 +2942,9 @@ namespace MyDev . Views
 
         private void DbProcsTree_Collapsed ( object sender , RoutedEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'x' is assigned but its value is never used
             int x = 0;
+#pragma warning restore CS0219 // The variable 'x' is assigned but its value is never used
         }
 
         private void TablesLabel_PreviewMouseRightButtonUp ( object sender , MouseButtonEventArgs e )

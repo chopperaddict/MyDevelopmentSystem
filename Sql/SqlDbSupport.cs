@@ -85,7 +85,6 @@ namespace MyDev . Sql
 			return true;
 		}
 
-
 		public static void AddNewRecord ( string CurrentDb , object bvm )
 		{
 			string SQLcommand = "";

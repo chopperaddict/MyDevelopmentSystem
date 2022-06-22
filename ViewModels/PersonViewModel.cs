@@ -3,6 +3,7 @@ using MyDev . Views;
 
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
+using System . ComponentModel;
 using System . Linq;
 using System . Net;
 using System . Net . Http . Headers;
@@ -15,10 +16,20 @@ using System . Xml . Linq;
 
 namespace MyDev . ViewModels
 {
-    public class PersonViewModel : BaseViewModel 
+    public class PersonViewModel
 	{
+		#region OnPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion OnPropertyChanged
 		//..Viewmodel for just one (of four) grid sections in the GENERICMVVM.window
-		private  static Person selectedItem;
+		private static Person selectedItem;
 //		private IList<Person> _personList;
 		private static ObservableCollection<Person> people = new ObservableCollection<Person>();
 
@@ -62,6 +73,7 @@ namespace MyDev . ViewModels
 		#endregion ICommands UPDATENAME, UPDATEADDRESS
 		public PersonViewModel ( )
 		{
+
 			//_personList = new List<Person> ( )
 			//  {
 			//	new Person(){Name="Prabhat", Address="Bangalore"},
@@ -91,13 +103,13 @@ namespace MyDev . ViewModels
 		public static ObservableCollection<Person> People 
 		{
 			get { return people; }
-			set { people = value; }// OnPropertyChanged ( People . ToString ( ) ); }
+			set { people = value; }// NotifyPropertyChanged ( People . ToString ( ) ); }
 		}
 		
 		public Person Selecteditem
 		{
 			get { return selectedItem; }
-			set { selectedItem = value; OnPropertyChanged ( Selecteditem . ToString ( )); }
+			set { selectedItem = value; NotifyPropertyChanged ( Selecteditem . ToString ( )); }
 		}		
 		public ObservableCollection<Person> MyProperty
 		{

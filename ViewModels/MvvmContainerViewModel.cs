@@ -262,7 +262,9 @@
         }
         public  void GetUserControl ( string ctrlname )
         {
+#pragma warning disable CS0219 // The variable 'selctrl' is assigned but its value is never used
             UserControl selctrl = null;
+#pragma warning restore CS0219 // The variable 'selctrl' is assigned but its value is never used
             //    switch ( ctrlname . ToUpper ( ) )
             //    {
             //        case "COLORPICKER":

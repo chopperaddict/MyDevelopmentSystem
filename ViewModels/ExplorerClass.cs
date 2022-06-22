@@ -19,7 +19,9 @@ namespace MyDev . ViewModels
 		private DirectoryInfo _directory;
 		private List<DirectoryInfo> _directories;
 		private List<FileInfo> _files;
+#pragma warning disable CS0169 // The field 'ExplorerClass._drives' is never used
 		private List<string> _drives;
+#pragma warning restore CS0169 // The field 'ExplorerClass._drives' is never used
 		public ExplorerClass ( ) { }
 		public static ExplorerClass Instance
 		{
@@ -118,6 +120,7 @@ namespace MyDev . ViewModels
 		{
 			get
 			{
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 				try
 				{
 					_files = new List<FileInfo> ( );
@@ -137,6 +140,7 @@ namespace MyDev . ViewModels
 				}
 				catch (Exception ex)
 				{; }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				//}
 				return _files;
 			}

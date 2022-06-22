@@ -9,7 +9,9 @@ namespace MyDev . ViewModels
 {
     public class BindingErrorListener : TraceListener
     {
+#pragma warning disable CS0649 // Field 'BindingErrorListener._errorHandler' is never assigned to, and will always have its default value null
         private readonly Action<string> _errorHandler;
+#pragma warning restore CS0649 // Field 'BindingErrorListener._errorHandler' is never assigned to, and will always have its default value null
 
         public BindingErrorListener ( Action<string> errorHandler )
         {

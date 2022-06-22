@@ -23,7 +23,9 @@ namespace MyDev . UserControls
     /// 
     public partial class MvvmListboxUC 
     {
+#pragma warning disable CS0169 // The field 'MvvmListboxUC.ucvm' is never used
         MvvmListboxUCViewModel ucvm;
+#pragma warning restore CS0169 // The field 'MvvmListboxUC.ucvm' is never used
         MvvmContainerViewModel mcvm { set; get; }
         public static MvvmListboxUC mvvmlistboxuc { get; set; }
 

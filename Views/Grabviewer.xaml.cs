@@ -26,9 +26,13 @@ namespace MyDev . Views
 		//private static double scrnwidth= 0;
 		//private static double scrnheight= 0;
 		private string Imagepath= "C:\\WPFPages-11nov21\\Icons\\Grabimage.png";
+#pragma warning disable CS0169 // The field 'Grabviewer.img' is never used
 		private RenderTargetBitmap  img;
+#pragma warning restore CS0169 // The field 'Grabviewer.img' is never used
 		Window caller;
+#pragma warning disable CS0649 // Field 'Grabviewer.ctrl' is never assigned to, and will always have its default value null
 		Control ctrl;
+#pragma warning restore CS0649 // Field 'Grabviewer.ctrl' is never assigned to, and will always have its default value null
 		public Grabviewer ( Window parent , Control ctrl , RenderTargetBitmap bmp )
 		{
 			if ( bmp == null )
@@ -163,6 +167,7 @@ namespace MyDev . Views
 				string path = Utils . GetExportFileName ( "Screengrab.png" );
 				if ( path . Contains ( "\\" ) == false )
 					break;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 				try
 				{
 					if ( System . IO . File . Exists ( path ) )
@@ -188,6 +193,7 @@ namespace MyDev . Views
 					Utils . Mbox ( this , string1: "A file of the same name already exists in this folder !" , string2: "Do you want to overwrite it ?" , caption: "File Overwrite Caution " , iconstring: "\\icons\\Information.png" , Btn1: MB . YES , Btn2: MB . NO , defButton: MB . YES );
 					if ( DlgInput . returnint == 0 )
 						break;
+#pragma warning disable CS0168 // The variable 'ex2' is declared but never used
 					try
 					{
 						System . IO . File . Copy ( Imagepath , path );
@@ -199,7 +205,9 @@ namespace MyDev . Views
 						Utils . DoErrorBeep ( repeat: 2 );
 						break;
 					}
+#pragma warning restore CS0168 // The variable 'ex2' is declared but never used
 				}
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				if ( isfinished )
 					break;
 			} while ( true );

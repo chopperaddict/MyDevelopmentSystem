@@ -51,7 +51,9 @@ namespace MyDev . Views
         //		private string [ ] DefaultTables = {"BANKACCOUNT", "CUSTOMER", "SECACCOUNTS", "CUSTOMERS", "GENERICS"};
         private string SqlCommand = "";
         private string DefaultSqlCommand = "Select * from BankAccount";
+#pragma warning disable CS0414 // The field 'FourwaySplitViewer.Nwconnection' is assigned but its value is never used
         string Nwconnection = "NorthwindConnectionString";
+#pragma warning restore CS0414 // The field 'FourwaySplitViewer.Nwconnection' is assigned but its value is never used
         private double MaxColWidth1 { get; set; }
         private double MinRowHeight1 { get; set; }
         private double MaxRowHeight { get; set; }
@@ -228,7 +230,9 @@ namespace MyDev . Views
         private bool LoadDirect = false;
         // pro temp variables
         private bool UseFlowdoc = false;
+#pragma warning disable CS0414 // The field 'FourwaySplitViewer.UseFlowdocBeep' is assigned but its value is never used
         private bool UseFlowdocBeep = false;
+#pragma warning restore CS0414 // The field 'FourwaySplitViewer.UseFlowdocBeep' is assigned but its value is never used
         private bool showall = false;
         private bool ShowFullScript = false;
         private bool LoadAll = false;
@@ -239,8 +243,12 @@ namespace MyDev . Views
 
         // Flowdoc file wide variables
         public FlowdocLib fdl = new FlowdocLib ( );
+#pragma warning disable CS0414 // The field 'FourwaySplitViewer.XLeft' is assigned but its value is never used
         private double XLeft = 0;
+#pragma warning restore CS0414 // The field 'FourwaySplitViewer.XLeft' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'FourwaySplitViewer.YTop' is assigned but its value is never used
         private double YTop = 0;
+#pragma warning restore CS0414 // The field 'FourwaySplitViewer.YTop' is assigned but its value is never used
 
         #endregion private variables
 
@@ -261,8 +269,12 @@ namespace MyDev . Views
             set { movingobject = value; }
         }
 
+#pragma warning disable CS0414 // The field 'FourwaySplitViewer.FirstXPos' is assigned but its value is never used
         private double FirstXPos = 0;
+#pragma warning restore CS0414 // The field 'FourwaySplitViewer.FirstXPos' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'FourwaySplitViewer.FirstYPos' is assigned but its value is never used
         private double FirstYPos = 0;
+#pragma warning restore CS0414 // The field 'FourwaySplitViewer.FirstYPos' is assigned but its value is never used
 
         #endregion Binding full props
 
@@ -275,31 +287,18 @@ namespace MyDev . Views
             EventControl . CustDataLoaded += EventControl_CustDataLoaded;
             EventControl . DetDataLoaded += EventControl_DetDataLoaded;
             EventControl . GenDataLoaded += EventControl_GenDataLoaded;
-
-            //            Listviews lv = new Listviews ( );
-
-            // FlowDoc support
+           // FlowDoc support
             Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
             //           Flowdoc. ExecuteFlowDocBorderMethod += FlowDoc_ExecuteFlowDocBorderMethod;
             this . SizeChanged += Datagrids_SizeChanged;
 
-            // set global flag so we can access it via this pointer
-            //Flags. dataGrids = this;
-            //Showinfo . IsChecked = true;
-
-            LoadTablesList ( );
+             LoadTablesList ( );
             LoadSpList ( );
             SqlCommand = "Select * from BankAccount";
             LoadData ( );
             Datagrids_SizeChanged ( sender , null );
             ShowdragText = "Drag Down here to ";
             ShowText = "Show more records";
-
-
-            //imgup = new BitmapImage ( new Uri ( @"\icons\up arroiw red.png" , UriKind . Relative ) );
-            //imgdn = new BitmapImage ( new Uri ( @"\icons\down arroiw red.png" , UriKind . Relative ) );
-            //vimgleft = new BitmapImage ( new Uri ( @"\icons\left arroiw red.png" , UriKind . Relative ) );
-            //vimgright = new BitmapImage ( new Uri ( @"\icons\right arroiw red.png" , UriKind . Relative ) );
         }
         private void Datagrids_SizeChanged ( object sender , SizeChangedEventArgs e )
         {
@@ -316,12 +315,8 @@ namespace MyDev . Views
             EventControl . CustDataLoaded -= EventControl_CustDataLoaded;
             EventControl . DetDataLoaded -= EventControl_DetDataLoaded;
             EventControl . GenDataLoaded -= EventControl_GenDataLoaded;
-
-            //         Listviews lv = new Listviews ( );
-            //			Flowdoc . ExecuteFlowDocResizeMethod -= lv . Flowdoc_ExecuteFlowDocResizeMethod;
           Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
-            //           Flowdoc. ExecuteFlowDocBorderMethod -= lv. FlowDoc_ExecuteFlowDocBorderMethod;
-        }
+         }
         private void App_Close ( object sender , RoutedEventArgs e )
         {
             this . Close ( );
@@ -628,7 +623,9 @@ namespace MyDev . Views
                 MessageBox . Show ( $"SQL ERROR 1125 - {ex . Message}" );
                 return "";
             }
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             columncount = 0;
             //			Generics . Clear ( );
             foreach ( var item in dt . Rows )
@@ -708,7 +705,9 @@ namespace MyDev . Views
         {
             SqlConnection con;
             DataTable dt = new DataTable ( );
+#pragma warning disable CS0219 // The variable 'filterline' is assigned but its value is never used
             string filterline = "";
+#pragma warning restore CS0219 // The variable 'filterline' is assigned but its value is never used
             string ConString = Flags . CurrentConnectionString;
             //			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
             //Debug . WriteLine ( $"Making new SQL connection in DETAILSCOLLECTION,  Time elapsed = {timer . ElapsedMilliseconds}" );
@@ -774,7 +773,7 @@ namespace MyDev . Views
                 // using our own SQLCOMMAND string to call
                 // our Background support class using a DELEGATE declared in the DataLoadController Class
                 DataLoadControl dlc = new DataLoadControl ( );
-                LoadTableDelegate glc = dlc . LoadTableInBackground;
+                Delegates . LoadTableDelegate glc = dlc . LoadTableInBackground;
                 if ( Usetimer )
                     timer . Start ( );
                 if ( CurrentType == "BANKACCOUNT" )
@@ -813,7 +812,7 @@ namespace MyDev . Views
             {
                 // default table loading methods (
                 DataLoadControl dlc = new DataLoadControl ( );
-                LoadTableWithDapperDelegate glc = dlc . LoadTablewithDapper;
+                Delegates . LoadTableWithDapperDelegate glc = dlc . LoadTablewithDapper;
                 DbLoadArgs dbla = new DbLoadArgs ( );
                 if ( Usetimer )
                     timer . Start ( );
@@ -890,7 +889,7 @@ namespace MyDev . Views
             int val = 0;
             string [ ] fields = { "" , "" , "" , "" , "" , "" , "" , "" , "" , "" };
             DataLoadControl dlc = new DataLoadControl ( );
-            LoadTableDelegate glc = dlc . LoadTableInBackground;
+            Delegates . LoadTableDelegate glc = dlc . LoadTableInBackground;
             fields [ 0 ] = "select";
             if ( LoadAll == false && RecCount . Text != "" && RecCount . Text != "*" )
             {
@@ -1005,7 +1004,7 @@ namespace MyDev . Views
                     //gc . field1 = $"Sorry, but no data was returned for the '{CurrentType}' Database Table  you requested...";
                     //genaccts . Add ( gc );
                     //SqlServerCommands . LoadActiveRowsOnlyInGrid ( DataGrid1, genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
-                    GenericDbHandlers . SetNullRecords ( genaccts , DataGrid1 , CurrentType );
+                    GenericDbUtilities . SetNullRecords ( genaccts , DataGrid1 , CurrentType );
                     //					DataGrid1. Columns [ 0 ] . Header = "Error Message";
                     DataGrid1 . Refresh ( );
                     return;
@@ -1021,7 +1020,7 @@ namespace MyDev . Views
                 SqlServerCommands . LoadActiveRowsOnlyInGrid ( DataGrid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                 if ( Flags . ReplaceFldNames )
                 {
-                    GenericDbHandlers . ReplaceDataGridFldNames ( CurrentType , ref DataGrid1 );
+                    GenericDbUtilities . ReplaceDataGridFldNames ( CurrentType , ref DataGrid1 );
                 }
                 DbCount = genaccts . Count;
                 if ( UseFlowdoc == true )
@@ -1090,7 +1089,7 @@ namespace MyDev . Views
             //This call returns us a DataTable
             DataTable dt = DataLoadControl . GetDataTable ( sqlcommand );
             if ( dt != null )
-                list = GenericDbHandlers . GetDataDridRowsWithSizes ( dt );
+                list = GenericDbUtilities . GetDataDridRowsWithSizes ( dt );
             //list = Utils . GetDataDridRowsAsListOfStrings ( dt );
             return list;
         }
@@ -1170,7 +1169,7 @@ namespace MyDev . Views
                 SqlServerCommands . LoadActiveRowsOnlyInGrid ( DataGrid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                 if ( Flags . ReplaceFldNames )
                 {
-                    GenericDbHandlers . ReplaceDataGridFldNames ( CurrentType , ref DataGrid1 );
+                    GenericDbUtilities . ReplaceDataGridFldNames ( CurrentType , ref DataGrid1 );
                 }
                 //				DataGrid1. ItemsSource = genaccts;
                 //				if ( UseFlowdoc == true )
@@ -1367,7 +1366,9 @@ namespace MyDev . Views
         private void ViewTableColumns ( object sender , RoutedEventArgs e )
         {
             bool flowdocswitch = false;
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             List<string> list = new List<string> ( );
             List<string> fldnameslist = new List<string> ( );
             string output = "";
@@ -1582,8 +1583,12 @@ namespace MyDev . Views
         private List<string> DbRowToList ( DataGrid dgrid , out string output )
         {
             output = "";
+#pragma warning disable CS0219 // The variable 'flowdocswitch' is assigned but its value is never used
             bool flowdocswitch = false;
+#pragma warning restore CS0219 // The variable 'flowdocswitch' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             List<string> list = new List<string> ( );
             List<string> fldnameslist = new List<string> ( );
             SqlCommand = $"spGetTableColumnWithSize {dbName . SelectedItem . ToString ( )}";
@@ -1595,8 +1600,12 @@ namespace MyDev . Views
 
         private void ParseGridRowData ( )
         {
+#pragma warning disable CS0219 // The variable 'dbtype' is assigned but its value is never used
             int dbtype = -1;
+#pragma warning restore CS0219 // The variable 'dbtype' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'record' is assigned but its value is never used
             string record = "";
+#pragma warning restore CS0219 // The variable 'record' is assigned but its value is never used
             string tablename = dbName . SelectedItem . ToString ( );
 
 
@@ -1649,7 +1658,9 @@ namespace MyDev . Views
             List<string> list = new List<string> ( );
             string [ ] lines;
             string [ ] entry;
+#pragma warning disable CS0219 // The variable 'itm' is assigned but its value is never used
             string itm = "";
+#pragma warning restore CS0219 // The variable 'itm' is assigned but its value is never used
             char ch = ',';
             lines = rowdata . Split ( ch );
             for ( int x = 0 ; x < lines . Length ; x++ )
@@ -1667,7 +1678,9 @@ namespace MyDev . Views
         private List<string> GetGenericDataRecord ( GenericClass bvm )
         {
             List<string> list = new List<string> ( );
+#pragma warning disable CS0219 // The variable 's' is assigned but its value is never used
             string s = "";
+#pragma warning restore CS0219 // The variable 's' is assigned but its value is never used
             list . Add ( bvm . field1 . ToString ( ) );
             list . Add ( bvm . field2 . ToString ( ) );
             list . Add ( bvm . field3 . ToString ( ) );
@@ -1694,7 +1707,9 @@ namespace MyDev . Views
         private List<string> GetCustDataRecord ( CustomerViewModel bvm )
         {
             List<string> list = new List<string> ( );
+#pragma warning disable CS0219 // The variable 's' is assigned but its value is never used
             string s = "";
+#pragma warning restore CS0219 // The variable 's' is assigned but its value is never used
             list . Add ( bvm . Id . ToString ( ) );
             list . Add ( bvm . CustNo );
             list . Add ( bvm . BankNo );
@@ -1716,7 +1731,9 @@ namespace MyDev . Views
         private List<string> GetBankDataRecord ( BankAccountViewModel bvm )
         {
             List<string> list = new List<string> ( );
+#pragma warning disable CS0219 // The variable 's' is assigned but its value is never used
             string s = "";
+#pragma warning restore CS0219 // The variable 's' is assigned but its value is never used
             list . Add ( bvm . Id . ToString ( ) );
             list . Add ( bvm . CustNo );
             list . Add ( bvm . BankNo );
@@ -1801,6 +1818,9 @@ namespace MyDev . Views
             //else
             //    Utils . Magnify ( list , false);
             Utils . SwitchMagnifyStyle ( DataGrid1 , ref Magnifyrate );
+            Utils . SwitchMagnifyStyle ( listbox, ref Magnifyrate );
+            Utils . SwitchMagnifyStyle ( TablesPanel , ref Magnifyrate );
+            Utils . SwitchMagnifyStyle ( DbRecordInfo , ref Magnifyrate );
         }
 
         private void Showfd_Click ( object sender , RoutedEventArgs e )

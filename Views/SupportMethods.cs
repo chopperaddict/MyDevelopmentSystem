@@ -77,6 +77,8 @@ namespace MyDev . Views
 			string currentline = "";
 			string linetext = "";
 			TextBox textBox = control;
+			string argument = textBox . Text . Trim ( );
+			argument = ParseFileName ( argument );
 			//Using a TextBox as input ?
 			if ( command == "" )
 			{
@@ -165,7 +167,7 @@ namespace MyDev . Views
 					try
 					{
 						//Setup our delegate
-						QualifyingFileLocations FindPathHandler = SupportMethods . qualifiers;
+						Delegates . QualifyingFileLocations FindPathHandler = SupportMethods . qualifiers;
 						// pass the delegate method thru to our search for executable path method
 						// It contains all the specialist paths we want to have searched
 						// WORKS VERY WELL 15/6/21
@@ -207,7 +209,9 @@ namespace MyDev . Views
 				Process ExternalProcess = new Process ( );
 				ExternalProcess . StartInfo . FileName = test . Trim ( );
 				ExternalProcess . StartInfo . Arguments = args . Trim ( );
-				try
+				if ( ExternalProcess . StartInfo . Arguments == "" && argument != "" )
+					ExternalProcess . StartInfo . Arguments = argument;
+					try
 				{
 					ExternalProcess . Start ( );
 					//					ExternalProcess . WaitForExit ( );
@@ -291,7 +295,7 @@ namespace MyDev . Views
 			return fullPath;
 		}
 
-		public static string FindExecutePath ( string filename , QualifyingFileLocations qualifiers = null )
+		public static string FindExecutePath ( string filename , Delegates . QualifyingFileLocations qualifiers = null )
 		{
 			string Fullpath = "";
 			if ( qualifiers != null )
@@ -348,6 +352,27 @@ namespace MyDev . Views
 			return "";
 		}
 
+		public static string ParseFileName ( string path )
+		{
+			//create valid file path/name argument in quotes
+			string output = "";
+			int count = 0;
+			string [ ] parse = path . Split ( '\\' );
+			foreach ( var item in parse )
+			{
+				if ( count == 0 )
+					output = $"\"{item}\\";
+				else if(count < parse.Length)
+					output += $"{item}\\";
+				else
+					output += $"{item}\"";
+				count++;
+			}
+			output = output . Substring ( 0 , output . Length - 1 );
+            output +=$"\"" ;
+            Console . WriteLine (output);
+			return output;
+		}
 
 	}
 }

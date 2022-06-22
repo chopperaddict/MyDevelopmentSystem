@@ -14,7 +14,9 @@ using System . Windows . Shapes;
 using MyDev . ViewModels;
 
 using MyDev . UserControls;
+#pragma warning disable CS0105 // The using directive for 'MyDev.ViewModels' appeared previously in this namespace
 using MyDev . ViewModels;
+#pragma warning restore CS0105 // The using directive for 'MyDev.ViewModels' appeared previously in this namespace
 
 namespace MyDev . Views
 {    

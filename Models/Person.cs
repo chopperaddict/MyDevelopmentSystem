@@ -13,8 +13,19 @@ using System . Xml . Linq;
 
 namespace MyDev . Models
 {
-    public class Person : BaseViewModel, IDataErrorInfo
+    public class Person :  IDataErrorInfo
     {
+        #region NotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged ( string propertyName )
+        {
+            if ( PropertyChanged != null )
+            {
+                PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+            }
+        }
+        #endregion NotifyPropertyChanged
+
         #region Properties
         private string name;
         private string address;
@@ -27,34 +38,34 @@ namespace MyDev . Models
         public int Age
         {
             get { return age; }
-            set { age = value; OnPropertyChanged ( "Age" ); }
+            set { age = value; NotifyPropertyChanged ( "Age" ); }
         }
         public string Name
         {
             get
             { return name; }
-            set { name = value; OnPropertyChanged ( "Name" ); }
+            set { name = value; NotifyPropertyChanged ( "Name" ); }
         }
         public string Address
         {
             get
             { return address; }
-            set { address = value; OnPropertyChanged ( "Address" ); }
+            set { address = value; NotifyPropertyChanged ( "Address" ); }
         }
         public Person SelectedPerson
         {
             get { return selectedperson; }
-            set { selectedperson = value; OnPropertyChanged ( "SelectedPerson" ); }
+            set { selectedperson = value; NotifyPropertyChanged ( "SelectedPerson" ); }
         }
         public string ErrorInfo1
         {
             get { return errorInfo1; }
-            set { errorInfo1 = value; OnPropertyChanged ( "ErrorInfo1" ); }
+            set { errorInfo1 = value; NotifyPropertyChanged ( "ErrorInfo1" ); }
         }
         public string ErrorInfo2
         {
             get { return errorInfo2; }
-            set { errorInfo2 = value; OnPropertyChanged ( "ErrorInfo2" ); }
+            set { errorInfo2 = value; NotifyPropertyChanged ( "ErrorInfo2" ); }
         }
 
         public string Error { get { return "An Error has occured in the data entered.."; } }
@@ -138,6 +149,7 @@ namespace MyDev . Models
             int result = -1;
             if ( entry == null )
                 return -1;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 foreach ( var item in invalidchars )
@@ -161,6 +173,7 @@ namespace MyDev . Models
                 }
             }
             catch (Exception ex) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             if ( !success )
                 return result;
             else return -1;

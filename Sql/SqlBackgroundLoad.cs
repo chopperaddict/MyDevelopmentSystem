@@ -33,7 +33,9 @@ namespace MyDev . SQL
         #endregion PropertyChanged
 
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         async public Task <ObservableCollection<BankAccountViewModel>> LoadBackground_BankAsync (
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
             ObservableCollection<BankAccountViewModel> bvmcollection ,
             string SqlCommand = "" ,
             string DbNameToLoad = "" ,
@@ -148,14 +150,16 @@ namespace MyDev . SQL
                 sqlCon . Close ( );
                 if ( Notify )
                 {
-                    EventControl . TriggerBankDataLoaded ( null ,
+					Application . Current . Dispatcher . Invoke ( ( ) =>
+					EventControl . TriggerBankDataLoaded ( null ,
                         new LoadedEventArgs
                         {
                             CallerType = "DAPPERSUPPORT" ,
                             CallerDb = Caller ,
                             DataSource = bvmcollection ,
                             RowCount = bvmcollection . Count
-                        } );
+                        } )
+					);
                     return bvmcollection;
                 }
                 else
@@ -284,6 +288,7 @@ namespace MyDev . SQL
 				sqlCon . Close ( );
 				if ( Notify )
 				{
+					Application . Current . Dispatcher . Invoke ( ( ) =>
 					EventControl . TriggerBankDataLoaded ( null ,
 						new LoadedEventArgs
 						{
@@ -291,7 +296,8 @@ namespace MyDev . SQL
 							CallerDb = Caller ,
 							DataSource = bvmcollection ,
 							RowCount = bvmcollection . Count
-						} );
+						} )
+					);
 					return bvmcollection;
 				}
 				else
@@ -459,7 +465,9 @@ namespace MyDev . SQL
 		{
 
 			int[] dummyargs = {0,0,0,0};
+#pragma warning disable CS0168 // The variable 'dvm' is declared but never used
 			IEnumerable<DetailsViewModel> dvm ;
+#pragma warning restore CS0168 // The variable 'dvm' is declared but never used
 			string ConString = Flags . CurrentConnectionString;
 			//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 

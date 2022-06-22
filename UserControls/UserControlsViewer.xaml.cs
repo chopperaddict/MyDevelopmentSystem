@@ -57,7 +57,9 @@ namespace MyDev . UserControls
                         {
                             break;
                         }
+#pragma warning disable CS0162 // Unreachable code detected
                         return null;
+#pragma warning restore CS0162 // Unreachable code detected
                 }
                 return null;
             }
@@ -75,7 +77,25 @@ namespace MyDev . UserControls
             uhw = UcHostWindow . GetUCHostWin ( );
             this . DataContext = this;
             LoadUserControlsViewer ( );
+            this . Loaded += UcHostWindow_Loaded;
         }
+        private void UcHostWindow_Loaded ( object sender , RoutedEventArgs e )
+        {
+            Window parentWin = Window . GetWindow ( this );
+            parentWin . Closing += ParentWin_Closing;
+        }
+        private void ParentWin_Closing ( object sender , System . ComponentModel . CancelEventArgs e )
+        {
+            //UcHostWindow vm = this . DataContext as UcHostWindow;
+            UCCtrlViewer = null;
+            uclistbox = null;
+            uhw = null;
+            webViewer = null;
+            uclb = null;
+            miv = null;
+            WrapPanelLoaded = false;
+            WPImages = null; 
+    }
         public void LoadUserControlsViewer ( )
         {
             UCCtrlViewer = this;
@@ -238,11 +258,11 @@ namespace MyDev . UserControls
         {
             // Close window only
             WrapPanelImages . Content = null;
-            Contentctrl . Content = null;
-            WPImages . Clear ( );
+            Contentctrl  . Content = null;
+            WPImages ?. Clear ( );
             uclistbox . UClistbox . ItemsSource = null;
             uclistbox.UClistbox.Items.Clear ( );
-            miv . sp1 . Children . Clear ( );
+            miv ?. sp1 . Children . Clear ( );
             //WPImages . Clear ( );
             uclistbox = null;
             uclb = null;
@@ -274,6 +294,7 @@ namespace MyDev . UserControls
         {
             WrapPanelImages . Opacity = 0;
             Contentctrl . Visibility = Visibility . Visible;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 Uri url = new Uri ( imagename );
@@ -284,6 +305,7 @@ namespace MyDev . UserControls
                 InfoPanel . Text = $"Image : {image}";
             }
             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
         }
         private void ShowPrevious ( object sender , RoutedEventArgs e )
         {
@@ -350,13 +372,23 @@ namespace MyDev . UserControls
                 //MessageBoxResult result = MessageBox . Show ( $"The images have to be rendered, which can take a period of time\n\nDo you want to  continue ?." , "DELAY WARNING !!" , MessageBoxButton . YesNo , MessageBoxImage . Question , MessageBoxResult . Yes );
                 //if ( result == MessageBoxResult . No )
                 //    return;
-                Mouse . OverrideCursor = Cursors . Wait;
+                //Mouse . OverrideCursor = Cursors . Wait;
+                MultiView . Content = "You can continue working....";
+                MultiView . UpdateLayout ( );
+                Loadcounter .Background= FindResource("Green5") as SolidColorBrush;
+                Loadcounter . UpdateLayout ( );
                 miv = new MultiImageViewer ( );
                 WrapPanelImages . Content = miv;
                 Contentctrl . Visibility = Visibility . Collapsed;
                 WrapPanelImages . Visibility = Visibility . Visible;
                 WrapPanelImages . Opacity = 1;
                 Mouse . OverrideCursor = Cursors . Arrow;
+                Loadcounter . Background = FindResource ( "Orange5" ) as SolidColorBrush;
+                Loadcounter . UpdateLayout ( );
+                MultiView . Content = "Images are full loaded, Click here" +
+                    "....";
+                MultiView . UpdateLayout ( );
+
             }
             else
             {

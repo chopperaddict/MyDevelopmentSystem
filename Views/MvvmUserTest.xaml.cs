@@ -27,15 +27,21 @@ namespace MyDev . Views
 	{
 		// Host window
 		// Must declare the event
+#pragma warning disable CS0067 // The event 'MvvmUserTest.Click' is never used
 		public event RoutedEventHandler Click;
+#pragma warning restore CS0067 // The event 'MvvmUserTest.Click' is never used
 		StdDataUserControl SduCtrl { get; set; }
 		MulltiDbUserControl MduCtrl { get; set; }
 		ListBoxUserControl LbuCtrl { get; set; }
 		Ucontrol1 U1ctrl { get; set; }
 		public double Col1width=260;
+#pragma warning disable CS0414 // The field 'MvvmUserTest.ButtonPanelMaxOffset' is assigned but its value is never used
 		private double ButtonPanelMaxOffset = 155;
+#pragma warning restore CS0414 // The field 'MvvmUserTest.ButtonPanelMaxOffset' is assigned but its value is never used
 		private double ButtonPanelLeftOffset = 265;
+#pragma warning disable CS0414 // The field 'MvvmUserTest.GridTopOffset' is assigned but its value is never used
 		private double GridTopOffset = 300;
+#pragma warning restore CS0414 // The field 'MvvmUserTest.GridTopOffset' is assigned but its value is never used
 		string CurrentClient = "STD";
 		//private double ButtonPanelLeftOffset = 245;
 		public MvvmUserTest ( )
@@ -67,7 +73,7 @@ namespace MyDev . Views
 		{
 			//Mouse . SetCursor ( Cursors . Wait);
 			//OpenMultiDbControl ( null, null);
-			//Mouse . SetCursor ( Cursors . Arrow );
+			//Mouse . OverrideCursor = Cursors . Arrow;
 			}
 
 		private void MvvmUserTest_SizeChanged ( object sender , SizeChangedEventArgs e )

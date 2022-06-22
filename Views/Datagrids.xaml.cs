@@ -99,7 +99,9 @@ namespace MyDev . Views
         //		private string [ ] DefaultTables = {"BANKACCOUNT", "CUSTOMER", "SECACCOUNTS", "CUSTOMERS", "GENERICS"};
         private string SqlCommand = "";
         private string DefaultSqlCommand = "Select * from BankAccount";
+#pragma warning disable CS0414 // The field 'Datagrids.Nwconnection' is assigned but its value is never used
         string Nwconnection = "NorthwindConnectionString";
+#pragma warning restore CS0414 // The field 'Datagrids.Nwconnection' is assigned but its value is never used
 
         #endregion  Public variables
 
@@ -120,8 +122,12 @@ namespace MyDev . Views
 
         // Flowdoc file wide variables
         public FlowdocLib fdl = new FlowdocLib ( );
+#pragma warning disable CS0414 // The field 'Datagrids.XLeft' is assigned but its value is never used
         private double XLeft = 0;
+#pragma warning restore CS0414 // The field 'Datagrids.XLeft' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'Datagrids.YTop' is assigned but its value is never used
         private double YTop = 0;
+#pragma warning restore CS0414 // The field 'Datagrids.YTop' is assigned but its value is never used
 
         #endregion private variables
 
@@ -147,8 +153,12 @@ namespace MyDev . Views
             set { movingobject = value; }
         }
 
+#pragma warning disable CS0414 // The field 'Datagrids.FirstXPos' is assigned but its value is never used
         private double FirstXPos = 0;
+#pragma warning restore CS0414 // The field 'Datagrids.FirstXPos' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'Datagrids.FirstYPos' is assigned but its value is never used
         private double FirstYPos = 0;
+#pragma warning restore CS0414 // The field 'Datagrids.FirstYPos' is assigned but its value is never used
 
         #endregion Binding full props
 
@@ -528,7 +538,9 @@ namespace MyDev . Views
                 MessageBox . Show ( $"SQL ERROR 1125 - {ex . Message}" );
                 return "";
             }
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             columncount = 0;
             //			Generics . Clear ( );
             foreach ( var item in dt . Rows )
@@ -596,7 +608,9 @@ namespace MyDev . Views
         {
             SqlConnection con;
             DataTable dt = new DataTable ( );
+#pragma warning disable CS0219 // The variable 'filterline' is assigned but its value is never used
             string filterline = "";
+#pragma warning restore CS0219 // The variable 'filterline' is assigned but its value is never used
             string ConString = Flags . CurrentConnectionString;
             //			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
             //Debug . WriteLine ( $"Making new SQL connection in DETAILSCOLLECTION,  Time elapsed = {timer . ElapsedMilliseconds}" );
@@ -662,7 +676,7 @@ namespace MyDev . Views
                 // using our own SQLCOMMAND string to call
                 // our Background support class using a DELEGATE declared in the DataLoadController Class
                 DataLoadControl dlc = new DataLoadControl ( );
-                LoadTableDelegate glc = dlc . LoadTableInBackground;
+                Delegates.LoadTableDelegate glc = dlc . LoadTableInBackground;
                 if ( Usetimer )
                     timer . Start ( );
                 if ( CurrentType == "BANKACCOUNT" )
@@ -701,7 +715,7 @@ namespace MyDev . Views
             {
                 // default table loading methods (
                 DataLoadControl dlc = new DataLoadControl ( );
-                LoadTableWithDapperDelegate glc = dlc . LoadTablewithDapper;
+                Delegates . LoadTableWithDapperDelegate glc = dlc . LoadTablewithDapper;
                 DbLoadArgs dbla = new DbLoadArgs ( );
                 if ( Usetimer )
                     timer . Start ( );
@@ -778,7 +792,7 @@ namespace MyDev . Views
             int val = 0;
             string [ ] fields = { "" , "" , "" , "" , "" , "" , "" , "" , "" , "" };
             DataLoadControl dlc = new DataLoadControl ( );
-            LoadTableDelegate glc = dlc . LoadTableInBackground;
+            Delegates . LoadTableDelegate glc = dlc . LoadTableInBackground;
             fields [ 0 ] = "select";
             if ( LoadAll == false && RecCount . Text != "" && RecCount . Text != "*" )
             {
@@ -890,7 +904,7 @@ namespace MyDev . Views
                     //gc . field1 = $"Sorry, but no data was returned for the '{CurrentType}' Database Table  you requested...";
                     //genaccts . Add ( gc );
                     //SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
-                    GenericDbHandlers . SetNullRecords ( genaccts , Grid1 , CurrentType );
+                    GenericDbUtilities . SetNullRecords ( genaccts , Grid1 , CurrentType );
                     //					Grid1 . Columns [ 0 ] . Header = "Error Message";
                     Grid1 . Refresh ( );
                     return;
@@ -905,7 +919,7 @@ namespace MyDev . Views
                 SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                 if ( Flags . ReplaceFldNames )
                 {
-                    GenericDbHandlers . ReplaceDataGridFldNames ( CurrentType , ref Grid1 );
+                    GenericDbUtilities . ReplaceDataGridFldNames ( CurrentType , ref Grid1 );
                 }
                 DbCount = genaccts . Count;
                 if ( UseFlowdoc == true )
@@ -969,7 +983,7 @@ namespace MyDev . Views
             //This call returns us a DataTable
             DataTable dt = DataLoadControl . GetDataTable ( sqlcommand );
             if ( dt != null )
-                list = GenericDbHandlers . GetDataDridRowsWithSizes ( dt );
+                list = GenericDbUtilities . GetDataDridRowsWithSizes ( dt );
             //list = Utils . GetDataDridRowsAsListOfStrings ( dt );
             return list;
         }
@@ -1058,7 +1072,7 @@ namespace MyDev . Views
                 SqlServerCommands . LoadActiveRowsOnlyInGrid ( Grid1 , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
                 if ( Flags . ReplaceFldNames )
                 {
-                    GenericDbHandlers . ReplaceDataGridFldNames ( CurrentType , ref Grid1 );
+                    GenericDbUtilities . ReplaceDataGridFldNames ( CurrentType , ref Grid1 );
                 }
                 //				Grid1 . ItemsSource = genaccts;
                 //				if ( UseFlowdoc == true )
@@ -1078,7 +1092,7 @@ namespace MyDev . Views
         {
             // Allow quick window close, (but only close FlowDoc if it is currently open)
             if ( e . Key == Key . Escape && Flowdoc . Visibility == Visibility . Visible )
-                Flowdoc . Visibility = Visibility . Hidden;       // Just hide  the FlowDoc
+                Flowdoc . Visibility = Visibility . Collapsed;       // Just hide  the FlowDoc
             else if ( e . Key == Key . Escape )
                 this . Close ( );           // Close the window
             else if ( e . Key == Key . F8 )
@@ -1232,7 +1246,9 @@ namespace MyDev . Views
         private void ViewTableColumns ( object sender , RoutedEventArgs e )
         {
             bool flowdocswitch = false;
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             List<string> list = new List<string> ( );
             List<string> fldnameslist = new List<string> ( );
             string output = "";

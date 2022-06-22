@@ -10,7 +10,9 @@ namespace MyDev . Converts
 {
     public class BoolToYesNo : IValueConverter
 	{
+#pragma warning disable CS0414 // The field 'BoolToYesNo.result' is assigned but its value is never used
 		string result = "";
+#pragma warning restore CS0414 // The field 'BoolToYesNo.result' is assigned but its value is never used
 		public object Convert ( object value , Type targetType , object parameter , CultureInfo culture )
 		{
 			string result = "";

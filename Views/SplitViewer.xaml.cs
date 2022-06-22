@@ -76,15 +76,23 @@ namespace MyDev . Views
             set { movingobject = value; }
         }
 
+#pragma warning disable CS0414 // The field 'SplitViewer.FirstXPos' is assigned but its value is never used
         private double FirstXPos = 0;
+#pragma warning restore CS0414 // The field 'SplitViewer.FirstXPos' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitViewer.FirstYPos' is assigned but its value is never used
         private double FirstYPos = 0;
+#pragma warning restore CS0414 // The field 'SplitViewer.FirstYPos' is assigned but its value is never used
 
         #endregion Binding full props
 
         #region Flowdoc file wide variables
         public FlowdocLib fdl = new FlowdocLib ( );
+#pragma warning disable CS0414 // The field 'SplitViewer.XLeft' is assigned but its value is never used
         private double XLeft = 0;
+#pragma warning restore CS0414 // The field 'SplitViewer.XLeft' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitViewer.YTop' is assigned but its value is never used
         private double YTop = 0;
+#pragma warning restore CS0414 // The field 'SplitViewer.YTop' is assigned but its value is never used
         #endregion Flowdoc file wide variables
 
         #endregion All Template setup stuff
@@ -223,7 +231,9 @@ namespace MyDev . Views
 
         public void LoadTablesList ( )
         {
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int bankindex = 0, count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             List<string> list = new List<string> ( );
             SqlCommand = "spGetTablesList";
             dbName . Items . Clear ( );
@@ -653,9 +663,15 @@ namespace MyDev . Views
             LoadData ( DataGrid2 );
         }
 
+#pragma warning disable CS0414 // The field 'SplitViewer.VSplitDown' is assigned but its value is never used
         private bool VSplitDown = false;
+#pragma warning restore CS0414 // The field 'SplitViewer.VSplitDown' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitViewer.LeftWidth' is assigned but its value is never used
         private double LeftWidth = 0;
+#pragma warning restore CS0414 // The field 'SplitViewer.LeftWidth' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitViewer.RightWidth' is assigned but its value is never used
         private double RightWidth = 0;
+#pragma warning restore CS0414 // The field 'SplitViewer.RightWidth' is assigned but its value is never used
         private void vsplitterbar_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
             VSplitDown = true;
@@ -716,7 +732,7 @@ namespace MyDev . Views
         {
             int indx = -1;
             List<string> gc = new List<string> ( );
-            Mouse . SetCursor ( Cursors . Wait );
+            Mouse . OverrideCursor = Cursors . Wait;
             for ( int x = 0 ; x < dgrid . Items . Count ; x++ )
             {
                 dgrid . SelectedIndex = x;
@@ -741,7 +757,7 @@ namespace MyDev . Views
                 infopanel . Text = "Search completed successfully....";
             else
                 infopanel . Text = $"Sorry, but the search of {dgrid . Items . Count} records Failed to match '{srchstring . ToUpper ( )}'...";
-            Mouse . SetCursor ( Cursors . Arrow );
+            Mouse . OverrideCursor = Cursors . Arrow;
             return indx;
         }
         private bool CheckFields ( string gc , int col , string Srchstring )

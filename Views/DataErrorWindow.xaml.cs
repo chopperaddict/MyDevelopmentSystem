@@ -61,7 +61,7 @@ namespace MyDev . Views
 
             thirdtextbox . SetDc ( tclass3 );
             tclass3 . PromptFontsize = 16;
-            tclass3 . PromptText = "Enter Something Else";
+            tclass3 . PromptText = "Enter Another username";
             // Doesnt work !!!
             //tclass . PromptBkground = FindResource ( "Gray0" ) as Brush;
             // show or hide prompt bar above textbox

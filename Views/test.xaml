@@ -1,0 +1,20 @@
+﻿<Window x:Class="MyDev.Views.test"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyDev.Views"
+        mc:Ignorable="d"
+        Title="test" Height="450" Width="800">
+    <Grid Margin="0,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="350"/>
+            <ColumnDefinition  Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Row="0" Grid.Column="0" x:Name="textbox1" Text="C:\users\Documents\bits and bobs notes.txt" Height="30" Margin="8,8,7,7"/>
+        <Button Grid.Row="0" Grid.Column="1" Click="Button_Click" Content="Execute Command" Background="Blue" Foreground="White" Margin="0,0,0,0" Width="80" HorizontalAlignment="Left"/>
+    </Grid>
+</Window>

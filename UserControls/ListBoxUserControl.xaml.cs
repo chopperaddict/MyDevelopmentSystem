@@ -35,7 +35,7 @@ namespace MyDev . UserControls
 	/// <summary>
 	/// Interaction logic for ListBoxUserControl.xaml
 	/// </summary>
-	public partial class ListBoxUserControl 
+	public partial class ListBoxUserControl : UserControl
 	{
 		public ListBoxUserControl ( )
 		{
@@ -255,7 +255,7 @@ namespace MyDev . UserControls
 				ObservableCollection<GenericClass> gc = new   ObservableCollection<GenericClass> ();
 				// This returns a Dictionary<sting,string> PLUS a collection  and a List<string> passed by ref....
 				List<int> VarCharLength  = new List<int>();
-				dict = GenericDbHandlers . GetDbTableColumns ( ref gc , ref list , "BankAccount" , "IAN1", ref VarCharLength );
+				dict = GenericDbUtilities . GetDbTableColumns ( ref gc , ref list , "BankAccount" , "IAN1", ref VarCharLength );
 				//foreach ( var item in dict )
 				//{
 				//	gc.

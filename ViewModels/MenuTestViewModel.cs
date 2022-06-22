@@ -11,11 +11,12 @@ using System . Windows . Markup;
 
 namespace MyDev . ViewModels
 {
-    public delegate void RunMenuCommand ( string command , object data );
+    //public delegate void RunMenuCommand ( string command , object data );
     public class MenuTestViewModel
     {
         private readonly ICommand _command;
-        public RunMenuCommand rmc = null;
+//        public  delegate void UpdateBankAccountSelection ( object sender , DbArgs args );
+        Delegates . RunMenuCommand rmc = null;
         public MenuTestViewModel ( )
         {
             _command = new CommandViewModel ( Execute );

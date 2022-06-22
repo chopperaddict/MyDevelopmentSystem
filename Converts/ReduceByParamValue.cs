@@ -22,7 +22,9 @@ namespace MyDev . Converts
 		public object Convert ( object value , Type targetType , object parameter , CultureInfo culture )
 		{
 			double currentvalue = 0;
+#pragma warning disable CS0219 // The variable 'offset' is assigned but its value is never used
 			double offset = 0;
+#pragma warning restore CS0219 // The variable 'offset' is assigned but its value is never used
 			double d = 0;
 			Type t = targetType;
 //			Console . WriteLine ( $"value = {value}, Parameter = {parameter}, TargetType={targetType}" );

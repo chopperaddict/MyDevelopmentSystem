@@ -4,6 +4,7 @@ using MyDev . Views;
 
 using System;
 using System . Collections . Generic;
+using System . ComponentModel;
 using System . Linq;
 using System . Security . RightsManagement;
 using System . Text;
@@ -16,45 +17,57 @@ using System . Windows . Media . Media3D;
 
 namespace MyDev . Models
 {
-	public class FlowdocLib : BaseViewModel
+	public class FlowdocLib
 	{
+
+		#region OnPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion OnPropertyChanged
+
 		#region Flowdoc Full Properties
 		private FlowDoc flowDoc;
 		public FlowDoc Flowdoc
 		{
 			get { return flowDoc; }
-			set { flowDoc = value; OnPropertyChanged ( Flowdoc . ToString ( ) ); }
+			set { flowDoc = value; NotifyPropertyChanged ( Flowdoc . ToString ( ) ); }
 		}
 
 		private bool flowdocResizing;
 		public bool FlowdocResizing
 		{
 			get { return flowdocResizing; }
-			set { flowdocResizing = value; OnPropertyChanged ( FlowdocResizing . ToString ( ) ); }
+			set { flowdocResizing = value; NotifyPropertyChanged ( FlowdocResizing . ToString ( ) ); }
 		}
 		private double flowdocFloatingTop;
 		public double FlowdocFloatingTop
 		{
 			get { return flowdocFloatingTop; }
-			set { flowdocFloatingTop = value; OnPropertyChanged ( FlowdocFloatingTop . ToString ( ) ); }
+			set { flowdocFloatingTop = value; NotifyPropertyChanged ( FlowdocFloatingTop . ToString ( ) ); }
 		}
 		private double flowdocFloatingLeft;
 		public double FlowdocFloatingLeft
 		{
 			get { return flowdocFloatingLeft; }
-			set { flowdocFloatingLeft = value; OnPropertyChanged ( FlowdocFloatingLeft . ToString ( ) ); }
+			set { flowdocFloatingLeft = value; NotifyPropertyChanged ( FlowdocFloatingLeft . ToString ( ) ); }
 		}
 		private double flowdocFloatingHeight;
 		public double FlowdocFloatingHeight
 		{
 			get { return flowdocFloatingHeight; }
-			set { flowdocFloatingHeight = value; OnPropertyChanged ( FlowdocFloatingHeight . ToString ( ) ); }
+			set { flowdocFloatingHeight = value; NotifyPropertyChanged ( FlowdocFloatingHeight . ToString ( ) ); }
 		}
 		private double flowdocFloatingWidth;
 		public double FlowdocFloatingWidth
 		{
 			get { return flowdocFloatingWidth; }
-			set { flowdocFloatingWidth = value; OnPropertyChanged ( FlowdocFloatingWidth . ToString ( ) ); }
+			set { flowdocFloatingWidth = value; NotifyPropertyChanged ( FlowdocFloatingWidth . ToString ( ) ); }
 		}
 
 		#endregion Flowdoc Full Properties
@@ -637,7 +650,7 @@ namespace MyDev . Models
 			CornerDrag = false;
 			TvMouseCaptured = false;
 			FdLeft = FdTop = th . Left = 0;
-			Mouse . SetCursor ( Cursors . Arrow );
+			Mouse . OverrideCursor = Cursors . Arrow;
 			//			Flowdoc.ReleaseMouseCapture ( );
 			Flowdoc . Focus ( );
 			IsScrollbarActive = false;

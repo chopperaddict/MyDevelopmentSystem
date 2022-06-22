@@ -27,12 +27,13 @@ namespace MyDev . Views
 	public partial class DragDropClient : Window
 	{
 		// Delegate to allow a selection of optional search locations for the internal Execute file method
-		public delegate string QualifyingFileLocations ( string filename );
+		//public delegate string QualifyingFileLocations ( string filename );
 
 #region Various DragView Type Declarations
 		/// </summary>
 
 		#endregion Various DargView Type Declarations
+
 		//-WORKING WELL 13 / 6 / 21
 		private BankAccountViewModel bvm = new BankAccountViewModel ( );
 		private CustomerViewModel cvm = new CustomerViewModel ( );
@@ -191,6 +192,7 @@ namespace MyDev . Views
 		}
 		private void PreviewKeyDownCombo ( object sender , KeyEventArgs e )
 		{
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 			try
 			{
 				if ( ( string ) e . OriginalSource == "" && e . Key == Key . Enter )
@@ -212,6 +214,7 @@ namespace MyDev . Views
 				}
 			}
 			catch ( Exception ex ) {; }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 		}
 		private void CloseBtn_Click ( object sender , RoutedEventArgs e )
 		{
@@ -237,7 +240,9 @@ namespace MyDev . Views
 			//-WORKING WELL 13 / 6 / 21
 			// Reload data from CSV (Text output format)
 			// Handles BAD text in the text fields
+#pragma warning disable CS0219 // The variable 'iscombo' is assigned but its value is never used
 			bool iscombo = false;
+#pragma warning restore CS0219 // The variable 'iscombo' is assigned but its value is never used
 			string [ ] data;
 			int index = 1;
 			string input = "";
@@ -247,12 +252,15 @@ namespace MyDev . Views
 			if ( path . Length == 0 )
 				return;
 			input = File . ReadAllText ( path );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 			try
 			{
 				//1st check - Is it a combined data source file
 				if ( input . Contains ( "\n$$$\n" ) )
 				{
+#pragma warning disable CS0168 // The variable 'tempgriddata' is declared but never used
 					string [ ] tempgriddata;
+#pragma warning restore CS0168 // The variable 'tempgriddata' is declared but never used
 					// got a combo file  Grid 1st with no \n then delim text with \n between lines
 					splitdata = input . Split ( '$' );
 					string griddata = splitdata [ 0 ];
@@ -313,6 +321,7 @@ namespace MyDev . Views
 			{
 				MessageBox . Show ( $"Error encountered loading data from [{path}]\nPlease check  this data file for possible corruption!\nor the file may NOT be in  the correct format for this application" , "Incompatible Data Identified" );
 			}
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 		}
 
 		private void ClearGrid_Click ( object sender , RoutedEventArgs e )
@@ -628,7 +637,7 @@ namespace MyDev . Views
 			else if ( e . Effects == DragDropEffects . Move )
 			{
 				e . UseDefaultCursors = false;
-				Mouse . SetCursor ( Cursors . Wait );
+				Mouse . OverrideCursor = Cursors . Wait;
 			}
 			else
 				e . UseDefaultCursors = true;

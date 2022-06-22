@@ -1,4 +1,5 @@
 ﻿using System;
+using System . Collections;
 using System . Collections . Generic;
 using System . ComponentModel;
 using System . Linq;
@@ -6,37 +7,62 @@ using System . Runtime . CompilerServices;
 using System . Text;
 using System . Threading . Tasks;
 
-
-//using static MyDev . ViewModels . Model;
-
 namespace MyDev . ViewModels
 {
-//      public class ViewModel : INotifyPropertyChanged
-//      {
-//            private List<Item> _dirItems;
+    public class ViewModel : INotifyPropertyChanged
+    {
+        private static Dictionary <string, object>VmDictionary  = new Dictionary<string, object> ();
 
-//            public ViewModel ( )
-//            {
-//                  var itemProvider = new ItemProvider();
-//                  DirItems = itemProvider . DirItems;
-//            }
+        private static int MvCount { get; set; }
+        public static ViewModel Viewmodel { get; set; }
+        public ViewModel ( )
+        {
+            Viewmodel = this;
+        }
 
-//            public List<Item> DirItems
-//            {
-//                  get { return _dirItems; }
-//                  set
-//                  {
-//                        _dirItems = value;
-//                        OnPropertyChanged ( nameof ( DirItems ) );
-//                  }
-//            }
+        public static void SaveViewmodel ( string name, object viewmodel )
+        {
+            object obj = null;
+            VmDictionary.TryGetValue( name . ToUpper ( ) , out obj);
+            if ( obj == null )
+            {
+                VmDictionary . Add ( name . ToUpper ( ) , viewmodel );
+                Console . WriteLine ($"[{name . ToUpper ( )}] added to dictionary");
+                MvCount++;
+            }
+        }
+        public static void ClearDictionary ( )
+        {
+            VmDictionary . Clear ( );
+        }
 
-//            public event PropertyChangedEventHandler PropertyChanged;
+        public static object GetViewmodel (string name)
+        {
+            object result = null;
+            foreach ( KeyValuePair<string , object> item in VmDictionary )
+            {
+                if(item.Key.ToUpper() == name . ToUpper ( ) )
+                {
+                    result = item . Value;
+                    break;
+                }
+            }
+            return result;
+        }
+        public static Dictionary<string,object> GetAllViewModels()
+        {
+            return VmDictionary;
+        }
 
-////            [NotifyPropertyChangedInvocator]
-//            protected virtual void OnPropertyChanged ( [CallerMemberName] string propertyName = null )
-//            {
-//                  PropertyChanged?.Invoke ( this , new PropertyChangedEventArgs ( propertyName ) );
-//            }
-//      }
+        #region OnPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        //            [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged ( [CallerMemberName] string propertyName = null )
+        {
+            PropertyChanged?.Invoke ( this , new PropertyChangedEventArgs ( propertyName ) );
+        }
+        #endregion OnPropertyChanged
+
+    }
 }

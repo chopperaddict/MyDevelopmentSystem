@@ -2,7 +2,6 @@
 
 using MyDev . Models;
 using MyDev . Views;
-//#define PERSISTENTDATA
 using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
@@ -11,7 +10,7 @@ using System . Data;
 using System . Data . SqlClient;
 using System . Diagnostics;
 using System . Linq;
-
+using System . Windows;
 
 namespace MyDev . ViewModels
 {
@@ -224,7 +223,7 @@ namespace MyDev . ViewModels
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
@@ -263,12 +262,10 @@ namespace MyDev . ViewModels
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
-				//			string ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
-
-				using ( IDbConnection db = new SqlConnection ( ConString ) )
+			using ( IDbConnection db = new SqlConnection ( ConString ) )
 			{
 				try
 				{
@@ -293,14 +290,16 @@ namespace MyDev . ViewModels
 			if ( Notify )
 			{
 				collection = cvmcollection;
-				EventControl . TriggerCustDataLoaded ( null ,
+				Application . Current . Dispatcher . Invoke ( ( ) =>
+					EventControl . TriggerCustDataLoaded ( null ,
 					new LoadedEventArgs
 					{
 						CallerType = "SQLSERVER" ,
 						CallerDb = Caller ,
 						DataSource = collection ,
 						RowCount = collection . Count
-					} );
+					} )
+					);
 			}
 			return cvmcollection;
 		}
@@ -314,7 +313,7 @@ namespace MyDev . ViewModels
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
@@ -322,7 +321,7 @@ namespace MyDev . ViewModels
 				try
 				{
 					if ( SqlCommand == "" )
-						cvmlist = db . Query<CustomerViewModel> ( "Select * From Customer" ) . ToList ( );
+						cvmlist = db . Query<CustomerViewModel> ( "Select * From Customer order by CustNo" ) . ToList ( );
 					else
 						cvmlist = db . Query<CustomerViewModel> ( SqlCommand ) . ToList ( );// as ObservableCollection<BankAccountViewModel>;
 
@@ -346,14 +345,16 @@ namespace MyDev . ViewModels
 			if ( Notify )
 			{
 				collection = cvmcollection;
-				EventControl . TriggerCustDataLoaded ( null ,
+				Application . Current . Dispatcher . Invoke ( ( ) =>
+			EventControl . TriggerCustDataLoaded ( null ,
 					new LoadedEventArgs
 					{
 						CallerType = "SQLSERVER" ,
 						CallerDb = Caller ,
 						DataSource = cvmcollection ,
 						RowCount = cvmcollection . Count
-					} );
+					})
+			);
 			}
 			return cvmcollection;
 		}

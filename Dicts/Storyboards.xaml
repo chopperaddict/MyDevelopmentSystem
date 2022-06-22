@@ -162,7 +162,7 @@
         </Style.Triggers>
     </Style>
 
-    <!--ncrease fontsize by  4 points-->
+    <!--ncrease fontsize by  3 points-->
     <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation3">
         <Style.Triggers>
             <EventTrigger RoutedEvent="DataGrid.MouseEnter">
@@ -192,6 +192,7 @@
         </Style.Triggers>
     </Style>
 
+    <!--ncrease fontsize by  4 points-->
     <Style TargetType="DataGrid" x:Key="DatagridMagnifyAnimation4">
         <Style.Triggers>
             <EventTrigger RoutedEvent="DataGrid.MouseEnter">
@@ -221,6 +222,7 @@
         </Style.Triggers>
     </Style>
     
+ 
     <Style TargetType="ListBox" x:Key="ListBoxMagnifyAnimation">
         <Style.Triggers>
             <EventTrigger RoutedEvent="ListBox.MouseEnter">
@@ -241,7 +243,7 @@
                         <Storyboard>
                             <DoubleAnimation
                                         Storyboard.TargetProperty="FontSize"
-                                        From="16" To="12" Duration="0:0:0.1" 
+                                        From="12" To="16" Duration="0:0:0.1" 
                                         AutoReverse="false"  />
                         </Storyboard>
                     </Storyboard>

@@ -28,7 +28,7 @@ namespace MyDev . ViewModels
 			List< int> VarCharLength= new List<int>();
 			// Ensure we hve access t cnnection strings
 			Utils. LoadConnectionStrings ( );			
-			GenClass = GenericDbHandlers . LoadDbAsGenericData ( ref list , SqlCommand , Arguments , DbDomain , ref VarCharLength );
+			GenClass = GenericDbUtilities . LoadDbAsGenericData ( ref list , SqlCommand , Arguments , DbDomain , ref VarCharLength );
 			return GenClass;
 		}
 

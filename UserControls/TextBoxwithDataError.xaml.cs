@@ -25,7 +25,9 @@ namespace MyDev . UserControls
         // define the delegate handler signature and the event that will be raised
         // to send the message
 //        public delegate void customMessageHandler ( object  sender , EventArgs e );
+#pragma warning disable CS0067 // The event 'TextBoxwithDataError.OnSend' is never used
         public event RoutedEventHandler OnSend;
+#pragma warning restore CS0067 // The event 'TextBoxwithDataError.OnSend' is never used
 
         // define the delegate handler signature and the event that will be raised
         // to send the message using my own specific Arguments
@@ -96,12 +98,14 @@ namespace MyDev . UserControls
             if ( this . SendUser != null )
             {
                 // This works fine, but have to parse out the arguments format
-                MessageEventArgs mea = new MessageEventArgs ( );
                 string str = e . OriginalSource.ToString();
                 if ( str == "" )
                     return;
                 string [ ] data = str . Split ( ':' );
+                if ( data . Length == 1 )
+                    return;
                 str = data [ 1 ] . Trim ( );
+                MessageEventArgs mea = new MessageEventArgs ( );
                 mea . message = $"{str}";
                 this . SendUser ( sender , mea );
             }

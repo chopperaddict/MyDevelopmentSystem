@@ -483,7 +483,9 @@ namespace MyDev . Views
         private void LoadDrives ( TreeView tv )
         {
             bool ValidDrive = false;
+#pragma warning disable CS0219 // The variable 'HasHiddenItems' is assigned but its value is never used
             bool HasHiddenItems = false;
+#pragma warning restore CS0219 // The variable 'HasHiddenItems' is assigned but its value is never used
             string volabel = "";
             string DriveHeader = "", Padding = "                 ";
             bool isvalid = false;
@@ -832,8 +834,12 @@ namespace MyDev . Views
         /// 
         // Variables Required for FlowDoc
         object MovingObject;
+#pragma warning disable CS0414 // The field 'HierarchicalTreeView.fdTop' is assigned but its value is never used
         private static double fdTop = 100;
+#pragma warning restore CS0414 // The field 'HierarchicalTreeView.fdTop' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'HierarchicalTreeView.fdLeft' is assigned but its value is never used
         private static double fdLeft = 100;
+#pragma warning restore CS0414 // The field 'HierarchicalTreeView.fdLeft' is assigned but its value is never used
         private static Thickness FdMargin = new Thickness ( );
 
         /*  
@@ -1290,7 +1296,7 @@ namespace MyDev . Views
             //string header = item . Header . ToString ( );
             //listBox . Items . Clear ( );
             //listBox . Refresh ( );
-            ////            Mouse . SetCursor ( Cursors . Arrow );
+            ////            Mouse . OverrideCursor = Cursors . Arrow;
             //GetItemCounts ( header , out int Dircount , out int Filecount );
             //Mouse . OverrideCursor = Cursors . Arrow;
         }
@@ -1322,7 +1328,7 @@ namespace MyDev . Views
             //    item = e . Source as TreeViewItem;
             //else
             //    item = sender as TreeViewItem;
-            ////            Mouse . SetCursor ( Cursors . Wait );
+            ////            Mouse . OverrideCursor = Cursors . Wait;
             //if ( item == null )
             //    return;
 
@@ -1573,12 +1579,14 @@ namespace MyDev . Views
                     UpdateExpandprogress ( );
                     if ( BreakExpand )
                         break;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                     try
                     {
                         childControl . IsExpanded = true;
                         //stack . Push ( childControl . Tag . ToString ( ) );
                     }
                     catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 
                     if ( CheckSearchSuccess ( childControl . Tag . ToString ( ) ) == true )
                     {
@@ -1649,12 +1657,14 @@ namespace MyDev . Views
                         {
                             UpdateListBox ( childControl . Tag . ToString ( ) );
                             ShowProgress ( );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                             try
                             {
                                 childControl . IsExpanded = true;
                                 //stack . Push ( childControl . Tag . ToString ( ) );
                             }
                             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                             ShowProgress ( );
                             if ( FullExpandinProgress == false )
                                 ActiveTree . Refresh ( );
@@ -1663,12 +1673,14 @@ namespace MyDev . Views
                     else
                     {
                         ShowProgress ( );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                         try
                         {
                             childControl . IsExpanded = true;
                             //stack . Push ( childControl . Tag . ToString ( ) );
                         }
                         catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                     }
                     ShowProgress ( );
                     if ( FullExpandinProgress == false )
@@ -1688,7 +1700,9 @@ namespace MyDev . Views
         private void ExpandAllDrivesBelowCurrent ( object [ ] Args )
         {
             // WORKING for TWO levels onlly
+#pragma warning disable CS0219 // The variable 'go' is assigned but its value is never used
             bool go = false;
+#pragma warning restore CS0219 // The variable 'go' is assigned but its value is never used
             int levels = ( int ) Args [ 1 ];
             TreeViewItem tv = Args [ 0 ] as TreeViewItem;
             if ( tv == null )
@@ -1944,12 +1958,14 @@ namespace MyDev . Views
                             return true;
                         }
                         fullpath = item2 . Tag . ToString ( ) . ToUpper ( );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                         try
                         {
                             item2 . IsExpanded = true;
                             //stack . Push ( item2 . Tag . ToString ( ) );
                         }
                         catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                         UpdateListBox ( item2 . Tag . ToString ( ) );
                         ShowProgress ( );
                         ShowExpandTime ( );
@@ -2073,7 +2089,9 @@ namespace MyDev . Views
                 }
                 continue;
 
+#pragma warning disable CS0162 // Unreachable code detected
                 dirs = directories;
+#pragma warning restore CS0162 // Unreachable code detected
 
                 foreach ( var directory in dirs )
                 {
@@ -2157,7 +2175,9 @@ namespace MyDev . Views
             ExpArgs . tvitem = ActiveTree . SelectedItem as TreeViewItem;
             ExpArgs . Selection = 4;
             ExpArgs . ExpandLevels = 90;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             RunExpandSystem ( sender , e );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
         }
 
         #region Expand Utility methods
@@ -2298,7 +2318,9 @@ namespace MyDev . Views
         }
 
         #endregion Expand Utility methods
+#pragma warning disable CS0169 // The field 'HierarchicalTreeView.ScrollToLeftEnd' is never used
         private ScrollEventType ScrollToLeftEnd;
+#pragma warning restore CS0169 // The field 'HierarchicalTreeView.ScrollToLeftEnd' is never used
 
         #region Failed Search fom M$$$$$$
 
@@ -2440,8 +2462,12 @@ namespace MyDev . Views
 
         private void listBox_SelectionChanged ( object sender , SelectionChangedEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'str' is assigned but its value is never used
             string str = "";
+#pragma warning restore CS0219 // The variable 'str' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'iterate' is assigned but its value is never used
             bool iterate = false;
+#pragma warning restore CS0219 // The variable 'iterate' is assigned but its value is never used
             ListBox tb = sender as ListBox;
             //foreach ( var item in tb.Items )
             //{
@@ -2467,7 +2493,9 @@ namespace MyDev . Views
         }
         private bool CheckFileForMatch ( List<string> files , string upperstring , out string resstring )
         {
+#pragma warning disable CS0219 // The variable 'result' is assigned but its value is never used
             bool result = false;
+#pragma warning restore CS0219 // The variable 'result' is assigned but its value is never used
             resstring = "";
             foreach ( var filename in files )
             {
@@ -2486,7 +2514,9 @@ namespace MyDev . Views
             resultstring = "";
             List<string> subfolders = new List<string> ( );
             List<string> files = new List<string> ( );
+#pragma warning disable CS0219 // The variable 'resstring' is assigned but its value is never used
             string resstring = "";
+#pragma warning restore CS0219 // The variable 'resstring' is assigned but its value is never used
 
             Console . WriteLine ( $"? FOLDER match [{folder}]" );
             TreeViewItem tvfound = new TreeViewItem ( );
@@ -2688,8 +2718,12 @@ namespace MyDev . Views
         // NOT USED
         private TreeViewItem SearchIterate ( TreeViewItem item , string SearchTerm )
         {
+#pragma warning disable CS0219 // The variable 'result' is assigned but its value is never used
             bool result = false;
+#pragma warning restore CS0219 // The variable 'result' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'found' is assigned but its value is never used
             bool found = false;
+#pragma warning restore CS0219 // The variable 'found' is assigned but its value is never used
             // Save main calling item so we can get back  to it later on
             TreeViewItem CallingItem = item;
             TreeViewItem MatchItem = null;
@@ -2785,7 +2819,9 @@ namespace MyDev . Views
                 if ( dot . Length == 2 )
                     entry = dot [ dot . Length - 1 ];
                 else if ( dot . Length >= 3 )
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
                     entry = entry;
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
                 else
                     entry = dot [ dot . Length - 1 ];
             }
@@ -2860,8 +2896,12 @@ namespace MyDev . Views
             int iterations = 0;
             int itemcount = 0;
             int levelscount = 0;
+#pragma warning disable CS0219 // The variable 'fail' is assigned but its value is never used
             var fail = false;
+#pragma warning restore CS0219 // The variable 'fail' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'success' is assigned but its value is never used
             var success = true;
+#pragma warning restore CS0219 // The variable 'success' is assigned but its value is never used
             int levels = ( int ) Args [ 1 ];
             TreeViewItem items = Args [ 0 ] as TreeViewItem;
             startitem = items;
@@ -2941,11 +2981,13 @@ namespace MyDev . Views
                     break;
                 }
 
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                 try
                 {
                     childControl . IsExpanded = true;
                 }
                 catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 
                 if ( childControl . Items . Count == 1 && childControl . Header . ToString ( ) == "Loading" )
                     continue;
@@ -3000,6 +3042,7 @@ namespace MyDev . Views
                                 TestTree . Refresh ( );
                                 break;
                             }
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                             try
                             {
                                 nextitem . IsExpanded = true;
@@ -3009,6 +3052,7 @@ namespace MyDev . Views
                                     continue;
                             }
                             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                             ShowProgress ( );
                             // working correctly
                             if ( FullExpandinProgress == false )
@@ -3107,11 +3151,13 @@ namespace MyDev . Views
                 return Task . FromResult ( success );
             }
 
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 items . IsExpanded = true;
             }
             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 
             ShowProgress ( );
             if ( FullExpandinProgress == false )
@@ -3151,11 +3197,13 @@ namespace MyDev . Views
                     break;
                 }
 
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                 try
                 {
                     childControl . IsExpanded = true;
                 }
                 catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                 //                Console . WriteLine ( $"2 Level={levelscount}, Outer loop {childControl . Tag . ToString ( )}" );
                 ShowProgress ( );
                 levelscount = CalculateLevel ( childControl . Tag . ToString ( ) );
@@ -3197,11 +3245,13 @@ namespace MyDev . Views
                                 break;
                             }
 
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                             try
                             {
                                 nextitem . IsExpanded = true;
                             }
                             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                             ShowProgress ( );
                             if ( FullExpandinProgress == false )
                                 TestTree . Refresh ( );
@@ -3295,6 +3345,7 @@ namespace MyDev . Views
         }
         private TreeViewItem GetParentNode ( TreeViewItem currentItem )
         {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 TreeViewItem tv2 = new TreeViewItem ( );
@@ -3331,6 +3382,7 @@ namespace MyDev . Views
             }
             catch ( Exception ex )
             { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             return null;
         }
 
@@ -3391,8 +3443,12 @@ namespace MyDev . Views
             int iterations = 0;
             int itemcount = 0;
             int levelscount = 0;
+#pragma warning disable CS0219 // The variable 'fail' is assigned but its value is never used
             var fail = false;
+#pragma warning restore CS0219 // The variable 'fail' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'success' is assigned but its value is never used
             var success = true;
+#pragma warning restore CS0219 // The variable 'success' is assigned but its value is never used
 
             // Force search to be upper case
             ExpArgs . SearchTerm = ExpArgs . SearchTerm . ToUpper ( );
@@ -3421,6 +3477,7 @@ namespace MyDev . Views
                 return;
             }
 
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 items . IsSelected = true;
@@ -3430,6 +3487,7 @@ namespace MyDev . Views
                 //stack . Push ( items . Tag . ToString ( ) );
             }
             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             Thread . Sleep ( SLEEPTIME );
             ShowProgress ( );
             if ( FullExpandinProgress == false )
@@ -3476,6 +3534,7 @@ namespace MyDev . Views
                     break;
                 }
 
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                 try
                 {
                     childControl . IsExpanded = true;
@@ -3483,6 +3542,7 @@ namespace MyDev . Views
                         return;
                 }
                 catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                 ShowProgress ( );
 
                 //                if ( ClosePreviousNode )
@@ -3537,6 +3597,7 @@ namespace MyDev . Views
                                 break;
                             }
 
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                             try
                             {
                                 nextitem . IsExpanded = true;
@@ -3544,6 +3605,7 @@ namespace MyDev . Views
                                     return;
                             }
                             catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                             ShowProgress ( );
                             // working correctly
                             if ( FullExpandinProgress == false )
@@ -3559,7 +3621,9 @@ namespace MyDev . Views
                                 continue;
                             }
                             if ( nextitem . Tag . ToString ( ) . Contains ( "-500" ) )
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
                                 Returnval = Returnval;
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
                             if ( ExpArgs . ExpandLevels >= 4 )
                             {
                                 //                                UpdateListBox ( nextitem . Tag . ToString ( ) );
@@ -3781,7 +3845,9 @@ namespace MyDev . Views
                 ExpArgs . SearchActive = true;
                 ExpanderMenuOption . Text = $"Search for Item down up to {ExpArgs . ExpandLevels - 1} levels";
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
                 RunExpandSystem ( null , null );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             }
             Mouse . OverrideCursor = Cursors . Arrow;
             return;
@@ -3816,11 +3882,13 @@ namespace MyDev . Views
             return null;
 
 
+#pragma warning disable CS0162 // Unreachable code detected
             if ( ExpArgs . SearchTerm == "SEARCH FOR...." )
             {
                 MessageBox . Show ( "No search term entered, so Search has been aborted" , "User Error" );
                 return null;
             }
+#pragma warning restore CS0162 // Unreachable code detected
             // Allow it  to unwind gracefully
             if ( ExpArgs . SearchSuccess )
                 return ExpArgs . SearchSuccessItem;
@@ -3905,9 +3973,13 @@ namespace MyDev . Views
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <returns></returns>
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         private async Task<bool> RunExpandSystem ( object sender , RoutedEventArgs e )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
+#pragma warning disable CS0219 // The variable 'temp' is assigned but its value is never used
             double temp = 0;
+#pragma warning restore CS0219 // The variable 'temp' is assigned but its value is never used
             ComboBox cb = DirectoryOptions;
             //int selindex = DirectoryOptions . SelectedIndex;
             int selindex = ExpArgs . Selection;
@@ -4063,6 +4135,7 @@ namespace MyDev . Views
             worker . RunWorkerCompleted += worker_RunWorkerCompleted;
             //args [ 0 ] = TreeViewObject as TreeViewItem;
             worker . RunWorkerAsync ( ExpArgs );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 TreeViewItem tv2 = new TreeViewItem ( );
@@ -4095,6 +4168,7 @@ namespace MyDev . Views
             }
             catch ( Exception ex )
             { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             return true;
         }
         private void TestTree_Expanded ( object sender , RoutedEventArgs e )

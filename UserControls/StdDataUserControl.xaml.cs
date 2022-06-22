@@ -68,10 +68,7 @@ namespace MyDev . UserControls
 			InitializeComponent ( );
 			stdgrid = this;
 			this . DataContext = this;
-		}
-		private void stddatagridControl_Loaded ( object sender , RoutedEventArgs e )
-		{
-			Mouse . SetCursor ( Cursors . Wait );
+			Mouse . OverrideCursor = Cursors . Wait;
 			// Flag so we can track which Db is being used in the main grid
 			IsBankActive = true;
 			// Hook into filter text change text fields to handle real time updating of Datagrid contents based on CustNo
@@ -86,12 +83,15 @@ namespace MyDev . UserControls
 			// Finally, Load Bank Account Data
 			ExecuteLoadBank ( null );
 			//			ExecuteLoadCustomers ( null );
-			Mouse . SetCursor ( Cursors . Arrow );
+			Mouse . OverrideCursor = Cursors . Arrow;
 			//this . Visibility = Visibility . Visible;
 			//this . Height = ControlHeight;
 			//this . Width = ControlWidth;
 			this . SizeChanged += StdDataControl_SizeChanged;
 			this . Height += 1;
+		}
+		private void stddatagridControl_Loaded ( object sender , RoutedEventArgs e )
+		{
 		}
 
 		private void StdDataControl_SizeChanged ( object sender , SizeChangedEventArgs e )
@@ -201,7 +201,7 @@ namespace MyDev . UserControls
 		//==============================//
 		private void ExecuteLoadBank ( object obj )
 		{
-			Mouse . SetCursor ( Cursors . Wait );
+			Mouse . OverrideCursor = Cursors . Wait;
 			BankCollection . Clear ( );
 			BankCollection = bvm . GetBankAccounts ( BankCollection , "Select * from BankAccount" , false , "BankGridView" );
 			BankCollectionView = CollectionViewSource . GetDefaultView ( BankCollection ) as CollectionView;
@@ -218,14 +218,14 @@ namespace MyDev . UserControls
 			GridLoading = false;
 			IsBankActive = true;
 			ToggleOptions ( "BANKACCOUNT" );
-			Mouse . SetCursor ( Cursors . Arrow );
+			Mouse . OverrideCursor = Cursors . Arrow;
 		}
 		//=================================//
 		// ICommand method  to Load Customer Data
 		//=================================//
 		private void ExecuteLoadCustomers ( object obj )
 		{
-			Mouse . SetCursor ( Cursors . Wait );
+			Mouse . OverrideCursor = Cursors . Wait;
 			CustCollection . Clear ( );
 			CustCollection = cvm . GetCustObsCollection ( CustCollection , "Select * from Customer" );
 			//CustCollection = SqlSupport . LoadCustomer ( "Select * from Customer" , 0 , false , false );
@@ -246,7 +246,7 @@ namespace MyDev . UserControls
 			dataGrid . BringIntoView ( );
 			IsBankActive = false;
 			ToggleOptions ( "CUSTOMER" );
-			Mouse . SetCursor ( Cursors . Arrow );
+			Mouse . OverrideCursor = Cursors . Arrow;
 		}
 		#endregion IComand Exection Handlers
 

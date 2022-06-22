@@ -4,6 +4,7 @@ using MyDev . Views;
 using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
+using System . ComponentModel;
 using System . Data . SqlClient;
 using System . Diagnostics;
 using System . Linq;
@@ -31,8 +32,19 @@ namespace MyDev . ViewModels
 	///		BankAccountViewModel and CustomerViewModel
 	///	that provide SQL support for Bank and Customer data retrieval
 	/// </summary>
-	public class MvvmGridModel : BaseViewModel
+	public class MvvmGridModel 
 	{
+		#region OnPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion OnPropertyChanged
+
 		#region Declarations
 		// Db SQL handles
 		public static BankAccountViewModel bvm { get; set; }
@@ -67,7 +79,7 @@ namespace MyDev . ViewModels
 		#region Setup
 		public MvvmGridModel ( object caller )
 		{
-			Mouse . SetCursor ( Cursors . Wait );
+			Mouse . OverrideCursor = Cursors . Wait;
 
 			mvvm = caller as MvvmViewModel;
 			ParentBGView = MvvmViewModel . ParentBGView;
@@ -81,7 +93,7 @@ namespace MyDev . ViewModels
 			// Finally, Load Bank Account Data
 			IsBankActive = true;
 			LoadData ( IsBankActive );
-			Mouse . SetCursor ( Cursors . Arrow );
+			Mouse . OverrideCursor = Cursors . Arrow;
 		}
 
 		#endregion Setup
@@ -121,6 +133,7 @@ namespace MyDev . ViewModels
 			else
 				return true;
 			
+#pragma warning disable CS0162 // Unreachable code detected
 			if ( IsBankActive == false )
 			{
 				ParentBGView . filtertext . IsEnabled = true;
@@ -133,6 +146,7 @@ namespace MyDev . ViewModels
 			{
 				return false;
 			}
+#pragma warning restore CS0162 // Unreachable code detected
 		}
 		private bool CanExecuteLoadCustomers ( object arg )
 		{
@@ -142,6 +156,7 @@ namespace MyDev . ViewModels
 			else
 				return true;
 
+#pragma warning disable CS0162 // Unreachable code detected
 			if ( IsBankActive == true )
 			{
 				if ( IsBankActive )
@@ -154,6 +169,7 @@ namespace MyDev . ViewModels
 				ParentBGView . filtertext . IsEnabled = true;
 				return false;
 			}
+#pragma warning restore CS0162 // Unreachable code detected
 			return false;
 		}
 
@@ -169,7 +185,7 @@ namespace MyDev . ViewModels
 		//==============================//
 		public string  LoadData ( bool obj )
 		{
-			Mouse . SetCursor ( Cursors . Wait );
+			Mouse . OverrideCursor = Cursors . Wait;
 			IsBankActive =  obj;
 			if ( IsBankActive == true )
 			{
@@ -192,7 +208,7 @@ namespace MyDev . ViewModels
 				GridLoading = false;
 				IsBankActive = true;
 				ParentBGView . RecordCount . Text = ParentBGView . dataGrid . Items . Count . ToString ( );
-				Mouse . SetCursor ( Cursors . Arrow );
+				Mouse . OverrideCursor = Cursors . Arrow;
 				return "BANKACCOUNT";
 			}
 			else
@@ -214,7 +230,7 @@ namespace MyDev . ViewModels
 				// NB These need to be called in this order to get the record to be displayed in the DataGrid
 				ParentBGView . dataGrid . ScrollIntoView ( ParentBGView . dataGrid . SelectedIndex );
 				ParentBGView . dataGrid . BringIntoView ( );
-				Mouse . SetCursor ( Cursors . Arrow );
+				Mouse . OverrideCursor = Cursors . Arrow;
 				return "CUSTOMER";
 			}
 		}

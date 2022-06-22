@@ -11,7 +11,9 @@ namespace MyDev . Commands
       {
             private readonly Predicate<object> _canExecute;
             private readonly Action<object> _execute;
-            public event EventHandler CanExecuteChanged;
+        private Action convertText;
+
+        public event EventHandler CanExecuteChanged;
 
             public DelegateCommand ( Action<object> execute ,
                            Predicate<object> canExecute )
@@ -20,7 +22,12 @@ namespace MyDev . Commands
                   _canExecute = canExecute;
             }
 
-            public bool CanExecute ( object parameter )
+        public DelegateCommand ( Action convertText )
+        {
+            this . convertText = convertText;
+        }
+
+        public bool CanExecute ( object parameter )
             {
                   if ( _canExecute == null )
                   {

@@ -91,9 +91,6 @@ namespace MyDev . UserControls
 		public Colorpicker ( )
 		{
 			InitializeComponent ( );
-		}
-		private void UserControl_Loaded ( object sender , RoutedEventArgs e )
-		{
 			OpacitySlider . Value = 255;
 			this . DataContext = this;
 			RedSlider . Value = 210;
@@ -105,6 +102,9 @@ namespace MyDev . UserControls
 			RedSlider . Focus ( );
 			PopulateListbox ( );
 			UpdateColorBlocks ( );
+		}
+		private void UserControl_Loaded ( object sender , RoutedEventArgs e )
+		{
 		}
 
 		#region Sliders Handling

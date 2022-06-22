@@ -2,6 +2,7 @@
 
 using System;
 using System . Collections . Generic;
+using System . ComponentModel;
 using System . Linq;
 using System . Security . Policy;
 using System . Text;
@@ -14,33 +15,44 @@ namespace MyDev . ViewModels
 	/// <summary>
 	/// Viewmodel for one section in the GENERICMVVM. window
 	/// </summary>
-	internal class MvvmGenericModel : BaseViewModel
+	internal class MvvmGenericModel 
 	{
+
 		//..Viewmodel for just one (of four) grid sections in the GENERICMVVM.window
+		#region NotifyPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion NotifyPropertyChanged
 		#region  Class Properties
-		private  string name;
+		private string name;
 		private string address1;
 		private string address2;
 		private string address3;
 		public string Name
 		{
 			get { return name; }
-			set { name = value; OnPropertyChanged ( Name ); }
+			set { name = value; NotifyPropertyChanged ( Name ); }
 		}
 		public string Address1
 		{
 			get { return address1; }
-			set { address1 = value; OnPropertyChanged ( Address1 ); }
+			set { address1 = value; NotifyPropertyChanged ( Address1 ); }
 		}
 		public string Address2
 		{
 			get { return address2; }
-			set { address2 = value; OnPropertyChanged ( Address2 ); }
+			set { address2 = value; NotifyPropertyChanged ( Address2 ); }
 		}
 		public string Address3
 		{
 			get { return address3; }
-			set { address3 = value; OnPropertyChanged ( Address3 ); }
+			set { address3 = value; NotifyPropertyChanged ( Address3 ); }
 		}
 
 		public ICommand UpdateName

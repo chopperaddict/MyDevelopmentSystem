@@ -41,6 +41,23 @@ namespace MyDev . UserControls
 			InitializeComponent ( );
 			this . SizeChanged += Ucontrol1_SizeChanged;
 			this . DataContext = this;
+			string str;
+			// This points to  Drive W !!!!!!!   Who knows what is going on ???
+			//			string file =$@"{Environment.SpecialFolder.MyDocuments}" + @"\library1 functions.txt";
+			string file =$@"C:\users\ianch\documents\library1 functions.txt";
+#pragma warning disable CS0168 // The variable 'buffer' is declared but never used
+			string[] buffer;
+#pragma warning restore CS0168 // The variable 'buffer' is declared but never used
+			//StringBuilder sb = new StringBuilder();
+#pragma warning disable CS0219 // The variable 'indx' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'offset' is assigned but its value is never used
+			int indx=0, offset=0;
+#pragma warning restore CS0219 // The variable 'offset' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'indx' is assigned but its value is never used
+			str = File . ReadAllText ( file );
+			LoadListboxWithText ( str );
+			str = $"Listbox Text file viewer - {file}";
+			Caption . Text = str;
 		}
 
 		private void Ucontrol1_SizeChanged ( object sender , SizeChangedEventArgs e )
@@ -49,17 +66,6 @@ namespace MyDev . UserControls
 
 		private void U1Ctrl_Loaded ( object sender , RoutedEventArgs e )
 		{
-			string str;
-			// This points to  Drive W !!!!!!!   Who knows what is going on ???
-			//			string file =$@"{Environment.SpecialFolder.MyDocuments}" + @"\library1 functions.txt";
-			string file =$@"C:\users\ianch\documents\library1 functions.txt";
-			string[] buffer;
-			//StringBuilder sb = new StringBuilder();
-			int indx=0, offset=0;
-			str = File . ReadAllText ( file );
-			LoadListboxWithText ( str );
-			str = $"Listbox Text file viewer - {file}";
-			Caption . Text = str;
 		}
 
 		private void Btn1_Click ( object sender , RoutedEventArgs e )
@@ -122,7 +128,9 @@ namespace MyDev . UserControls
 		private void LoadListboxWithText ( string file )
 		{
 			string[] buffer;
+#pragma warning disable CS0219 // The variable 'line3' is assigned but its value is never used
 			string line1="",line2="", line3 ="", templine="";
+#pragma warning restore CS0219 // The variable 'line3' is assigned but its value is never used
 			char[] ch ={ ',','.'};
 			buffer = file . Split ( '\n' );
 			listbox1 . Items . Clear ( );

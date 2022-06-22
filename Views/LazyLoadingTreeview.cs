@@ -96,7 +96,9 @@ namespace MyDev . Views
             {
                 Console . WriteLine ($"Loading files for newpath = {newpath}");
                 DirectoryInfo NextDirectory = null;
+#pragma warning disable CS0219 // The variable 'folderindex' is assigned but its value is never used
                 int folderindex = 0, foldercount = 0; ;
+#pragma warning restore CS0219 // The variable 'folderindex' is assigned but its value is never used
                 item . Items . Clear ( );
                 try
                 {

@@ -46,23 +46,23 @@ namespace MyDev . Views
 
 	public class EventHandlers
 	{
-		#region DELEGATES IN USE
-
-		//Delegates I AM USING
-		//		public static NotifyViewer SendViewerCommand;
-
-		#endregion DELEGATES IN USE
 
 		public MainWindow mw = null;
 
 
 		// Not used if DEBUG is UnDefined
-		[Conditional ( "DEBUG" )]
+//		[Conditional ( "DEBUG" )]
 		public static void ShowSubscribersCount ( )
 		{
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
 			int count = -1;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'count2' is assigned but its value is never used
 			int count2 = -1;
+#pragma warning restore CS0219 // The variable 'count2' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'count3' is assigned but its value is never used
 			int count3 = -1;
+#pragma warning restore CS0219 // The variable 'count3' is assigned but its value is never used
 			int count4 = -1;
 			int count5 = -1;
 			int count6 = -1;
@@ -70,7 +70,9 @@ namespace MyDev . Views
 			int count8 = -1;
 			int count9 = -1;
 			int count10 =-1;
+#pragma warning disable CS0219 // The variable 'count11' is assigned but its value is never used
 			int count11 =-1;
+#pragma warning restore CS0219 // The variable 'count11' is assigned but its value is never used
 
 			Delegate[] dg = EventControl . GetEventCount4 ( );
 			if ( dg != null )
@@ -316,39 +318,38 @@ namespace MyDev . Views
 			Debug . WriteLine ( $"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
 		}
 	}
+	//public static class DispatcherExtensions
+	//{
+	//	public static SwitchToUiAwaitable SwitchToUi ( this Dispatcher dispatcher )
+	//	{
+	//		return new SwitchToUiAwaitable ( dispatcher );
+	//	}
 
-	public static class DispatcherExtensions
-	{
-		public static SwitchToUiAwaitable SwitchToUi ( this Dispatcher dispatcher )
-		{
-			return new SwitchToUiAwaitable ( dispatcher );
-		}
+	//	public struct SwitchToUiAwaitable : INotifyCompletion
+	//	{
+	//		private readonly Dispatcher _dispatcher;
 
-		public struct SwitchToUiAwaitable : INotifyCompletion
-		{
-			private readonly Dispatcher _dispatcher;
+	//		public SwitchToUiAwaitable ( Dispatcher dispatcher )
+	//		{
+	//			_dispatcher = dispatcher;
+	//		}
 
-			public SwitchToUiAwaitable ( Dispatcher dispatcher )
-			{
-				_dispatcher = dispatcher;
-			}
+	//		public SwitchToUiAwaitable GetAwaiter ( )
+	//		{
+	//			return this;
+	//		}
 
-			public SwitchToUiAwaitable GetAwaiter ( )
-			{
-				return this;
-			}
+	//		public void GetResult ( )
+	//		{
+	//		}
 
-			public void GetResult ( )
-			{
-			}
+	//		public bool IsCompleted => _dispatcher . CheckAccess ( );
 
-			public bool IsCompleted => _dispatcher . CheckAccess ( );
-
-			public void OnCompleted ( Action continuation )
-			{
-				_dispatcher . BeginInvoke ( continuation );
-			}
-		}
-	}
+	//		public void OnCompleted ( Action continuation )
+	//		{
+	//			_dispatcher . BeginInvoke ( continuation );
+	//		}
+	//	}
+	//}
 
 } // End namespace

@@ -290,7 +290,9 @@ namespace MyDev . Views
 			}
 			// Check  for iconstring !!
 			CheckForFinalDefaultSettings ( Iconstring );
+#pragma warning disable CS0219 // The variable 'path' is assigned but its value is never used
 			string path = "";
+#pragma warning restore CS0219 // The variable 'path' is assigned but its value is never used
 			// sort out the icon
 			string icostr = Iconstring . ToUpper ( );
 			if ( icostr . Contains ( "EXCLAIM" ) || icostr . Contains ( "GREEN" ) )
@@ -612,7 +614,9 @@ namespace MyDev . Views
 		// Handle each buttons visual effcts
 		private void SetBtnStatus ( int btnNum , Border Btn , bool isdef , bool ismouseover )
 		{
+#pragma warning disable CS0219 // The variable 'th' is assigned but its value is never used
 			Thickness th = new Thickness();
+#pragma warning restore CS0219 // The variable 'th' is assigned but its value is never used
 			if ( IsTabbing )
 			{
 				//************************//
@@ -1529,7 +1533,9 @@ namespace MyDev . Views
 		// Read configuration in from disk fie
 		private void ReadMsgboxData ( int mode )
 		{
+#pragma warning disable CS0168 // The variable 'sb' is declared but never used
 			SolidColorBrush sb;
+#pragma warning restore CS0168 // The variable 'sb' is declared but never used
 			string input = File . ReadAllText ( @"Messageboxes.dat" );
 			string[] fields = input.Split('\n');
 			int indx= 0;
@@ -1759,7 +1765,9 @@ namespace MyDev . Views
 						this . Width = 610;
 						BtnWrap . Margin = new Thickness ( left: 0 , top: -65 , right: 0 , bottom: 0 );
 						break;  // OK
+#pragma warning disable CS0162 // Unreachable code detected
 						Row1 . Height = 70;
+#pragma warning restore CS0162 // Unreachable code detected
 						Row2 . Height = 10;
 						this . Height = 160;
 						this . Width = 600;
@@ -2227,12 +2235,14 @@ namespace MyDev . Views
 			{
 				if ( btnsarray [ x ] == active && x < 4 )
 				{
+#pragma warning disable CS0162 // Unreachable code detected
 					for ( int y = x + 1 ; y < 4 ; y++ )
 					{
 						if ( btnsarray [ y ] != 0 )
 							newbtn = y;
 						break;
 					}
+#pragma warning restore CS0162 // Unreachable code detected
 					if ( newbtn != 0 )
 						break;
 				}

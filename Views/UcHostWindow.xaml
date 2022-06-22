@@ -8,7 +8,9 @@
         Background="Gray"
         WindowChrome.ResizeGripDirection="BottomRight"
 	    ResizeMode="CanResizeWithGrip"
-        MinHeight="520" MinWidth="600"
+        MinHeight="550" MinWidth="600"
+        Closing="Window_Closing"
+        Loaded="Window_Loaded"
         SizeChanged="Window_SizeChanged"
         Title="User controls Host Window" Height="450" Width="800">
     <Grid>

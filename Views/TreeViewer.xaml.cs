@@ -11,7 +11,9 @@ using System . Windows . Input;
 using System . Windows . Media;
 using System . Windows . Media . Imaging;
 using System . Windows . Shapes;
+#pragma warning disable CS0105 // The using directive for 'System.Windows' appeared previously in this namespace
 using System . Windows;
+#pragma warning restore CS0105 // The using directive for 'System.Windows' appeared previously in this namespace
 using System . IO;
 using System . ComponentModel;
 using MyDev . AttachedProperties;
@@ -405,7 +407,9 @@ namespace MyDev . Views
             // Adds a series of EMPTY folders  to parent item
             int added = 0;
             int TotalDirs = 0;
+#pragma warning disable CS0219 // The variable 'TotalFiles' is assigned but its value is never used
             int TotalFiles = 0;
+#pragma warning restore CS0219 // The variable 'TotalFiles' is assigned but its value is never used
             item . Items . Clear ( );
             foreach ( var directoryPath in directories )
             {
@@ -526,6 +530,7 @@ namespace MyDev . Views
             bool result = true;
             var files = new List<string> ( );
             // Get a list of all items in the current folder
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 //var file = Directory . EnumerateFiles ( path , "*.*" );
@@ -537,6 +542,7 @@ namespace MyDev . Views
                 //Console . WriteLine ( $"GetFilesCount : 1081 : {ex . Message}" );
                 result = false;
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 
             //allfiles = files;
             if ( result == false )
@@ -583,6 +589,7 @@ namespace MyDev . Views
         {
             int count = 0;
             List<string> directories = new List<string> ( );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 string [ ] directs = Directory . GetDirectories ( path , "*.*" , SearchOption . TopDirectoryOnly );
@@ -600,6 +607,7 @@ namespace MyDev . Views
                 { //Console . WriteLine ( $"GetDirectoryCount : 9968 : {ex . Message}" );
                 }
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             return count;
         }
         public static string GetFileFolderName ( string path )
@@ -904,7 +912,9 @@ namespace MyDev . Views
          public Task<bool> RunExpandSystem ( TreeViewItem tvitem )
         {
             bool success = true;
+#pragma warning disable CS0219 // The variable 'fail' is assigned but its value is never used
             bool fail = false;
+#pragma warning restore CS0219 // The variable 'fail' is assigned but its value is never used
             ExpandSpecifiedLevels ( tvitem , null );
             TestTree . Refresh ( );
             if ( ExpArgs . ExpandLevels > 1 )
@@ -989,7 +999,9 @@ namespace MyDev . Views
             return true;
         }
   
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         async private void TriggerExpand1 ( object sender , RoutedEventArgs e )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             if ( TestTree . SelectedItem == null )
             {
@@ -1013,24 +1025,32 @@ namespace MyDev . Views
             {
                 ExpArgs . Selection = 1;
             }
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             RunRecurse ( TestTree , null );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             //Dispatcher . BeginInvoke ( DispatcherPriority . Normal , ( Action ) ( async ( ) => await RunRecurse ( TestTree , null ) ) );
 
             //RunExpandSystem ( null , null );
             return;
         }
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         async private void TriggerExpand2 ( object sender , RoutedEventArgs e )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
 
         }
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         async private void TriggerExpand3 ( object sender , RoutedEventArgs e )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
 
         }
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         async private void TriggerExpand4 ( object sender , RoutedEventArgs e )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
 
         }
@@ -1085,7 +1105,9 @@ namespace MyDev . Views
         {
             // e contains current treeviewitem !!!
             // All parameters are in ExpandArgs ExpArgs
+#pragma warning disable CS0219 // The variable 'Returnval' is assigned but its value is never used
             bool Returnval = false;
+#pragma warning restore CS0219 // The variable 'Returnval' is assigned but its value is never used
             bool IsComplete = false;
             int iterations = 0;
 
@@ -1181,8 +1203,10 @@ namespace MyDev . Views
                     if ( childControl . Items . Count == 1 )
                     {
                         TreeViewItem test = childControl . Items [ 0 ] as TreeViewItem;
+#pragma warning disable CS0252 // Possible unintended reference comparison; to get a value comparison, cast the left hand side to type 'string'
                         if ( test . Header == "Loading" )
                             continue;
+#pragma warning restore CS0252 // Possible unintended reference comparison; to get a value comparison, cast the left hand side to type 'string'
                     }
                     //                    ExpandFolder ( childControl );
                     childControl . IsExpanded = true;
@@ -1222,6 +1246,7 @@ namespace MyDev . Views
                         foreach ( var newentry in childControl . Items )
                         {
                             TreeViewItem nextitem = new TreeViewItem ( );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                             try
                             {
                                 nextitem = newentry as TreeViewItem;
@@ -1231,6 +1256,7 @@ namespace MyDev . Views
                                 Console . WriteLine ( $"Unable to access {childControl . Tag . ToString ( )}" );
                                 nofault = true;
                             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                             if ( nofault || nextitem == null )
                             {
                                 nofault = false;

@@ -25,6 +25,7 @@ using System . Xml;
 
 namespace MyDev . Sql
 {
+
 	public partial class SqlServerCommands : Window
 	{
 		ObservableCollection<GenericClass> Generics= new ObservableCollection<GenericClass>();
@@ -47,6 +48,7 @@ namespace MyDev . Sql
 				{
 					string[] inner = fields[z].Split('=');
 					try
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 					{
 						switch ( z + 1 )
 						{
@@ -112,6 +114,7 @@ namespace MyDev . Sql
 								break;
 						}
 					} catch ( Exception ex ) { }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				}
 				Generics . Add ( genclass );
 			}
@@ -429,7 +432,6 @@ namespace MyDev . Sql
 		#endregion generic data formatting methods
 		public static GenericClass ParseDapperRow ( dynamic buff , Dictionary<string , object> dict , out int colcount )
 		{
-			string outstr="";
 			//			StringBuilder sb = new StringBuilder();
 			GenericClass GenRow = new GenericClass();
 			int index=0;
@@ -501,6 +503,7 @@ namespace MyDev . Sql
 			output = output . Substring ( 0 , output . Length - 1 );
 			return output;
 		}
+		
 		public static GenericClass SaveToField ( GenericClass GenRow , int index , string outstr )
 		{
 			switch ( index )

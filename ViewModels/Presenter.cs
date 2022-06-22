@@ -1,8 +1,10 @@
-﻿using MyDev . Views;
+﻿using MyDev . Commands;
+using MyDev . Views;
 
 using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
+using System . ComponentModel;
 using System . Windows . Controls;
 using System . Windows . Input;
 
@@ -10,8 +12,18 @@ using System . Windows . Input;
 
 namespace MyDev . ViewModels
 {
-	public class Presenter : BaseViewModel
+	public class Presenter
 	{
+		#region NotifyPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion NotifyPropertyChanged
 		private readonly TextConverter _textConverter    = new TextConverter(s => s.ToUpper());
 		private readonly ObservableCollection<string> _history  = new ObservableCollection<string>();
 
@@ -22,7 +34,7 @@ namespace MyDev . ViewModels
 			set
 			{
 				_someText = value;
-				OnPropertyChanged ( SomeText );
+				NotifyPropertyChanged ( SomeText );
 			}
 		}
 		public IEnumerable<string> History

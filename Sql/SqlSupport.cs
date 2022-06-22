@@ -1,6 +1,7 @@
 ﻿using Dapper;
 
 using MyDev . Dapper;
+using MyDev . Models;
 using MyDev . ViewModels;
 using MyDev . Views;
 
@@ -228,13 +229,21 @@ namespace MyDev . SQL
 			return dtDetails;
 		}
 
-		public static DataTable LoadGenericData ( string Sqlcommand , int max = 0 , bool isMultiMode = false )
+		public static DataTable LoadGenericData ( string Sqlcommand , string DbName="", int max = 0 , bool isMultiMode = false )
 		{
 			SqlConnection con;
 			string filterline = "";
 			DataTable dtGeneric= new DataTable();
+
+			// This resets the current database connection - should be used anywhere that We switch between databases in Sql Server
+			if ( Utils . CheckResetDbConnection ( "IAN1" , out string constring ) == false )
+			{
+				Console . WriteLine ( $"Failed to set connection string for {DbName . ToUpper ( )} Db" );
+				return null;
+			}
+			//GenericDbHandlers . CheckDbDomain ( "IAN1" );
+			filterline = Sqlcommand;
 			string ConString = Flags . CurrentConnectionString;
-			//			ConString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 
 			con = new SqlConnection ( ConString );
 			try
@@ -249,8 +258,8 @@ namespace MyDev . SQL
 			}
 			catch ( Exception ex )
 			{
-				Debug . WriteLine ( $"DETAILS : ERROR in LoadDetailsDataSql(): Failed to load Details Details - {ex . Message}, {ex . Data}" );
-				MessageBox . Show ( $"DETAILS : ERROR in LoadDetailsDataSql(): Failed to load Details Details - {ex . Message}, {ex . Data}" );
+				Debug . WriteLine ( $"GENERIC : ERROR in LoadGenericData(): Failed to load Generic Data :  {ex . Message}, {ex . Data}" );
+				MessageBox . Show ( $"GENERIC: ERROR in LoadGenericData(): Failed to load Generic Data : {ex . Message}, {ex . Data}" );
 			}
 			finally
 			{
@@ -296,13 +305,15 @@ namespace MyDev . SQL
 				// This is ONLY called  if a requestor specifies the argument as TRUE
 				if ( Notify )
 				{
+					Application . Current . Dispatcher . Invoke ( ( ) =>
 					EventControl . TriggerBankDataLoaded ( null ,
 						new LoadedEventArgs
 						{
 							CallerType = "SQLSUPPORT" ,
 							DataSource = bvm ,
 							RowCount = bvm . Count
-						} );
+						} )
+					);
 				}
 			}
 			return bvm;
@@ -349,13 +360,15 @@ namespace MyDev . SQL
 				if ( Notify && count > 0 )
 				{
 					Console . WriteLine ( $"Triggering event CustDataLoaded with {cvm . Count}" );
+					Application . Current . Dispatcher . Invoke ( ( ) =>
 					EventControl . TriggerCustDataLoaded ( null ,
 						  new LoadedEventArgs
 						  {
 							  CallerType = "SQLSUPPPORT" ,
 							  DataSource = cvm ,
 							  RowCount = cvm . Count
-						  } );
+						  } )
+					);
 				}
 			}
 			Console . WriteLine ( $"Customers Db Total = {cvm?.Count}" );
@@ -746,7 +759,7 @@ namespace MyDev . SQL
 			{
 				if ( Notify )
 				{
-					EventControl . TriggerDetDataLoaded ( null ,
+					EventControl . TriggerGenDataLoaded ( null ,
 						new LoadedEventArgs
 						{
 							CallerType = "SQLSERVER" ,
@@ -834,14 +847,26 @@ namespace MyDev . SQL
 		{
 			ResultString = "";
 			string SavedValue = SqlCommand;
+#pragma warning disable CS0219 // The variable 'dbnametoopen' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'command' is assigned but its value is never used
 			string command = "", dbnametoopen = "";
+#pragma warning restore CS0219 // The variable 'command' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'dbnametoopen' is assigned but its value is never used
 			string errormsg="";
+#pragma warning disable CS0219 // The variable 'WhereClause' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'OrderByClause' is assigned but its value is never used
 			string  WhereClause="", OrderByClause="";
+#pragma warning restore CS0219 // The variable 'OrderByClause' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'WhereClause' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'CheckingArgsOnly' is assigned but its value is never used
 			bool CheckingArgsOnly = false;
+#pragma warning restore CS0219 // The variable 'CheckingArgsOnly' is assigned but its value is never used
 			int totalcolumns = 0;
 			ObservableCollection<BankAccountViewModel> bvmparam = new ObservableCollection<BankAccountViewModel>();
 			Dictionary <string, object>dict = new Dictionary<string, object>();
+#pragma warning disable CS0219 // The variable 'DbResult' is assigned but its value is never used
 			IEnumerable DbResult=null;
+#pragma warning restore CS0219 // The variable 'DbResult' is assigned but its value is never used
 			//============
 			// Sanity checks
 			//============
@@ -900,7 +925,9 @@ namespace MyDev . SQL
 			{
 				List<string> genericlist = new List<string>();
 				bool usegeneric = false;
+#pragma warning disable CS0219 // The variable 'outbuffer' is assigned but its value is never used
 				string outbuffer="";
+#pragma warning restore CS0219 // The variable 'outbuffer' is assigned but its value is never used
 
 				if ( usegeneric )
 				{

@@ -18,6 +18,22 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>C:\publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -43,7 +59,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
@@ -71,7 +87,6 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -102,20 +117,50 @@
     <Compile Include="Behaviors\MvvmMouse.cs" />
     <Compile Include="Behaviors\TreeViewItemBehavior.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converts\BankCombinerCustNoBankno.cs" />
     <Compile Include="Converts\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converts\BoolToNotBool.cs" />
     <Compile Include="Converts\DebugConverter.cs" />
+    <Compile Include="Converts\DiameterAndThicknessToDasharrayConverter.cs" />
     <Compile Include="Converts\ExpanderArgumentsConverter.cs" />
     <Compile Include="Converts\GetCurrentReccount.cs" />
     <Compile Include="Converts\HeaderToImageConverter.cs" />
     <Compile Include="Converts\SetBoolRedBlack.cs" />
+    <Compile Include="Delegates.cs" />
+    <Compile Include="TabControlHelper.cs" />
+    <Compile Include="UserControls\GotFocusArgs.cs" />
+    <Compile Include="UserControls\LogUserControl.xaml.cs">
+      <DependentUpon>LogUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\DatagridUserControlViewModel.cs" />
+    <Compile Include="ViewModels\DbTypeArgs.cs" />
+    <Compile Include="ViewModels\UserControlDataAccess.cs" />
+    <Compile Include="ViewModels\ViewModel.cs" />
+    <Compile Include="Views\ConditionalEventTrigger.cs" />
+    <Compile Include="Views\DbCountArgs.cs" />
+    <Compile Include="Views\DispatcherExtensions.cs" />
     <Compile Include="Menus\ContextMenuTemplateSelector.cs" />
     <Compile Include="Models\FlowdocLib.cs" />
     <Compile Include="Models\GenericDbHandlers.cs" />
     <Compile Include="Models\ValidateCounty.cs" />
     <Compile Include="Models\ValidateUsernameClass.cs" />
+    <Compile Include="SpinnerDlg.xaml.cs">
+      <DependentUpon>SpinnerDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CustomControl1.cs" />
+    <Compile Include="UserControls\DgUserControl.xaml.cs">
+      <DependentUpon>DgUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LbUserControl.xaml.cs">
+      <DependentUpon>LbUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LinkChangedArgs.cs" />
     <Compile Include="UserControls\ListBoxUserControl.xaml.cs">
       <DependentUpon>ListBoxUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LoadDbArgs.cs" />
+    <Compile Include="UserControls\LvUserControl.xaml.cs">
+      <DependentUpon>LvUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MulltiDbUserControl.xaml.cs">
       <DependentUpon>MulltiDbUserControl.xaml</DependentUpon>
@@ -123,9 +168,16 @@
     <Compile Include="UserControls\MultiImageViewer.xaml.cs">
       <DependentUpon>MultiImageViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\PropertyChanged.cs" />
+    <Compile Include="UserControls\SelectionChangedArgs.cs" />
+    <Compile Include="UserControls\SpinnerControl.cs" />
+    <Compile Include="UserControls\SpinnerUserControl.xaml.cs">
+      <DependentUpon>SpinnerUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\TextBoxwithDataError.xaml.cs">
       <DependentUpon>TextBoxwithDataError.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\TvUserControl.xaml.cs">
+      <DependentUpon>TvUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UCListBox.xaml.cs">
       <DependentUpon>UCListBox.xaml</DependentUpon>
@@ -151,17 +203,16 @@
     <Compile Include="UserControls\WebViewer.xaml.cs">
       <DependentUpon>WebViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ValidationRules\ValidationrulesClass.cs" />
     <Compile Include="ViewModels\BindingErrorListner.cs" />
     <Compile Include="ViewModels\MvvmContainerViewModel.cs" />
     <Compile Include="ViewModels\MenuTestViewModel.cs" />
-    <Compile Include="ViewModels\Notifier.cs" />
     <Compile Include="ViewModels\MvvmListboxUCViewModel.cs" />
     <Compile Include="ViewModels\BrowserUCViewModel.cs" />
     <Compile Include="ViewModels\MvvmImageUCViewModel.cs" />
+    <Compile Include="ViewModels\TabWinViewmodel.cs" />
     <Compile Include="ViewModels\Updater.cs" />
-    <Compile Include="ViewModels\UserControl.cs" />
     <Compile Include="ViewModels\UserCtrlViewModel.cs" />
+    <Compile Include="ViewModels\YieldWindowViewModel.cs" />
     <Compile Include="Views\Blink.cs" />
     <Compile Include="ViewModels\DatagridDataSupplier.cs" />
     <Compile Include="ViewModels\ListBoxDataSupplier.cs" />
@@ -172,19 +223,30 @@
     <Compile Include="ViewModels\SqlAccess.cs" />
     <Compile Include="ViewModels\ApplicationListItem.cs" />
     <Compile Include="Converts\EqualityConverter.cs" />
+    <Compile Include="Views\CountGrid.cs" />
     <Compile Include="Views\DataErrorWindow.xaml.cs">
       <DependentUpon>DataErrorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DispatcherHelper.cs" />
     <Compile Include="Views\ExpanderTest.xaml.cs">
       <DependentUpon>ExpanderTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ListItem.cs" />
+    <Compile Include="Views\GenericStack.cs" />
     <Compile Include="Views\HierarchicalTreeView.xaml.cs">
       <DependentUpon>HierarchicalTreeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InterWinComms.xaml.cs">
+      <DependentUpon>InterWinComms.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InterWindowArgs.cs" />
+    <Compile Include="Views\LoadPopup.xaml.cs">
+      <DependentUpon>LoadPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Menutest.xaml.cs">
       <DependentUpon>Menutest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MessageListener.cs" />
     <Compile Include="Views\ModernViews.xaml.cs">
       <DependentUpon>ModernViews.xaml</DependentUpon>
     </Compile>
@@ -213,7 +275,6 @@
     <Compile Include="DataTemplates\BankDataTemplateSelector.cs" />
     <Compile Include="DataTemplates\DataTemplateSelectors.cs" />
     <Compile Include="Models\Person.cs" />
-    <Compile Include="Sql\SqlDbSupport.cs" />
     <Compile Include="Sql\SqlServerCommands.cs" />
     <Compile Include="UserControls\Colorpicker.xaml.cs">
       <DependentUpon>Colorpicker.xaml</DependentUpon>
@@ -318,6 +379,15 @@
     <Compile Include="Views\SysConfig.xaml.cs">
       <DependentUpon>SysConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Tabview.xaml.cs">
+      <DependentUpon>Tabview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TabViewInfo.xaml.cs">
+      <DependentUpon>TabViewInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\test.xaml.cs">
+      <DependentUpon>test.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TreeViewCollection.cs" />
     <Compile Include="Views\TreeViewer.xaml.cs">
       <DependentUpon>TreeViewer.xaml</DependentUpon>
@@ -335,6 +405,9 @@
     </Compile>
     <Compile Include="Views\VmTest.xaml.cs">
       <DependentUpon>VmTest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\YieldWindow.xaml.cs">
+      <DependentUpon>YieldWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="DataTemplates\BankDataTemplates.xaml">
       <SubType>Designer</SubType>
@@ -408,7 +481,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SpinnerDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\StylesDictonary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\DgUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\LbUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\ListBoxUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\LogUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\LvUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -420,7 +521,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\SpinnerUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\TextBoxwithDataError.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\TvUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -489,6 +598,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HierarchicalTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\InterWinComms.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoadPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -572,6 +689,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Tabview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TabViewInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\test.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TreeViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -589,6 +718,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\VmTest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\YieldWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -798,7 +931,7 @@
     <Resource Include="Icons\small magnify.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Styles\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Application.ico" />
@@ -841,6 +974,18 @@
     <PackageReference Include="System.Data.SqlClient">
       <Version>4.8.3</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Fody.6.5.1\build\Fody.targets" Condition="Exists('packages\Fody.6.5.1\build\Fody.targets')" />

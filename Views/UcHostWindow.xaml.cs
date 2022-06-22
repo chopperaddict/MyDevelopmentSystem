@@ -30,8 +30,8 @@ namespace MyDev . Views
         {
             InitializeComponent ( );
             uchw = this;
-        }
 
+        }
         public void LoadHostWindow()
         {
              ucv = new UserControlsViewer ( );
@@ -41,15 +41,33 @@ namespace MyDev . Views
         }
         public static UcHostWindow GetUCHostWin ( )
         {
+            //return a pointer to this host !
             return uchw;
         }
-
         private void Window_SizeChanged ( object sender , SizeChangedEventArgs e )
         {
             if ( ucv == null )
                 return;
             ucv.Height = UCHostContent . Height;
             uchwidth= UCHostContent . Width;
+        }
+        private void Window_Closing ( object sender , System . ComponentModel . CancelEventArgs e )
+        {
+            ucv = null;
+            uchw = null;
+        }
+        public void CloseThis(object obj)
+        {
+            obj = null;
+        }
+        private void UcHostWindow_Loaded ( object sender , RoutedEventArgs e )
+        {
+
+        }
+
+        private void Window_Loaded ( object sender , RoutedEventArgs e )
+        {
+
         }
     }
 }

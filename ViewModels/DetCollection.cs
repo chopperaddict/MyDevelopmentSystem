@@ -159,7 +159,9 @@ namespace MyDev . ViewModels
 		CancellationTokenSource cts = new CancellationTokenSource ( );
 
 		//**************************************************************************************************************************************************************//
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public async Task<DetCollection> LoadDetailsTaskInSortOrderAsync ( bool b = false , int row = 0 , bool notifyAll = false )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		{
 			Notify = notifyAll;
 
@@ -179,6 +181,7 @@ namespace MyDev . ViewModels
 					//							Debug . WriteLine ( $"After initial Task.Run() : Thread = { Thread . CurrentThread . ManagedThreadId}" );
 				}
 				);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
 			t1 . ContinueWith
 			(
 				async ( Detinternalcollection ) =>
@@ -186,6 +189,7 @@ namespace MyDev . ViewModels
 					await LoadDetCollection ( row , b );
 				} , TaskScheduler . FromCurrentSynchronizationContext ( )
 			 );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
 
 			#endregion process code to load data
 
@@ -193,14 +197,17 @@ namespace MyDev . ViewModels
 
 			// Now handle "post processing of errors etc"
 			//This will ONLY run if there were No Exceptions  and it ALL ran successfully!!
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
 			t1 . ContinueWith (
 				( Detinternalcollection ) =>
 				{
 					Debug . WriteLine ( $"DETAILS : Task.Run() Completed : Status was [ {Detinternalcollection . Status} ]." );
 				} , CancellationToken . None , TaskContinuationOptions . OnlyOnRanToCompletion , TaskScheduler . FromCurrentSynchronizationContext ( )
 			);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
 			//This will iterate through ALL of the Exceptions that may have occured in the previous Tasks
 			// but ONLY if there were any Exceptions !!
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
 			t1 . ContinueWith (
 				( Detinternalcollection ) =>
 				{
@@ -212,6 +219,7 @@ namespace MyDev . ViewModels
 					}
 				} , CancellationToken . None , TaskContinuationOptions . NotOnRanToCompletion , TaskScheduler . FromCurrentSynchronizationContext ( )
 			);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
 
 			//			Debug . WriteLine ($"DETAILS : END OF PROCESSING & Error checking functionality\nDETAILS : *** Detcollection total = {Detcollection.Count} ***\n\n");
 			#endregion Success//Error reporting/handling
@@ -224,7 +232,9 @@ namespace MyDev . ViewModels
 		/// </summary>
 		/// <returns></returns>
 		//**************************************************************************************************************************************************************//
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public async Task<bool> LoadDetailsDataSql ( bool isMultiMode = false )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		{
 			//			Stopwatch st = new Stopwatch ( );
 
@@ -279,7 +289,9 @@ namespace MyDev . ViewModels
 		}
 
 		//**************************************************************************************************************************************************************//
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public static async Task<DetCollection> LoadDetCollection ( int row , bool DoNotify = true )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		{
 			int count = 0;
 			try
@@ -327,7 +339,9 @@ namespace MyDev . ViewModels
 			//			}
 		}
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public static async Task<DetCollection> LoadDetTest ( DetCollection Detinternalcollection )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		{
 			int count = 0;
 			try

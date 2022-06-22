@@ -45,8 +45,12 @@ namespace MyDev . Views
 			set { movingobject = value; }
 		}
 
+#pragma warning disable CS0414 // The field 'MvvmDataGrid.CpFirstXPos' is assigned but its value is never used
 		private double CpFirstXPos=0;
+#pragma warning restore CS0414 // The field 'MvvmDataGrid.CpFirstXPos' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'MvvmDataGrid.CpFirstYPos' is assigned but its value is never used
 		private double CpFirstYPos=0;
+#pragma warning restore CS0414 // The field 'MvvmDataGrid.CpFirstYPos' is assigned but its value is never used
 	
 		public MvvmDataGrid ( )
 		{

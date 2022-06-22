@@ -10,7 +10,7 @@ using System . Windows . Input;
 
 namespace MyDev . ViewModels
 {
-	public abstract class BaseViewModel : INotifyPropertyChanged
+	public abstract class xBaseViewModel : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
             //public void OnPropertyChanged ( string propertyName ) => PropertyChanged?.Invoke ( this , new PropertyChangedEventArgs ( propertyName ) );

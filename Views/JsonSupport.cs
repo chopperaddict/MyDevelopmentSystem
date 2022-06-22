@@ -82,16 +82,26 @@ using ( var reader = new JsonTextReader ( sw ) )
 
 		public static string CreateFormattedJsonOutput ( string jsonInput , string Title , Progressbar pbar = null )
 		{
+#pragma warning disable CS0219 // The variable 'rows' is assigned but its value is never used
 			int rows = 0, max = 0;
+#pragma warning restore CS0219 // The variable 'rows' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'fiddle' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'maxrows' is assigned but its value is never used
 			int fiddle = 0, maxrows = 0;
+#pragma warning restore CS0219 // The variable 'maxrows' is assigned but its value is never used
+#pragma warning restore CS0219 // The variable 'fiddle' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'current' is assigned but its value is never used
 			double current = 0;
+#pragma warning restore CS0219 // The variable 'current' is assigned but its value is never used
 			maxrows = 0;
 			string Output = "", interim = "";
 			if ( Title . Length > 0 )
 				Output = "{\r\n\t\"" + Title + " Database Contents\" :\r\n\t{\r\n\t\t";
 			else
 				Output = "{\r\n\t\t";
+#pragma warning disable CS0219 // The variable 'isStruct' is assigned but its value is never used
 			bool isStruct = false;
+#pragma warning restore CS0219 // The variable 'isStruct' is assigned but its value is never used
 			// using a stringbuilder improves speed by around 1000 % - honestly !!!
 			// it is now almost instant
 			StringBuilder sb = new StringBuilder();

@@ -25,8 +25,12 @@ namespace MyDev . Views
 	{
 		private bool  IsTabbing=false;
 		private int  CurrentButton = 0;
+#pragma warning disable CS0169 // The field 'Msgboxs.DefBorder' is never used
 		private Border DefBorder;
+#pragma warning restore CS0169 // The field 'Msgboxs.DefBorder' is never used
+#pragma warning disable CS0414 // The field 'Msgboxs.isShiftDown' is assigned but its value is never used
 		private bool isShiftDown = false;
+#pragma warning restore CS0414 // The field 'Msgboxs.isShiftDown' is assigned but its value is never used
 		private int TabPass=0;
 		private bool IsDarkMode { get; set; }
 		private bool IsMinSize { get; set; }
@@ -59,12 +63,24 @@ namespace MyDev . Views
 		Button DefaultButton;
 
 
+#pragma warning disable CS0649 // Field 'Msgboxs.Btnbackground' is never assigned to, and will always have its default value null
 		static Brush Btnbackground;               // Std button Background
+#pragma warning restore CS0649 // Field 'Msgboxs.Btnbackground' is never assigned to, and will always have its default value null
+#pragma warning disable CS0169 // The field 'Msgboxs.Btnforeground' is never used
 		static Brush Btnforeground;               // Std button Foreground
+#pragma warning restore CS0169 // The field 'Msgboxs.Btnforeground' is never used
+#pragma warning disable CS0169 // The field 'Msgboxs.BtnMbackground' is never used
 		static Brush BtnMbackground;        // Mouseover button Background
+#pragma warning restore CS0169 // The field 'Msgboxs.BtnMbackground' is never used
+#pragma warning disable CS0169 // The field 'Msgboxs.BtnMforeground' is never used
 		static Brush BtnMforeground;        // Mouseover button Foreground
+#pragma warning restore CS0169 // The field 'Msgboxs.BtnMforeground' is never used
+#pragma warning disable CS0649 // Field 'Msgboxs.DefBtnbackground' is never assigned to, and will always have its default value null
 		static Brush DefBtnbackground;        // Defaullt Button Background
+#pragma warning restore CS0649 // Field 'Msgboxs.DefBtnbackground' is never assigned to, and will always have its default value null
+#pragma warning disable CS0169 // The field 'Msgboxs.DefBtnforeground' is never used
 		static Brush DefBtnforeground;         // Default Button Foreground
+#pragma warning restore CS0169 // The field 'Msgboxs.DefBtnforeground' is never used
 
 		#endregion buttondata
 
@@ -125,6 +141,7 @@ namespace MyDev . Views
 			Utils . SetupWindowDrag ( this );
 			bool result = CheckMsgBoxData ( );
 			//			ConfigureCurrentColors ( ); 
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
 			LoadWindow (
 			 caption ,
 			string1 ,
@@ -143,6 +160,7 @@ namespace MyDev . Views
 			 MinSize ,
 			 modal = modal
 				);
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
 		}
 		public Msgboxs (
 			string caption ,
@@ -173,6 +191,16 @@ namespace MyDev . Views
 			IsMinSize = MinSize;
 			bool result = CheckMsgBoxData ( );
 			//			ConfigureCurrentColors ( );
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
 			LoadWindow (
 			 caption = caption ,
 			string1 = string1 ,
@@ -191,6 +219,16 @@ namespace MyDev . Views
 			 MinSize ,
 			 modal
 				);
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
 
 		}
 		private void LoadWindow (
@@ -1091,7 +1129,9 @@ namespace MyDev . Views
 
 		private void Button1_KeyDown ( object sender , KeyEventArgs e )
 		{
+#pragma warning disable CS0219 // The variable 'changed' is assigned but its value is never used
 			bool changed=false;
+#pragma warning restore CS0219 // The variable 'changed' is assigned but its value is never used
 			Button newbtn = null;
 			if ( e . Key == Key . Enter )
 			{
@@ -1128,7 +1168,9 @@ namespace MyDev . Views
 		}
 		private void Button2_KeyDown ( object sender , KeyEventArgs e )
 		{
+#pragma warning disable CS0219 // The variable 'changed' is assigned but its value is never used
 			bool changed = false;
+#pragma warning restore CS0219 // The variable 'changed' is assigned but its value is never used
 			Button newbtn = null;
 			if ( e . Key == Key . Enter )
 			{
@@ -1167,7 +1209,9 @@ namespace MyDev . Views
 
 		private void Button3_KeyDown ( object sender , KeyEventArgs e )
 		{
+#pragma warning disable CS0219 // The variable 'changed' is assigned but its value is never used
 			bool changed=false;
+#pragma warning restore CS0219 // The variable 'changed' is assigned but its value is never used
 			Button newbtn = null;
 			if ( e . Key == Key . Enter )
 			{
@@ -1205,7 +1249,9 @@ namespace MyDev . Views
 		}
 		private void Button4_KeyDown ( object sender , KeyEventArgs e )
 		{
+#pragma warning disable CS0219 // The variable 'changed' is assigned but its value is never used
 			bool changed=false;
+#pragma warning restore CS0219 // The variable 'changed' is assigned but its value is never used
 			Button newbtn = null;
 			if ( e . Key == Key . Enter )
 			{
@@ -2023,7 +2069,9 @@ namespace MyDev . Views
 
 		private void SetBtnStatus ( Button Btn , bool isdef , bool ismouseover )
 		{
+#pragma warning disable CS0219 // The variable 'th' is assigned but its value is never used
 			Thickness th = new Thickness();
+#pragma warning restore CS0219 // The variable 'th' is assigned but its value is never used
 			if ( IsTabbing )
 			{
 				if ( isdef == false )

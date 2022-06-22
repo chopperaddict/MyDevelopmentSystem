@@ -60,25 +60,41 @@ namespace MyDev . UserControls
 		private string DefaultSqlCommand="Select * from BankAccount";
 		private string CurrentType= "BANKACCOUNT";
 
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.CurrentDbName' is assigned but its value is never used
 		string CurrentDbName = "IAN1";
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.CurrentDbName' is assigned but its value is never used
 		string CurrentTableName="BANKACCOUNT";
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.CurrentDataTable' is assigned but its value is never used
 		string CurrentDataTable = "";
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.CurrentDataTable' is assigned but its value is never used
 		private bool IsSelectionChanged=false;
 		public static string CurrentSqlConnection = "BankSysConnectionString";
 		public static Dictionary <string, string> DefaultSqlCommands = new Dictionary<string, string>();
 
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.alldone' is assigned but its value is never used
 		private bool alldone=false;
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.alldone' is assigned but its value is never used
 		// pro temp variables
 		// Flowdoc flags
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.UseFlowdoc' is assigned but its value is never used
 		private bool UseFlowdoc=false;
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.UseFlowdoc' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.UseFlowdocBeep' is assigned but its value is never used
 		private bool UseFlowdocBeep=false;
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.UseFlowdocBeep' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.UseScrollViewer' is assigned but its value is never used
 		private bool UseScrollViewer= false;
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.UseScrollViewer' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.TvMouseCaptured' is assigned but its value is never used
 		private bool  TvMouseCaptured = false;
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.TvMouseCaptured' is assigned but its value is never used
 
 		private Window win { get; set; }
 
 		private bool Usetimer = true;
+#pragma warning disable CS0414 // The field 'MulltiDbUserControl.ComboSelectionActive' is assigned but its value is never used
 		private bool ComboSelectionActive = false;
+#pragma warning restore CS0414 // The field 'MulltiDbUserControl.ComboSelectionActive' is assigned but its value is never used
 		private static Stopwatch timer = new Stopwatch();
 		public void SetParent ( Window parent )
 		{
@@ -264,7 +280,7 @@ namespace MyDev . UserControls
 					//gc . field1 = "The database request succeeded but did not return any records for the selected table";
 					//genaccts . Add ( gc );
 					//SqlServerCommands . LoadActiveRowsOnlyInGrid ( BankDataGrid , genaccts , SqlServerCommands . GetGenericColumnCount ( genaccts ) );
-					GenericDbHandlers . SetNullRecords (genaccts, BankDataGrid , CurrentType);
+					GenericDbUtilities . SetNullRecords (genaccts, BankDataGrid , CurrentType);
 					//BankDataGrid . Columns [ 0 ] . Header = "Query result Information";
 					RecordsCount = BankDataGrid . Items . Count - 1;
 					return;
@@ -276,7 +292,7 @@ namespace MyDev . UserControls
 				if ( Flags . ReplaceFldNames )
 				{
 					string CurrentDomain = DbMain. SelectedItem . ToString ( ) . ToUpper ( );
-					GenericDbHandlers . ReplaceDataGridFldNames ( CurrentType, ref BankDataGrid , CurrentDomain);
+					GenericDbUtilities . ReplaceDataGridFldNames ( CurrentType, ref BankDataGrid , CurrentDomain);
 				}
 				//				Grid1 . ItemsSource = genaccts;
 				//				DbCount = genaccts . Count;

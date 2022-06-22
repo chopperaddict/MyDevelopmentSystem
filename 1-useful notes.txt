@@ -1,4 +1,314 @@
-﻿===============================================================================================================
+﻿==============================================================================================================
+	// How to call SQL data loading FAT methods
+===============================================================================================================
+           Task task = Task . Run (  ( ) =>
+            {
+                   // This is pretty fast - uses Dapper and Linq
+                     this . Dispatcher . Invoke ( ( ) =>
+                     {
+                         UserControlDataAccess . GetBankObsCollectionAsync ( Bvm, "" , true, "DgUserControl" );
+                         UserControlDataAccess . GetCustObsCollectionAsync ( Cvm, "" , true, "DgUserControl" );
+                     } );
+                return Bvm;
+
+==============================================================================================================
+	// How to speed up listviews in particular, but other content conrols as well
+===============================================================================================================
+          
+		<ListView .ItemsPanel>
+            <!--// Saves memory and loads much faster-->
+            <ItemsPanelTemplate>
+                <VirtualizingStackPanel/>
+            </ItemsPanelTemplate>
+        </ListView .ItemsPanel>
+		You can replace DataGrid with DataGridor ListBox as well
+
+		ALSO adding 
+			maxheight="2000" 
+		or equally large values helps in speed for all 3 controls
+
+==============================================================================================================
+	// How to wrap methods in threads to access UI elements
+===============================================================================================================
+                    ControlName. Current . Dispatcher . Invoke ( ( ) =>
+					OR
+                    Application . Current . Dispatcher . Invoke ( ( ) =>
+					{
+					as many commands as required go here.
+					}
+					);
+==============================================================================================================
+	// How to use my Utils.FindChildren method
+===============================================================================================================
+        // arguments are (Control to be searched, string = control type eg"Button" etc)
+		//Passing "*"" will return ALL controls found...
+
+		List<object> obj = Utils . GetChildControls ( Tview , "TabItem" );
+        foreach ( var item in obj)
+        {
+            TabItem titem = item as TabItem;
+            Console . WriteLine ($"{item.ToString()}, {titem.Name}");
+        }
+==============================================================================================================
+	// How to access an objects properties easily
+===============================================================================================================
+    
+	(item as Button ). Content = "&&&&&&&";
+    
+===============================================================================================================
+	// How to run two (or even more) tasks in parallel safely and easily ()
+	// Here I load data via sql as the main task, but also process the relevant screen layout stuff in the child process
+===============================================================================================================
+            // First, declare the Main Task (task2() here) as a new task with the usual ( () => { setup
+            // DO NOT CLOSE IT ..... just wrap it all in { ......  }
+            Task maintask = new Task ( ( ) =>
+            {
+                // Thereafter the basic logic is this :-
+                // Next, without closing the main task2 with a ); we declare the secondary Task
+                //(child() here) as a new task with the usual ' ( () => { '  setup and
+                //place the relevant code in there, finally closing it withthe usual  '}'
+                // add the  ,TaskCreationOptions. AttachedToParent statement to the CHILD after it's closing ' }
+                // '(Note the comma at the front..) and *** without*** any terminating semi colon.
+                // Then close the child Task with the usual   ' ); '
+                // Run it with ' child . Start(); ' immediately after its declaration
+                // Next, while stil inside outer ' { '  declare the Parent task as another new task directly below the ' child.Start(); '
+                // finally Close the outer (main) Task OFF and finally :
+                // Call ' task2 . Start(); ' to run the entire thing......
+                Task child = new Task (  ( ) =>
+                {
+                    Console . WriteLine ( $"Loading Db....." );
+					etc ....;
+					can be loads in here ......
+                } , TaskCreationOptions . AttachedToParent
+                );		// close off child task
+				// RUN THE CHILD Task here (strange but true)
+				child . Start ( );
+
+				OR				
+				// Add do not start it yet, but add more child(ren) if required in the same way as above
+                Task child2 = new Task (  ( ) =>
+                {
+					.....more code to run in parallel
+				});		// close off child task
+                
+				....... more child processes here iif required
+                Task child3 = new Task ( ( ) =>
+                {
+                    // just to prove it all works in parellel
+                    for ( int i = 0 ; i < 100 ; i++ )
+                    {
+                        Console . Write ( "." );
+                        Thread . Sleep ( 10 );
+                    }
+                    Console . WriteLine ( "\nTest thread ended...." );
+                } );
+
+				// Run the child processes in reverse order ( I think)
+				child x .....
+                child3 . Start ( );
+				child2 . Start ( );
+                child . Start ( );
+
+				// This is the main "Parent" task, which we just declare inline here
+                lvUserctrl . LoadBank ( true );
+				....... more code as needed
+            }
+            );		// close off main task
+
+			// RUN THE WHOLE THING
+            maintask . Start ( );
+        }
+
+===============================================================================================================
+	// How to pass arguments in BackgroundWorker ()
+===============================================================================================================
+      private void LbWorker_DoWork ( object sender , DoWorkEventArgs e )
+        {
+            Console . WriteLine ( $"Calling ListBox Background Worker ProgressChanged method" );
+            BackgroundWorker worker = sender as BackgroundWorker;
+            // How  to pass more than just percent  done by using e.Argument (object) which can be anyhing you want to unpack in progresschanged()
+            worker . ReportProgress ( 10 , e . Argument as LbUserControl );
+              Console . WriteLine ( $"Cancelling thread of ProgressChanged method" );
+            Tview . ProgressBar_Progress . UpdateLayout ( );
+            worker . CancelAsync ( );
+		}
+===============================================================================================================
+	// How close any or even all open window in any application
+===============================================================================================================
+            // public CloseWindows(object WinNameToClose)
+			{
+				//WindowCollection v = Application . Current . Windows;
+				// foreach ( Window item in v )
+				// {
+				//		Allow for ALL or just a specific window name
+				//     if ( WinNameToClose. ToString ( )  == "*"  )
+				//     {
+				//         item . Close ( );
+					//}
+					else if(item . ToString ( ) . Contains ( WinNameToClose )
+					//{
+					//         item . Close ( );
+					//         break;
+					//     }
+				// }
+			//}
+===============================================================================================================
+	// How to setup shadows on text
+===============================================================================================================
+             <Button.Content>
+                    <TextBlock Text="Load Customer">
+                        <TextBlock.Effect>
+                            <DropShadowEffect ShadowDepth="2" 
+								BlurRadius="0.5" 
+								Color="White" 
+								Direction="310"/>
+                            
+							<!--<BlurEffect Radius="1.0" KernelType="Box"/>-->
+                        </TextBlock.Effect>   
+						
+                        <!--<TextBlock.RenderTransform>
+                            <TranslateTransform X="3" Y="3" />
+                        </TextBlock.RenderTransform>-->
+                    </TextBlock>
+                </Button.Content>
+
+===============================================================================================================
+	// How to close any window from c#
+===============================================================================================================
+           WindowCollection v = Application . Current . Windows;
+            foreach ( Window item in v )
+            {
+                if ( item . ToString ( ) . Contains ( "LoadPopup" ) )
+                {
+                    item . Close ( );
+                    break;
+                }
+            }	
+
+===============================================================================================================
+	// How to use predicates etc
+===============================================================================================================
+	// NB: Predicates MUST only have ONE argmuent & return a bool 
+	// NB: Actions can have MULTIPLE (<=16) argmuents BUT MUST return void
+	// NB: Func can have ZERO or (<=16) argmuents & NO return except  as the last parameter as an OUT variable
+
+		//==========
+		// PREDICATES :
+		//==========
+		static bool IsUpperCase(string str)
+		{return str.Equals(str.ToUpper());}
+
+		Predicate<string> isUpper = IsUpperCase;
+		
+		OR
+		
+		Predicate<string> isUpper = delegate(string s) { return s.Equals(s.ToUpper());};
+		bool result = isUpper("hello world!!");
+
+		//==========
+		// ACTIONs
+		//==========
+	// NB: Actions can have MULTIPLE (<=16) argmuents BUT MUST return void
+		Action<int> printActionDel = ConsolePrint;
+		//Or
+		Action<int> printActionDel = new Action<int>(ConsolePrint);
+		//Or
+		Action<int> printActionDel = i => Console.WriteLine(i);
+
+		//==========
+		// FUNCs
+		//==========
+
+	// NB: Func can have ZERO or (<=16) argmuents & NO return except  as the last parameter as an OUT variable
+	// Arguments are enclosed in <>
+
+	//Simple example :
+		Func<int, int, int> sum;
+		has 2 int input args and ONE int out argument
+
+		// Generic version :
+		public delegate TResult Func<in T, out TResult>(T arg);
+				where (T Arg) is te type of the 1st input arg
+
+				Func<int,int, int> add = Sum;
+
+				where it can call  :
+				public  int Sum(int x, int y) {  }
+				as it has 2 inputs  and one output....
+
+				OR equally valid is  :
+				Func<int> getRandomNumber;
+
+===============================================================================================================
+	// How to read data fron ANY ObservableCollection object using a generic Iterator method
+===============================================================================================================
+	        // This uses a Generic Iteration Method to read the data that handles any type of Collection
+            // it uses the IEnumerable Iterator method to access the collection and  returns them indiviually
+            // because it uses the yield return  system, so it can be used to obtain any number of records
+            // as individual items without having to load them all into memory
+		
+		//To call the generic method :-
+		foreach ( int item in ReadGenericCollection( intobj ) )
+        {
+            Console . WriteLine ( item );
+        }
+		
+		// the generic routine itself
+		public static IEnumerable ReadGenericCollection<T> ( ObservableCollection <T> collection)
+        {
+            IEnumerator ie = collection. GetEnumerator ( );
+            foreach ( var item in collection )
+            {
+                if(ie.MoveNext())
+                yield return item;
+            }
+        }
+
+===============================================================================================================
+	// How to use IEnumerable's Iterator
+===============================================================================================================
+        private void IterateCollection ( )
+        {
+            //  Iterates thru all records in the collection
+            BankAccountViewModel bvrecord = new BankAccountViewModel ( );
+            IEnumerator ie = bvm . GetEnumerator ( );
+            while ( true )
+            {
+                if ( ie . MoveNext ( ) )
+                {
+				// Cast item to relevant type
+                    bvrecord = ie . Current as BankAccountViewModel;
+                    Console . WriteLine ( bvrecord . CustNo );
+                }
+                else break;
+            }
+        }
+===============================================================================================================
+	// How to use yield return
+===============================================================================================================
+           // Caling method :
+		   foreach ( DataRow item in LoadSelectedBankYield (lim1, lim2 ) )
+            {
+			}
+		//enumerable method called (MUST be IEnumerable,xxxx()>)
+       public IEnumerable<DataRow> LoadSelectedBankYield (int lim1, int lim2 )
+        {
+            // Use Yield return for max efficiency
+            //YIELD RETURN Method to return Bank records matching ACTYPE lowHigh values pased to it
+            // Only  returns records that have a matching ACTYPE(s), saving memory
+            // that would otherwise be used processing all the (nearly 5000 records in this Db
+            // NB There s a time overhead for this.
+			// DataTable is a  global var
+            BankAccountViewModel bvrecord = new BankAccountViewModel ( );
+            foreach ( DataRow item in dt . Rows )
+            {
+                bvrecord . AcType = Convert . ToInt32 ( item[ 3 ] );
+                if( bvrecord . AcType >= lim1 && bvrecord . AcType  <= lim2)
+                    yield return item;
+            }
+
+   
+===============================================================================================================
 	// How to Setup messaging between windows/Controls with specialized arguments (Args)
 ===============================================================================================================
         // In Provider Control/Window
@@ -55,7 +365,7 @@
 
 
 ===============================================================================================================
-	// How to valid a  Cell # in  code
+	// How to validate a  Cell # in  code
 ===============================================================================================================
 
 	Private string checkCellNumber(string Mobilenumber)
@@ -345,17 +655,20 @@ NB See DataErrorWindow for a different Method
 	// How to use my  Flowdoc in any file
 ===============================================================================================================
 
-//ALL METHODS to be added to source file :
+//ALL METHODS / Declarations to be added to source file :
 
 		// Flowdoc file wide variables
 		// Pointer to the special library FlowdocLib.cs 
 		FlowdocLib fdl = new FlowdocLib();
 		private double XLeft=0;
 		private double YTop=0;
+        private bool UseFlowdoc = true;
+        public static object MovingObject { get; set; }
 
-		//Maximize hook  +/- statements
+		//Maximize hook  +/- statements - dont forget to remove them (Unsubscribe on closing)
 		Flowdoc . ExecuteFlowDocMaxmizeMethod += new EventHandler ( MaximizeFlowDoc );
 		Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
+        FlowDoc . FlowDocClosed += Flowdoc_FlowDocClosed;
 
 =======================================================================================
  place in .CS Code behind
@@ -363,12 +676,20 @@ NB See DataErrorWindow for a different Method
 		/// <summary>
 		///  These are the only methods any window needs to provide support for my FlowDoc system.
 
+		// This is triggered/Broadcast by FlowDoc so that the parent controller can Collapse the 
+		// Canvas so it  does not BLOCK other controls after being closed.
+		private void Flowdoc_FlowDocClosed ( object sender , EventArgs e )
+        {
+            canvas . Visibility = Visibility . Collapsed;
+        }
+
 		protected void MaximizeFlowDoc ( object sender , EventArgs e )
 		{
 			// Clever "Hook" method that Allows the flowdoc to be resized to fill window
 			// or return to its original size and position courtesy of the Event declard in FlowDoc
 			fdl . MaximizeFlowDoc ( Flowdoc , canvas , e );
 		}
+
 		private void Flowdoc_MouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
 			// Window wide  !!
@@ -376,6 +697,7 @@ NB See DataErrorWindow for a different Method
 			MovingObject = fdl . Flowdoc_MouseLeftButtonUp ( sender , Flowdoc , MovingObject , e );
 			ReleaseMouseCapture ( );
 		}
+
 		// CALLED WHEN  LEFT BUTTON PRESSED
 		private void Flowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
 		{
@@ -383,16 +705,19 @@ NB See DataErrorWindow for a different Method
 			MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc , e );
 			Console . WriteLine ($"MvvmDataGrid Btn down {MovingObject}");
 		}
+
 		private void Flowdoc_MouseMove ( object sender , MouseEventArgs e )
 		{
 			// We are Resizing the Flowdoc using the mouse on the border  (Border.Name=FdBorder)
 				fdl . Flowdoc_MouseMove ( Flowdoc , canvas , MovingObject , e );
 		}
+
 		// Shortened version proxy call		
 		private void Flowdoc_LostFocus ( object sender , RoutedEventArgs e )
 		{
 			Flowdoc . BorderClicked = false;
 		}
+
 		public void FlowDoc_ExecuteFlowDocBorderMethod ( object sender , EventArgs e )
 		{
 			// EVENTHANDLER to Handle resizing
@@ -401,6 +726,13 @@ NB See DataErrorWindow for a different Method
 			double dLeft = pt.X;
 			double dTop= pt.Y;
 		}
+
+		private void LvFlowdoc_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
+            //In this event, we get current mouse position on the control to use it in the MouseMove event.
+            MovingObject = fdl . Flowdoc_PreviewMouseLeftButtonDown ( sender , Flowdoc , e );
+        }
+ 
 		public void fdmsg ( string line1 , string line2 = "" , string line3 = "" )
 		{
 			//We have to pass the Flowdoc.Name, and Canvas.Name as well as up   to 3 strings of message
@@ -410,6 +742,7 @@ NB See DataErrorWindow for a different Method
 		}
 
 		#endregion Flowdoc support via library
+
 =======================================================================================
 		/ how tp call flowdoc
 		fdl.ShowInfo ( Flowdoc, canvas , $"The request for the default Bank Accounts table [{CurrentType}] was successful, and the {DbCount} results returned are shown in the datagrid ..." ,
@@ -439,16 +772,18 @@ NB See DataErrorWindow for a different Method
 
 		// You need to wrap the entire window area in a Canvas (I suggest it is named ""canvas"")
 		// but it can be placed anywhere inside the main Grid or whatever is used  to wrap the entire window
-		// Ensure it is set as Visibility="HIDDEN"
-		<Canvas x:Name="canvas" Grid.Row="0">
-				Canvas.Left="0" Canvas.Top="0">
+		// Ensure it is set as Visibility="COLLAPSED"
+		// It s recommended to always name if just "canvas" for contiinuty across all controls using Flowdoc
+
+		<Canvas x:Name="canvas" Grid.Row="0"
+				Canvas.Left="0" Canvas.Top="0"
 				HorizontalAlignment="Stretch"
 				VerticalAlignment="Stretch"
 				Height="{Binding Path=Height, ElementName=MainGrid}"
 				Width="{Binding Path=Width, ElementName=MainGrid}"
 				Panel.ZIndex="4"
 				Background="Transparent"
-MUST BE -		Visibility="Hidden">
+MUST BE -		Visibility="Collapsed">
 
 	    		<user:FlowDoc x:Name="Flowdoc"
 				backGround="{StaticResource Gray5}"
@@ -463,22 +798,26 @@ MUST BE -		Visibility="Hidden">
 				Opacity="1"
 				Panel.ZIndex="4"
 				PreviewMouseLeftButtonDown="LvFlowdoc_PreviewMouseLeftButtonDown"
-MUST BE -				Visibility="Hidden"
+MUST BE -				Visibility="Collapsed"
 				Width="520" />
-
 			</Canvas>
+
 					......  all other Window functionality goes here .....
+
 	</Grid>
 
-
-	#endregion FlowDoc support
+		#endregion FlowDoc support
 
 ===============================================================================================================
 	// How to ensure that the Db Domain is correct BEFORE trying to access Stored Procedures or other Tables
 	// that are not in the default (IAN1) SQL domain used most f the time (Adventureworks etc)
+	// GenericDbHandlers.CS is required
+
+	// GenericDbHandlersContains has this very useful helper method for ensuring SQL Db handling will acess the correct M$ Db name "Ian1" is mmmy main supply
+	// but it is geeric for any Db names shown in M$SQLServer (requires FLAGS.CS also as it  trigger the connection strings utility therein)
 ===============================================================================================================
 
-		private static void CheckDbDomain(string DbDomain="IAN1")
+		private static void GenericDbHandlers.CheckDbDomain(string DbDomain="IAN1")
 
 ===============================================================================================================
 	// How to access ICommands
@@ -967,7 +1306,8 @@ Server=localhost\MSSQLSERVER03;Database=master;Trusted_Connection=True;
 ===============================================================================================================
 
 	  ResizeMode="CanResizeWithGrip"
- 
+ 	  WindowChrome.ResizeGripDirection="BottomRight"
+
 ===============================================================================================================
 // How to Add/Create columns in any datagrid
 ===============================================================================================================
@@ -1117,6 +1457,8 @@ System . Diagnostics . PresentationTraceSources . DataBindingSource . Switch . L
 	viewer.Refresh();
 
 	// You  need relevant Methods matching the condition you want it tested against  eg:
+	
+	// NB: Predicates MUST only have ONE argmuent & return a bool 
 
 	private bool Actypefiltermethod ( object obj )
 	{
@@ -1627,6 +1969,34 @@ can be used most anywhere in XAML code
 					<Binding Path="FontDecoration" ElementName="DisplayWindow"/>
 				</MultiBinding>
 			</local:ThreeDeeBtnControl.Width>
+
+			OR:
+
+			          <TextBlock.Text>
+                   <!--//THIS is how you can pass an object (BankAccountViewModel or theViewModel or whatever) to a converter ,
+                    so we can combine fields or whatever else we want to show
+                    NB SelectedAccount1 is received in [0]-->
+                <MultiBinding Converter="{StaticResource BankCombinerCustNoBankno}">
+                    <!--// provides total collection, which we might need, but NOT really here -->
+                    <!--<Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" Path="DataContext.bvm" />-->
+
+                    <!--// provides direct pointer to  YieldWindowViewModel.SelectedAccount1, which is a BankAccountViewModel record-->
+                    <!--NB MUST use the DataContext prefix here...
+                    |||||NB SelectedAccount1 is received in [0]-->
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" Path="DataContext.SelectedAccount1" />
+                    <!--// provides direct pointer to  YieldWindowViewModel.SelectedAccount2, which is a BankAccountViewModel record, mostly it is null->
+                    NB SelectedAccount1 is received in [1]-->
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" Path="DataContext.SelectedAccount2" />
+
+                    <!--// provides a pointer to YieldWindowViewModel, which is the ViewModel & current DataContext
+                    NB SelectedAccount1 is received in [2]-->
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" Path="DataContext" />
+                    <!--// Also provides only a pointer to YieldWindowViewModel, which is the ViewModel & current DataContext
+                    NB SelectedAccount1 is received in [3]-->
+                    <Binding />
+                </MultiBinding>
+                </TextBlock.Text>
+
 
 ===============================================================================================================
 //You can use this format almost anywhere to change a Dependency Poperty

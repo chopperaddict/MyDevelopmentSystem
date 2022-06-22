@@ -1,4 +1,6 @@
-﻿using MyDev . ViewModels;
+﻿using System . ComponentModel;
+
+using MyDev . ViewModels;
 
 namespace MyDev . Views
 {
@@ -12,7 +14,7 @@ namespace MyDev . Views
 		/// Interaction logic for DragDropClient.xaml
 		/// </summary>
 		/// 
-		public class BankDragviewModel : BankAccountViewModel
+		public class BankDragviewModel : BankAccountViewModel, INotifyPropertyChanged
 		{
 			public string RecordType
 			{

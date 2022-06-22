@@ -1,6 +1,4 @@
 ﻿
-#define DEBUGEXPAND
-#undef DEBUGEXPAND
 
 using System;
 using System . Collections . Generic;

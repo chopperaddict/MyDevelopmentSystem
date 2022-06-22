@@ -14,10 +14,20 @@ using System . Windows . Input;
 namespace MyDev . ViewModels
 {
 	//
-	public class DirectoryItemViewModel : BaseViewModel//INotifyPropertyChanged
+	public class DirectoryItemViewModel 
 	{
+		#region OnPropertyChanged
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void NotifyPropertyChanged ( string propertyName )
+		{
+			if ( PropertyChanged != null )
+			{
+				PropertyChanged ( this , new PropertyChangedEventArgs ( propertyName ) );
+			}
+		}
+		#endregion OnPropertyChanged
 
-//		public event PropertyChangedEventHandler PropertyChanged;
+		//		public event PropertyChangedEventHandler PropertyChanged;
 		//private void OnPropertyChanged ( string propertyName )
 		//{
 		//	if ( Flags . SqlBankActive == false )

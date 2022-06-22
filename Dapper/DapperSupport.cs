@@ -47,18 +47,24 @@ namespace MyDev . Dapper
 			// Use DAPPER to run a Stored Procedure
 			//====================================
 			string result = "";
+#pragma warning disable CS0219 // The variable 'HasArgs' is assigned but its value is never used
 			bool HasArgs = false;
+#pragma warning restore CS0219 // The variable 'HasArgs' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'argcount' is assigned but its value is never used
 			int argcount = 0;
+#pragma warning restore CS0219 // The variable 'argcount' is assigned but its value is never used
 			//DbToOpen = "";
 			errormsg = "";
+#pragma warning disable CS0168 // The variable 'resultDb' is declared but never used
 			IEnumerable  resultDb;
+#pragma warning restore CS0168 // The variable 'resultDb' is declared but never used
 			genericlist = new List<string> ( );
 			string arg1="", arg2="", arg3="", arg4="";
 			Dictionary<string , object> dict = new Dictionary<string, object>();
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
@@ -170,7 +176,9 @@ namespace MyDev . Dapper
 							Params . Add ( "Arg4" , arg4 , DbType . String , ParameterDirection . Input , arg4 . Length );
 						// Call Dapper to get results using it's StoredProcedures method which returns
 						// a Dynamic IEnumerable that we then parse via a dictionary into collection of GenericClass  records
+#pragma warning disable CS0219 // The variable 'maxcols' is assigned but its value is never used
 						int colcount = 0, maxcols = 0;
+#pragma warning restore CS0219 // The variable 'maxcols' is assigned but its value is never used
 
 						if ( SqlCommand . ToUpper ( ) . Contains ( "SELECT " ) )
 						{
@@ -203,7 +211,9 @@ namespace MyDev . Dapper
 											gc = ParseDapperRow ( item , dict , out colcount , ref VarcharList );
 											dictcount = 1;
 											fldcount = dict . Count;
+#pragma warning disable CS0219 // The variable 'index' is assigned but its value is never used
 											int index = 0;
+#pragma warning restore CS0219 // The variable 'index' is assigned but its value is never used
 											string tmp="";
 											foreach ( var pair in dict )
 											{
@@ -374,9 +384,13 @@ namespace MyDev . Dapper
 		private static void ParseListToDbRecord ( List<string> genericlist , out GenericClass collection )
 		{
 			GenericClass gc = new GenericClass();
+#pragma warning disable CS0168 // The variable 'fields' is declared but never used
 			string[] fields;
+#pragma warning restore CS0168 // The variable 'fields' is declared but never used
 			string input  = genericlist[0];
+#pragma warning disable CS0219 // The variable 'outerindex' is assigned but its value is never used
 			int index = 1, outerindex = 0;
+#pragma warning restore CS0219 // The variable 'outerindex' is assigned but its value is never used
 			//foreach ( var item in genericlist )
 			//{
 			//	outerindex++;
@@ -470,7 +484,7 @@ namespace MyDev . Dapper
 				string ConString = Flags . CurrentConnectionString;
 				if ( ConString == "" )
 				{
-					GenericDbHandlers . CheckDbDomain ( "IAN1" );
+					GenericDbUtilities . CheckDbDomain ( "IAN1" );
 					ConString = Flags . CurrentConnectionString;
 				}
 				con = new SqlConnection ( ConString );
@@ -663,7 +677,9 @@ namespace MyDev . Dapper
 			// only used tocreta Global collectionfrom our list
 			//			IEnumerable  <SelectionEntry>  bvmi;
 			// Read data via Dapper into list<BVM> cos Dapper uses Linq, so we cannot get other types returned
+#pragma warning disable CS0219 // The variable 'sqlCon' is assigned but its value is never used
 			SqlConnection sqlCon=null;
+#pragma warning restore CS0219 // The variable 'sqlCon' is assigned but its value is never used
 			using ( IDbConnection db = new SqlConnection ( Con ) )
 			{
 				try
@@ -709,7 +725,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			string[] ValidFields=
@@ -799,14 +815,16 @@ namespace MyDev . Dapper
 					Console . WriteLine ( $"SQL DAPPER {DbNameToLoad}  FAILED : {ex . Message}" );
 				}
 			}
-			EventControl . TriggerBankDataLoaded ( null ,
+			Application . Current . Dispatcher . Invoke ( ( ) =>
+				EventControl . TriggerBankDataLoaded ( null ,
 				new LoadedEventArgs
 				{
 					CallerType = "DAPPERSUPPORT" ,
 					CallerDb = Caller ,
 					DataSource = bvmcollection ,
 					RowCount = bvmcollection . Count
-				} );
+				} )
+				);
 			return;
 		}
 
@@ -832,7 +850,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			string[] ValidFields=
@@ -939,7 +957,9 @@ namespace MyDev . Dapper
 
 
 		#region Bank loading methods
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public async static Task<bool> GetBankObsCollectionAsync ( ObservableCollection<BankAccountViewModel> collection ,
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 			string SqlCommand = "" ,
 			string DbNameToLoad = "" ,
 			string Orderby = "" ,
@@ -954,7 +974,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			string[] ValidFields=
@@ -1224,7 +1244,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			string[] ValidFields=
@@ -1499,7 +1519,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			if ( DbNameToLoad == "" )
@@ -1585,7 +1605,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			Dict = BankDict;
@@ -1653,7 +1673,9 @@ namespace MyDev . Dapper
 
 		#region Customer Db Data Loading methods
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public async static Task<bool> GetCustObsCollectionAsync ( ObservableCollection<CustomerViewModel> collection ,
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 			string SqlCommand = "" ,
 			string DbNameToLoad = "" ,
 			string Orderby = "" ,
@@ -1689,7 +1711,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -1928,14 +1950,16 @@ namespace MyDev . Dapper
 					}
 				}
 			}
-			EventControl . TriggerCustDataLoaded ( null ,
+			Application . Current . Dispatcher . Invoke ( ( ) =>
+				EventControl . TriggerCustDataLoaded ( null ,
 				new LoadedEventArgs
 				{
 					CallerType = "SQLSERVER" ,
 					CallerDb = Caller ,
 					DataSource = cvmcollection ,
 					RowCount = cvmcollection . Count
-				} );
+				} )
+				);
 			return true;
 		}
 
@@ -1975,7 +1999,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -2230,14 +2254,16 @@ namespace MyDev . Dapper
 			}
 			if ( Notify )
 			{
-				EventControl . TriggerCustDataLoaded ( null ,
+				Application . Current . Dispatcher . Invoke ( ( ) =>
+					EventControl . TriggerCustDataLoaded ( null ,
 					new LoadedEventArgs
 					{
 						CallerType = "SQLSERVER" ,
 						CallerDb = Caller ,
 						DataSource = cvmcollection ,
 						RowCount = cvmcollection . Count
-					} );
+					})
+					);
 			}
 			return cvmcollection;
 		}
@@ -2267,7 +2293,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -2322,14 +2348,16 @@ namespace MyDev . Dapper
 
 			if ( NotifyCaller )
 			{
-				EventControl . TriggerCustDataLoaded ( null ,
+				Application . Current . Dispatcher . Invoke ( ( ) =>
+			EventControl . TriggerCustDataLoaded ( null ,
 					new LoadedEventArgs
 					{
 						CallerType = "SQLSERVER" ,
 						CallerDb = Caller ,
 						DataSource = collection ,
 						RowCount = collection . Count
-					} );
+					} )
+			);
 			}
 			return collection;
 		}
@@ -2338,7 +2366,9 @@ namespace MyDev . Dapper
 
 		#region Details Db Data Loading methods
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public async static Task<bool> GetDetailsObsCollectionAsync ( ObservableCollection<DetailsViewModel> collection ,
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 			string SqlCommand = "" ,
 			string DbNameToLoad = "" ,
 			string Orderby = "" ,
@@ -2354,7 +2384,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -2648,7 +2678,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -2932,11 +2962,13 @@ namespace MyDev . Dapper
 		{
 			// Works very well 27/10/21
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			BankAccountViewModel bvm = new BankAccountViewModel();
@@ -2993,11 +3025,13 @@ namespace MyDev . Dapper
 			// Works very well 27/10/21
 			string SqlCommand = "" ;
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -3052,11 +3086,13 @@ namespace MyDev . Dapper
 			// Works very well 27/10/21
 			string SqlCommand = "" ;
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			CustomerViewModel cvm = new CustomerViewModel ( );
@@ -3121,11 +3157,13 @@ namespace MyDev . Dapper
 			//CAUTION THIS ONLY WORKS FOR TABLES WITH FIELD1 - FIELD20 STRUCTURE (GENERIC TABLE)
 			string SqlCommand = "" ;
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			CustomerViewModel cvm = new CustomerViewModel ( );
@@ -3168,11 +3206,13 @@ namespace MyDev . Dapper
 			// Works very well 27/10/21
 			string SqlCommand = "" ;
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			CustomerViewModel cvm = new CustomerViewModel ( );
@@ -3238,11 +3278,13 @@ namespace MyDev . Dapper
 			// Works very well 27/10/21
 			string SqlCommand = "" ;
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -3315,11 +3357,13 @@ namespace MyDev . Dapper
 		{
 			// Works very well 27/10/21
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			DetailsViewModel bvm = new DetailsViewModel();
@@ -3387,11 +3431,13 @@ namespace MyDev . Dapper
 			// Works very well 27/10/21
 			string SqlCommand = "" ;
 			bool result = true;
+#pragma warning disable CS0219 // The variable 'indexer' is assigned but its value is never used
 			int indexer = 0;
+#pragma warning restore CS0219 // The variable 'indexer' is assigned but its value is never used
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -3827,7 +3873,9 @@ namespace MyDev . Dapper
 		}
 
 		#region Generic Db load	  ASYNC
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public static async Task<bool> GetGenericCollectionAsync ( List<string> collection ,
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		string SqlCommand = "" ,
 		bool Notify = false ,
 		string Caller = "" )
@@ -3837,7 +3885,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			try
@@ -3882,7 +3930,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -3931,7 +3979,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 
@@ -3970,12 +4018,13 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			using ( IDbConnection connection = new SqlConnection ( ConString ) )
 			{
 				// Check for existence of Db to be created
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 				try
 				{
 					TestCommand = $"Select top(1) * from  {NewDb}";
@@ -3987,6 +4036,7 @@ namespace MyDev . Dapper
 				{
 					Console . WriteLine ( $"Database not found by test call to Db, proceeding with copy operation" );
 				}
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 				// All is well, carry on and Copy Db
 				try
 				{
@@ -4010,7 +4060,9 @@ namespace MyDev . Dapper
 		#endregion Create Copy of any specified Db
 
 		#region	CREATEBANKCOMBINEDASYNC
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		public async static Task<ObservableCollection<BankCombinedViewModel>> CreateBankCombinedAsync ( ObservableCollection<BankCombinedViewModel> collection ,
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
 		string SqlCommand = "" ,
 		bool Notify = false )
 		{
@@ -4021,7 +4073,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )
@@ -4087,7 +4139,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			//============================================
@@ -4453,7 +4505,9 @@ namespace MyDev . Dapper
 		}
 		public static GenericClass ParseDapperRow ( dynamic buff , Dictionary<string , object> dict , out int colcount , ref List<int> varcharlen , bool GetLength=false)
 		{
+#pragma warning disable CS0219 // The variable 'outstr' is assigned but its value is never used
 			string outstr="";
+#pragma warning restore CS0219 // The variable 'outstr' is assigned but its value is never used
 			//			StringBuilder sb = new StringBuilder();
 			GenericClass GenRow = new GenericClass();
 			int index=0;

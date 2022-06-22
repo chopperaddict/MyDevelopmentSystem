@@ -55,10 +55,16 @@ namespace MyDev . Views
         private double MaxRowHeight { get; set; }
         #endregion Variables used for splitters
 
+#pragma warning disable CS0414 // The field 'SplitterTemplate.SqlCommand' is assigned but its value is never used
         private string SqlCommand = "";
+#pragma warning restore CS0414 // The field 'SplitterTemplate.SqlCommand' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitterTemplate.DefaultSqlCommand' is assigned but its value is never used
         private string DefaultSqlCommand = "Select * from BankAccount";
+#pragma warning restore CS0414 // The field 'SplitterTemplate.DefaultSqlCommand' is assigned but its value is never used
 //        private bool UseBGThread = false;
+#pragma warning disable CS0414 // The field 'SplitterTemplate.LoadDirect' is assigned but its value is never used
         private bool LoadDirect = true;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.LoadDirect' is assigned but its value is never used
 
         #region Binding full props
         // Full properties used in Binding to I/f objects
@@ -76,15 +82,23 @@ namespace MyDev . Views
             set { movingobject = value; }
         }
 
+#pragma warning disable CS0414 // The field 'SplitterTemplate.FirstXPos' is assigned but its value is never used
         private double FirstXPos = 0;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.FirstXPos' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitterTemplate.FirstYPos' is assigned but its value is never used
         private double FirstYPos = 0;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.FirstYPos' is assigned but its value is never used
 
         #endregion Binding full props
 
         #region Flowdoc file wide variables
         public FlowdocLib fdl = new FlowdocLib ( );
+#pragma warning disable CS0414 // The field 'SplitterTemplate.XLeft' is assigned but its value is never used
         private double XLeft = 0;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.XLeft' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitterTemplate.YTop' is assigned but its value is never used
         private double YTop = 0;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.YTop' is assigned but its value is never used
         #endregion Flowdoc file wide variables
 
         #endregion All Template setup stuff
@@ -499,9 +513,15 @@ namespace MyDev . Views
             //vsplitterbar . Margin = th;
         }
 
+#pragma warning disable CS0414 // The field 'SplitterTemplate.VSplitDown' is assigned but its value is never used
         private bool VSplitDown = false;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.VSplitDown' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitterTemplate.LeftWidth' is assigned but its value is never used
         private double LeftWidth = 0;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.LeftWidth' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'SplitterTemplate.RightWidth' is assigned but its value is never used
         private double RightWidth = 0;
+#pragma warning restore CS0414 // The field 'SplitterTemplate.RightWidth' is assigned but its value is never used
         private void vsplitterbar_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
             VSplitDown = true;

@@ -21,6 +21,7 @@ namespace MyDev . ViewModels
             public NwOrderCollection ( string arg )
             {
                   //if ( arg == "" )
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                   try
                   {
                         LoadOrders ( arg );
@@ -29,6 +30,7 @@ namespace MyDev . ViewModels
                   {
                         Console . WriteLine ( $"ERROR IN MAIN NW ORDERS CALL SYSTEM" );
                   }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                   //else
                   //        StdLoadOrders ( arg );
             }
@@ -84,6 +86,7 @@ namespace MyDev . ViewModels
                   // Get names of fields.
                   for ( int ctr = 0 ; ctr < fieldCount ; ctr++ )
                         headers [ ctr ] = dr . GetName ( ctr );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                   try
                   {
                         // Get data, replace missing values with dummy date as in this case the ShippedDate data is BAD "01/01/2000", and display it.
@@ -129,6 +132,7 @@ namespace MyDev . ViewModels
                   {
                         Console . WriteLine ( $"NW ORDERS - INNER ERROR" );
                   }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                   return nword;
             }
             public NwOrderCollection CreateOrdersCollection ( DataTable dt )

@@ -17,7 +17,9 @@ namespace MyDev . ViewModels
 {
     public class MvvmImageUCViewModel
     {
+#pragma warning disable CS0169 // The field 'MvvmImageUCViewModel.obj' is never used
         private EventHandler<Image> obj;
+#pragma warning restore CS0169 // The field 'MvvmImageUCViewModel.obj' is never used
 
         public ICommand CloseUControl4 { get; set; }
         public ICommand MouseUpCommand { get; set; }

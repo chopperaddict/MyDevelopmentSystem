@@ -25,7 +25,7 @@ namespace MyDev . UserControls
     /// </summary>
     public partial class MultiImageViewer : UserControl, IDataErrorInfo
     {
-        public ObservableCollection<Image> MVImages = new ObservableCollection<Image> ( );
+        public static ObservableCollection<Image> MVImages = new ObservableCollection<Image> ( );
         public bool WrapPanelLoaded { get; set; } = false;
         public int WPLoadCount { get; set; } = 0;
         private UserControlsViewer ucv { get; set; }
@@ -41,148 +41,160 @@ namespace MyDev . UserControls
                 return null;
             }
         }
-        public string this [ string PropertyName ] 
-        { 
-            get 
-            { 
-                if(PropertyName == "img")
+        
+        // Required by IDataError  above!!!!
+        public string this [ string PropertyName ]
+        {
+            get
+            {
+                if ( PropertyName == "img" )
                 {
                     if ( img . Source == null )
                         return null;
                 }
                 return null;
-            } 
+            }
         }
 
         //BackgroundWorker worker = new BackgroundWorker ( );
         public MultiImageViewer ( )
         {
             InitializeComponent ( );
+            
+            // set up for closedown cleanup as UserControls do NOT have Closing/Closed methods
+            this . Loaded += UcHostWindow_Loaded;
+
+            // get handlle  to our parent window
             ucv = UserControlsViewer . GetUCviewer ( );
-            if ( ucv.WrapPanelLoaded == false || MVImages . Count == 0 )
+
+            if (  MVImages . Count == 0 )
             {
-                LoadImages ( );
-                this . Refresh ( );
-
+                Mouse . OverrideCursor = Cursors . Wait;
+                Dispatcher . Invoke ( ( ) =>
                 {
-                    //Dispatcher . Invoke ( ( ) =>
-                    //{
-                    //    Task . Run ( ( ) => LoadMultiViewImages ( Images , sp1 ) );
-
-                    //} , System . Windows . Threading . DispatcherPriority . Background );
-                    //Task . Run ( ( ) => LoadMultiViewImages ( Images , sp1 ) );
-
-                    //ThreadStart threadDelegate = new ThreadStart ( LoadMultiViewImages );
-                    //Thread newThread = new Thread ( threadDelegate );
-                    //newThread . Start ( );
-
-
-                    //                Thread thread = new Thread ( LoadMultiViewImages) ;
-
-                }
-                //ucv . uclistbox . UClistbox . ItemsSource = null;
-                //ucv . uclistbox . UClistbox . Items . Clear ( );
+                    LoadImagesAsync ( MVImages );
+                } );
+                Mouse . OverrideCursor = Cursors . Arrow;
+                Task . Run ( ( ) => WrapPanelSetup ( ) );
+                this . Refresh ( );
                 sp1 . Children . Clear ( );
-
-                Thread thread = new Thread ( WrapPanelSetup );
-                thread . Start ( );
-
-                // reset images listbox contents we removed earlier
-                //ucv . uclistbox . UClistbox . ItemsSource = MVImages;
-                //ucv . uclistbox . UClistbox . SelectedIndex = ucv . uclistbox . CurrentIndex == -1 ? 0 : ucv . uclistbox . CurrentIndex;
-                //ucv . uclistbox . UClistbox . SelectedItem = ucv . uclistbox . CurrentIndex == -1 ? 0 : ucv . uclistbox . CurrentIndex;
-                //ucv . WrapPanelImages . Content = this;
-                //ucv . WrapPanelLoaded = true;
-                //WrapPanelLoaded = true;
+                this . Loaded += UcHostWindow_Loaded;
             }
             else
             {
+                if(sp1.Children . Count <= 1)
+                {
+                    sp1.Children . Clear ( );
+                    Task . Run ( ( ) => WrapPanelSetup ( ) );
+                }
+                sp1 . UpdateLayout ( );
                 ucv . InfoPanel . Text = $"Multi Image Viewer";
-                //WrapPanelLoaded = true;
                 ucv . WrapPanelLoaded = true;
             }
-
-            //WrapPanelSetup ( );
         }
-        async private void WrapPanelSetup ( )
+
+        private void UcHostWindow_Loaded ( object sender , RoutedEventArgs e )
+        {
+            Window parentWin = Window . GetWindow ( this );
+            parentWin . Closing += ParentWin_Closing;
+        }
+        private void ParentWin_Closing ( object sender , System . ComponentModel . CancelEventArgs e )
+        {
+            //UcHostWindow vm = this . DataContext as UcHostWindow;
+            MVImages = null;
+            ucv = null;            
+        }
+        private async void LoadImagesAsync ( ObservableCollection<Image> Mvimages )
+        {
+            int count = 0;
+            if ( Mvimages . Count == 0 )
+            {
+                //               Mouse . OverrideCursor = Cursors . Wait;
+                string path = @"C:\\Users\ianch\pictures\";
+                var imagefiles = Directory . GetFiles ( path );
+                foreach ( var imagefile in imagefiles )
+                {
+                    if ( imagefile . ToUpper ( ) . Contains ( ".PSD" ) == false )
+                    {
+                        try
+                        {
+                            Uri url = new Uri ( imagefile );
+                            BitmapImage img = new BitmapImage ( url );
+                            Image image = new Image ( );
+                            image . Source = img;
+                            image . Height = 100;
+                            image . Width = 100;
+                            image . Tag = url;
+                            Mvimages . Add ( image );
+                            count++;
+                            Console . Write ( "." );
+                        }
+                        catch ( Exception ex ) { Console . WriteLine ( $"{ex . Message}" ); }
+                    }
+                }
+            }
+            Console . WriteLine ( $"{count} images loaded into ObservableCollection MvImages" );
+            Mouse . OverrideCursor = Cursors . Arrow;
+            return;
+        }
+        async private Task WrapPanelSetup ( )
         {
             {
-                //            await Dispatcher . BeginInvoke ( DispatcherPriority . Normal , ( Action ) ( async ( ) =>
-                //                 LoadMultiViewImages ()
-                ////                LoadMultiViewImages ( Images , sp1 )
-                //            ) );
-            }
-            if ( ucv . WrapPanelLoaded == false )
-            {
-                //ucv . uclistbox . UClistbox . ItemsSource = null;
-                //ucv . uclistbox . UClistbox . Items . Clear ( );
-//                sp1 . Children . Clear ( );
-                await Dispatcher . BeginInvoke ( new Action ( ( ) =>
-                 LoadMultiViewImages ( )
-                ) , DispatcherPriority . ApplicationIdle );
+                // This loads ALL the images into the Wrappanel, and can be quite slow
+                Dispatcher . BeginInvoke ( DispatcherPriority . Normal , ( Action ) LoadMultiViewImages );
 
-                //await Dispatcher . BeginInvoke ( new Action ( ( ) =>
-                //    // reset images listbox contents we removed earlier
-                //    ucv . uclistbox . UClistbox . ItemsSource = MVImages
-                //) , DispatcherPriority . ApplicationIdle );
-
-                //await Dispatcher . BeginInvoke ( new Action ( ( ) =>
-                //    ucv . uclistbox . UClistbox . SelectedIndex = ucv . uclistbox . CurrentIndex == -1 ? 0 : ucv . uclistbox . CurrentIndex
-                //) , DispatcherPriority . ApplicationIdle );
-                //await Dispatcher . BeginInvoke ( new Action ( ( ) =>
-                //    ucv . uclistbox . UClistbox . SelectedItem = ucv . uclistbox . CurrentIndex == -1 ? 0 : ucv . uclistbox . CurrentIndex
-                //) , DispatcherPriority . ApplicationIdle );
-                //await Dispatcher . BeginInvoke ( new Action ( ( ) =>
-                //    ucv . WrapPanelImages . Content = this
-                //) , DispatcherPriority . ApplicationIdle );
-            
-//                Mouse . OverrideCursor = Cursors . Arrow;
             }
-            else
-            {
-                //ucv . InfoPanel . Text = $"Multi Image Viewer";
-                //WrapPanelLoaded = true;
-                //ucv . WrapPanelLoaded = true;
-            }
+            //if ( ucv . WrapPanelLoaded == false )
+            //{
+            //    //await Dispatcher . BeginInvoke ( new Action ( ( ) =>
+            //    // LoadMultiViewImages ( )
+            //    //) , DispatcherPriority . ApplicationIdle );
+            //}
+            //else
+            //{
+            //}
 
-            {
-                //await Task . Run ( ( ) => LoadMultiViewImages ( Images , sp1 ) );
-                //return;
+            //{
+            //    return;
 
-                //worker = new BackgroundWorker ( );
-                //worker . RunWorkerCompleted += new RunWorkerCompletedEventHandler ( worker_RunWorkerCompleted );
-                //worker . DoWork += new DoWorkEventHandler ( worker_DoWork );
-                //worker . WorkerReportsProgress = true;
-                //worker . ProgressChanged += worker_ProgressChanged;
-                //worker . RunWorkerAsync ( 10000 );
-                //          Mouse . OverrideCursor = Cursors . Arrow;
-            }
+            //worker = new BackgroundWorker ( );
+            //worker . RunWorkerCompleted += new RunWorkerCompletedEventHandler ( worker_RunWorkerCompleted );
+            //worker . DoWork += new DoWorkEventHandler ( worker_DoWork );
+            //worker . WorkerReportsProgress = true;
+            //worker . ProgressChanged += worker_ProgressChanged;
+            //worker . RunWorkerAsync ( 10000 );
+            //          Mouse . OverrideCursor = Cursors . Arrow;
+            //}
         }
 
         private async void LoadMultiViewImages ( )
         {
             WPLoadCount = 0;
-//            ucv . uclistbox . UClistbox . ItemsSource = null;
-//            ucv . uclistbox . UClistbox . Items . Clear ( );
+            sp1 . Children . Clear ( );
+            Console . WriteLine ( $"Loading Multiple Images " );
             for ( int x = WPLoadCount ; x < MVImages . Count ; x++ )
             {
-                await this . Dispatcher . BeginInvoke ( new Action ( ( ) =>
+                sp1 . Children . Add ( MVImages [ x ] );
+                WPLoadCount++;
+                Console . Write ( "." );
+                Dispatcher . Invoke ( ( ) =>
                 {
-                    sp1 . Children . Add ( MVImages [ x ] );
-                    WPLoadCount++;
                     string msg = $"{WPLoadCount}/{MVImages . Count} images loaded successfully.....";
                     ucv . Loadcounter . Text = msg;
-                    Thread . Sleep ( 5 );
-                } ) );
+                } , DispatcherPriority . Background );
+
                 if ( WPLoadCount >= 50 )
                 {
+                    Console . WriteLine ( "." );
                     break;
                 }
             }
             // Only now we set Images Loaded into WrapPanel flags
-  //         WrapPanelLoaded = true;
+            //         WrapPanelLoaded = true;
             ucv . WrapPanelLoaded = true;
         }
+
+        // not in use
         private void LoadImages ( )
         {
             int count = 0;
@@ -214,6 +226,8 @@ namespace MyDev . UserControls
             Console . WriteLine ( $"{count} images loaded into ObservableCollection MvImages" );
             Mouse . OverrideCursor = Cursors . Arrow;
         }
+
+        // IS in use
 
         private void img_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
         {
@@ -279,12 +293,14 @@ namespace MyDev . UserControls
 
         private void img_PreviewMouseRightButtonDown ( object sender , MouseButtonEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'index' is assigned but its value is never used
             int index = 0;
+#pragma warning restore CS0219 // The variable 'index' is assigned but its value is never used
             WrapPanel img = sender as WrapPanel;
             Image imagename = e . OriginalSource as Image;
             string s = imagename . Tag . ToString ( );
             s = s . Substring ( 8 );
-            for ( int x = 0 ; x < MVImages . Count; x++ )
+            for ( int x = 0 ; x < MVImages . Count ; x++ )
             {
                 if ( MVImages [ x ] . Name == s )
                 {

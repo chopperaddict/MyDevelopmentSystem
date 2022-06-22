@@ -15,7 +15,9 @@ namespace MyDev . Converts
     {
         public object Convert ( object [ ] values , Type targetType , object parameter , CultureInfo culture )
         {
+#pragma warning disable CS0219 // The variable 'eargs' is assigned but its value is never used
             ExpandArgs eargs = new ExpandArgs ( );
+#pragma warning restore CS0219 // The variable 'eargs' is assigned but its value is never used
             return values;
             //eargs . tvitem = values [ 0 ] as TreeViewItem;
             //eargs . Levels = System.Convert . ToInt16 ( values [ 1 ] );

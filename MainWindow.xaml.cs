@@ -25,8 +25,8 @@ namespace MyDev
     #region Generic System wide structures and Definitions
     // All System wide Delegates are declared here...
     #region DELEGATE DECLARATIONS
-    public delegate void LoadTableDelegate ( string Sqlcommand , string TableType , object bvm );
-	public delegate void LoadTableWithDapperDelegate ( string Sqlcommand , string TableType , object bvm , object Args);
+ //   public delegate void LoadTableDelegate ( string Sqlcommand , string TableType , object bvm );
+	//public delegate void LoadTableWithDapperDelegate ( string Sqlcommand , string TableType , object bvm , object Args);
 	#endregion DELEGATE DECLARATIONS
 
 	#region dummy classes
@@ -240,9 +240,6 @@ namespace MyDev
 	//		Flags . UseFlowdoc = ( bool ) Properties . Settings . Default [ "UseFlowdoc" ];
 //			Flags . UseScrollView= ( bool ) Properties . Settings . Default [ "UseScrollViewer" ];
 			Flags . FlowdocCrMultplier = 3.0;
-			// Setup our treeview data source  as a publically accessible static pointer (Txplorer)
-			//TreeExplorer. Explorer = new ExplorerClass();
-			//Txplorer = TreeExplorer . Explorer;
 			Flags . UseFlowdoc= Properties . Settings . Default . UseFlowDoc. ToUpper ( ) == "TRUE" ? true : false;
 			Properties . Settings . Default . Save ( );
 			Flags . UseScrollView = Properties . Settings . Default . UseScrollViewer . ToUpper ( ) == "TRUE" ? true : false;
@@ -278,11 +275,13 @@ namespace MyDev
 		private void button3_Click ( object sender , RoutedEventArgs e )
 		{
 			TreeViews tv = new TreeViews();
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
 			try
 			{
 				tv . Show ( );
 			}
             catch ( Exception ex ) { Console . WriteLine ("TreeViews already open"); }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
 		}
 
 		private void button4_Click ( object sender , RoutedEventArgs e )
@@ -370,8 +369,9 @@ namespace MyDev
 
         private void button14_Click ( object sender, RoutedEventArgs e )
         {
- //           SplitterTemplate st = new SplitterTemplate ( );
-//            st . Show ( );
+			Mouse . OverrideCursor = Cursors . Wait;
+			InterWinComms iw= new InterWinComms ( );
+            iw . Show ( );
 		}
 
 		private void button15_Click ( object sender, RoutedEventArgs e )
@@ -403,19 +403,25 @@ namespace MyDev
 
         private void button18_Click ( object sender , RoutedEventArgs e )
         {
-
+			//test t = new test ( );
+//			SpinnerDlg spinner = new SpinnerDlg ( ); 
+//			spinner . Show ( );
         }
 
         private void button20_Click ( object sender , RoutedEventArgs e )
         {
-//			ScrollviewerSample ss = new ScrollviewerSample ( );
-	//		ss . Show ( );
+//			LoadPopup pu= new LoadPopup ( );
+//			pu . Show ( );
+			
+			Tabview ss = new Tabview( );
+			ss . Show ( );
 
 		}
 
         private void button21_Click ( object sender , RoutedEventArgs e )
         {
-
+			YieldWindow yw = new YieldWindow ( );
+			yw . Show ( );
         }
     }
 }

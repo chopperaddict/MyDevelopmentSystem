@@ -33,6 +33,8 @@ namespace MyDev . UserControls
 	public partial class FlowDoc : INotifyPropertyChanged
 	{
 
+		public static event EventHandler<EventArgs> FlowDocClosed;
+
 		#region Properties
 		private bool mouseCaptured  ;
 		public bool MouseCaptured
@@ -133,7 +135,7 @@ namespace MyDev . UserControls
 			{
 				UseScrollviewer = true;
 				fdviewer . Visibility = Visibility . Visible;
-				doc . Visibility = Visibility . Hidden;
+				doc . Visibility = Visibility . Collapsed;
 				BorderSelected = -1;
 				UseScrollviewer = true;
 				UseRichTextBox = false;
@@ -141,7 +143,7 @@ namespace MyDev . UserControls
 			else
 			{
 				UseScrollviewer = false;
-				fdviewer . Visibility = Visibility . Hidden;
+				fdviewer . Visibility = Visibility . Collapsed;
 				doc . Visibility = Visibility . Visible;
 				BorderSelected = -1;
 				UseScrollviewer = false;
@@ -176,14 +178,14 @@ namespace MyDev . UserControls
 			if ( Flags . UseScrollView )
 			{
 				fdviewer . Visibility = Visibility . Visible;
-				doc . Visibility = Visibility . Hidden;
+				doc . Visibility = Visibility . Collapsed;
 				myFlowDocument2 = CreateFlowDocumentScroll ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 );
 				fdviewer . Document = myFlowDocument2;
 				textRange = new TextRange ( fdviewer . Document . ContentStart , fdviewer . Document . ContentEnd );
 			}
 			else
 			{
-				fdviewer . Visibility = Visibility . Hidden;
+				fdviewer . Visibility = Visibility . Collapsed;
 				doc . Visibility = Visibility . Visible;
 				myFlowDocument = CreateFlowDocument ( line1 , clr1 , line2 , clr2 , line3 , clr3 , header , clr4 );
 				doc . Document = myFlowDocument;
@@ -265,7 +267,7 @@ namespace MyDev . UserControls
 				flowdoc . Width = v2;
 			flowdoc . SetValue ( WidthProperty , ( double ) flowdoc . Width );
 
-			if ( this . Visibility == Visibility . Hidden )
+			if ( this . Visibility == Visibility . Collapsed )
 			{
 				if ( Flags . UseFlowScrollbar )
 				{
@@ -549,9 +551,9 @@ namespace MyDev . UserControls
 		#endregion FlowDoc helpers
 		private void Button_Click ( object sender , RoutedEventArgs e )
 		{
-			this . Visibility = Visibility . Hidden;
+			this . Visibility = Visibility . Collapsed;
 			Mouse . OverrideCursor = Cursors . Arrow;
-			Mouse . SetCursor ( Cursors . Arrow );
+			Mouse . OverrideCursor = Cursors . Arrow;
 			BorderSelected = -1;
 		}
 
@@ -611,9 +613,9 @@ namespace MyDev . UserControls
 			{
 				e . Handled = true;
 				{
-					this . Visibility = Visibility . Hidden;
+					this . Visibility = Visibility . Collapsed;
 					Mouse . OverrideCursor = Cursors . Arrow;
-					Mouse . SetCursor ( Cursors . Arrow );
+					Mouse . OverrideCursor = Cursors . Arrow;
 				}
 				BorderSelected = -1;
 			}
@@ -754,9 +756,9 @@ namespace MyDev . UserControls
 		{
 			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
-			this . Visibility = Visibility . Hidden;
+			this . Visibility = Visibility . Collapsed;
+			FlowDocClosed . Invoke ( this , null );
 			Mouse . OverrideCursor = Cursors . Arrow;
-			Mouse . SetCursor ( Cursors . Arrow );
 		}
 
 		private void dummy_Click ( object sender , RoutedEventArgs e )
@@ -766,11 +768,10 @@ namespace MyDev . UserControls
 
 		private void Exit_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
 		{
-			this . Visibility = Visibility . Hidden;
+			this . Visibility = Visibility . Collapsed;
 			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
 			Mouse . OverrideCursor = Cursors . Arrow;
-			Mouse . SetCursor ( Cursors . Arrow );
 		}
 
 		#region External Hook
@@ -828,7 +829,7 @@ namespace MyDev . UserControls
 		// Called by ListViews	&& Datagrids
 		private void FdBorder_MouseLeave ( object sender , MouseEventArgs e )
 		{
-			Mouse . SetCursor ( Cursors . Arrow );
+			Mouse . OverrideCursor = Cursors . Arrow;
 			//MouseCaptured = false;				
 		}
 

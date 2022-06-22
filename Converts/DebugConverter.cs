@@ -14,15 +14,21 @@ namespace MyDev . Converts
 	{
 		public object Convert ( object value , Type targetType , object parameter , System . Globalization . CultureInfo culture )
 		{
-//            Console . WriteLine ($"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
-			Debugger . Break ( );
+#if BINDINGDBUG
+			if(value == null)
+				Console . WriteLine ($"Debug Converter : value = {value?.ToString()}, Parameter = {parameter ?. ToString ( )}, TargetType={targetType}" );
+			//Debugger . Break ( );
+#endif 
 			return value;
 		}
 
 		public object ConvertBack ( object value , Type targetType , object parameter , System . Globalization . CultureInfo culture )
 		{
-//			Console . WriteLine ( $"value = {value}, Parameter = {parameter}, TargetType={targetType}" );
+			#if BINDINGDBUG
+if ( value == null )
+				Console . WriteLine ( $"Debug Converter : value = {value? . ToString ( )}, Parameter = {parameter? . ToString ( )}, TargetType={targetType}" );
 			Debugger . Break ( );
+#endif
 			return value;
 		}
 	}

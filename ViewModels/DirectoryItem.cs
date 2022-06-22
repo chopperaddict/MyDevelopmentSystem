@@ -36,7 +36,9 @@ namespace MyDev . ViewModels
 				//this . PropertyChanged ( this , e );
 			}
 		}
+#pragma warning disable CS0169 // The field 'DirectoryItem.name' is never used
 		private string name;
+#pragma warning restore CS0169 // The field 'DirectoryItem.name' is never used
 		public string Name
 		{
 			get

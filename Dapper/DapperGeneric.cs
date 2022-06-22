@@ -40,45 +40,19 @@ namespace MyDev . Dapper
 
 			genericlist = new List<string> ( );
 			errormsg = "";
-			int ArgType = 0;
-
-
-			//switch ( collection )
-			//{
-			//	//case ObservableCollection<GenericClass>:
-			//	//	objG = collection as ObservableCollection<GenericClass>;
-			//	//	ArgType = 1;
-			//	//	break;
-			//	//case GenericClass:
-			//	//	objGclass = collection as GenericClass;
-			//	//	ArgType = 2;
-			//	//	break;
-			//	//case List<string>:
-			//	//	objL = collection as List<string>;
-			//	//	ArgType = 3;
-			//	//	break;
-			//	//case ObservableCollection<BankAccountViewModel>:
-			//	//	objB = collection as ObservableCollection<BankAccountViewModel>;
-			//	//	ArgType = 4;
-			//	//	break;
-			//}
 
 			Console . WriteLine ( $"objG.Count = { objG . Count ( )}" );
 			//====================================
 			// Use DAPPER to run a Stored Procedure
 			//====================================
 			string result = "";
-			bool HasArgs = false;
-			int argcount = 0;
-			//DbToOpen = "";
 			errormsg = "";
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
-			IEnumerable  resultDb;
 			genericlist = new List<string> ( );
 
 			string arg1="", arg2="", arg3="", arg4="";
@@ -141,7 +115,7 @@ namespace MyDev . Dapper
 							Params . Add ( "Arg4" , arg4 , DbType . String , ParameterDirection . Input , arg4 . Length );
 						// Call Dapper to get results using it's StoredProcedures method which returns
 						// a Dynamic IEnumerable that we then parse via a dictionary into collection of GenericClass  records
-						int colcount = 0, maxcols = 0;
+						int colcount = 0;
 
 						// process a standard sql query string
 						if ( SqlCommand . ToUpper ( ) . Contains ( "SELECT " ) )
@@ -182,7 +156,6 @@ namespace MyDev . Dapper
 											string buffer = "";
 											gc = ParseDapperRowGen ( gc , dict , out colcount );
 											// Create a dictionary entry for each record
-											string outstr="";
 											StringBuilder sb = new StringBuilder();
 											int indx=2;
 											colcount = 0;
@@ -202,7 +175,6 @@ namespace MyDev . Dapper
 											colcount = indx;
 											dictcount = 1;
 											fldcount = dict . Count;
-											int index = 0;
 											string tmp="";
 											foreach ( var pair in dict )
 											{
@@ -379,23 +351,31 @@ namespace MyDev . Dapper
 				out string errormsg )
 		{
 			errormsg = "";
+#pragma warning disable CS0219 // The variable 'ArgType' is assigned but its value is never used
 			int ArgType = 0;
+#pragma warning restore CS0219 // The variable 'ArgType' is assigned but its value is never used
 			Console . WriteLine ( $"objG.Count = { objG . Count ( )}" );
 			//====================================
 			// Use DAPPER to run a Stored Procedure or Select query
 			//====================================
 			string result = "";
+#pragma warning disable CS0219 // The variable 'HasArgs' is assigned but its value is never used
 			bool HasArgs = false;
+#pragma warning restore CS0219 // The variable 'HasArgs' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'argcount' is assigned but its value is never used
 			int argcount = 0;
+#pragma warning restore CS0219 // The variable 'argcount' is assigned but its value is never used
 			//DbToOpen = "";
 			errormsg = "";
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
+#pragma warning disable CS0168 // The variable 'resultDb' is declared but never used
 			IEnumerable  resultDb;
+#pragma warning restore CS0168 // The variable 'resultDb' is declared but never used
 
 			string arg1="", arg2="", arg3="", arg4="";
 			Dictionary<string , object> dict = new Dictionary<string, object>();
@@ -460,7 +440,9 @@ namespace MyDev . Dapper
 									Params . Add ( "Arg4" , arg4 , DbType . String , ParameterDirection . Input , arg4 . Length );
 								// Call Dapper to get results using it's StoredProcedures method which returns
 								// a Dynamic IEnumerable that we then parse via a dictionary into collection of GenericClass  records
+#pragma warning disable CS0219 // The variable 'maxcols' is assigned but its value is never used
 								int colcount = 0, maxcols = 0;
+#pragma warning restore CS0219 // The variable 'maxcols' is assigned but its value is never used
 								var reslt = db . Query ( SqlCommand ,
 																			   null
 																			   ,commandType: CommandType . StoredProcedure );
@@ -469,12 +451,16 @@ namespace MyDev . Dapper
 								// How to test the type if a generic
 								if ( typeof ( T ) == typeof ( ObservableCollection<GenericClass> ) )
 								{
+#pragma warning disable CS0219 // The variable 'k' is assigned but its value is never used
 									int k = 0;
+#pragma warning restore CS0219 // The variable 'k' is assigned but its value is never used
 								}
 								if ( reslt != null )
 								{
 									//Although this is duplicated  with the one above we CANNOT make it a method()
+#pragma warning disable CS0219 // The variable 'IsSuccess' is assigned but its value is never used
 									bool IsSuccess=false;
+#pragma warning restore CS0219 // The variable 'IsSuccess' is assigned but its value is never used
 									int dictcount = 0;
 									int fldcount = 0;
 									//									int colcount=0;
@@ -697,7 +683,9 @@ namespace MyDev . Dapper
 														string buffer = "";
 														gc = ParseDapperRowGen ( gc , dict , out colcount );
 														// Create a dictionary entry for each record
+#pragma warning disable CS0219 // The variable 'outstr' is assigned but its value is never used
 														string outstr="";
+#pragma warning restore CS0219 // The variable 'outstr' is assigned but its value is never used
 														StringBuilder sb = new StringBuilder();
 														int indx=2;
 														colcount = 0;
@@ -717,7 +705,9 @@ namespace MyDev . Dapper
 														colcount = indx;
 														dictcount = 1;
 														fldcount = dict . Count;
+#pragma warning disable CS0219 // The variable 'index' is assigned but its value is never used
 														int index = 0;
+#pragma warning restore CS0219 // The variable 'index' is assigned but its value is never used
 														string tmp="";
 														foreach ( var pair in dict )
 														{
@@ -787,7 +777,9 @@ namespace MyDev . Dapper
 							// How to test the type if a generic
 							if ( typeof ( T ) == typeof ( ObservableCollection<GenericClass> ) )
 							{
+#pragma warning disable CS0219 // The variable 'k' is assigned but its value is never used
 								int k = 0;
+#pragma warning restore CS0219 // The variable 'k' is assigned but its value is never used
 							}
 							if ( reslt != null )
 							{
@@ -892,7 +884,6 @@ namespace MyDev . Dapper
 			return null;
 		}
 
-
 		#region support methods
 
 		public static T1 GetInstance<T1> ( ) where T1 : new()
@@ -904,7 +895,6 @@ namespace MyDev . Dapper
 		// how to access <T> parameers in any generic method
 		public static bool CallGeneric<T1> ( T1 arg )
 		{
-			int ArgTpe = 0;
 
 			Console . WriteLine ( $"direct = [{arg}]\nstring() = [{arg . ToString ( )}]" );
 			Console . WriteLine ( $"test  : {arg}" );
@@ -1001,7 +991,7 @@ namespace MyDev . Dapper
 			string ConString = Flags . CurrentConnectionString;
 			if ( ConString == "" )
 			{
-				GenericDbHandlers . CheckDbDomain ( "IAN1" );
+				GenericDbUtilities . CheckDbDomain ( "IAN1" );
 				ConString = Flags . CurrentConnectionString;
 			}
 			using ( IDbConnection db = new SqlConnection ( ConString ) )

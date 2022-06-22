@@ -1,4 +1,5 @@
-﻿#define SHOWWINDOWDATA
+﻿//using Microsoft . Win32;
+
 using Microsoft . Win32;
 
 using MyDev . Properties;
@@ -7,6 +8,7 @@ using MyDev . ViewModels;
 using MyDev . Views;
 
 using System;
+using System . Collections;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
 using System . Configuration;
@@ -14,9 +16,11 @@ using System . Data;
 using System . Data . SqlClient;
 using System . Diagnostics;
 using System . IO;
-using System . Runtime . InteropServices . WindowsRuntime;
+//using System . Runtime . InteropServices . WindowsRuntime;
+//using System . Security . Permissions;
+using System . Text;
 using System . Threading;
-using System . Threading . Tasks;
+//using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Controls;
 using System . Windows . Controls . Primitives;
@@ -26,6 +30,7 @@ using System . Windows . Input;
 using System . Windows . Media;
 using System . Windows . Media . Imaging;
 using System . Windows . Shapes;
+//using System . Windows . Threading;
 
 using static MyDev . Views . DragDropClient;
 
@@ -228,7 +233,7 @@ namespace MyDev
                 //			return t;
             }
         }
-        public static Task DoErrorBeep ( int freq = 280 , int count = 100 , int repeat = 3 )
+        public static void DoErrorBeep ( int freq = 280 , int count = 100 , int repeat = 3 )
         {
             //			int x = 0;
             //			Task t = new Task ( ( ) => x = 1 );
@@ -240,13 +245,19 @@ namespace MyDev
                 }
                 Thread . Sleep ( 100 );
             }
-            return null;
+            return;
         }
 
         #endregion play tunes / sounds
 
 
-        //public static void SetSynchforDbCollections ( object _lock ,
+        /// <summary>
+        /// Simulate Application.DoEvents function of 
+        /// <see cref=" System.Windows.Forms.Application"/> class.
+        /// </summary>
+        //[SecurityPermissionAttribute ( SecurityAction . Demand ,
+        //    Flags = SecurityPermissionFlag . UnmanagedCode )]
+            //public static void SetSynchforDbCollections ( object _lock ,
         //	ObservableCollection<BankAccountViewModel> bvmcollection ,
         //	ObservableCollection<CustomerViewModel> cvmcollection ,
         //	ObservableCollection<DetailsViewModel> dvmcollection
@@ -314,6 +325,7 @@ namespace MyDev
         //}
         public static bool DeleteDictionaryEntry ( Dictionary<string , string> dict , string value )
         {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 dict . Remove ( value );
@@ -324,10 +336,12 @@ namespace MyDev
                 Utils . DoErrorBeep ( 250 , 50 , 1 );
                 return false;
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             return true;
         }
         public static bool DeleteDictionaryEntry ( Dictionary<string , int> dict , string value )
         {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 dict . Remove ( value );
@@ -338,10 +352,12 @@ namespace MyDev
                 Utils . DoErrorBeep ( 250 , 50 , 1 );
                 return false;
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             return true;
         }
         public static bool DeleteDictionaryEntry ( Dictionary<int , int> dict , int value )
         {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 dict . Remove ( value );
@@ -352,6 +368,7 @@ namespace MyDev
                 Utils . DoErrorBeep ( 250 , 50 , 1 );
                 return false;
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             return true;
         }
         #endregion Dictionary Handlers
@@ -519,6 +536,7 @@ namespace MyDev
                 output = prompt + $"\nStackTrace  for {prompt}:\n";
             while ( true )
             {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                 try
                 {
 
@@ -534,6 +552,7 @@ namespace MyDev
                     output += "\ntrace() Crashed...\n";
                     break;
                 }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             }
             Console . WriteLine ( $"\n{output}\n" );
             return $"\n{output}\n";
@@ -698,6 +717,7 @@ namespace MyDev
                 //Check to see if the data includes the data type in it
                 //As we have to parse it diffrently if not - see index....
                 index = 0;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                 try
                 {
                     int x = int . Parse ( donor );
@@ -709,6 +729,7 @@ namespace MyDev
                     //its probably the Data Type string, so ignore it for our Data creation processing
                     index = 1;
                 }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                 //We have a CUSTOMER record
                 bvm . RecordType = type;
                 bvm . Id = int . Parse ( data [ index++ ] );
@@ -808,8 +829,7 @@ namespace MyDev
         public static void Magnify ( List<object> list , bool magnify )
         {
             // lets other controls have magnification, providing other Templates do not overrule these.....
-            Style style;
-            for ( int i = 0 ; i < list . Count ; i++ )
+           for ( int i = 0 ; i < list . Count ; i++ )
             {
                 var obj = list [ i ] as ListBox;
                 if ( obj != null )
@@ -906,6 +926,7 @@ namespace MyDev
             //}
             ////			return hit . VisualHit . GetVisualAncestor<ScrollBar> ( ) != null;
             object original = e . OriginalSource;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 var v = original . GetType ( );
@@ -951,6 +972,7 @@ namespace MyDev
             {
  //               Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             return true;
         }
         public static DependencyObject FindChild ( DependencyObject o , Type childType )
@@ -1082,6 +1104,7 @@ namespace MyDev
         public static int FindMatchingRecord ( string Custno , string Bankno , DataGrid Grid , string currentDb = "" )
         {
             int index = 0;
+            bool success = false;
             if ( currentDb == "BANKACCOUNT" )
             {
                 foreach ( var item in Grid . Items )
@@ -1091,11 +1114,12 @@ namespace MyDev
                         break;
                     if ( cvm . CustNo == Custno && cvm . BankNo == Bankno )
                     {
+                        success = true;
                         break;
                     }
                     index++;
                 }
-                if ( index == Grid . Items . Count )
+                if ( ! success)
                     index = -1;
                 return index;
             }
@@ -1489,6 +1513,7 @@ namespace MyDev
         public static bool HitTestBorder ( object sender , MouseButtonEventArgs e )
         {
             object original = e . OriginalSource;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 var v = original . GetType ( );
@@ -1528,6 +1553,7 @@ namespace MyDev
                 //              Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
                 return false;
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             //		return true;
         }
         public static bool HitTestTreeViewItem( object sender , MouseButtonEventArgs e )
@@ -1535,6 +1561,7 @@ namespace MyDev
             TreeView tv = sender as TreeView;
             object original = e . OriginalSource;
             var vv = e . Source;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 var v = original . GetType ( );
@@ -1565,6 +1592,7 @@ namespace MyDev
                 //              Debug . WriteLine ( $"Error in HitTest ScriollBar Function (Utils-1520({ex . Data}" );
                 return false;
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             //		return true;
         }
         private static string ParseforCR ( string input )
@@ -1653,20 +1681,33 @@ namespace MyDev
                 Utils . Mbox ( null , string1: "The image could not be saved for the following reason " , string2: $"{ex . Message}" , caption: "" , iconstring: "\\icons\\Information.png" , Btn1: MB . OK , Btn2: MB . NNULL , defButton: MB . OK );
             }
         }
-        public static void ScrollLBRecordIntoView ( ListBox Dgrid , int CurrentRecord )
+        public static void ScrollLBRecordIntoView ( ListBox lbox , int CurrentRecord )
+        {
+            // Works well 26/5/21
+
+            //update and scroll to bottom first
+            //lbox . SelectedIndex = ( int ) CurrentRecord;
+            //lbox . SelectedItem = ( int ) CurrentRecord;
+//            lbox . UpdateLayout ( );
+            lbox . ScrollIntoView ( lbox . SelectedIndex);
+            lbox . UpdateLayout ( );
+            lbox . ScrollIntoView ( lbox . SelectedItem );
+            lbox . UpdateLayout ( );
+        }
+        public static void ScrollLVRecordIntoView ( ListView Dgrid , int CurrentRecord )
         {
             // Works well 26/5/21
 
             //update and scroll to bottom first
             Dgrid . SelectedIndex = ( int ) CurrentRecord;
             Dgrid . SelectedItem = ( int ) CurrentRecord;
-            Dgrid . UpdateLayout ( );
-            Dgrid . ScrollIntoView ( Dgrid . Items . Count - 1 );
-            Dgrid . UpdateLayout ( );
+//            Dgrid . UpdateLayout ( );
             Dgrid . ScrollIntoView ( Dgrid . SelectedItem );
             Dgrid . UpdateLayout ( );
+//            Dgrid . ScrollIntoView ( Dgrid . SelectedItem );
+//            Dgrid . UpdateLayout ( );
         }
-        public static void ScrollRecordIntoView ( DataGrid Dgrid , int CurrentRecord )
+        public static void ScrollRecordIntoView ( DataGrid Dgrid , int CurrentRecord, object row=null )
         {
             // Works well 26/5/21
             double currentTop = 0;
@@ -1689,22 +1730,46 @@ namespace MyDev
                 currentBottom = Flags . BottomVisibleDetGridRow;
             }     // Believe it or not, it takes all this to force a scrollinto view correctly
 
-            if ( Dgrid == null || Dgrid . Items . Count == 0 || Dgrid . SelectedItem == null )
+            if ( Dgrid == null || Dgrid . Items . Count == 0 )//|| Dgrid . SelectedItem == null )
                 return;
 
             //update and scroll to bottom first
-            Dgrid . SelectedIndex = ( int ) CurrentRecord;
-            Dgrid . SelectedItem = ( int ) CurrentRecord;
-            Dgrid . UpdateLayout ( );
-            Dgrid . ScrollIntoView ( Dgrid . Items . Count - 1 );
-            Dgrid . UpdateLayout ( );
-            Dgrid . ScrollIntoView ( Dgrid . SelectedItem );
-            Dgrid . UpdateLayout ( );
+            //Dgrid . CurrentColumn = Dgrid . Columns [ 0 ];
+            //Dgrid . Dispatcher . Invoke ( () =>
+            //{
+            //    //Dgrid . Focus ( );
+                Dgrid . SelectedIndex = CurrentRecord;
+                Dgrid . SelectedItem = CurrentRecord;
+                //Dgrid . UpdateLayout ( );
+                //Dgrid . BringIntoView ( );
+//                Dgrid . ScrollIntoView ( row == null ? Dgrid . SelectedItem : row);
+                Dgrid . UpdateLayout ( );
+//                Dgrid . ScrollIntoView ( row == null ? Dgrid . SelectedItem : row );
+                //Dgrid . ScrollIntoView ( Dgrid . SelectedItem , Dgrid . Columns [ 0 ] );
+                //ScrollRowInGrid ( Dgrid , Convert.ToInt16(row) );
+//                Dgrid . UpdateLayout ( );
+            if(CurrentRecord == 0)
+                Console . WriteLine ($"DataGrid Scroll is selecting record ZERO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                //Dgrid . Refresh ( );
+            //} );
             //TRANSFER			Flags . CurrentSqlViewer?.SetScrollVariables ( Dgrid );
+        }
+
+        static public DataGridRow GetRow ( DataGrid dg , int index )
+        {
+            DataGridRow row = ( DataGridRow ) dg . ItemContainerGenerator . ContainerFromIndex ( index );
+            if ( row == null )
+            {
+                // may be virtualized, bring into view and try again
+                dg . ScrollIntoView ( dg . Items [ index ] );
+                row = ( DataGridRow ) dg . ItemContainerGenerator . ContainerFromIndex ( index );
+            }
+            return row;
         }
         //Generic form of Selection forcing code below
         public static void SetupWindowDrag ( Window inst )
         {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 //Handle the button NOT being the left mouse button
@@ -1716,6 +1781,7 @@ namespace MyDev
                 inst . MouseDown += delegate
                 {
                     {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                         try
                         {
                             inst?.DragMove ( );
@@ -1724,6 +1790,7 @@ namespace MyDev
                         {
                             return;
                         }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                     }
                 };
             }
@@ -1731,6 +1798,7 @@ namespace MyDev
             {
                 return;
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
         }
         public static bool CheckResetDbConnection ( string currdb , out string constring )
         {
@@ -1773,6 +1841,7 @@ namespace MyDev
         // Create dictionary of ALL Sql Connection strings we may want to use
         public static void LoadConnectionStrings ( )
         {
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
             try
             {
                 if ( Flags . ConnectionStringsDict . Count > 0 )
@@ -1790,6 +1859,7 @@ namespace MyDev
             {
 
             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
         }
         public static void SetUpGridSelection ( DataGrid grid , int row = 0 )
         {
@@ -1804,6 +1874,7 @@ namespace MyDev
             grid . SelectedIndex = row;
             grid . SelectedItem = row;
             Utils . ScrollRecordIntoView ( grid , row );
+            grid . ScrollIntoView ( grid . SelectedItem );
             grid . UpdateLayout ( );
             grid . Refresh ( );
             //			var v = grid .VerticalAlignment;
@@ -1838,6 +1909,252 @@ namespace MyDev
             }
         }
 
+        public static void SwitchMagnifyStyle ( ListBox lbox , ref TextBlock info )
+        {
+            // Toggle magnification of DataGrid thru from 4 > 0 and return to 4
+            if ( info . Text == "+4" )
+            {
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                info . Text = "+3";
+            }
+            else if ( info . Text == "+3" )
+            {
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                info . Text = "+2";
+            }
+            else if ( info . Text == "+2" )
+            {
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                info . Text = "+1";
+            }
+            else if ( info . Text == "+1" )
+            {
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                info . Text = "0";
+            }
+            else if ( info . Text == "0" )
+            {
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                info . Text = "+4";
+            }
+        }
+
+        public static void SwitchMagnifyStyle ( ListView lview , ref TextBlock info )
+        {
+            // Toggle magnification of DataGrid thru from 4 > 0 and return to 4
+            if ( info . Text == "+4" )
+            {
+                lview . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListViewMagnifyAnimation" );
+                info . Text = "+3";
+            }
+            else if ( info . Text == "+3" )
+            {
+                lview . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListViewMagnifyAnimation" );
+                info . Text = "+2";
+            }
+            else if ( info . Text == "+2" )
+            {
+                lview . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListViewMagnifyAnimation" );
+                info . Text = "+1";
+            }
+            else if ( info . Text == "+1" )
+            {
+                lview . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListViewMagnifyAnimation" );
+                info . Text = "0";
+            }
+            else if ( info . Text == "0" )
+            {
+                lview . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListViewMagnifyAnimation" );
+                info . Text = "+4";
+            }
+        }
+
+        /// <summary>
+        /// A Generic data reader for any ObservableCollection&lt;T&gt; type
+        /// </summary>
+        ///<example>
+        ///Call Method using loop such as :
+        ///<code>
+        ///<c>foreach ( int item in Utils. ReadGenericCollection ( <paramref name="collection"/> intcollection) )</c>
+        ///</code>
+        /// </example>
+        /// or any similar looping construct
+        /// <typeparam name="T">Any Generic Observable Collection</typeparam>
+        /// <param name="collection"/>
+        /// <returns>Individual records via yield return system to return items on demand, or NULL if collection cannot provide an Iterator 
+        /// </returns>
+        public static IEnumerable ReadGenericCollection<T> ( ObservableCollection<T> collection , IEnumerator ie = null)
+        {
+            // Generic method to supply content of ANY Observablecollection<> type
+            // Call it by a call such as  :-
+            //  foreach ( BankCollection item in Utils.GenericRead ( BankCollection ) )
+            //      {Console . WriteLine ( item );}
+            //or
+            //  foreach ( int item in Utils.GenericRead ( integerCollection ) )
+            //      {Console . WriteLine ( item );}
+            if ( collection . Count > 0 )
+            {
+                ie = collection . GetEnumerator ( );
+                if ( ie != null )
+                {
+                    foreach ( var item in collection )
+                    {
+
+                        if ( ie . MoveNext ( ) )
+                            yield return item;
+                    }
+                }
+            }
+        }
+
+        #region Nullable handlers
+        public static bool ? CompareNullable(int  ? a, int ?  b)
+        {
+            if ( Nullable . Compare<int> ( a , b ) == 0 )
+            {
+                $"Nullable int {a} is Equal to {b}" . cwinfo ( ); return true;
+            }
+            else {
+                $"Nullable int {a} is NOT Equal to {b}" . cwinfo ( ); 
+                return false; 
+            }
+        }
+        public static bool ? CompareNullable ( long? a , long? b )
+        {
+            if ( Nullable . Compare<long> ( a , b ) == 0 )
+            {
+                $"Nullable long {a} is Equal to {b}" . cwinfo ( ); 
+                return true;
+            }
+            else
+            {
+                $"Nullable long {a} is NOT Equal to {b}" . cwinfo ( );
+                return false;
+            }
+        }
+        public static bool ? CompareNullable ( double? a , double? b )
+        {
+            if ( Nullable . Compare<double> ( a , b ) == 0 )
+            {
+                $"Nullable double {a} is Equal to {b}" . cwinfo ( );
+                return true;
+            }
+            else
+            {
+                $"Nullable double int {a} is NOT Equal to {b}" . cwinfo ( );
+                return false;
+            }
+        }
+        public static bool ? CompareNullable ( float? a , float? b )
+        {
+            if ( Nullable . Compare<float> ( a , b ) == 0 )
+            {
+                $"Nullable float {a} is Equal to {b}" . cwinfo ( );
+                return true;
+            }
+            else
+            {
+                $"Nullable float {a} is NOT Equal to {b}" . cwinfo ( );
+                return false;
+            }
+        }
+        public static bool ? CompareNullable ( decimal? a , decimal? b )
+        {
+            if ( Nullable . Compare<decimal> ( a , b ) == 0 )
+            {
+                $"Nullable decimal {a} is Equal to {b}" . cwinfo ( );
+                return true;
+            }
+            else
+            {
+                $"Nullable decimal {a} is NOT Equal to {b}" . cwinfo ( );
+                return false;
+            }
+        }
+
+        #endregion Nullable handlers
+
+        //public static string ? CompareNullable ( string? a , string? b )
+        //{ return Nullable . Compare ( a , b ); }
+        //public static BankAccountViewModel ? CompareNullable ( BankAccountViewModel ? a , BankAccountViewModel ? b )
+        //{ return Nullable . Compare ( a , b ); }
+
+        public static StringBuilder ReadFileGeneric ( string path ,  ref StringBuilder sb )
+        {
+            string s = File . ReadAllText ( path );
+            sb . Append (  s);
+            return sb;
+        }
+        public static string ReadFileGeneric ( string path , ref  string sb )
+        {
+            sb  =  File . ReadAllText ( path );
+            return sb;
+        }
+        public static bool WriteFileGeneric ( string path , string data )
+        {
+            File . WriteAllText ( path , data );
+            return true;
+        }
+        public static bool WriteFileGeneric ( string path , StringBuilder data )
+        {
+           File . WriteAllText ( path , data .ToString()) ;
+            return true;
+        }
+
+        public static List<object> GetChildControls(UIElement parent, string TypeRequired)
+        {
+            // this uses  the TabControlHelper class
+            UIElement element = new UIElement ( );
+            List<object> objects = new List<object> ( );
+            IEnumerable alltabcontrols = null;
+            if ( TypeRequired == "*" )
+                alltabcontrols = TabControlHelper . FindChildren<UIElement> ( parent );
+            else if ( TypeRequired == "Button" )
+                alltabcontrols = TabControlHelper . FindChildren<Button> ( parent );
+            else if ( TypeRequired == "TextBlock" )
+                alltabcontrols = TabControlHelper . FindChildren<TextBlock> ( parent );
+            else if ( TypeRequired == "DataGrid" )
+                alltabcontrols = TabControlHelper . FindChildren<DataGrid> ( parent );
+            else if ( TypeRequired == "ListBox" )
+                alltabcontrols = TabControlHelper . FindChildren<ListBox> ( parent );
+            else if ( TypeRequired == "ListView" )
+                alltabcontrols = TabControlHelper . FindChildren<ListView> ( parent );
+            else if ( TypeRequired == "TextBox" )
+                alltabcontrols = TabControlHelper . FindChildren<TextBox> ( parent );
+            //else if ( TypeRequired == "WrapPanel" )
+            //    alltabcontrols = TabControlHelper . FindChildren<WrapPanel> ( parent );
+            else if ( TypeRequired == "Border" )
+                alltabcontrols = TabControlHelper . FindChildren<Border> ( parent );
+            else if ( TypeRequired == "Slider" )
+                alltabcontrols = TabControlHelper . FindChildren<Slider> ( parent );
+            else if ( TypeRequired == "TabControl" )
+                alltabcontrols = TabControlHelper . FindChildren<TabControl> ( parent );
+            else if ( TypeRequired == "TabItem" )
+                alltabcontrols = TabControlHelper . FindChildren<TabItem> ( parent );
+            else if ( TypeRequired == "" )
+                alltabcontrols = TabControlHelper . FindChildren<UIElement> ( parent );
+            if ( alltabcontrols != null )
+            {
+                int count = 0;
+                IEnumerator enumerator = alltabcontrols . GetEnumerator ( );
+                try
+                {
+                    while ( enumerator . MoveNext ( ) )
+                    {
+                        count++;
+                        var v = enumerator . Current;
+                         objects . Add ( v );
+                    }
+                }
+                finally
+                {
+                    Console . WriteLine ( $"Found {count} controls of  type {TypeRequired}" );
+                }
+           }
+            Console . WriteLine ( "Finished FindChildren() 4\n" );
+
+            return objects;
+        }
         #region ZERO referennces
         public static string convertToHex ( double temp )
         {
@@ -2019,6 +2336,7 @@ namespace MyDev
                 //Check to see if the data includes the data type in it
                 //As we have to parse it diffrently if not - see index....
                 index = 0;
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                 try
                 {
                     int x = int . Parse ( donor );
@@ -2030,6 +2348,7 @@ namespace MyDev
                     //its probably the Data Type string, so ignore it for our Data creation processing
                     index = 1;
                 }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
             }
             return cvm;
         }
@@ -2324,7 +2643,22 @@ namespace MyDev
                     dgrid . SelectedItem = index;
                     dgrid . UpdateLayout ( );
                     dgrid . BringIntoView ( );
-                    dgrid . ScrollIntoView ( dgrid . Items [ index ] );
+                    object obj = dgrid . Items [ index ];
+                    if ( obj . GetType ( ) == typeof ( BankAccountViewModel ) )
+                    {
+                        BankAccountViewModel item = dgrid . Items [ index ] as BankAccountViewModel;
+                        dgrid . ScrollIntoView ( item );
+                    }
+                    else if ( obj . GetType ( ) == typeof ( CustomerViewModel ) )
+                    {
+                        CustomerViewModel item = dgrid . Items [ index ] as CustomerViewModel;
+                        dgrid . ScrollIntoView ( item );
+                    }
+                    else if ( obj . GetType ( ) == typeof ( GenericClass ) )
+                    {
+                        GenericClass item = dgrid . Items [ index ] as GenericClass;
+                        dgrid . ScrollIntoView ( item );
+                    }
                 }
                 catch ( Exception ex )
                 {
@@ -2353,7 +2687,7 @@ namespace MyDev
 
             dg . SelectedItem = selectedItem;
             dg . CurrentColumn = dg . Columns [ 0 ];
-            dg . ScrollIntoView ( dg . SelectedItem , dg . CurrentColumn );
+            dg . ScrollIntoView ( dg . SelectedItem  );
         }
         public static void SetUpGListboxSelection ( ListBox grid , int row = 0 )
         {
@@ -2381,14 +2715,12 @@ namespace MyDev
         /// <param name="row"></param>
         public static void ScrollRowInGrid ( DataGrid dGrid , int row )
         {
-            if ( dGrid . CurrentItem == null )
-                return;
+            if ( dGrid . SelectedItem == null ) return;
+
+            dGrid . ScrollIntoView ( dGrid.SelectedItem );
             dGrid . UpdateLayout ( );
-            dGrid . ScrollIntoView ( dGrid . Items . Count - 1 );
-            dGrid . UpdateLayout ( );
-            dGrid . ScrollIntoView ( row );
-            dGrid . UpdateLayout ( );
-            Utils . ScrollRecordIntoView ( dGrid , row );
+//           Utils . ScrollRecordIntoView ( dGrid , row );
+//            dGrid . UpdateLayout ( );
         }
         //********************************************************************************************************************************************************************************//
         public static void NewCookie_Click ( object sender , RoutedEventArgs e )
@@ -2403,8 +2735,7 @@ namespace MyDev
             if ( maxrecords == -1 )
             {
                 DataTable dt = new DataTable ( );
-                //				bvm = BankCollection. LoadSelectedCollection ( bankCollection: bvm, max: -1, dtBank: dt, Notify: Notify );
-                BankCollection . LoadBank ( bvm , caller: "BankAccount" , ViewerType: 99 , NotifyAll: Notify );
+                  BankCollection . LoadBank ( bvm , caller: caller , ViewerType: 99 , NotifyAll: Notify );
             }
             else
             {

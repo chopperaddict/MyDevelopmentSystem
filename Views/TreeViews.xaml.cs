@@ -1,7 +1,4 @@
-﻿#define DEBUGEXPAND
-#undef DEBUGEXPAND
-
-using System;
+﻿using System;
 using System . Collections . Generic;
 using System . Collections . ObjectModel;
 using System . ComponentModel;
@@ -24,6 +21,7 @@ using MyDev . AttachedProperties;
 using MyDev . Models;
 using MyDev . UserControls;
 using MyDev . ViewModels;
+
 
 namespace MyDev . Views
 {
@@ -263,7 +261,15 @@ namespace MyDev . Views
             get { return busyLabelBkgrn; }
             set { busyLabelBkgrn = value; OnPropertyChanged ( BusyLabelBkgrn . ToString ( ) ); }
         }
+        private int comboSelectedItem;
 
+        public int ComboSelectedItem
+        {
+            get { return comboSelectedItem; }
+            set { comboSelectedItem = value; OnPropertyChanged ( ComboSelectedItem . ToString ( ) ); }
+        }
+
+ 
         #endregion Full Properties
 
         #region Dependency Properties
@@ -417,7 +423,9 @@ namespace MyDev . Views
         #region startup  items
         public TreeViews ( )
         {
+#pragma warning disable CS0219 // The variable 'count' is assigned but its value is never used
             int count = 0;
+#pragma warning restore CS0219 // The variable 'count' is assigned but its value is never used
             InitializeComponent ( );
             this . DataContext = this;
             ReadSettings ( );
@@ -822,8 +830,12 @@ namespace MyDev . Views
         /// 
         // Variables Required for FlowDoc
         object MovingObject;
+#pragma warning disable CS0414 // The field 'TreeViews.fdTop' is assigned but its value is never used
         private static double fdTop = 100;
+#pragma warning restore CS0414 // The field 'TreeViews.fdTop' is assigned but its value is never used
+#pragma warning disable CS0414 // The field 'TreeViews.fdLeft' is assigned but its value is never used
         private static double fdLeft = 100;
+#pragma warning restore CS0414 // The field 'TreeViews.fdLeft' is assigned but its value is never used
         private static Thickness FdMargin = new Thickness ( );
 
         /*  
@@ -925,7 +937,9 @@ namespace MyDev . Views
             // Called by basic TESTTREE_EXPANDED()
             int added = 0;
             int TotalDirs = 0;
+#pragma warning disable CS0219 // The variable 'TotalFiles' is assigned but its value is never used
             int TotalFiles = 0;
+#pragma warning restore CS0219 // The variable 'TotalFiles' is assigned but its value is never used
             item . Items . Clear ( );
             foreach ( var directoryPath in directories )
             {
@@ -938,13 +952,8 @@ namespace MyDev . Views
                 if ( CheckIsVisible ( directoryPath . ToUpper ( ) , ShowAllFiles , out HasHidden ) == true )
                 {     // add the dummy entry to each of the subdirectories we are adding to the tree so we get the Expand icons
                     TotalDirs = GetDirectoryCount ( directoryPath );
-                    // do NOT need to know about files here !!
-//                    TotalFiles = GetFilesCount ( directoryPath );
-//                    if ( TotalFiles == -1 )
-//                        TotalFiles = 0;
+  
                     item . Items . Add ( subitem );
-//                    Console . WriteLine ( $"ADDDIRECTORIESTOTESTTREE : {subitem . Header}  / {subitem . Tag}" );
-
                     //    // Add DUMMY entry as we have content in this folder
                     dummy . Header = "Loading";
                     subitem . Items . Add ( dummy );
@@ -955,7 +964,6 @@ namespace MyDev . Views
                     added++;
                 }
                 ShowProgress ( );
-                //});
             }
             // Folder now has a set of subdirs in it.
             return added;
@@ -1473,7 +1481,9 @@ namespace MyDev . Views
         private void ExpandAllDrivesBelowCurrent ( object [ ] Args )
         {
             // WORKING for TWO levels onlly
+#pragma warning disable CS0219 // The variable 'go' is assigned but its value is never used
             bool go = false;
+#pragma warning restore CS0219 // The variable 'go' is assigned but its value is never used
             int levels = ( int ) Args [ 1 ];
             TreeViewItem tv = Args [ 0 ] as TreeViewItem;
             if ( tv == null )
@@ -1671,6 +1681,7 @@ namespace MyDev . Views
             WalkTestTree ( sender , e );
             return;
             // Open ALL levels
+#pragma warning disable CS0162 // Unreachable code detected
             if ( ActiveTree . SelectedItem == null )
             {
                 //MessageBox . Show ( $"Please select a drive or subfolder before using  these options...." , "No Drive Selected" );
@@ -1680,6 +1691,7 @@ namespace MyDev . Views
                      "TreeView Search Sytem" );
                 return;
             }
+#pragma warning restore CS0162 // Unreachable code detected
             if ( ExpArgs . SearchActive == false )
             {
                 if ( MessageBox . Show ( $"This  can take a *** considerable *** time to complete, and access to the application will not be available until it has completed"
@@ -1811,6 +1823,7 @@ namespace MyDev . Views
             DirectoryOptions . ItemsSource = DirOptions;
             DirectoryOptions . SelectedIndex = 0;
             DirectoryOptions . SelectedItem = 0;
+            ComboSelectedItem = 0;
         }
         private void LoadSearchLevels ( )
         {
@@ -1932,9 +1945,17 @@ namespace MyDev . Views
         private void DirectoryOptions_Selected ( object sender , SelectionChangedEventArgs e )
         {
             ExpanderMenuOption . Text = $"{DirectoryOptions . SelectedItem . ToString ( )}";
+            int current = DirectoryOptions . SelectedIndex;
+            ComboBox cb = sender as ComboBox;
+            ComboSelectedItem = current;
+           // var  sp = cb . Items [ ComboSelectedItem ];
+            //var v = cb . ItemsHost as WrapPanel;
+            //ComboSelectedItem = e.OriginalSource;
 
         }
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         async private void WalkTestTree ( object sender , RoutedEventArgs e )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             Args [ 0 ] = ActiveTree . SelectedItem as TreeViewItem;
             Args [ 1 ] = 90;
@@ -1946,7 +1967,9 @@ namespace MyDev . Views
             ExpArgs . Selection = 4;
             ExpArgs . ExpandLevels = 90;
 //          await Dispatcher . BeginInvoke ( DispatcherPriority . Normal , ( Action ) ( async ( ) => await RunExpandSystem ( Args [ 0 ] , e ) ) );
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             RunExpandSystem ( sender , e );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
         }
 
         #region Expand Utility methods
@@ -2241,8 +2264,12 @@ namespace MyDev . Views
 
         private void listBox_SelectionChanged ( object sender , SelectionChangedEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'str' is assigned but its value is never used
             string str = "";
+#pragma warning restore CS0219 // The variable 'str' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'iterate' is assigned but its value is never used
             bool iterate = false;
+#pragma warning restore CS0219 // The variable 'iterate' is assigned but its value is never used
             ListBox tb = sender as ListBox;
             tb . ScrollIntoView ( tb . SelectedItem );
             tb . HorizontalAlignment = HorizontalAlignment . Left;
@@ -2270,7 +2297,9 @@ namespace MyDev . Views
         }
         private bool CheckFileForMatch ( List<string> files , string upperstring , out string resstring )
         {
+#pragma warning disable CS0219 // The variable 'result' is assigned but its value is never used
             bool result = false;
+#pragma warning restore CS0219 // The variable 'result' is assigned but its value is never used
             resstring = "";
             foreach ( var filename in files )
             {
@@ -2289,7 +2318,9 @@ namespace MyDev . Views
             resultstring = "";
             List<string> subfolders = new List<string> ( );
             List<string> files = new List<string> ( );
+#pragma warning disable CS0219 // The variable 'resstring' is assigned but its value is never used
             string resstring = "";
+#pragma warning restore CS0219 // The variable 'resstring' is assigned but its value is never used
 
             Console . WriteLine ( $"? FOLDER match [{folder}]" );
             TreeViewItem tvfound = new TreeViewItem ( );
@@ -2498,8 +2529,12 @@ namespace MyDev . Views
         // NOT USED
         private TreeViewItem SearchIterate ( TreeViewItem item , string SearchTerm )
         {
+#pragma warning disable CS0219 // The variable 'result' is assigned but its value is never used
             bool result = false;
+#pragma warning restore CS0219 // The variable 'result' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'found' is assigned but its value is never used
             bool found = false;
+#pragma warning restore CS0219 // The variable 'found' is assigned but its value is never used
             // Save main calling item so we can get back  to it later on
             TreeViewItem CallingItem = item;
             TreeViewItem MatchItem = null;
@@ -2595,7 +2630,9 @@ namespace MyDev . Views
                 if ( dot . Length == 2 )
                     entry = dot [ dot . Length - 1 ];
                 else if ( dot . Length >= 3 )
+#pragma warning disable CS1717 // Assignment made to same variable; did you mean to assign something else?
                     entry = entry;
+#pragma warning restore CS1717 // Assignment made to same variable; did you mean to assign something else?
                 else
                     entry = dot [ dot . Length - 1 ];
             }
@@ -2682,13 +2719,19 @@ namespace MyDev . Views
             return true;
 
 
+#pragma warning disable CS0162 // Unreachable code detected
             bool Returnval = false;
+#pragma warning restore CS0162 // Unreachable code detected
             bool IsComplete = false;
             int iterations = 0;
             int itemcount = 0;
             int levelscount = 0;
+#pragma warning disable CS0219 // The variable 'fail' is assigned but its value is never used
             var fail = false;
+#pragma warning restore CS0219 // The variable 'fail' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'success' is assigned but its value is never used
             var success = true;
+#pragma warning restore CS0219 // The variable 'success' is assigned but its value is never used
             int levels = ( int ) ExpArgs . ExpandLevels;
             TreeViewItem items = ExpArgs . tvitem;
             startitem = items;
@@ -3175,7 +3218,9 @@ namespace MyDev . Views
         {
             // e contains current treeviewitem !!!
             // All parameters are in ExpandArgs ExpArgs
+#pragma warning disable CS0219 // The variable 'Returnval' is assigned but its value is never used
             bool Returnval = false;
+#pragma warning restore CS0219 // The variable 'Returnval' is assigned but its value is never used
             bool IsComplete = false;
             int iterations = 0;
 
@@ -3316,6 +3361,7 @@ namespace MyDev . Views
                         foreach ( var newentry in childControl . Items )
                         {
                             TreeViewItem nextitem = new TreeViewItem ( );
+#pragma warning disable CS0168 // The variable 'ex' is declared but never used
                             try
                             {
                                 nextitem = newentry as TreeViewItem;
@@ -3325,6 +3371,7 @@ namespace MyDev . Views
                                 Console . WriteLine ( $"Unable to access {childControl . Tag . ToString ( )}" );
                                 nofault = true;
                             }
+#pragma warning restore CS0168 // The variable 'ex' is declared but never used
                             if ( nofault || nextitem == null )
                             {
                                 nofault = false;
@@ -3530,7 +3577,9 @@ namespace MyDev . Views
                 ExpArgs . SearchActive = true;
                 ExpanderMenuOption . Text = $"Search for Item down up to {ExpArgs . ExpandLevels - 1} levels";
 
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
                 RunExpandSystem ( null , null );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
                 //RecurseItem ( ExpArgs . tvitem , ExpArgs . SearchTerm , ExpArgs . IsFullExpand );
             }
             Mouse . OverrideCursor = Cursors . Arrow;
@@ -3566,11 +3615,13 @@ namespace MyDev . Views
             return null;
 
 
+#pragma warning disable CS0162 // Unreachable code detected
             if ( ExpArgs . SearchTerm == "SEARCH FOR...." )
             {
                 MessageBox . Show ( "No search term entered, so Search has been aborted" , "User Error" );
                 return null;
             }
+#pragma warning restore CS0162 // Unreachable code detected
             // Allow it  to unwind gracefully
             if ( ExpArgs . SearchSuccess )
                 return ExpArgs . SearchSuccessItem;
@@ -3658,7 +3709,9 @@ namespace MyDev . Views
                 ExpArgs . ExpandLevels = 3;
             ExpArgs . tvitem = ActiveTree . SelectedItem as TreeViewItem;
             tvi = ExpArgs . tvitem;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             RunExpandSystem ( sender , e );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             Utils . DoErrorBeep ( 300 , 60 , 1 );
             Utils . DoErrorBeep ( 250 , 70 , 1 );
             if ( tvi != null )
@@ -3677,14 +3730,18 @@ namespace MyDev . Views
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <returns></returns>
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         async private Task<bool> RunExpandSystem ( object sender , RoutedEventArgs e )
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             //called by Context menu and dropdown list options to handle individual and multiple drive expansions
             // This iterates internally to fully expand xx levels as per ExpArgs level setting
             // and visually track the items as they are expanded down the tree in the TreeView itself
             // and finally selects the original calling item that has been opened
 
+#pragma warning disable CS0219 // The variable 'temp' is assigned but its value is never used
             double temp = 0;
+#pragma warning restore CS0219 // The variable 'temp' is assigned but its value is never used
             ComboBox cb = DirectoryOptions;
             int selindex = ExpArgs . Selection;
             string original = "";
@@ -4176,7 +4233,9 @@ namespace MyDev . Views
 
         public bool ExpandSpecifiedLevels ( TreeViewItem tvitem , RoutedEventArgs e )
         {
+#pragma warning disable CS0219 // The variable 'level' is assigned but its value is never used
             int level = 1;
+#pragma warning restore CS0219 // The variable 'level' is assigned but its value is never used
             IsExpanding = false;
             tvitem . IsExpanded = true;
             foreach ( TreeViewItem subdir in tvitem . Items )
@@ -4760,7 +4819,9 @@ namespace MyDev . Views
 
             return;
 
+#pragma warning disable CS0162 // Unreachable code detected
             Point pt = new Point ( );
+#pragma warning restore CS0162 // Unreachable code detected
             pt = e . GetPosition ( TestTree );
             IInputElement dropNode = TestTree . InputHitTest ( pt );
             Type type = dropNode . GetType ( );
@@ -4789,8 +4850,12 @@ namespace MyDev . Views
         }
         public TreeViewItem GetPathAtPos ( Point point )
         {
+#pragma warning disable CS0219 // The variable 'pt' is assigned but its value is never used
             Point pt = new Point ( );
+#pragma warning restore CS0219 // The variable 'pt' is assigned but its value is never used
+#pragma warning disable CS0219 // The variable 'pt2' is assigned but its value is never used
             Point pt2 = new Point ( );
+#pragma warning restore CS0219 // The variable 'pt2' is assigned but its value is never used
             Point pt3 = new Point ( );
             int index = 1;
 
@@ -4859,24 +4924,20 @@ namespace MyDev . Views
 
         }
 
-        private void click1 ( object sender , RoutedEventArgs e )
-        {
 
+        private void DirectoryOptions_PreviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
+        {
         }
 
-        private void click2 ( object sender , RoutedEventArgs e )
+        private void DirectoryOptions_DropDownOpened ( object sender , EventArgs e )
         {
-
+            // System . Windows . Controls . MenuItem mi = sender as System . Windows . Controls . MenuItem;
+            DirectoryOptions . SelectedItem = ComboSelectedItem;
         }
 
-        private void click3 ( object sender , RoutedEventArgs e )
+        private void ComboBoxItem_Selected ( object sender , RoutedEventArgs e )
         {
-
-        }
-
-        private void Clickopt1 ( object sender , RoutedEventArgs e )
-        {
-            Console . WriteLine ();
+            var v = e . OriginalSource;
         }
     }
 }

@@ -16,6 +16,16 @@ namespace MyDev . Views
 		//Event CallBack for when Asynchronous data loading has been completed in the Various ViewModel classes
 
 		// Main Event handlersfor when DB's load data from disk
+		
+		//<SelectionChangedArgs> 
+		//public UIElement element;
+		//public string sendername;
+		//public string sendertype;
+		//public int index;
+		//public object data;
+		//public string Empty;
+		public static event EventHandler<SelectionChangedArgs> ListSelectionChanged;
+		
 		public static event EventHandler<LoadedEventArgs> BankDataLoaded;
 		public static event EventHandler<LoadedEventArgs> CustDataLoaded;
 		public static event EventHandler<LoadedEventArgs> DetDataLoaded;
@@ -25,6 +35,8 @@ namespace MyDev . Views
 		public static event EventHandler<IndexChangedArgs> EditIndexChanged;
 		public static event EventHandler<IndexChangedArgs> MultiViewerIndexChanged;
 		public static event EventHandler<IndexChangedArgs> ForceEditDbIndexChanged;
+		public static event EventHandler<InterWindowArgs> WindowMessage;
+
 
 		//Northwind events
 		public static event EventHandler<NwGridArgs> NwCustomerSelected;
@@ -102,6 +114,12 @@ namespace MyDev . Views
 		//------------------------------//
 		// INDEX CHANGE EVENTS
 		//------------------------------//
+
+		public static void TriggerWindowMessage ( object obj , InterWindowArgs e )
+		{
+			if ( WindowMessage != null )
+				WindowMessage?.Invoke ( obj , e );
+		}
 
 		#region index changes
 		public static void TriggerViewSharingChanged ( object obj , NotifyAllViewersOfViewSharingStatus e )
@@ -188,10 +206,15 @@ namespace MyDev . Views
 		}
 		#endregion data changes
 
-
 		//------------------------------//
 		// DATA LOADED EVENTS
 		//------------------------------//		
+		
+		public static void TriggerListSelectionChanged ( object obj , SelectionChangedArgs e )
+		{
+			if ( ListSelectionChanged != null )
+				ListSelectionChanged?.Invoke ( obj , e );
+		}
 		public static void TriggerBackgroundBankDataLoaded ( object obj , BackgroundDataLoadeEventArgs e )
 		{
 			//			Console . WriteLine ( $"DEBUG : In EventControl : Sending  TriggerBackgroundBankDataLoaded EVENT trigger" );

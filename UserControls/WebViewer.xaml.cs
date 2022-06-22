@@ -29,6 +29,13 @@ namespace MyDev . UserControls
             InitializeAsync ( );
             initUrlList ( );
         }
+        public WebViewer (string url )
+        {
+            InitializeComponent ( );
+            webView . NavigationStarting += EnsureHttps;
+            InitializeAsync ( );
+            initUrlList ( );
+        }
         public string URL { get; set; }
         public string LastURL { get; set; }
         public string OriginalAddress { get; set; }
@@ -124,13 +131,18 @@ namespace MyDev . UserControls
             addressBar . SelectedItem = addressBar . SelectedIndex;
             //ButtonGo_Click ( sender , null );
         }
+        public  void LoadWebsite(int index)
+        {
+            addressBar . SelectedIndex = index;
+            ButtonGo_Click ( this , null );
+        }
         private void ButtonGo_Click ( object sender , RoutedEventArgs e )
         {
             if ( webView != null && webView . CoreWebView2 != null )
             {
                 if ( addressBar . SelectedIndex == -1 )
                 {
-                    if ( addressBar . SelectedItem != "" )
+                    if ( (string)addressBar . SelectedItem != "" )
                     {
                         addressBar . SelectedIndex = 0;
                         URL = addressBar . SelectedItem . ToString ( );
