@@ -271,8 +271,17 @@
                  MouseEnter="PART_MouseEnter"
                  MouseLeave="PART_MouseLeave"
                  PreviewMouseRightButtonDown="ttSp_PreviewMouseRightButtonDown"
-                ItemContainerStyle="{StaticResource _ListBoxItemStyle1}"> 
-            
+                ItemContainerStyle="{StaticResource _ListBoxItemStyle1}">
+            <ListBox.ItemsPanel>
+                <!--// Saves memory and loads much faster-->
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel>
+                        <!--// saves loads of memroy-->
+                    </VirtualizingStackPanel>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+
             <ListBox.ToolTip                >
                 <StackPanel  >
                     <TextBlock Text="{Binding underlinetext}" HorizontalAlignment="Center"/>

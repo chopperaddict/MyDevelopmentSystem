@@ -1712,7 +1712,7 @@ namespace MyDev
             // Works well 26/5/21
             double currentTop = 0;
             double currentBottom = 0;
-            if ( CurrentRecord == -1 )
+            if ( CurrentRecord == -1 || Dgrid  == null)
                 return;
             if ( Dgrid . Name == "CustomerGrid" || Dgrid . Name == "DataGrid1" )
             {
@@ -1741,13 +1741,13 @@ namespace MyDev
                 Dgrid . SelectedIndex = CurrentRecord;
                 Dgrid . SelectedItem = CurrentRecord;
                 //Dgrid . UpdateLayout ( );
-                //Dgrid . BringIntoView ( );
+                Dgrid . BringIntoView ( );
 //                Dgrid . ScrollIntoView ( row == null ? Dgrid . SelectedItem : row);
                 Dgrid . UpdateLayout ( );
 //                Dgrid . ScrollIntoView ( row == null ? Dgrid . SelectedItem : row );
-                //Dgrid . ScrollIntoView ( Dgrid . SelectedItem , Dgrid . Columns [ 0 ] );
+                //Dgrid . ScrollIntoView ( Dgrid . SelectedIndex );
                 //ScrollRowInGrid ( Dgrid , Convert.ToInt16(row) );
-//                Dgrid . UpdateLayout ( );
+                Dgrid . UpdateLayout ( );
             if(CurrentRecord == 0)
                 Console . WriteLine ($"DataGrid Scroll is selecting record ZERO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 //Dgrid . Refresh ( );
@@ -1914,27 +1914,27 @@ namespace MyDev
             // Toggle magnification of DataGrid thru from 4 > 0 and return to 4
             if ( info . Text == "+4" )
             {
-                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation4" );
                 info . Text = "+3";
             }
             else if ( info . Text == "+3" )
             {
-                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation4" );
                 info . Text = "+2";
             }
             else if ( info . Text == "+2" )
             {
-                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation4" );
                 info . Text = "+1";
             }
             else if ( info . Text == "+1" )
             {
-                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation4" );
                 info . Text = "0";
             }
             else if ( info . Text == "0" )
             {
-                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" );
+                lbox . Style = ( Style ) System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation4" );
                 info . Text = "+4";
             }
         }

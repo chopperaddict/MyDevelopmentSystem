@@ -223,7 +223,7 @@
     </Style>
     
  
-    <Style TargetType="ListBox" x:Key="ListBoxMagnifyAnimation">
+    <Style TargetType="ListBox" x:Key="ListBoxMagnifyAnimation4">
         <Style.Triggers>
             <EventTrigger RoutedEvent="ListBox.MouseEnter">
                 <BeginStoryboard>
@@ -243,7 +243,7 @@
                         <Storyboard>
                             <DoubleAnimation
                                         Storyboard.TargetProperty="FontSize"
-                                        From="12" To="16" Duration="0:0:0.1" 
+                                        From="16" To="12" Duration="0:0:0.1" 
                                         AutoReverse="false"  />
                         </Storyboard>
                     </Storyboard>

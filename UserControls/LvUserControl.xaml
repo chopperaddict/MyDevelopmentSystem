@@ -215,14 +215,14 @@
                   GotFocus="listview1_GotFocus"
             ItemContainerStyle="{StaticResource ListBoxItemStyle1}">
             <!--ItemContainerStyle="{StaticResource ListBoxItemStyle1}">-->
-            <!--<ListView.ItemsPanel>
-                --><!--// Saves memory and loads much faster--><!--
+            <ListView.ItemsPanel>
+                <!--// Saves memory and loads much faster-->
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel>
-                        --><!--// saves loads of memroy--><!--
+                        <!--// saves loads of memroy-->
                     </VirtualizingStackPanel>
                 </ItemsPanelTemplate>
-            </ListView.ItemsPanel>-->
+            </ListView.ItemsPanel>
         </ListView>
     </Grid>
 </UserControl>

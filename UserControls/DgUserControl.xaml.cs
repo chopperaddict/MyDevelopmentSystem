@@ -20,28 +20,27 @@ using System . Runtime . Serialization . Formatters . Binary;
 
 namespace MyDev . UserControls
 {
-    /// <summary>
-    /// Interaction logic for DgUserControl.xaml
-    /// </summary>
+
     public partial class DgUserControl : UserControl
     {
-        const string FileName = @"DgUserControl.bin";
-        DatagridUserControlViewModel dgridctrlvm { get; set; }  = new DatagridUserControlViewModel ( );   
-        #region header block
-        public object Viewmodel { get; set; }
+        const string FileName = @"DgUserControl.bin"; 
+        DatagridUserControlViewModel dgridctrlvm { get; set; }
 
+        #region header block
         public ObservableCollection<ViewModels . BankAccountViewModel> Bvm { get; private set; }
         public ObservableCollection<ViewModels . CustomerViewModel> Cvm { get; private set; }
         //       private static TabWinViewModel Controller { get; set; }
-        public static object HostViewModel { get; set; }
-        public static Tabview tabviewWin { get; set; }
+//        public static object HostViewModel { get; set; }
+//        public static Tabview tabviewWin { get; set; }
         public string CurrentType { set; get; } = "CUSTOMER";
-        private static DgUserControl ThisWin { get; set; }
+        //private static DgUserControl ThisWin { get; set; }
         new private bool IsLoaded { get; set; } = false;
-        public bool  SelectionInAction { get; set; } = false;
+        private bool SelectionInAction { get; set; } = false;
         public static bool TrackselectionChanges { get; set; } = false;
         private int CurrentIndex { get; set; } = 0;
+        #endregion header block
 
+        #region Serialization
         public DatagridUserControlViewModel ReadSerializedObject ( )
         {
             Console . WriteLine ( "Reading saved file" );
@@ -52,53 +51,43 @@ namespace MyDev . UserControls
             openFileStream . Close ( );
             return dcvm;
         }
-        public void WriteSerializedObject()
+        public void WriteSerializedObject ( )
         {
             Stream SaveFileStream = File . Create ( FileName );
             BinaryFormatter serializer = new BinaryFormatter ( );
             serializer . Serialize ( SaveFileStream , grid1 );
             SaveFileStream . Close ( );
         }
-         #endregion header block
-
-        public static event EventHandler<GotFocusArgs> GridGotFocus;
-
-        public static void SetGridGotFocus ( GotFocusArgs args )
-        {
-            if ( DgUserControl . GridGotFocus != null )
-                DgUserControl . GridGotFocus . Invoke ( null , args );
-        }
+        #endregion Serialization
 
         public DgUserControl ( )
         {
             InitializeComponent ( );
             Console . WriteLine ( $"DataGrid Control Loading ......" );
-            ThisWin = this;
-            this . DataContext = dgridctrlvm ;
-            TabWinViewModel . LoadDb += DgLoadDb;
-            EventControl . BankDataLoaded += EventControl_BankDataLoaded;
-            EventControl . CustDataLoaded += EventControl_CustDataLoaded;
-            EventControl . ListSelectionChanged += SelectionHasChanged;
-            grid1 . PreviewGotKeyboardFocus += Grid1_PreviewGotKeyboardFocus;
+            //ThisWin = this;
 
-            GridGotFocus += DgUserControl_GridGotFocus;
-            // allow   this  to broadcast
-            EventControl . TriggerWindowMessage ( this , new InterWindowArgs { message = $"DgUIserControl loaded..." } );
-            CreateBankColumns ( );
-            LoadBank ( );
+            // setup DP pointer in Tabview to DgUserControl using shortcut command line !
+            Tabview . GetTabview(). Dgusercontrol = this; 
+            
+            //Set Datagrid AP pointer in Tabview
+            Tabview . SetDGControl ( this , this.grid1 );
+
+            // setup local data collections
+            Bvm = new ObservableCollection<BankAccountViewModel> ( );
+            Cvm = new ObservableCollection<CustomerViewModel> ( );
+
+            //setup DataContext
+            dgridctrlvm = new DatagridUserControlViewModel ( this );
+            this . DataContext = dgridctrlvm;
+
+            
+            // setup required Hooks
+            this . grid1 . SelectionChanged += dgridctrlvm . grid1_SelectionChanged;
+            
+            // allow this  to broadcast
+            EventControl . TriggerWindowMessage ( this , new InterWindowArgs { message = $"DgUIserControl loaded, ViewMode is DATAGRIDUSERCONTROLVIEWMODEL..." } );
             IsLoaded = false;
-            AddHotKeys ( );
-            // Save to our ViewModel repository
-            Viewmodel = new ViewModel ( );
-            Viewmodel = this;
-            ViewModel . SaveViewmodel ( "DgUsercontrol" , Viewmodel );
         }
-
-        private void DgUserControl_GridGotFocus ( object sender , GotFocusArgs e )
-        {
-            ReceivedFocus ( e );
-        }
-
         private void ReceivedFocus ( GotFocusArgs args )
         {
             // Handle focus being set to this user control
@@ -113,12 +102,12 @@ namespace MyDev . UserControls
                 if ( grid1 . IsKeyboardFocusWithin )
                 {
                     Console . WriteLine ( "Keyboard IS FOCUSED" );
-//                    grid1 . GotKeyboardFocus += Grid1_GotKeyboardFocus;
+                    //                    grid1 . GotKeyboardFocus += Grid1_GotKeyboardFocus;
                 }
                 else
                     Console . WriteLine ( "Keyboard not  focused" );
                 Mouse . OverrideCursor = Cursors . Arrow;
-            Console . WriteLine ( $"Current index is {grid1 . SelectedIndex}" );
+                Console . WriteLine ( $"Current index is {grid1 . SelectedIndex}" );
             }
             else
             {
@@ -135,13 +124,8 @@ namespace MyDev . UserControls
                         UserControlDataAccess . GetBankObsCollectionAsync ( Bvm , "" , true , "DgUserControl" );
                     } );
                     task . Start ( );
-
                 }
-                else
-                {
-                    //                    TabWinViewModel. LoadDatagridInBackgroundTask ( null);
-                }
-            }
+               }
             Mouse . OverrideCursor = Cursors . Arrow;
             DbCountArgs cargs = new DbCountArgs ( );
             cargs . Dbcount = grid1 . Items . Count;
@@ -154,120 +138,16 @@ namespace MyDev . UserControls
             else
             {
                 Console . WriteLine ( "Keyboard not  focused" );
-                SendEscapeToGrid ( );
             }
             return;
         }
-        private void SendEscapeToGrid ( )
-        {
-            Key key = Key . Escape;
-            
-        }
-        private void AddHotKeys ( )
-        {
-            try
-            {
-                RoutedCommand firstSettings = new RoutedCommand ( );
-                firstSettings . InputGestures . Add ( new KeyGesture ( Key . Escape , ModifierKeys . None ) );
-                CommandBindings . Add ( new CommandBinding ( firstSettings , HandleEscKey ) );
 
-                //RoutedCommand secondSettings = new RoutedCommand ( );
-                //secondSettings . InputGestures . Add ( new KeyGesture ( Key . B , ModifierKeys . None ) );
-                //CommandBindings . Add ( new CommandBinding ( secondSettings , My_second_event_handler ) );
-            }
-            catch ( Exception err )
-            {
-                //handle exception error
-            }
-        }
 
-    
-        private void Grid1_PreviewGotKeyboardFocus ( object sender , KeyboardFocusChangedEventArgs e )
-        {
-            // has no effect, it still focuses on ID fielld on top record
-            KeyboardDevice kd = e . KeyboardDevice;
-            kd . ClearFocus ( );
-            kd . Focus ( TabWinViewModel . dgUserctrl );
-        }
-
-        private void UserControl_Loaded ( object sender , System . Windows . RoutedEventArgs e )
-        {
-            if ( IsLoaded == true ) return;
-            IsLoaded = true;
-        }
         public static void SetListSelectionChanged ( bool arg )
         {
             TrackselectionChanges = arg;
         }
 
-        private void EventControl_BankDataLoaded ( object sender , LoadedEventArgs e )
-        {
-            if ( e . CallerType != "DgUserControl" ) return;
-            //if ( grid1 . Items . Count > 0 && CurrentType != "BANK" ) return;
-            CurrentType = "BANK";
-            TabWinViewModel . TriggerDbType ( CurrentType );
-            //await Dispatcher . SwitchToUi ( );
-            $"Dispatcher on UI thread =  {Dispatcher . CheckAccess ( )}" . CW ( );
-            Console . WriteLine ( $"Data requested by : [{e . CallerDb}]" );
-            this . grid1 . ItemsSource = null;
-            this . grid1 . Items . Clear ( );
-            CreateBankColumns ( );
-            Bvm = e . DataSource as ObservableCollection<ViewModels . BankAccountViewModel>;
-            DataTemplate dt = FindResource ( "BankDataTemplate1" ) as DataTemplate;
-            this . grid1 . ItemTemplate = dt;
-            this . grid1 . ItemsSource = Bvm;
-            this . grid1 . SelectedIndex = 0;
-            this . grid1 . SelectedItem = 0;
-            Utils . ScrollRecordIntoView ( this . grid1 , 0 );
-            this . grid1 . UpdateLayout ( );
-            Console . WriteLine ( $"Data Loaded for: [{e . CallerDb}], Records = {this . grid1 . Items . Count}" );
-            //TabWinViewModel . dgUserctrl . Refresh ( );
-            DbCountArgs args = new DbCountArgs ( );
-            args . Dbcount = Bvm?.Count ?? -1;
-            args . sender = "dgUserctrl";
-            TabWinViewModel . TriggerBankDbCount ( this , args );
-
-        }
-
-        private void EventControl_CustDataLoaded ( object sender , LoadedEventArgs e )
-        {
-            if ( e . CallerType != "DgUserControl" ) return;
-            //            if ( grid1 . Items . Count > 0 && CurrentType != "CUSTOMER" ) return;
-
-            CurrentType = "CUSTOMER";
-            TabWinViewModel . TriggerDbType ( CurrentType );
-            this . grid1 . ItemsSource = null;
-            this . grid1 . Items . Clear ( );
-            CreateCustomerColumns ( );
-            Cvm = new ObservableCollection<ViewModels . CustomerViewModel> ( );
-            Cvm = e . DataSource as ObservableCollection<ViewModels . CustomerViewModel>;
-            this . grid1 . ItemsSource = Cvm;
-            this . grid1 . CellStyle = FindResource ( "MAINCustomerGridStyle" ) as Style;
-            DataTemplate dt = FindResource ( "CustomersDbTemplate1" ) as DataTemplate;
-            this . grid1 . ItemTemplate = dt;
-            this . grid1 . SelectedIndex = 0;
-            this . grid1 . SelectedItem = 0;
-            Utils . ScrollRecordIntoView ( grid1 , 0 );
-            DbCountArgs args = new DbCountArgs ( );
-            args . Dbcount = Cvm?.Count ?? -1;
-            args . sender = "dgUserctrl";
-            TabWinViewModel . TriggerBankDbCount ( this , args );
-        }
-
-        private void DgLoadDb ( object sender , LoadDbArgs e )
-        {
-            if ( e . dbname == "BANK" )
-                LoadBank ( );
-            else
-                LoadCustomer ( );
-        }
-
-        public static DgUserControl SetController ( object ctrl )
-        {
-            HostViewModel = ctrl ;
-            tabviewWin = TabWinViewModel . SendTabview ( );
-            return ThisWin;
-        }
         public async Task<ObservableCollection<BankAccountViewModel>> LoadBank ( bool update = true )
         {
             BankCollection bankcollection = new BankCollection ( );
@@ -302,7 +182,6 @@ namespace MyDev . UserControls
             CurrentType = "CUSTOMER";
             TabWinViewModel . TriggerDbType ( CurrentType );
             if ( Cvm == null ) Cvm = new ObservableCollection<CustomerViewModel> ( );
-            //            CustomerViewModel . GetCustObsCollectionWithDict ( Cvm );
             Task task = Task . Run ( ( ) =>
             {
                 // This is pretty fast - uses Dapper and Linq
@@ -313,145 +192,7 @@ namespace MyDev . UserControls
             } );
         }
 
-  
-        private void grid1_SelectionChanged ( object sender , SelectionChangedEventArgs e )
-        {
-            if ( this . SelectionInAction )
-            {
-                this . SelectionInAction = false;
-                return;
-            }
-            //DataGrid dg = sender as DataGrid;
-            //if ( dg == null ) return;
-            if ( this.grid1. Items . Count == 0 ) return;
-            if ( this . grid1 . SelectedIndex == -1 )
-            {
-                //make sure we have something selected !
-                this . grid1 . SelectedIndex = 0;
-                this . grid1 . SelectedItem = 0;
-            }
-            //            DataGrid v = e . OriginalSource as DataGrid;
-            DataGrid v = e . OriginalSource as DataGrid;
-            if ( v?.SelectedIndex != CurrentIndex )
-            {
-                (double, int) t1 = (4.5, 3);
-                CurrentIndex = v. SelectedIndex;
-                
-                if ( TrackselectionChanges )
-                {
-                    this . SelectionInAction = true;
-                    SelectionChangedArgs args = new SelectionChangedArgs ( );
-                    args . index = this . grid1 . SelectedIndex;
-                    args . data = this . grid1 . SelectedItem;
-                    args . sendertype = CurrentType;
-                    args . sendername = "grid1";
-                    Console . WriteLine ( $"DataGrid broadcasting selection set to  {args . index}" );
-                    this . SelectionInAction = false;
-                    EventControl . TriggerListSelectionChanged ( sender , args );
-                }
-                else this . SelectionInAction = false;
-            }
-            else
-                this . SelectionInAction = false;
-
-            Mouse . OverrideCursor = Cursors . Arrow;
-            CurrentIndex = this . grid1 . SelectedIndex;
-            Console . WriteLine ( $"{CurrentIndex} ...." );
-        }
-        private void SelectionHasChanged ( object sender , SelectionChangedArgs e )
-        {
-            bool success = false;
-            object row = null;
-            string custno = "", bankno = "";
-            if ( DgUserControl . TrackselectionChanges == false ) return;
-            // Another viewer has changed selection
-            if ( this . grid1 . ItemsSource == null ) return;
-            if ( sender . GetType ( ) == typeof ( DgUserControl ) ) return;
-
-            int newindex = 0;
-            if ( e . sendername != "grid1" )
-            {
-                if ( e . sendertype == "BANK" )
-                {
-                    // Sender is a BANK
-                    BankAccountViewModel sourcerecord = new BankAccountViewModel ( );
-                    sourcerecord = e . data as BankAccountViewModel;
-                    if ( sourcerecord != null )
-                    {
-                        custno = sourcerecord . CustNo;
-                        bankno = sourcerecord . BankNo;
-                    }
-                    else return;
-                }
-                else if ( e . sendertype == "CUSTOMER" )
-                {
-                    // Sender is a CUSTOMER
-                    CustomerViewModel sourcerecord = new CustomerViewModel ( );
-                    sourcerecord = e . data as CustomerViewModel;
-                    if ( sourcerecord != null )
-                    {
-                        custno = sourcerecord . CustNo;
-                        bankno = sourcerecord . BankNo;
-                    }
-                    else return;
-                }
-                if ( this . CurrentType == "CUSTOMER" )
-                {
-                    try
-                    {
-                        foreach ( CustomerViewModel item in this . grid1 . Items )
-                        {
-                            if ( item . CustNo == custno && item . BankNo == bankno )
-                            {
-                                this . SelectionInAction = true;
-                                this . grid1 . SelectedIndex = newindex;
-                                this . grid1 . SelectedItem = newindex;
-                                CurrentIndex = newindex;
-
-                                Console . WriteLine ( $"DataGrid selection in Customers matched on {custno}:{bankno}, index {newindex}" );
-                                //
-                                //row = Utils . GetRow ( grid1 , newindex );
-                                Utils . ScrollRecordIntoView ( grid1 , newindex );
-                                success = true;
-                                break;
-                            }
-                            newindex++;
-                        }
-                    }
-                    catch ( Exception ex ) { Console . WriteLine ( $"DataGrid failed search in Customer for match to {custno} : {bankno} : {ex . Message}" ); }
-                }
-                else
-                {
-                    try
-                    {
-                        foreach ( BankAccountViewModel item in this . grid1 . Items )
-                        {
-                            if ( item . CustNo == custno && item . BankNo == bankno )
-                            {
-                                this . SelectionInAction = true;
-                                this . grid1 . SelectedIndex = newindex;
-                                this . grid1 . SelectedItem = newindex;
-                                CurrentIndex = newindex;
-                                Console . WriteLine ( $"DataGrid selection in BankAccount matched on {custno}:{bankno}, index {newindex}" );
-                                //row = Utils . GetRow ( grid1 , newindex );
-                                Utils . ScrollRecordIntoView ( grid1 , newindex );
-                                this . grid1 . UpdateLayout ( );
-                                success = true;
-                                break;
-                            }
-                            newindex++;
-                        }
-                    }
-                    catch ( Exception ex ) { Console . WriteLine ( $"DataGrid failed search in Bank for match to {custno} : {bankno}" ); }
-                }
-                if ( success == false )
-                    Console . WriteLine ( $"DataGrid failed search in Bank for match to {custno} : {bankno}" );
-            }
-            if ( success )
-                Utils . ScrollRecordIntoView ( this . grid1 , newindex );
-            Console . WriteLine ( $"DataGrid : {CurrentIndex} ...." );
-        }
-
+        #region Hilite TabItem header on mouse Entry / Exit
         public void PART_MouseLeave ( object sender , MouseEventArgs e )
         {
             var tabview = TabWinViewModel . Tview;
@@ -473,8 +214,8 @@ namespace MyDev . UserControls
                 tabview . Tab1Header . Foreground = FindResource ( "Yellow0" ) as SolidColorBrush;
             }
         }
+        #endregion Hilite TabItem header on mouse Entry / Exit
 
-  
         #region DataGrid columns creation
         private void CreateBankColumns ( )
         {
@@ -559,90 +300,9 @@ namespace MyDev . UserControls
             grid1 . Columns . Add ( c11 );
         }
         #endregion DataGrid columns creation
-
-        #region sundry grid focus stuff
-        private void grid1_CellEditEnding ( object sender , DataGridCellEditEndingEventArgs e )
-        {
-            //DataGridRow  row = e.Row; 
-        }
-        private void HandleEscKey ( object sender , ExecutedRoutedEventArgs e )
-        {
-            grid1 . SelectedItem = CurrentIndex;
-        }
-        private void Grid1_GotKeyboardFocus ( object sender , KeyboardFocusChangedEventArgs e )
-        {
-            bool cancelled = grid1 . CancelEdit ( );
-            Console . WriteLine ( $"still in Edit ? {cancelled}" );
-            HandleEscKey ( sender , null );
-        }
-        private void Grid1_PreviewKeyDown ( object sender , KeyEventArgs e )
-        {
-            //            throw new NotImplementedException ( );
-        }
-        private void grid1_PreparingCellForEdit ( object sender , DataGridPreparingCellForEditEventArgs e )
-        {
-            //never gets  here !!!!
-            var v = e . EditingEventArgs;
-            v . Handled = true;
-        }
-        private void grid1_PreviewMouseMove1 ( object sender , MouseEventArgs e )
-        {
-            //DataGrid dgSender = sender as DataGrid;
-            //if ( dgSender != null )
-            //{
-            //    if ( dgSender . Name == "grid1" )
-            //    {
-            //        TabWinViewModel . CurrentTabIndex = 0;
-            //        TabWinViewModel . CurrentTabName = "DgridTab";
-            //        TabWinViewModel . CurrentTabTextBlock = "Tab1Header";
-            //    }
-            //}
-
-        }
-        private void grid1_Loaded ( object sender , System . Windows . RoutedEventArgs e )
-        {
-            this . SelectionInAction = false;
-            Console . WriteLine ( $"Datagrid : this . SelectionInAction = false" );
-        }
-        private void grid1_GotFocus ( object sender , RoutedEventArgs e )
-        {
-            grid1 . CancelEdit ( );
-            ReceivedFocus (null );
-        }
-        private void grid1_LostFocus ( object sender , RoutedEventArgs e )
-        {
-            Console . WriteLine ( $"Datagrid lost focus" );
-            //            this . SelectionInAction = false;
-        }
-        private void dg_Editing ( object sender , DataGridBeginningEditEventArgs e )
-        {
-        }
-        private void dg_CellEditEnding ( object sender , DataGridCellEditEndingEventArgs e )
-        {
-        }
-        private void dg_RowEditEnding ( object sender , DataGridRowEditEndingEventArgs e )
-        {
-        }
-        private void grid1_BeginningEdit ( object sender , DataGridBeginningEditEventArgs e )
-        {
-        }
-        
-        #endregion sundry grid focus stuff
-
-        private void TabControl_PreviewMouseDown ( object sender , MouseButtonEventArgs e )
-        {
-            if ( IsUnderTabHeader ( e . OriginalSource as DependencyObject ) )
-                CommitTables ( sender as Tabview );
-        }
-        private bool IsUnderTabHeader ( DependencyObject control )
-        {
-            if ( control is TabItem ) return true;
-            DependencyObject parent = VisualTreeHelper . GetParent ( control );
-            if ( parent == null )
-                return false;
-            return IsUnderTabHeader ( parent );
-        }
-        private void CommitTables ( DependencyObject control )
+ 
+        //#endregion sundry grid focus stuff
+         private void CommitTables ( DependencyObject control )
         {
             if ( control is DataGrid )
             {

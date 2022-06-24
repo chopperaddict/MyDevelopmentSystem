@@ -18,7 +18,7 @@
         Title="Tabview" MinHeight="450" MinWidth="800">
     <Window.Resources>
         <view:TabWinViewModel x:Key="TabWinViewModel"/>
-        <local:ConditionalEventTrigger x:Key="ConditionalEventTrigger"/>
+        <!--<local:ConditionalEventTrigger x:Key="ConditionalEventTrigger"/>-->
         <conv:ReduceByParamValue x:Key="ReduceByParamValue"/>
 
         <DataTemplate x:Key="NotificationTemplate">

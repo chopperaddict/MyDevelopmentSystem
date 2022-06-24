@@ -34,7 +34,7 @@ namespace MyDev . UserControls
     /// <summary>
     /// Interaction logic for LbUserControl.xaml
     /// </summary>
-   
+
     public partial class LbUserControl : UserControl
     {
         const string FileName = @"LbUserControl.bin";
@@ -53,7 +53,7 @@ namespace MyDev . UserControls
         public static LbUserControl ThisWin { get; set; }
         private static Tabview tabviewWin { get; set; }
         public static string lbParent { get; set; }
-        public bool  SelectionInAction { get; set; } = false;
+        public bool SelectionInAction { get; set; } = false;
         public static bool TrackselectionChanges { get; set; } = false;
         private int CurrentIndex { get; set; } = 0;
         public int TipElapsedTime { get; set; }
@@ -188,6 +188,14 @@ namespace MyDev . UserControls
             InitializeComponent ( );
             Console . WriteLine ( $"'Creating 'LbUserControl' User Control  ......" );
             ThisWin = this;
+
+            // setup DP pointer in Tabview to LbUserControl using shortcut command line !
+            Tabview . GetTabview ( ) . Lbusercontrol = this;
+
+            //Set ListBox  AP pointer in Tabview
+            Tabview . SetListBox ( this , listbox1 );
+
+            // setup local data collections
             Bvm = new ObservableCollection<BankAccountViewModel> ( );
             Cvm = new ObservableCollection<CustomerViewModel> ( );
             EventControl . BankDataLoaded += EventControl_BankDataLoaded;
@@ -204,7 +212,7 @@ namespace MyDev . UserControls
             Viewmodel = new ViewModel ( );
             Viewmodel = this;
             ViewModel . SaveViewmodel ( "LbUserControl" , Viewmodel );
-//            listbox1.
+            //            listbox1.
             this . DataContext = this;
         }
         public static void SetListSelectionChanged ( bool arg )
@@ -224,7 +232,7 @@ namespace MyDev . UserControls
         {
             Stream SaveFileStream = File . Create ( FileName );
             BinaryFormatter serializer = new BinaryFormatter ( );
-            serializer . Serialize ( SaveFileStream , TabWinViewModel . lbUserctrl.listbox1);
+            serializer . Serialize ( SaveFileStream , TabWinViewModel . lbUserctrl . listbox1 );
             SaveFileStream . Close ( );
         }
 
@@ -308,7 +316,7 @@ namespace MyDev . UserControls
 
             Utils . ScrollLBRecordIntoView ( this . listbox1 , 0 );
             this . listbox1 . Refresh ( );
-            tabviewWin . TabSizeChanged ( null , null );
+            Tabview . GetTabview ( ) . TabSizeChanged ( null , null );
             Mouse . OverrideCursor = Cursors . Arrow;
             DbCountArgs args = new DbCountArgs ( );
             args . Dbcount = Bvm?.Count ?? -1;
@@ -328,7 +336,7 @@ namespace MyDev . UserControls
             DataTemplate dt = FindResource ( "CustomersDbTemplate1" ) as DataTemplate;
             this . listbox1 . ItemTemplate = dt;
             Utils . ScrollLBRecordIntoView ( this . listbox1 , 0 );
-            tabviewWin . TabSizeChanged ( null , null );
+            Tabview . GetTabview ( ) . TabSizeChanged ( null , null );
             Mouse . OverrideCursor = Cursors . Arrow;
             DbCountArgs args = new DbCountArgs ( );
             args . Dbcount = Cvm?.Count ?? -1;
@@ -400,10 +408,10 @@ namespace MyDev . UserControls
             this . listbox1 . Items . Clear ( );
             //Task task = Task . Run ( ( ) =>
             //{
-                CurrentType = "BANK";
-                TabWinViewModel . TriggerDbType ( CurrentType );
-                // uses BankDataLoadedto load data indirectly
-                Bvm = UserControlDataAccess . GetBankObsCollection ( true , "LbUserControl" );
+            CurrentType = "BANK";
+            TabWinViewModel . TriggerDbType ( CurrentType );
+            // uses BankDataLoadedto load data indirectly
+            Bvm = UserControlDataAccess . GetBankObsCollection ( true , "LbUserControl" );
             //} );
             return Bvm;
         }
@@ -444,15 +452,13 @@ namespace MyDev . UserControls
         }
         private void listbox1_GotFocus ( object sender , RoutedEventArgs e )
         {
-            //           this . SelectionInAction = false;
         }
         private void listbox1_LostFocus ( object sender , RoutedEventArgs e )
         {
-            //           this . SelectionInAction = false;
         }
         private void listbox1_SelectionChanged ( object sender , SelectionChangedEventArgs e )
         {
-            if ( this . SelectionInAction )
+            if ( this . SelectionInAction )          
             {
                 Mouse . OverrideCursor = Cursors . Arrow;
                 return;
@@ -469,10 +475,10 @@ namespace MyDev . UserControls
             ListBox v = e . OriginalSource as ListBox;
             if ( v?.SelectedIndex != CurrentIndex )
             {
-                this . SelectionInAction = true;
-                CurrentIndex = v.SelectedIndex;
-                if ( TrackselectionChanges )
+                CurrentIndex = v . SelectedIndex;
+                if ( Tabview .GetTabview(). ViewersLinked )
                 {
+                    this . SelectionInAction = true;
                     SelectionChangedArgs args = new SelectionChangedArgs ( );
                     args . data = this . listbox1 . SelectedItem;
                     args . sendername = "listbox1";
@@ -480,20 +486,19 @@ namespace MyDev . UserControls
                     args . index = this . listbox1 . SelectedIndex;
                     Console . WriteLine ( $"ListBox broadcasting selection set to  {args . index}" );
                     EventControl . TriggerListSelectionChanged ( sender , args );
-                    this . SelectionInAction = false;
+//                    this . SelectionInAction = false;
                 }
-                else this . SelectionInAction = false;
+//                else this . SelectionInAction = false;
             }
-            else
-                this . SelectionInAction = false;
 
+            this . SelectionInAction = false;
             Mouse . OverrideCursor = Cursors . Arrow;
             e . Handled = true;
         }
         private void SelectionHasChanged ( object sender , SelectionChangedArgs e )
         {
             bool success = false;
-            if ( this . SelectionInAction == true)
+            if ( this . SelectionInAction == true )
                 return;
 
             if ( LbUserControl . TrackselectionChanges == false ) return;
@@ -584,6 +589,7 @@ namespace MyDev . UserControls
                 }
                 if ( success == false )
                     Console . WriteLine ( $"Listbox failed search in Bank for match to {custno} : {bankno}" );
+                SelectionInAction = false;
 
                 if ( success )
                     Utils . ScrollLBRecordIntoView ( this . listbox1 , newindex );

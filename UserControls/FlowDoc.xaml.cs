@@ -757,7 +757,7 @@ namespace MyDev . UserControls
 			flowdoc . ReleaseMouseCapture ( );
 			BorderSelected = -1;
 			this . Visibility = Visibility . Collapsed;
-			FlowDocClosed . Invoke ( this , null );
+			FlowDocClosed ?. Invoke ( this , null );
 			Mouse . OverrideCursor = Cursors . Arrow;
 		}
 

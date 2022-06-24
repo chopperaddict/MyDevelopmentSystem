@@ -235,6 +235,8 @@ namespace MyDev
 		public MainWindow ( )
 		{
 			InitializeComponent ( );
+			this . Top = 100;
+			this . Left = 100;
 			Utils . SetupWindowDrag ( this );
 			Flags . CurrentConnectionString = ( string ) Properties . Settings . Default [ "BankSysConnectionString" ];
 	//		Flags . UseFlowdoc = ( bool ) Properties . Settings . Default [ "UseFlowdoc" ];
@@ -403,12 +405,11 @@ namespace MyDev
 
         private void button18_Click ( object sender , RoutedEventArgs e )
         {
-			//test t = new test ( );
-//			SpinnerDlg spinner = new SpinnerDlg ( ); 
-//			spinner . Show ( );
-        }
+			TabViewInfo tvvi = new TabViewInfo ("MyDevInfo.txt" );
+			tvvi . Show ( );
+		}
 
-        private void button20_Click ( object sender , RoutedEventArgs e )
+		private void button20_Click ( object sender , RoutedEventArgs e )
         {
 //			LoadPopup pu= new LoadPopup ( );
 //			pu . Show ( );

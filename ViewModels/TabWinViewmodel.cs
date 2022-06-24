@@ -74,8 +74,10 @@ namespace MyDev . ViewModels
 
 
         #endregion Events
+
         public Button button = new Button ( );
         private static Stopwatch timer = new Stopwatch ( );
+        private bool SelectionInAction {get; set;} = false;
         static public IProgress<int> progress { get; set; }
 
         public bool USETASK { get; set; } = true;
@@ -131,7 +133,7 @@ namespace MyDev . ViewModels
         private DataGrid dgrid;
         private string dbType;
         private string dbCount;
-        private bool areViewersLinked = false;
+        //        private bool areViewersLinked = false;
         private int progressValue;
 
         public TabItem Tabitem
@@ -154,18 +156,14 @@ namespace MyDev . ViewModels
             get { return dbCount; }
             set { dbCount = value; }
         }
-        public bool AreViewersLinked
-        {
-            get { return areViewersLinked; }
-            set { areViewersLinked = value; NotifyPropertyChanged ( nameof ( AreViewersLinked ) ); }
-        }
+
         public int ProgressValue
         {
             get { return progressValue; }
             set { progressValue = value; NotifyPropertyChanged ( "ProgressValue" ); }
         }
-
         #endregion Full properties
+
 
         #region Commands
         public ICommand LoadBankBtn { get; }
@@ -188,23 +186,40 @@ namespace MyDev . ViewModels
                 // Give a pointer for 'this' to our usercontrols and get theirs back
                 SetDBCount += Tabview_SetDBCount;
                 SetDBType += Tabview_SetDBType;
+                // set local public static pointer  to Tabview
+                Tview = Tabview . GetTabview ( );
 
                 if ( dgUserctrl == null )
-                    dgUserctrl = new DgUserControl ( );
+                {
+                    dgUserctrl = Tabview . GetTabview ( ) . Dgusercontrol;
+                    if ( dgUserctrl == null )
+                    {
+                        dgUserctrl = new DgUserControl ( );
+                        Tview . Dgusercontrol = dgUserctrl;
+                    }
+                }
+                lbUserctrl = Tabview . GetTabview ( ) . Lbusercontrol;
                 if ( lbUserctrl == null )
+                {
                     lbUserctrl = new LbUserControl ( );
+                    Tview . Lbusercontrol = lbUserctrl;
+                }
+                lvUserctrl = Tabview . GetTabview ( ) . Lvusercontrol;
                 if ( lvUserctrl == null )
+                {
                     lvUserctrl = new LvUserControl ( );
+                    Tview . Lvusercontrol = lvUserctrl;
+                }
                 if ( tvUserctrl == null )
                     tvUserctrl = new TvUserControl ( );
                 if ( logUserctrl == null )
                     logUserctrl = new LogUserControl ( );
 
-                dgUserctrl = DgUserControl . SetController ( this );
-                lbUserctrl = LbUserControl . SetController ( this );
-                lvUserctrl = LvUserControl . SetController ( this );
-                tvUserctrl = TvUserControl . SetController ( this );
-                logUserctrl = LogUserControl . SetController ( this );
+                //dgUserctrl = DgUserControl . SetController ( this );
+                //lbUserctrl = LbUserControl . SetController ( this );
+                //lvUserctrl = LvUserControl . SetController ( this );
+                //tvUserctrl = TvUserControl . SetController ( this );
+                //logUserctrl = LogUserControl . SetController ( this );
 
                 // Save to our ViewModel repository
                 Viewmodel = new ViewModel ( );
@@ -249,9 +264,10 @@ namespace MyDev . ViewModels
         #region Button Handlers   for loading data
         public void LoadCustBtnExecute ( object obj )
         {
+            // Generic Load of Customer data for any control type
             if ( CurrentTabName == "DgridTab" )
             {
-                //dgUserctrl . Bvm . Clear ( );
+                dgUserctrl . Cvm ?. Clear ( );
                 dgUserctrl . CurrentType = "CUSTOMER";
                 dgUserctrl . LoadCustomer ( );
                 dgUserctrl . grid1 . ItemsSource = dgUserctrl . Cvm;
@@ -265,7 +281,7 @@ namespace MyDev . ViewModels
             }
             else if ( CurrentTabName == "ListboxTab" )
             {
-                //lbUserctrl . Bvm . Clear ( );
+                lbUserctrl . Cvm ?. Clear ( );
                 lbUserctrl . CurrentType = "CUSTOMER";
                 lbUserctrl . LoadCustomer ( true );
                 lbUserctrl . listbox1 . ItemsSource = lbUserctrl . Cvm;
@@ -278,7 +294,7 @@ namespace MyDev . ViewModels
             }
             else if ( CurrentTabName == "ListviewTab" )
             {
-                //lvUserctrl . Bvm = new ObservableCollection<BankAccountViewModel> ( );
+                lvUserctrl . Cvm? .Clear( );
                 lvUserctrl . CurrentType = "CUSTOMER";
                 lvUserctrl . LoadCustomer ( );
                 lvUserctrl . listview1 . ItemsSource = lvUserctrl . Cvm;
@@ -293,6 +309,7 @@ namespace MyDev . ViewModels
         }
         public void LoadBankBtnExecute ( object obj )
         {
+            // Generic Load of Bank data for any control type
             if ( CurrentTabName == "DgridTab" )
             {
                 dgUserctrl . Bvm?.Clear ( );
@@ -338,8 +355,8 @@ namespace MyDev . ViewModels
             // Get pointer to our view
             Tview = tview;
             Tabcontrol = Tview?.Tabctrl;
-            dgUserctrl = DgUserControl . SetController ( ThisWin );
-            lbUserctrl = LbUserControl . SetController ( ThisWin );
+            //dgUserctrl = DgUserControl . SetController ( ThisWin );
+            //lbUserctrl = LbUserControl . SetController ( ThisWin );
             lvUserctrl = LvUserControl . SetController ( ThisWin );
             tvUserctrl = TvUserControl . SetController ( ThisWin );
             CurrentTabIndex = 0;
@@ -378,7 +395,7 @@ namespace MyDev . ViewModels
                 TItem . Content = dgUserctrl;
                 ProgressValue = 25;
                 Tview . ProgressBar_Progress . UpdateLayout ( );
-                 
+
                 // Handle UserControl
                 if ( dgUserctrl == null )
                 {
@@ -400,6 +417,8 @@ namespace MyDev . ViewModels
                     {
                         ViewModel . SaveViewmodel ( "DgUserControl" , dgUserctrl );
                         test = ViewModel . GetViewmodel ( "DgUserControl" ) as DgUserControl;
+                        if ( test == null )
+                            test = new DgUserControl ( );
                         // reset to our saved control
                         dgUserctrl = test;
                         TItem . Content = test;
@@ -431,8 +450,8 @@ namespace MyDev . ViewModels
                 // clear all Tags to false;
                 ClearTags ( );
                 dgUserctrl . Tag = true;
-                dgUserctrl . SelectionInAction = false;
-
+//                this.SelectionInAction = Tabview . GetTabview ( ) . ViewersLinked;
+                //dgUserctrl . SelectionInAction = this . SelectionInAction;
                 //Always do this close to end of method
                 TItem . Content = dgUserctrl;
                 //Tview . DgridTab . Content = dgUserctrl;
@@ -464,7 +483,7 @@ namespace MyDev . ViewModels
                 Tabcontrol . SelectedIndex = 1;
                 TabItem TItem = Tabcontrol . Items [ 1 ] as TabItem;
                 CurrentTabIndex = Tabcontrol . SelectedIndex;
-                
+
                 if ( lbUserctrl == null )
                 {
                     lbUserctrl = ViewModel . GetViewmodel ( "LbUserControl" ) as LbUserControl;
@@ -525,8 +544,8 @@ namespace MyDev . ViewModels
                         task . Start ( );
                         ProgressValue = 55;
                         Tview . ProgressBar_Progress . UpdateLayout ( );
-//                        TabItem TItem = Tabcontrol . Items [ 1 ] as TabItem;
-//                        TItem . Content = lbUserctrl;
+                        //                        TabItem TItem = Tabcontrol . Items [ 1 ] as TabItem;
+                        //                        TItem . Content = lbUserctrl;
                         TItem . IsSelected = true;
                         //ListBox lb = lbUserctrl . listbox1;
                         //ReduceByParamValue converter = new ReduceByParamValue ( );
@@ -563,16 +582,16 @@ namespace MyDev . ViewModels
                 }
                 else
                 {
-//                    Tview . ListboxTab . Content = lbUserctrl;
+                    //                    Tview . ListboxTab . Content = lbUserctrl;
                     TItem . IsSelected = true;
                     Console . WriteLine ( "Already loaded...." );
                     Mouse . OverrideCursor = Cursors . Arrow;
                 }
                 TItem . Content = lbUserctrl;
                 DbType = lbUserctrl?.CurrentType;
-//                Tabcontrol . SelectedIndex = 1;
+                //                Tabcontrol . SelectedIndex = 1;
                 CurrentTabIndex = Tabcontrol . SelectedIndex;
-//                Tview . ListboxTab . Opacity = 1.0;
+                //                Tview . ListboxTab . Opacity = 1.0;
                 lbUserctrl?.UpdateLayout ( );
                 //if ( lbUserctrl != null )
                 //{
@@ -583,9 +602,10 @@ namespace MyDev . ViewModels
                 ClearTags ( );
                 lbUserctrl . Tag = true;
                 lbUserctrl . listbox1 . Focus ( );
-                lbUserctrl. SelectionInAction = false;
+                //lbUserctrl .
+                //false;
                 DbCountArgs cargs = new DbCountArgs ( );
-//                Tview . ListboxTab . Content = lbUserctrl;
+                //                Tview . ListboxTab . Content = lbUserctrl;
                 cargs . Dbcount = lbUserctrl . listbox1 . Items . Count;
                 cargs . sender = "lbUserctrl";
                 IsLoadingDb = false;
@@ -641,7 +661,8 @@ namespace MyDev . ViewModels
                     lvUserctrl . DataContext = test;
                 }
 
-                lvUserctrl . SelectionInAction = false;
+                LvUserControl. SetSelectionInAction ( Tabview . GetTabview ( ) . ViewersLinked);
+                //lvUserctrl . SelectionInAction = false;
 
                 if ( lvUserctrl . listview1 . Items . Count == 0 )
                 {
@@ -1179,50 +1200,45 @@ namespace MyDev . ViewModels
             args . message = msg;
             EventControl . TriggerWindowMessage ( this , args );
         }
-        public bool SetViewerLinkage ( bool Islinked )
-        {
-            AreViewersLinked = Islinked;
-            return AreViewersLinked;
-        }
         private void CloseAppExecute ( object obj )
         {
             Application . Current . Shutdown ( );
         }
         private void CloseWinExecute ( object obj )
         {
-            if ( TabWinViewModel . dgUserctrl != null )
+            if ( dgUserctrl != null )
             {
-                TabWinViewModel . dgUserctrl . grid1 . ItemsSource = null;
-                TabWinViewModel . dgUserctrl . grid1 . Items . Clear ( );
-                TabWinViewModel . dgUserctrl = null;
+                dgUserctrl . grid1 . ItemsSource = null;
+                dgUserctrl . grid1 . Items . Clear ( );
+                dgUserctrl = null;
                 Tview . DgridTab . Content = null;
             }
-            if ( TabWinViewModel . lbUserctrl != null )
+            if ( lbUserctrl != null )
             {
-                TabWinViewModel . lbUserctrl . listbox1 . ItemsSource = null;
-                TabWinViewModel . lbUserctrl . listbox1 . Items . Clear ( );
-                TabWinViewModel . lbUserctrl = null;
+                lbUserctrl . listbox1 . ItemsSource = null;
+                lbUserctrl . listbox1 . Items . Clear ( );
+                lbUserctrl = null;
                 Tview . ListboxTab . Content = null;
             }
-            if ( TabWinViewModel . lvUserctrl != null )
+            if ( lvUserctrl != null )
             {
-                TabWinViewModel . lvUserctrl . listview1 . ItemsSource = null;
-                TabWinViewModel . lvUserctrl . listview1 . Items . Clear ( );
-                TabWinViewModel . lvUserctrl = null;
+                lvUserctrl . listview1 . ItemsSource = null;
+                lvUserctrl . listview1 . Items . Clear ( );
+                lvUserctrl = null;
                 Tview . ListviewTab . Content = null;
             }
-            if ( TabWinViewModel . tvUserctrl != null )
+            if ( tvUserctrl != null )
             {
-                TabWinViewModel . tvUserctrl . treeview1 . ItemsSource = null;
-                TabWinViewModel . tvUserctrl . treeview1 . Items . Clear ( );
-                TabWinViewModel . tvUserctrl = null;
+                tvUserctrl . treeview1 . ItemsSource = null;
+                tvUserctrl . treeview1 . Items . Clear ( );
+                tvUserctrl = null;
                 Tview . TreeviewTab . Content = null;
             }
-            if ( TabWinViewModel . logUserctrl != null )
+            if ( logUserctrl != null )
             {
-                TabWinViewModel . logUserctrl . logview . ItemsSource = null;
-                TabWinViewModel . logUserctrl . logview . Items . Clear ( );
-                TabWinViewModel . logUserctrl = null;
+                logUserctrl . logview . ItemsSource = null;
+                logUserctrl . logview . Items . Clear ( );
+                logUserctrl = null;
                 Tview . LogviewTab . Content = null;
             }
             lbUserctrl = null;

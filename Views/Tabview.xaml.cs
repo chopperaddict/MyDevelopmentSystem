@@ -1,50 +1,23 @@
 ﻿using System;
-using System . Collections;
 using System . Collections . Generic;
-
 using System . ComponentModel;
-using System . Data;
-using System . Globalization;
-using System . Linq;
-//using System . Runtime . CompilerServices;
-using System . Text;
 using System . Threading;
 using System . Threading . Tasks;
 using System . Windows;
 using System . Windows . Controls;
-using System . Windows . Data;
-using System . Windows . Documents;
 using System . Windows . Input;
 using System . Windows . Media;
 using System . Windows . Media . Animation;
 using System . Windows . Media . Effects;
-using System . Windows . Media . Imaging;
-//using System . Windows . Shapes;
-//using System . Xml . Linq;
-
 using MyDev . Converts;
 using MyDev . Models;
 using MyDev . UserControls;
 using MyDev . ViewModels;
-using Windows . System;
-using static MyDev . Views . Tabview;
 
 namespace MyDev . Views
-{
-    /// <summary>
-    /// Interaction logic for Tabview.xaml
-    /// </summary>
+{   
     public partial class Tabview : Window
     {
-
-        // Flowdoc file wide variables
-        // Pointer to the special library FlowdocLib.cs 
-        FlowdocLib fdl = new FlowdocLib ( );
-        //private double XLeft = 0;
-        //private double YTop = 0;
-        //private bool UseFlowdoc = true;
-        public static object MovingObject { get; set; }
-
         #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged ( string propertyName )
@@ -56,26 +29,111 @@ namespace MyDev . Views
         }
         #endregion OnPropertyChanged
 
+        #region Declarations
+        // Pointer to the special library FlowdocLib.cs 
+        FlowdocLib fdl = new FlowdocLib ( );
+        public static object MovingObject { get; set; }
         private CancellationTokenSource currentCancellationSource;
-        //        static public IProgress<int> progress { get; set;} 
-        private int msgcounter { get; set; } = 1;
-
-        public static Tabview tabvw;
+         private int msgcounter { get; set; } = 1;
+        public static Tabview tabvw { get; set; }
         public static TabWinViewModel ControllerVm { get; set; }
         public static TabControl currenttab { get; set; }
-        //      public static TabItem Titem { get; set; }
-        //        public static object CurrentTabContentObject { get; set; }
 
-        // doesnt work !!!
-        //public class ConditionalEventTriggerCollection : List<ConditionalEventTrigger> { }
+        #endregion Declarations
+
+        #region ALL Dependency Properties
+
+        public bool  ViewersLinked
+        {   // DP VIEWERSLINKED
+            get { return ( bool  ) GetValue ( ViewersLinkedProperty ); }
+            set { SetValue ( ViewersLinkedProperty , value ); }
+        }
+        public static readonly DependencyProperty ViewersLinkedProperty =
+            DependencyProperty . Register ( "ViewersLinked" , typeof ( bool  ) ,
+                typeof ( Tabview) , new PropertyMetadata ( (bool)false ) );
+
+        public Tabview  TabViewWin
+        {// DP TABVIEWWIN
+            get { return ( Tabview  ) GetValue ( TabViewWinProperty ); }
+            set { SetValue ( TabViewWinProperty , value ); }
+        }
+        public static readonly DependencyProperty TabViewWinProperty =
+            DependencyProperty . Register ( "TabViewWin" , typeof ( Tabview  ) ,
+            typeof ( Tabview ) , new PropertyMetadata ( (Tabview)null ) );
+
+        #region User Control DP;s
+        public DgUserControl Dgusercontrol
+        {   // DP DGUSERCTRL
+            get { return ( DgUserControl ) GetValue ( DgusercontrolProperty ); }
+            set { SetValue ( DgusercontrolProperty , value ); }
+        }
+        public static readonly DependencyProperty DgusercontrolProperty =
+            DependencyProperty . Register ( "Dgusercontrol" , typeof ( DgUserControl ) ,
+                typeof ( Tabview) , new PropertyMetadata ( (DgUserControl)null ) );
+
+        public LbUserControl Lbusercontrol
+        {   // DP LBUSERCTRL
+            get { return ( LbUserControl ) GetValue ( LbUserControlProperty ); }
+            set { SetValue ( LbUserControlProperty , value ); }
+        }
+        public static readonly DependencyProperty LbUserControlProperty =
+            DependencyProperty . Register ( "Lbusercontrol" , typeof ( LbUserControl ) ,
+                typeof ( Tabview ) , new PropertyMetadata ( ( LbUserControl ) null ) );
+
+        public LvUserControl Lvusercontrol
+        {   // DP LVUSERCTRL
+            get { return ( LvUserControl ) GetValue ( LvUserControlProperty ); }
+            set { SetValue ( LvUserControlProperty , value ); }
+        }
+        public static readonly DependencyProperty LvUserControlProperty =
+            DependencyProperty . Register ( "Lvusercontrol" , typeof ( LvUserControl ) ,
+                typeof ( Tabview ) , new PropertyMetadata ( ( LvUserControl ) null ) );
+
+        #endregion User Control DP;s
+        #endregion ALL Dependency Properties
+
+        #region Attached properties
+
+        // GLOBAL DATAGRID
+        public static DataGrid GetDataGrid( DependencyObject obj )
+        {   if ( DGControlProperty == null )    return null;
+                return ( DataGrid ) obj . GetValue ( DGControlProperty ); }
+        public static void SetDGControl( DependencyObject obj , DataGrid value )
+        {obj . SetValue ( DGControlProperty , value );}        
+        public static readonly DependencyProperty DGControlProperty =
+            DependencyProperty . RegisterAttached ( "DGControl" , typeof ( DataGrid) , 
+            typeof ( Tabview ) , new PropertyMetadata ( (DataGrid)null , OnDataGridSet) );
+        private static void OnDataGridSet ( DependencyObject d , DependencyPropertyChangedEventArgs e )
+        { Console . WriteLine ($"DGControl set to {e.NewValue}"); }
+
+        // GLOBAL LISTBOX
+        public static ListBox GetListBox ( DependencyObject obj )
+        { return ( ListBox ) obj . GetValue ( LBControlProperty ); }
+        public static void SetListBox ( DependencyObject obj , ListBox value )
+        { obj . SetValue ( LBControlProperty , value ); }
+        public static readonly DependencyProperty LBControlProperty =
+            DependencyProperty . RegisterAttached ( "LBControl" , typeof ( ListBox ) , typeof ( Tabview ) , new PropertyMetadata ( ( ListBox ) null ) );
+
+        // GLOBAL LISTVIEW`
+        public static ListView GetListView ( DependencyObject obj )
+        { return ( ListView ) obj . GetValue ( LVControlProperty ); }
+        public static void SetListView ( DependencyObject obj , ListView value )
+        { obj . SetValue ( LVControlProperty , value ); }
+        public static readonly DependencyProperty LVControlProperty =
+            DependencyProperty . RegisterAttached ( "LVControl" , typeof ( ListView ) , typeof ( Tabview ) , new PropertyMetadata ( ( ListView ) null ) );
+
+
+        #endregion Attached properties
 
         public Tabview ( )
         {
             Mouse . OverrideCursor = Cursors . Wait;
-            InitializeComponent ( );
-            UpdateLayout ( );
-            SizeChanged += Tabview_SizeChanged;
             tabvw = this;
+            TabViewWin = this;
+            InitializeComponent ( );
+            this . Left = 50;
+            this . Top = 100;
+            SizeChanged += Tabview_SizeChanged;
             ControllerVm = TabWinViewModel . SetPointer ( this , "DgridTab" );
             this . Show ( );
             this . DataContext = ControllerVm;
@@ -91,12 +149,29 @@ namespace MyDev . Views
             Mouse . OverrideCursor = Cursors . Arrow;
         }
 
-        private void Flowdoc_FlowDocClosed ( object sender , EventArgs e )
+        public static Tabview GetTabview ( )
+        {   // Return  pointer to ourselves (TABVIEW)
+            return tabvw;
+        }
+        public void SetViewerLinkage ( bool Islinked )
+        {   //set our DP for viewer linkage
+            ViewersLinked = Islinked;
+        }
+        private void Linkall ( object sender , RoutedEventArgs e )
+        {   // Set linkage  for control indexes
+            bool val = ( bool ) linkViewers . IsChecked;
+            SetViewerLinkage (  val);
+            LvUserControl . SetListSelectionChanged ( val );
+            LbUserControl . SetListSelectionChanged ( val );
+            DgUserControl . SetListSelectionChanged ( val );
+            linkViewers . IsChecked = val;
+            ViewersLinked = val;
+        }
+
+         private void Flowdoc_FlowDocClosed ( object sender , EventArgs e )
         {
             canvas . Visibility = Visibility . Collapsed;
         }
-
-
 
         #region Intra window messaging
         private void SendWindowMessage ( string msg = "" )
@@ -132,34 +207,24 @@ namespace MyDev . Views
         #endregion Intra window messaging
         public void TabSizeChanged ( object sender , SizeChangedEventArgs e )
         {
-            // Helper to let other usercontrols resize their content before viewing
+            // Helper called by other UserControls to resize their content before viewing
             Tabview_SizeChanged ( sender , e );
         }
-
+        #region window resizing
         private void Tabview_SizeChanged ( object sender , SizeChangedEventArgs e )
         {
             ReduceByParamValue rbp = new ReduceByParamValue ( );
-            //Thickness th = new Thickness ( );
             var v = currenttab?.ActualWidth;
             if ( TabWinViewModel . dgUserctrl != null )
-            {
-                ResizeDatagridTab ( );
-            }
+            {ResizeDatagridTab ( );}
             if ( TabWinViewModel . lbUserctrl != null )
-            {
-                ResizeListboxTab ( );
-            }
+            {ResizeListboxTab ( );}
             if ( TabWinViewModel . lvUserctrl != null )
-            {
-                ResizeListviewTab ( );
-            }
+            {ResizeListviewTab ( );}
             if ( TabWinViewModel . tvUserctrl != null )
-            {
-                ResizeTreeviewTab ( );
-            }
+            {ResizeTreeviewTab ( );}
         }
 
-        #region resizing
         public static void ResizeDatagridTab ( )
         {
             if ( currenttab == null ) return;
@@ -235,61 +300,37 @@ namespace MyDev . Views
             TabWinViewModel . tvUserctrl . treeview1 . VerticalAlignment = VerticalAlignment . Top; ;
             TabWinViewModel . tvUserctrl . treeview1 . UpdateLayout ( );
         }
+ 
         #endregion resizing
 
         private async void Window_Loaded ( object sender , RoutedEventArgs e )
         {
-            TabWinViewModel TW = ControllerVm;
             Tabctrl . SelectedIndex = 0;
             TabWinViewModel . IsLoadingDb = false;
             await ControllerVm . SetCurrentTab ( this , "DgridTab" );
-            Tabctrl . SelectedIndex = 0;
-        }
-
-        private void Linkall ( object sender , RoutedEventArgs e )
-        {
-            bool val = ( bool ) linkViewers . IsChecked;
-            LvUserControl . SetListSelectionChanged ( val );
-            LbUserControl . SetListSelectionChanged ( val );
-            DgUserControl . SetListSelectionChanged ( val );
-            //bool result = ControllerVm . SetViewerLinkage ( val );
-            linkViewers . IsChecked = val;
-            //if( val )
-            //    fdmsg ( line1: "The three viewers provided in this window now have their item selection's linked" , line2: "so they wil all have the same records selected..." , line3: "Clever stuff eh ??" );
-            //else
-            //    fdmsg ( line1: "The three viewers provided in this window no longer have their item selection's linked" , line2: "so they wil NOT have the same records selected..." , line3: "Even Cleverer stuff eh ??" );
-
         }
 
         private void tabview_Closed ( object sender , EventArgs e )
         {
+            // cleanup FLowDoc before closing down
             Flowdoc . ExecuteFlowDocMaxmizeMethod -= new EventHandler ( MaximizeFlowDoc );
             FlowDoc . FlowDocClosed -= Flowdoc_FlowDocClosed;
-
+            // Close App
             ControllerVm . Closedown ( );
         }
 
         #region Left Mouse Ckick on tabs Trigger Methods
         private void GridMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-        {
-            ControllerVm . SetCurrentTab ( this , "DgridTab" );
-        }
+        {ControllerVm . SetCurrentTab ( this , "DgridTab" );}
         private async void ListboxMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-        {
-            await ControllerVm . SetCurrentTab ( this , "ListboxTab" );
-        }
+        {await ControllerVm . SetCurrentTab ( this , "ListboxTab" );}
         private async void ListviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-        {
-          await ControllerVm . SetCurrentTab ( this , "ListviewTab" );
-        }
+        {await ControllerVm . SetCurrentTab ( this , "ListviewTab" );}
         private async void LogviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-        {
-            await ControllerVm . SetCurrentTab ( this , "LogviewTab" );
-        }
+        {await ControllerVm . SetCurrentTab ( this , "LogviewTab" );}
         private async void TreeviewMouseLeftButtonDown ( object sender , MouseButtonEventArgs e )
-        {
-            await ControllerVm . SetCurrentTab ( this , "TreeviewTab" );
-        }
+        {await ControllerVm . SetCurrentTab ( this , "TreeviewTab" );}
+        
         #endregion Left Mouse Ckick on Tabs
 
         public void ClearTab ( UIElement element )
@@ -326,7 +367,6 @@ namespace MyDev . Views
                 ControllerVm . SetCurrentTab ( tview , "ListviewTab" );
             }
         }
-
         private void clearTabs ( object sender , RoutedEventArgs e )
         {
             if ( TabWinViewModel . lbUserctrl != null )
@@ -405,8 +445,6 @@ namespace MyDev . Views
                 }
             }
         }
-
-
         private async void Button_Click ( object sender , RoutedEventArgs e )
         {
             // Enable/disabled buttons so that only one counting task runs at a time.
@@ -444,7 +482,6 @@ namespace MyDev . Views
                 this . currentCancellationSource = null;
             }
         }
-
         private async Task CountToOneHundredAsync ( IProgress<int> progress , CancellationToken cancellationToken )
         {
             for ( int i = 1 ; i <= 100 ; i++ )
@@ -465,7 +502,6 @@ namespace MyDev . Views
                 ControllerVm . ProgressValue = i;
             }
         }
-
         private void Button_Cancel_Click ( object sender , RoutedEventArgs e )
         {
             // Cancel the cancellation token
@@ -523,7 +559,8 @@ namespace MyDev . Views
                 Console . WriteLine ();
             clearTabs ( this , null );
         }
-        //Remote triggers  for mouseover events
+
+    #region Remote triggers  for mouseover events
         public static void TriggerStoryBoardOn ( int Id )
         {
             Storyboard sb;
@@ -578,6 +615,7 @@ namespace MyDev . Views
                     break;
             }
         }
+        #endregion Remote triggers  for mouseover events
 
         #region UNUSED
         public void PART_MouseLeave ( object sender , MouseEventArgs e )
@@ -870,7 +908,8 @@ namespace MyDev . Views
         private void DeSerialize_DgUserControl ( object sender , RoutedEventArgs e )
         {
 
-        }
+        }        
+
+
     }
 }
-

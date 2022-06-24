@@ -45,11 +45,21 @@ namespace MyDev . Views
                 NotifyPropertyChanged ( nameof ( TabbedWindowText ) );
             }
         }
-
+        protected void CloseControl(object sender, RoutedEventArgs e)
+        {
+            CustCtrl . Visibility = Visibility.Collapsed;
+        }
         public TabViewInfo (string datafile= "TabbedDataInfo.txt" )
         {
             InitializeComponent ( );
             this . DataContext = this;
+            if ( File . Exists ( datafile ) == false )
+            {
+                MessageBox . Show ( $"Sorry, but the Information file [{datafile}] cannot be found" , "Missing information file" );
+                ShowOption ( null , null );
+                return;
+            }
+
             TabbedWindowText = File . ReadAllText ( datafile );
             if ( TabbedWindowText . Length == 0 )
                 MessageBox . Show ( "Could  not find the source text file...." , "Missing Data" );

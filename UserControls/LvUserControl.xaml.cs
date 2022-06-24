@@ -42,7 +42,7 @@ namespace MyDev . UserControls
         public TabControl tabControl { get; set; }
         private static LvUserControl ThisWin { get; set; }
         private static Tabview tabviewWin { get; set; }
-        public bool SelectionInAction { get; set; } = false;
+        private static bool SelectionInAction { get; set; } = false;
         public static bool TrackselectionChanges { get; set; } = false;
         private int CurrentIndex { get; set; } = 0;
 
@@ -57,6 +57,14 @@ namespace MyDev . UserControls
             InitializeComponent ( );
             Console . WriteLine ( $"Listview Control Loading ......" );
             ThisWin = this;
+
+            // setup DP pointer in Tabview to LvUserControl using shortcut command line !
+            Tabview . GetTabview ( ) . Lvusercontrol = this;
+
+            //Set ListView AP pointer in Tabview
+            Tabview . SetListView( this , listview1 );
+
+            // setup local data collections
             Bvm = new ObservableCollection<BankAccountViewModel> ( );
             Cvm = new ObservableCollection<CustomerViewModel> ( );
             //LbUserControl . LbSelectionChanged += SelectionHasChanged;
@@ -66,6 +74,8 @@ namespace MyDev . UserControls
             EventControl . CustDataLoaded += EventControl_CustDataLoaded;
             EventControl . TriggerWindowMessage ( this , new InterWindowArgs { message = "LvUserControl  loaded..." } );
             tabControl = Tabview . currenttab;
+
+
             // Save to our ViewModel repository
             Viewmodel = new ViewModel ( );
             Viewmodel = this;
@@ -265,16 +275,18 @@ namespace MyDev . UserControls
         }
         private void listview1_GotFocus ( object sender , RoutedEventArgs e )
         {
-            //            this . this . SelectionInAction = false;
         }
         private void listview1_LostFocus ( object sender , RoutedEventArgs e )
         {
-            //           this . SelectionInAction = false;
-        }
+     }
 
+        public static void SetSelectionInAction(bool arg)
+        {
+   //         SelectionInAction = arg;
+        }
         private void listview1_SelectionChanged ( object sender , SelectionChangedEventArgs e )
         {
-            if ( this . SelectionInAction == true)
+            if ( SelectionInAction == true)
                 return;
 
             ListView lv = sender as ListView;
@@ -289,12 +301,11 @@ namespace MyDev . UserControls
             lv = e . OriginalSource as ListView;
             if ( lv. SelectedIndex != CurrentIndex )
             {
-                this . SelectionInAction = true;
+                SelectionInAction = true;
                 this . listview1 . SelectedIndex = lv.SelectedIndex;
                 CurrentIndex= lv . SelectedIndex;
-                this . SelectionInAction = true;
                 Utils . ScrollLVRecordIntoView ( listview1 , CurrentIndex );
-                if ( TrackselectionChanges )
+                if ( tabviewWin . ViewersLinked )
                 {
                     SelectionChangedArgs args = new SelectionChangedArgs ( );
                     args . data = this . listview1 . SelectedItem;
@@ -302,14 +313,12 @@ namespace MyDev . UserControls
                     args . sendertype = CurrentType;
                     args . index = CurrentIndex;
                     Console . WriteLine ( $"ListView broadcasting selection set to  {args . index}" );
-                    this . SelectionInAction = false;
+                    SelectionInAction = false;
                     EventControl . TriggerListSelectionChanged ( sender , args );
                 }
-                else this . SelectionInAction = false;
             }
-            else
-                this . SelectionInAction = false;
 
+            SelectionInAction = false;
             Mouse . OverrideCursor = Cursors . Arrow;
             CurrentIndex = this . listview1 . SelectedIndex;
             e . Handled = true;
@@ -360,7 +369,7 @@ namespace MyDev . UserControls
                         {
                             if ( item . CustNo == custno && item . BankNo == bankno )
                             {
-                                this . SelectionInAction = true;
+                                SelectionInAction = true;
                                 this . listview1 . SelectedIndex = newindex;
                                 this . listview1 . SelectedItem = newindex;
                                 Console . WriteLine ( $"ListView selection in Customers matched on {custno}:{bankno}, index {newindex}" );
@@ -381,7 +390,7 @@ namespace MyDev . UserControls
                         {
                             if ( item . CustNo == custno && item . BankNo == bankno )
                             {
-                                this . SelectionInAction = true;
+                                SelectionInAction = true;
                                 this . listview1 . SelectedIndex = newindex;
                                 this . listview1 . SelectedItem = newindex;
                                 Console . WriteLine ( $"ListView selection in BankAccount matched on {custno}:{bankno}, index {newindex}" );
@@ -399,6 +408,7 @@ namespace MyDev . UserControls
             }
             if ( success )
                 Utils . ScrollLVRecordIntoView ( this.listview1 , newindex );
+            SelectionInAction = false;
             this . listview1 . UpdateLayout ( );
         }
         public void PART_MouseLeave ( object sender , MouseEventArgs e )
@@ -445,7 +455,6 @@ namespace MyDev . UserControls
 
         private void listview1_PreviewMouseLeftButtonUp ( object sender , MouseButtonEventArgs e )
         {
-            //this . this . SelectionInAction = false;
         }
     }
 }
