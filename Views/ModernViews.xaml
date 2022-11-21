@@ -27,6 +27,65 @@
 
     <Window.Resources>
 
+
+        <Style TargetType="ListBoxItem" x:Key="ListBoxMagnifyAnimation">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="ListBoxItem.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="12" To="16" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                            </Storyboard>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="ListBoxItem.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="16" To="12" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                            </Storyboard>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <Style TargetType="ItemsControl" x:Key="ItemsControlMagnifyAnimation">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="ItemsControl.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="12" To="16" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                            </Storyboard>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="ItemsControl.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                        Storyboard.TargetProperty="FontSize"
+                                        From="16" To="12" Duration="0:0:0.1" 
+                                        AutoReverse="false"  />
+                            </Storyboard>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+        
         <ControlTemplate x:Key="GroupItemTemplate">
             <Expander IsExpanded="True" VerticalAlignment="Bottom" VerticalContentAlignment="Bottom">
                 <!-- Header Panel of the Expander control -->
@@ -577,10 +636,11 @@
 							Height="Auto"
 							Margin="10,0,0,30"
                             IsSynchronizedWithCurrentItem="True"
-                    Style="{StaticResource ListBoxMagnifyAnimation}"
 							VerticalContentAlignment="Stretch" 
 							Visibility="Hidden" Grid.ColumnSpan="2">
-
+                <ListBoxItem 
+                    Style="{StaticResource ListBoxMagnifyAnimation}">
+                </ListBoxItem>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel Orientation="Horizontal">
@@ -602,6 +662,7 @@
             <ItemsControl x:Name="ItemsList"
                           Background="Yellow"
                           Visibility="Visible"
+                          Style="{StaticResource ItemsControlMagnifyAnimation}"
                 ItemsSource="{Binding lvview}" Grid.ColumnSpan="2">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

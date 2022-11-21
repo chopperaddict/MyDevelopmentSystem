@@ -593,12 +593,12 @@
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                    ScrollViewer.VerticalScrollBarVisibility="Auto"
                     Width="320"
-                       Style="{StaticResource ListBoxMagnifyAnimation}"
                     Visibility="Visible">
                 <ListBoxItem>gfhgghd</ListBoxItem>
                 <ListBoxItem>rtyryu</ListBoxItem>
                 <ListBoxItem>n,bmyu658</ListBoxItem>
             </ListBox>
+                       <!--Style="{StaticResource --><!--ListBoxMagnifyAnimation--><!--4}"-->
 
             <Button Margin="10,270,0,0" 
                     Content="Reload"
@@ -643,12 +643,12 @@
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     Height="Auto"
-                       Style="{StaticResource ListBoxMagnifyAnimation}"
                      Margin="10 350 0 20"
                     MinHeight="0"
                     MaxHeight="700"
                     Width="320"
                     Visibility="Visible"/>
+                       <!--Style="{StaticResource ListBoxMagnifyAnimation4}"-->
 
             <!--<Button Margin="10,570,0,0" 
                     Content="Clear"

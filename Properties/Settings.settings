@@ -33,7 +33,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AppRootPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">W:\\MyDev\\bin\\Debug\\</Value>
+      <Value Profile="(Default)">C:\\MyDev\\bin\\Debug\\</Value>
     </Setting>
   </Settings>
 </SettingsFile>

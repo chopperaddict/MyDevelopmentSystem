@@ -138,6 +138,7 @@
       <DependentUpon>LogUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\DatagridUserControlViewModel.cs" />
+    <Compile Include="ViewModels\DbArgs.cs" />
     <Compile Include="ViewModels\DbTypeArgs.cs" />
     <Compile Include="ViewModels\UserControlDataAccess.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
@@ -393,6 +394,7 @@
     <Compile Include="Views\test.xaml.cs">
       <DependentUpon>test.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TooltipArgs.cs" />
     <Compile Include="Views\TreeViewCollection.cs" />
     <Compile Include="Views\TreeViewer.xaml.cs">
       <DependentUpon>TreeViewer.xaml</DependentUpon>

@@ -29,7 +29,7 @@ namespace MyDev . UserControls
             InitializeComponent ( );
             string startpath = Properties . Settings . Default . AppRootPath;
             string [ ] str = startpath . Split ( '\\' );
-            startpath = $"{str [ 0 ]}\\{str [ 1 ]}\\UserControls";
+            startpath = $"{str [ 0 ]}\\{str [ 2 ]}\\UserControls";
             LoadUCList ( startpath );
             ucv = UserControlsViewer . GetUCviewer ( );
             uclb = this;

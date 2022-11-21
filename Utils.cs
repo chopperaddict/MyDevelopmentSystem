@@ -834,7 +834,7 @@ namespace MyDev
                 var obj = list [ i ] as ListBox;
                 if ( obj != null )
                 {
-                    obj . Style = magnify ? System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation" ) as Style : null;
+                    obj . Style = magnify ? System . Windows . Application . Current . FindResource ( "ListBoxMagnifyAnimation4" ) as Style : null;
                     continue;
                 }
                 var lv = list [ i ] as ListView;

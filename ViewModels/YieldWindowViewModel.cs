@@ -12,8 +12,8 @@ using System . Windows;
 using System . Windows . Controls;
 using System . Windows . Data;
 using System . Windows . Input;
+
 using MyDev . SQL;
-using MyDev . ViewModels;
 using MyDev . Views;
 
 
@@ -589,14 +589,5 @@ namespace MyDev . ViewModels
         //#endregion Delegate Testing
 
     }
-}
-
-
-public class DbArgs
-{
-    public int index { get; set; }
-    public BankAccountViewModel bvm { get; set; }
-    public bool DoUpdate { get; set; }
-    public bool UseMatch { get; set; }
 }
 

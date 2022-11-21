@@ -27,7 +27,6 @@ using MyDev . Views;
 
 using Newtonsoft . Json . Linq;
 
-using Windows . UI . Text;
 
 namespace MyDev . UserControls
 {

@@ -224,6 +224,10 @@ namespace MyDev . Views
                     if ( lvview . Filter == null )
                         lvview . Filter = Filter_CustNo;
                     lview3 . ItemsSource = lvview;
+                    
+                    //ItemsList.ItemsSource = lvview;
+                    //ItemsList.Visibility = Visibility.Visible;
+
                     RecCountlv = lview3 . Items . Count;
                     RecCount = RecCountlv;
                     Button1 . Opacity = 1;
@@ -470,6 +474,9 @@ namespace MyDev . Views
             if ( lvview . Filter == null )
                 lvview . Filter = Filter_CustNo;
             lview3 . ItemsSource = lvview;
+            
+            ItemsList.ItemsSource = lvview;
+            
             RecCountlv = lview3 . Items . Count;
             RecCount = RecCountlv;
             Button1 . Opacity = 1;
@@ -759,9 +766,10 @@ namespace MyDev . Views
                 CurrentActiveView = 0;
                 Dgrid1 . Visibility = Visibility . Hidden;
                 lbox1 . Visibility = Visibility . Hidden;
-                lview3 . Visibility = Visibility . Visible;
-                lvview . Refresh ( );
-                if ( lview3 . Items . Count == 0 )
+                lview3.Visibility = Visibility . Visible;
+                ItemsList. Visibility = Visibility . Hidden;
+                //ItemsList. Refresh ( );
+                if (lview3. Items . Count == 0 )
                 {
                     Infopanel . Content = "Click 'Load ListView' to load data...";
                     Infopanel . Refresh ( );
@@ -776,10 +784,10 @@ namespace MyDev . Views
                 RecCountlv = lview3 . Items . Count;
                 RecCount = RecCountlv;
                 Button5 . Background = FindResource ( "Green4" ) as SolidColorBrush;
-                if ( lview3 . Items . Count == 0 )
+                if (ItemsList. Items . Count == 0 )
                 {                
                     Button1 . Opacity = 0.3;
-                    Button5 . Background = FindResource ( "LightGray" ) as SolidColorBrush;
+                    Button5 . Background = FindResource ( "Gray0" ) as SolidColorBrush;
                 }
                 else
                 {

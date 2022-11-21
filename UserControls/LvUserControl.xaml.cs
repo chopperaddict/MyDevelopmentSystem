@@ -77,9 +77,9 @@ namespace MyDev . UserControls
 
 
             // Save to our ViewModel repository
-            Viewmodel = new ViewModel ( );
-            Viewmodel = this;
-            ViewModel . SaveViewmodel ( "LvUserControl" , Viewmodel );
+            //Viewmodel = new ViewModel ( );
+            //Viewmodel = this;
+            //ViewModel . SaveViewmodel ( "LvUserControl" , Viewmodel );
 
         }
         private void UserControl_Loaded ( object sender , RoutedEventArgs e )
